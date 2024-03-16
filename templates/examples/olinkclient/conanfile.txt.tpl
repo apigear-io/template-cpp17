@@ -3,7 +3,7 @@
 {{- $module := . }}
 {{snake $module.Name}}/{{$module.Version}}
 {{- end }}
-apigear/3.5.2
+apigear/3.6.0
 
 [generators]
 CMakeDeps

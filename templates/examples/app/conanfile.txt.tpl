@@ -4,7 +4,7 @@
 {{snake $module.Name}}/{{$module.Version}}
 {{- end }}
 {{- if .Features.monitor }}
-apigear/3.5.2
+apigear/3.6.0
 {{- end }}
 
 [generators]

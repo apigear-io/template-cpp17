@@ -6,7 +6,7 @@ from pathlib import os
 
 class apigearConan(ConanFile):
     name = "apigear"
-    version = "3.5.2"
+    version = "3.6.0"
     package_type = "library"
     license = "Apache-2.0"
     author = "ApiGear UG"

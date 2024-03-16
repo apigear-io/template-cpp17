@@ -48,7 +48,7 @@ class {{$module_id}}Conan(ConanFile):
     def requirements(self):
         self.requires("nlohmann_json/3.9.1", transitive_headers=True)
         {{ if $features.apigear }}
-        self.requires("apigear/3.5.2", transitive_headers=True)
+        self.requires("apigear/3.6.0", transitive_headers=True)
         {{- end}}
 
     def build_requirements(self):
