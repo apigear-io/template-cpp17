@@ -26,8 +26,9 @@ the bear minimum classes are the [publisher](stubs#publisher) and [data](stubs#d
 
 With our example API definition
 
-<details><summary>Hello World API (click to expand)</summary>
-<CodeBlock language="yaml" showLineNumbers>{helloWorldModuleComponent}</CodeBlock>
+<details>
+  <summary>Hello World API (click to expand)</summary>
+  <CodeBlock language="yaml" showLineNumbers>{helloWorldModuleComponent}</CodeBlock>
 </details>
 
 the following file structure will be generated. The purpose and content of each file is explained below.

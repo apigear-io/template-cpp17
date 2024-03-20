@@ -7,15 +7,16 @@ import helloWorldModuleComponent from '!!raw-loader!./data/helloworld.module.yam
 
 # Monitor
 
-Use the monitor feature to examine the interface calls, state and signals during runtime. With this feature you obtain a monitor client and a monitored version of your interfaces. The monitoring server is embedded into the [ApiGear Studio](https://docs.apigear.io/docs/category/desktop-studio) and [CLI version](https://docs.apigear.io/docs/category/command-line).
-More details on [monitoring](https://docs.apigear.io/docs/advanced/monitor/intro)
+Use the monitor feature to examine the interface calls, state and signals during runtime. With this feature you obtain a monitor client and a monitored version of your interfaces. The monitoring server is embedded into the [ApiGear Studio](/docs/studio/intro) and [CLI version](/docs/cli/intro).
+More details on [monitoring](/docs/advanced/monitor/intro)
 
 ## File overview for module
 
 With our example API definition
 
-<details><summary>Hello World API (click to expand)</summary>
-<CodeBlock language="yaml" showLineNumbers>{helloWorldModuleComponent}</CodeBlock>
+<details>
+    <summary>Hello World API (click to expand)</summary>
+    <CodeBlock language="yaml" showLineNumbers>{helloWorldModuleComponent}</CodeBlock>
 </details>
 
 the following file structure will be generated. The purpose and content of each file is explained below.
@@ -70,7 +71,7 @@ The other calls are just forwarded to your implementation - so you can use the `
 The wrapped object `IHello& impl` is just the object that fulfills the `IHello` interface, so the implementation can be e.g. the [`OlinkClient`](olink.md) version of `Hello`.
 :::
 
-The `📜hello.tracer.h` and `📜hello.tracer.cpp` files contain helper to prepare interface specific trace data for the general tracing [TraceClient](monitor#qt-trace-client)
+The `📜hello.tracer.h` and `📜hello.tracer.cpp` files contain helper to prepare interface specific trace data for the general tracing [TraceClient](monitor#tracing-example)
 
 ### Tracing example
 

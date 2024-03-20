@@ -20,7 +20,7 @@ Basic c++ knowledge is necessary.
 
 ### Code generation
 
-Follow the documentation for the [code generation](https://docs.apigear.io/docs/start/first_steps) in general and [CLI](https://docs.apigear.io/docs/cli/generate) or the [Studio](https://docs.apigear.io/docs/category/desktop-studio) tools.
+Follow the documentation for the [code generation](/docs/start/first_steps) in general and [CLI](/docs/cli/generate) or the [Studio](/docs/studio/intro) tools.
 Or try first the [quick start guide](../quickstart/index.md) which shows how to prepare api and generate code out of it.
 
 :::tip
@@ -31,8 +31,9 @@ For questions regarding the template please go to our [discussions page](https:/
 
 The following code snippet contains the _API_ definition which is used throughout this guide to demonstrate the generated code and its usage.
 
-<details><summary>Hello World API (click to expand)</summary>
-<CodeBlock language="yaml" showLineNumbers>{helloWorldModuleComponent}</CodeBlock>
+<details>
+    <summary>Hello World API (click to expand)</summary>
+    <CodeBlock language="yaml" showLineNumbers>{helloWorldModuleComponent}</CodeBlock>
 </details>
 
 ## Features
@@ -49,11 +50,11 @@ Features generate a view model for the _API_ definition. This can be used to imp
 
 Features can be used in combination with _API_ and add more functionality on top, like simulation support (see [olink](olink.md#simulation))
 
-- [olink](olink.md) - provides a client and server adapters for each interface, that can be connected to any of the other technology templates with support for [ObjectLink](https://docs.apigear.io/objectlink/). Use this feature to connect with ApiGear simulation tools.
+- [olink](olink.md) - provides a client and server adapters for each interface, that can be connected to any of the other technology templates with support for [ObjectLink](/docs/advanced/objectlink/intro). Use this feature to connect with ApiGear simulation tools.
 - examples_olink - examples of generated code for the olink feature. Contains:
 	- `olinkserver` shows use of your interfaces as an olink services.
 	- `olinkclient` shows use of your interfaces as an olink clients.
-- [monitor](monitor.md) - generates a middle-ware layer which logs all API events to the [CLI](https://docs.apigear.io/docs/category/command-line) or the [Studio](https://docs.apigear.io/docs/category/desktop-studio)
+- [monitor](monitor.md) - generates a middle-ware layer which logs all API events to the [CLI](/docs/cli/intro) or the [Studio](/docs/studio/intro)
 - [MQTT](mqtt.md) _experimental_ - provides minimal working adapters for MQTT client and service side for each interfaces. Check also MQTT in other technology templates that supports it.
 - examples_mqtt - examples of generated code for the olink feature. Contains:
 	- `mqttserver` shows use of your interfaces with mqtt adapted for your services.

@@ -13,8 +13,9 @@ With this feature you we generate a conan support for your project. It helps wit
 
 With an example API
 
-<details><summary>Hello World API (click to expand)</summary>
-<CodeBlock language="yaml" showLineNumbers>{helloWorldModuleComponent}</CodeBlock>
+<details>
+    <summary>Hello World API (click to expand)</summary>
+    <CodeBlock language="yaml" showLineNumbers>{helloWorldModuleComponent}</CodeBlock>
 </details>
 
 The files for conan will be generated for project:

@@ -22,8 +22,9 @@ Check out the [stubs](stubs.md) feature which provides fully functional implemen
 
 Using the example API definition
 
-<details><summary>Hello World API (click to expand)</summary>
-<CodeBlock language="yaml" showLineNumbers>{helloWorldModuleComponent}</CodeBlock>
+<details>
+  <summary>Hello World API (click to expand)</summary>
+  <CodeBlock language="yaml" showLineNumbers>{helloWorldModuleComponent}</CodeBlock>
 </details>
 
 the following file structure will be generated inside the target folder. The purpose and content of each file is explained below.

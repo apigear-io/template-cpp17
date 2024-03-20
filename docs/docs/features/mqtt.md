@@ -4,7 +4,7 @@ sidebar_position: 3
 
 import CodeBlock from '@theme/CodeBlock';
 import helloWorldModuleComponent from '!!raw-loader!./data/helloworld.module.yaml';
-import mqttMessagesFormat from '/files/mqtt/ApiGearMQTTv0.1.pdf';
+import mqttMessagesFormat from './data/ApiGearMQTTv0.1.pdf';
 
 # MQTT
 
@@ -22,7 +22,7 @@ If you need to use MQTT in high load application consider using our qt template 
 This feature does not only introduce MQTT protocol into your project, but also show that an existing protocol can be adapted for sharing your data in your ecosystem. When going through this document you may notice this implementation contains general client/server adapters in `📂hello-world/apigear/mqtt`
 and an interface specific part generated from templates for each interface in `📂hello-world/cpp_hello_world/modules/io_world/generated/mqtt`.
 
-This feature provides a _client_ and _service_ adapter for your interfaces for the MQTT protocol. It allows you to connect different applications in the same or different technologies (check all of our [templates](https://docs.apigear.io/docs/category/sdk-templates)).
+This feature provides a _client_ and _service_ adapter for your interfaces for the MQTT protocol. It allows you to connect different applications in the same or different technologies (check all of our [templates](/docs/sdk/intro)).
 
 - Use an _Mqtt client_ instead of your interface implementation to be able to receive data from remote service.
 - Use an _Mqtt server adapter_ to expose your interface implementation as a remote service.
@@ -41,8 +41,9 @@ Otherwise, it has to be ensured that your build configuration matches the librar
 
 With our API definition
 
-<details><summary>Hello World API (click to expand)</summary>
-<CodeBlock language="yaml" showLineNumbers>{helloWorldModuleComponent}</CodeBlock>
+<details>
+  <summary>Hello World API (click to expand)</summary>
+  <CodeBlock language="yaml" showLineNumbers>{helloWorldModuleComponent}</CodeBlock>
 </details>
 
 the following file structure is generated. The purpose and content of each file is explained below.
@@ -203,4 +204,4 @@ testIoWorldHello->_getPublisher().publishJustSaid(someMessage);
 
 ### MQTT Messages
 
-In case you want construct messages for client or server side on your own, please check how topics are created and how does the payload look like, check this document [messages format](/files/mqtt/ApiGearMQTTv0.1.pdf).
+In case you want construct messages for client or server side on your own, please check how topics are created and how does the payload look like, check this document [messages format](./data/ApiGearMQTTv0.1.pdf).

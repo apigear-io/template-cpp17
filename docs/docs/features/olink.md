@@ -13,7 +13,7 @@ import Figure from '../figure'
 
 # Olink
 
-This feature provides a _client_ and a _server_ adapter for your interfaces for the [ObjectLink](https://docs.apigear.io/objectlink/) protocol. It allows you to connect different applications using the same or different technologies (check all of our [templates](https://docs.apigear.io/docs/category/sdk-templates)).
+This feature provides a _client_ and a _server_ adapter for your interfaces for the [ObjectLink](/docs/advanced/objectlink/intro) protocol. It allows you to connect different applications using the same or different technologies (check all of our [templates](/docs/sdk/intro)).
 
 Use an _OLink client_ instead of your interface implementation to connect to a remote service, or to a the [ApiGear simulation](olink#simulation). Use an _OLink server adapter_ to expose your interface implementation as a remote service.
 
@@ -21,12 +21,12 @@ Below you'll find short introduction on `ApiGear ObjectLink` protocol. Before de
 
 :::note
 The `OLink client` and the `OLink server` objects are ready-to-use as they are, they don't' need any extra implementation.
-If you want quickly start working with them go to use sections of [client](olink#use-olinkhello), [server](olink#use-olinkhelloadapter).
+If you want quickly start working with them go to use sections of [client](olink#olink-client-adapter), [server](olink#olink-server-adapter).
 :::
 
 ### Apigear ObjectLink protocol and ObjectLink core library
 
-The [ObjectLink](https://docs.apigear.io/objectlink/) protocol is a lightweight websocket based protocol for Objects described with an interface. It allows connecting a client object with a server object, and perform remote operations like: remote property change request (client) or notifications on property changed (server), inform about signal emission (server) and allows requesting a remote method call (client) and delivering a response to the caller (server).
+The [ObjectLink](/docs/advanced/objectlink/intro) protocol is a lightweight websocket based protocol for Objects described with an interface. It allows connecting a client object with a server object, and perform remote operations like: remote property change request (client) or notifications on property changed (server), inform about signal emission (server) and allows requesting a remote method call (client) and delivering a response to the caller (server).
 
 The Olink feature for your interface uses a library [ObjectLink core](https://github.com/apigear-io/objectlink-core-cpp), common for cpp based templates. The provided `CMakeLists` already contain all the dependencies, so you don't have to add it manually.
 
@@ -42,8 +42,9 @@ Otherwise, it has to be ensured that your build configuration matches the librar
 
 With out example API
 
-<details><summary>Hello World API (click to expand)</summary>
-<CodeBlock language="yaml" showLineNumbers>{helloWorldModuleComponent}</CodeBlock>
+<details>
+  <summary>Hello World API (click to expand)</summary>
+  <CodeBlock language="yaml" showLineNumbers>{helloWorldModuleComponent}</CodeBlock>
 </details>
 
 the following file structure will be generated. The purpose and content of each file is explained below.
@@ -98,11 +99,12 @@ When generating the olink feature (or monitor feature) you'll get an additional 
 
 Files `📜helloclient.h` and `📜helloclient.cpp` contain the olink client version of the `Hello` interface - an `HelloClient` class. It implements two interfaces: `IHello` and a `IObjectSink`.
 
-<details><summary>IObjectSink (click to expand)</summary>
-<CodeBlock language="cpp" >{objectSink}</CodeBlock>
+<details>
+  <summary>IObjectSink (click to expand)</summary>
+  <CodeBlock language="cpp" >{objectSink}</CodeBlock>
 </details>
 
-The `IObjectSink` interface comes from [ObjectLink core](https://github.com/apigear-io/objectlink-core-cpp) and is necessary for handling incoming messages from the server side and is used by a `OLinkClient` ([cpp Apigear Olink lib](olink#cpp-apigear---The-Network-Layer)). Apart from setting up and tear down of the `OLinkHello` object, you don't need to perform any additional actions, the object `OLinkHello` will communicate with the server transparently and you should use it as an `IHello` Object only.
+The `IObjectSink` interface comes from [ObjectLink core](https://github.com/apigear-io/objectlink-core-cpp) and is necessary for handling incoming messages from the server side and is used by a `OLinkClient` ([cpp Apigear Olink lib](olink#cpp-apigear---the-network-layer)). Apart from setting up and tear down of the `OLinkHello` object, you don't need to perform any additional actions, the object `OLinkHello` will communicate with the server transparently and you should use it as an `IHello` Object only.
 
 #### Properties
 
@@ -169,14 +171,15 @@ client.unlinkObjectSource(ioWorldHello->olinkObjectName());
 
 Files `📜helloservice.h` and `📜helloservice.h` contain the olink server adapter for the `Hello` interface - the `HelloService` class.
 
-It implements an `IObjectSource` interface (from [ObjectLink core](https://github.com/apigear-io/objectlink-core-cpp)), which wraps your `Hello` and exposes it for remote usage with the [ObjectLink](https://docs.apigear.io/objectlink/) protocol. It handles all the network requests, and calls your local object.
+It implements an `IObjectSource` interface (from [ObjectLink core](https://github.com/apigear-io/objectlink-core-cpp)), which wraps your `Hello` and exposes it for remote usage with the [ObjectLink](/docs/advanced/objectlink/intro) protocol. It handles all the network requests, and calls your local object.
 
 When creating the `HelloService` you need to provide the local `IHello` service object, you want to expose to clients.
 
 The `IObjectSource` interface:
 
-<details><summary>IObjectSource (click to expand)</summary>
-<CodeBlock language="cpp" >{objectSource}</CodeBlock>
+<details>
+  <summary>IObjectSource (click to expand)</summary>
+  <CodeBlock language="cpp" >{objectSource}</CodeBlock>
 </details>
 
 After setting up the OlinkHost (cpp Apigear Olink lib) and registering your Interface registered, the client connections and communication with them is handled transparently for you, no additional actions are needed.
@@ -227,11 +230,11 @@ registry.removeSource(ioWorldOlinkHelloService->olinkObjectName());
 ## Simulation
 
 The simulation can be used to test, demonstrate or develop applications without the need to have the actual service available.
-The simulation server is integrated into the [ApiGear studio](https://docs.apigear.io/docs/category/desktop-studio) and the [CLI](https://docs.apigear.io/docs/cli/simulate).
+The simulation server is integrated into the [ApiGear studio](/docs/studio/intro) and the [CLI](/docs/cli/simulate).
 
-For simulating you will use [simulation scenarios](https://docs.apigear.io/docs/advanced/simulation/scenario) They allow to define sequences of actions. The actions can change the property values of the service or emit signals. The scenarios can be written using a YAML schema.
+For simulating you will use [simulation scenarios](/docs/advanced/simulation/scenario) They allow to define sequences of actions. The actions can change the property values of the service or emit signals. The scenarios can be written using a YAML schema.
 
-See more on [simulation](https://docs.apigear.io/docs/advanced/simulation/intro).
+See more on [simulation](/docs/advanced/simulation/intro).
 
 ### Prepare your application
 
@@ -240,11 +243,13 @@ Make sure you are using OlinkClient as your `Hello` object, an instance on [cpp 
 You may try our example, it subscribes for signals and property changes, with a simple logging function. Create new folder under `examples` directory.
 Paste the below `main.cpp` and `CMakeLists.txt` files. Remember to add this directory to main `CMakeLists.txt` (or to extend test_conan.bat/sh in case using conan).
 
-<details><summary>main.cpp (click to expand)</summary>
-<CodeBlock language="yaml" showLineNumbers>{simulationExampleMain}</CodeBlock>
+<details>
+  <summary>main.cpp (click to expand)</summary>
+  <CodeBlock language="yaml" showLineNumbers>{simulationExampleMain}</CodeBlock>
 </details>
-<details><summary>CMAkeLists.txt (click to expand)</summary>
-<CodeBlock language="yaml" showLineNumbers>{simulationExampleCMake}</CodeBlock>
+<details>
+  <summary>CMAkeLists.txt (click to expand)</summary>
+  <CodeBlock language="yaml" showLineNumbers>{simulationExampleCMake}</CodeBlock>
 </details>
 
 :::note
@@ -255,8 +260,9 @@ Make sure to configure the client to use the correct IP and port configuration o
 
 As a starting point you can check our simulation scenario:
 
-<details><summary>Scenario(click to expand)</summary>
-<CodeBlock language="yaml" showLineNumbers>{simulationExampleTestScenario}</CodeBlock>
+<details>
+  <summary>Scenario(click to expand)</summary>
+  <CodeBlock language="yaml" showLineNumbers>{simulationExampleTestScenario}</CodeBlock>
 </details>
 
 Apart from the header with the scenario name and its version it consists of two parts:
