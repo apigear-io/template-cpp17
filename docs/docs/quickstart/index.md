@@ -14,7 +14,7 @@ For all available features check the [overview](features/features.md).
 
 ## 1. Install the code generator
 
-Get the [ApiGear Studio](https://github.com/apigear-io/studio-releases/releases) or [ApiGear CLI](https://github.com/apigear-io/cli/releases). For more information check the [ApiGear documentation](/docs/start/install).
+Get the [ApiGear Studio](https://github.com/apigear-io/studio/releases) or [ApiGear CLI](https://github.com/apigear-io/cli/releases). For more information check the [ApiGear documentation](/docs/start/install).
 
 ## 2. Get the template
 
