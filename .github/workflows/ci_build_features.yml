@@ -5,6 +5,9 @@ name: Build Feature Configurations
 on:
   pull_request:
     branches: [main]
+    paths:
+      - '*/**'
+      - '!docs/**'
 
 env:
   go_version: "1.21.x"
