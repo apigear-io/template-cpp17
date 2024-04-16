@@ -159,19 +159,14 @@ std::future<Enum0Enum> EnumInterfaceClient::func0Async(Enum0Enum param0)
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<Enum0Enum>{};
     }
-    return std::async(std::launch::async, [this,
-                    param0]()
-        {
-            std::promise<Enum0Enum> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "func0");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({param0}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    const Enum0Enum& value = arg.value.get<Enum0Enum>();
-                    resultPromise.set_value(value);
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<Enum0Enum>> resultPromise = std::make_shared<std::promise<Enum0Enum>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "func0");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({param0}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const Enum0Enum& value = arg.value.get<Enum0Enum>();
+            resultPromise->set_value(value);
+        });
+    return resultPromise->get_future();
 }
 
 Enum1Enum EnumInterfaceClient::func1(Enum1Enum param1)
@@ -190,19 +185,14 @@ std::future<Enum1Enum> EnumInterfaceClient::func1Async(Enum1Enum param1)
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<Enum1Enum>{};
     }
-    return std::async(std::launch::async, [this,
-                    param1]()
-        {
-            std::promise<Enum1Enum> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "func1");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({param1}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    const Enum1Enum& value = arg.value.get<Enum1Enum>();
-                    resultPromise.set_value(value);
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<Enum1Enum>> resultPromise = std::make_shared<std::promise<Enum1Enum>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "func1");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({param1}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const Enum1Enum& value = arg.value.get<Enum1Enum>();
+            resultPromise->set_value(value);
+        });
+    return resultPromise->get_future();
 }
 
 Enum2Enum EnumInterfaceClient::func2(Enum2Enum param2)
@@ -221,19 +211,14 @@ std::future<Enum2Enum> EnumInterfaceClient::func2Async(Enum2Enum param2)
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<Enum2Enum>{};
     }
-    return std::async(std::launch::async, [this,
-                    param2]()
-        {
-            std::promise<Enum2Enum> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "func2");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({param2}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    const Enum2Enum& value = arg.value.get<Enum2Enum>();
-                    resultPromise.set_value(value);
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<Enum2Enum>> resultPromise = std::make_shared<std::promise<Enum2Enum>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "func2");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({param2}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const Enum2Enum& value = arg.value.get<Enum2Enum>();
+            resultPromise->set_value(value);
+        });
+    return resultPromise->get_future();
 }
 
 Enum3Enum EnumInterfaceClient::func3(Enum3Enum param3)
@@ -252,19 +237,14 @@ std::future<Enum3Enum> EnumInterfaceClient::func3Async(Enum3Enum param3)
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<Enum3Enum>{};
     }
-    return std::async(std::launch::async, [this,
-                    param3]()
-        {
-            std::promise<Enum3Enum> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "func3");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({param3}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    const Enum3Enum& value = arg.value.get<Enum3Enum>();
-                    resultPromise.set_value(value);
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<Enum3Enum>> resultPromise = std::make_shared<std::promise<Enum3Enum>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "func3");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({param3}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const Enum3Enum& value = arg.value.get<Enum3Enum>();
+            resultPromise->set_value(value);
+        });
+    return resultPromise->get_future();
 }
 
 std::string EnumInterfaceClient::olinkObjectName()

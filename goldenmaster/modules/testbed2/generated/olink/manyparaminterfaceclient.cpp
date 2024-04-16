@@ -159,19 +159,14 @@ std::future<int> ManyParamInterfaceClient::func1Async(int param1)
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<int>{};
     }
-    return std::async(std::launch::async, [this,
-                    param1]()
-        {
-            std::promise<int> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "func1");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({param1}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    const int& value = arg.value.get<int>();
-                    resultPromise.set_value(value);
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<int>> resultPromise = std::make_shared<std::promise<int>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "func1");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({param1}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const int& value = arg.value.get<int>();
+            resultPromise->set_value(value);
+        });
+    return resultPromise->get_future();
 }
 
 int ManyParamInterfaceClient::func2(int param1, int param2)
@@ -190,20 +185,14 @@ std::future<int> ManyParamInterfaceClient::func2Async(int param1, int param2)
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<int>{};
     }
-    return std::async(std::launch::async, [this,
-                    param1,
-                    param2]()
-        {
-            std::promise<int> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "func2");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({param1, param2}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    const int& value = arg.value.get<int>();
-                    resultPromise.set_value(value);
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<int>> resultPromise = std::make_shared<std::promise<int>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "func2");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({param1, param2}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const int& value = arg.value.get<int>();
+            resultPromise->set_value(value);
+        });
+    return resultPromise->get_future();
 }
 
 int ManyParamInterfaceClient::func3(int param1, int param2, int param3)
@@ -222,21 +211,14 @@ std::future<int> ManyParamInterfaceClient::func3Async(int param1, int param2, in
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<int>{};
     }
-    return std::async(std::launch::async, [this,
-                    param1,
-                    param2,
-                    param3]()
-        {
-            std::promise<int> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "func3");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({param1, param2, param3}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    const int& value = arg.value.get<int>();
-                    resultPromise.set_value(value);
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<int>> resultPromise = std::make_shared<std::promise<int>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "func3");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({param1, param2, param3}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const int& value = arg.value.get<int>();
+            resultPromise->set_value(value);
+        });
+    return resultPromise->get_future();
 }
 
 int ManyParamInterfaceClient::func4(int param1, int param2, int param3, int param4)
@@ -255,22 +237,14 @@ std::future<int> ManyParamInterfaceClient::func4Async(int param1, int param2, in
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<int>{};
     }
-    return std::async(std::launch::async, [this,
-                    param1,
-                    param2,
-                    param3,
-                    param4]()
-        {
-            std::promise<int> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "func4");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({param1, param2, param3, param4}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    const int& value = arg.value.get<int>();
-                    resultPromise.set_value(value);
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<int>> resultPromise = std::make_shared<std::promise<int>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "func4");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({param1, param2, param3, param4}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const int& value = arg.value.get<int>();
+            resultPromise->set_value(value);
+        });
+    return resultPromise->get_future();
 }
 
 std::string ManyParamInterfaceClient::olinkObjectName()

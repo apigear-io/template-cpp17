@@ -159,19 +159,14 @@ std::future<StructBool> StructArrayInterfaceClient::funcBoolAsync(const std::lis
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<StructBool>{};
     }
-    return std::async(std::launch::async, [this,
-                    paramBool]()
-        {
-            std::promise<StructBool> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcBool");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({paramBool}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    const StructBool& value = arg.value.get<StructBool>();
-                    resultPromise.set_value(value);
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<StructBool>> resultPromise = std::make_shared<std::promise<StructBool>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcBool");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({paramBool}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const StructBool& value = arg.value.get<StructBool>();
+            resultPromise->set_value(value);
+        });
+    return resultPromise->get_future();
 }
 
 StructBool StructArrayInterfaceClient::funcInt(const std::list<StructInt>& paramInt)
@@ -190,19 +185,14 @@ std::future<StructBool> StructArrayInterfaceClient::funcIntAsync(const std::list
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<StructBool>{};
     }
-    return std::async(std::launch::async, [this,
-                    paramInt]()
-        {
-            std::promise<StructBool> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcInt");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({paramInt}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    const StructBool& value = arg.value.get<StructBool>();
-                    resultPromise.set_value(value);
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<StructBool>> resultPromise = std::make_shared<std::promise<StructBool>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcInt");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({paramInt}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const StructBool& value = arg.value.get<StructBool>();
+            resultPromise->set_value(value);
+        });
+    return resultPromise->get_future();
 }
 
 StructBool StructArrayInterfaceClient::funcFloat(const std::list<StructFloat>& paramFloat)
@@ -221,19 +211,14 @@ std::future<StructBool> StructArrayInterfaceClient::funcFloatAsync(const std::li
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<StructBool>{};
     }
-    return std::async(std::launch::async, [this,
-                    paramFloat]()
-        {
-            std::promise<StructBool> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcFloat");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({paramFloat}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    const StructBool& value = arg.value.get<StructBool>();
-                    resultPromise.set_value(value);
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<StructBool>> resultPromise = std::make_shared<std::promise<StructBool>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcFloat");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({paramFloat}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const StructBool& value = arg.value.get<StructBool>();
+            resultPromise->set_value(value);
+        });
+    return resultPromise->get_future();
 }
 
 StructBool StructArrayInterfaceClient::funcString(const std::list<StructString>& paramString)
@@ -252,19 +237,14 @@ std::future<StructBool> StructArrayInterfaceClient::funcStringAsync(const std::l
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<StructBool>{};
     }
-    return std::async(std::launch::async, [this,
-                    paramString]()
-        {
-            std::promise<StructBool> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcString");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({paramString}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    const StructBool& value = arg.value.get<StructBool>();
-                    resultPromise.set_value(value);
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<StructBool>> resultPromise = std::make_shared<std::promise<StructBool>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcString");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({paramString}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const StructBool& value = arg.value.get<StructBool>();
+            resultPromise->set_value(value);
+        });
+    return resultPromise->get_future();
 }
 
 std::string StructArrayInterfaceClient::olinkObjectName()

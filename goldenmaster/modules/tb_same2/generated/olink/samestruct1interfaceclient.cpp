@@ -72,19 +72,14 @@ std::future<Struct1> SameStruct1InterfaceClient::func1Async(const Struct1& param
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<Struct1>{};
     }
-    return std::async(std::launch::async, [this,
-                    param1]()
-        {
-            std::promise<Struct1> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "func1");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({param1}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    const Struct1& value = arg.value.get<Struct1>();
-                    resultPromise.set_value(value);
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<Struct1>> resultPromise = std::make_shared<std::promise<Struct1>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "func1");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({param1}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const Struct1& value = arg.value.get<Struct1>();
+            resultPromise->set_value(value);
+        });
+    return resultPromise->get_future();
 }
 
 std::string SameStruct1InterfaceClient::olinkObjectName()

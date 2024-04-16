@@ -136,19 +136,14 @@ std::future<void> Nam_EsClient::sOME_FUNCTIONAsync(bool SOME_PARAM)
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<void>{};
     }
-    return std::async(std::launch::async, [this,
-                    SOME_PARAM]()
-        {
-            std::promise<void> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "SOME_FUNCTION");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({SOME_PARAM}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    (void) arg;
-                    resultPromise.set_value();
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<void>> resultPromise = std::make_shared<std::promise<void>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "SOME_FUNCTION");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({SOME_PARAM}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            (void) arg;
+            resultPromise->set_value();
+        });
+    return resultPromise->get_future();
 }
 
 void Nam_EsClient::some_Function2(bool Some_Param)
@@ -173,19 +168,14 @@ std::future<void> Nam_EsClient::some_Function2Async(bool Some_Param)
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<void>{};
     }
-    return std::async(std::launch::async, [this,
-                    Some_Param]()
-        {
-            std::promise<void> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "Some_Function2");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({Some_Param}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    (void) arg;
-                    resultPromise.set_value();
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<void>> resultPromise = std::make_shared<std::promise<void>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "Some_Function2");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({Some_Param}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            (void) arg;
+            resultPromise->set_value();
+        });
+    return resultPromise->get_future();
 }
 
 std::string Nam_EsClient::olinkObjectName()

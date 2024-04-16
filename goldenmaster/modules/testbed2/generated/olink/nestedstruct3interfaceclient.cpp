@@ -130,19 +130,14 @@ std::future<NestedStruct1> NestedStruct3InterfaceClient::func1Async(const Nested
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<NestedStruct1>{};
     }
-    return std::async(std::launch::async, [this,
-                    param1]()
-        {
-            std::promise<NestedStruct1> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "func1");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({param1}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    const NestedStruct1& value = arg.value.get<NestedStruct1>();
-                    resultPromise.set_value(value);
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<NestedStruct1>> resultPromise = std::make_shared<std::promise<NestedStruct1>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "func1");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({param1}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const NestedStruct1& value = arg.value.get<NestedStruct1>();
+            resultPromise->set_value(value);
+        });
+    return resultPromise->get_future();
 }
 
 NestedStruct1 NestedStruct3InterfaceClient::func2(const NestedStruct1& param1, const NestedStruct2& param2)
@@ -161,20 +156,14 @@ std::future<NestedStruct1> NestedStruct3InterfaceClient::func2Async(const Nested
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<NestedStruct1>{};
     }
-    return std::async(std::launch::async, [this,
-                    param1,
-                    param2]()
-        {
-            std::promise<NestedStruct1> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "func2");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({param1, param2}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    const NestedStruct1& value = arg.value.get<NestedStruct1>();
-                    resultPromise.set_value(value);
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<NestedStruct1>> resultPromise = std::make_shared<std::promise<NestedStruct1>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "func2");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({param1, param2}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const NestedStruct1& value = arg.value.get<NestedStruct1>();
+            resultPromise->set_value(value);
+        });
+    return resultPromise->get_future();
 }
 
 NestedStruct1 NestedStruct3InterfaceClient::func3(const NestedStruct1& param1, const NestedStruct2& param2, const NestedStruct3& param3)
@@ -193,21 +182,14 @@ std::future<NestedStruct1> NestedStruct3InterfaceClient::func3Async(const Nested
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<NestedStruct1>{};
     }
-    return std::async(std::launch::async, [this,
-                    param1,
-                    param2,
-                    param3]()
-        {
-            std::promise<NestedStruct1> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "func3");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({param1, param2, param3}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    const NestedStruct1& value = arg.value.get<NestedStruct1>();
-                    resultPromise.set_value(value);
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<NestedStruct1>> resultPromise = std::make_shared<std::promise<NestedStruct1>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "func3");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({param1, param2, param3}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const NestedStruct1& value = arg.value.get<NestedStruct1>();
+            resultPromise->set_value(value);
+        });
+    return resultPromise->get_future();
 }
 
 std::string NestedStruct3InterfaceClient::olinkObjectName()

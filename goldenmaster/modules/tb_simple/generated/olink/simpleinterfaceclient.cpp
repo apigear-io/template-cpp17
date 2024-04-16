@@ -281,19 +281,14 @@ std::future<void> SimpleInterfaceClient::funcNoReturnValueAsync(bool paramBool)
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<void>{};
     }
-    return std::async(std::launch::async, [this,
-                    paramBool]()
-        {
-            std::promise<void> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcNoReturnValue");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({paramBool}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    (void) arg;
-                    resultPromise.set_value();
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<void>> resultPromise = std::make_shared<std::promise<void>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcNoReturnValue");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({paramBool}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            (void) arg;
+            resultPromise->set_value();
+        });
+    return resultPromise->get_future();
 }
 
 bool SimpleInterfaceClient::funcBool(bool paramBool)
@@ -312,19 +307,14 @@ std::future<bool> SimpleInterfaceClient::funcBoolAsync(bool paramBool)
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<bool>{};
     }
-    return std::async(std::launch::async, [this,
-                    paramBool]()
-        {
-            std::promise<bool> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcBool");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({paramBool}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    const bool& value = arg.value.get<bool>();
-                    resultPromise.set_value(value);
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<bool>> resultPromise = std::make_shared<std::promise<bool>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcBool");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({paramBool}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const bool& value = arg.value.get<bool>();
+            resultPromise->set_value(value);
+        });
+    return resultPromise->get_future();
 }
 
 int SimpleInterfaceClient::funcInt(int paramInt)
@@ -343,19 +333,14 @@ std::future<int> SimpleInterfaceClient::funcIntAsync(int paramInt)
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<int>{};
     }
-    return std::async(std::launch::async, [this,
-                    paramInt]()
-        {
-            std::promise<int> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcInt");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({paramInt}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    const int& value = arg.value.get<int>();
-                    resultPromise.set_value(value);
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<int>> resultPromise = std::make_shared<std::promise<int>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcInt");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({paramInt}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const int& value = arg.value.get<int>();
+            resultPromise->set_value(value);
+        });
+    return resultPromise->get_future();
 }
 
 int32_t SimpleInterfaceClient::funcInt32(int32_t paramInt32)
@@ -374,19 +359,14 @@ std::future<int32_t> SimpleInterfaceClient::funcInt32Async(int32_t paramInt32)
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<int32_t>{};
     }
-    return std::async(std::launch::async, [this,
-                    paramInt32]()
-        {
-            std::promise<int32_t> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcInt32");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({paramInt32}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    const int32_t& value = arg.value.get<int32_t>();
-                    resultPromise.set_value(value);
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<int32_t>> resultPromise = std::make_shared<std::promise<int32_t>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcInt32");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({paramInt32}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const int32_t& value = arg.value.get<int32_t>();
+            resultPromise->set_value(value);
+        });
+    return resultPromise->get_future();
 }
 
 int64_t SimpleInterfaceClient::funcInt64(int64_t paramInt64)
@@ -405,19 +385,14 @@ std::future<int64_t> SimpleInterfaceClient::funcInt64Async(int64_t paramInt64)
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<int64_t>{};
     }
-    return std::async(std::launch::async, [this,
-                    paramInt64]()
-        {
-            std::promise<int64_t> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcInt64");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({paramInt64}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    const int64_t& value = arg.value.get<int64_t>();
-                    resultPromise.set_value(value);
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<int64_t>> resultPromise = std::make_shared<std::promise<int64_t>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcInt64");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({paramInt64}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const int64_t& value = arg.value.get<int64_t>();
+            resultPromise->set_value(value);
+        });
+    return resultPromise->get_future();
 }
 
 float SimpleInterfaceClient::funcFloat(float paramFloat)
@@ -436,19 +411,14 @@ std::future<float> SimpleInterfaceClient::funcFloatAsync(float paramFloat)
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<float>{};
     }
-    return std::async(std::launch::async, [this,
-                    paramFloat]()
-        {
-            std::promise<float> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcFloat");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({paramFloat}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    const float& value = arg.value.get<float>();
-                    resultPromise.set_value(value);
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<float>> resultPromise = std::make_shared<std::promise<float>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcFloat");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({paramFloat}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const float& value = arg.value.get<float>();
+            resultPromise->set_value(value);
+        });
+    return resultPromise->get_future();
 }
 
 float SimpleInterfaceClient::funcFloat32(float paramFloat32)
@@ -467,19 +437,14 @@ std::future<float> SimpleInterfaceClient::funcFloat32Async(float paramFloat32)
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<float>{};
     }
-    return std::async(std::launch::async, [this,
-                    paramFloat32]()
-        {
-            std::promise<float> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcFloat32");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({paramFloat32}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    const float& value = arg.value.get<float>();
-                    resultPromise.set_value(value);
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<float>> resultPromise = std::make_shared<std::promise<float>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcFloat32");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({paramFloat32}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const float& value = arg.value.get<float>();
+            resultPromise->set_value(value);
+        });
+    return resultPromise->get_future();
 }
 
 double SimpleInterfaceClient::funcFloat64(double paramFloat)
@@ -498,19 +463,14 @@ std::future<double> SimpleInterfaceClient::funcFloat64Async(double paramFloat)
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<double>{};
     }
-    return std::async(std::launch::async, [this,
-                    paramFloat]()
-        {
-            std::promise<double> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcFloat64");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({paramFloat}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    const double& value = arg.value.get<double>();
-                    resultPromise.set_value(value);
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<double>> resultPromise = std::make_shared<std::promise<double>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcFloat64");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({paramFloat}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const double& value = arg.value.get<double>();
+            resultPromise->set_value(value);
+        });
+    return resultPromise->get_future();
 }
 
 std::string SimpleInterfaceClient::funcString(const std::string& paramString)
@@ -529,19 +489,14 @@ std::future<std::string> SimpleInterfaceClient::funcStringAsync(const std::strin
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<std::string>{};
     }
-    return std::async(std::launch::async, [this,
-                    paramString]()
-        {
-            std::promise<std::string> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcString");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({paramString}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    const std::string& value = arg.value.get<std::string>();
-                    resultPromise.set_value(value);
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<std::string>> resultPromise = std::make_shared<std::promise<std::string>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcString");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({paramString}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const std::string& value = arg.value.get<std::string>();
+            resultPromise->set_value(value);
+        });
+    return resultPromise->get_future();
 }
 
 std::string SimpleInterfaceClient::olinkObjectName()

@@ -107,18 +107,14 @@ std::future<void> NoSignalsInterfaceClient::funcVoidAsync()
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<void>{};
     }
-    return std::async(std::launch::async, [this]()
-        {
-            std::promise<void> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcVoid");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    (void) arg;
-                    resultPromise.set_value();
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<void>> resultPromise = std::make_shared<std::promise<void>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcVoid");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            (void) arg;
+            resultPromise->set_value();
+        });
+    return resultPromise->get_future();
 }
 
 bool NoSignalsInterfaceClient::funcBool(bool paramBool)
@@ -137,19 +133,14 @@ std::future<bool> NoSignalsInterfaceClient::funcBoolAsync(bool paramBool)
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<bool>{};
     }
-    return std::async(std::launch::async, [this,
-                    paramBool]()
-        {
-            std::promise<bool> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcBool");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({paramBool}), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
-                    const bool& value = arg.value.get<bool>();
-                    resultPromise.set_value(value);
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<bool>> resultPromise = std::make_shared<std::promise<bool>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcBool");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({paramBool}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const bool& value = arg.value.get<bool>();
+            resultPromise->set_value(value);
+        });
+    return resultPromise->get_future();
 }
 
 std::string NoSignalsInterfaceClient::olinkObjectName()

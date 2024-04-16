@@ -118,25 +118,19 @@ std::future<{{$returnType}}> {{$class}}::{{$operation.Name| lower1}}Async({{cppP
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
         return std::future<{{$returnType}}>{};
     }
-    return std::async(std::launch::async, [this{{- range $operation.Params -}},
-                    {{.Name}}
-                {{- end -}}]()
-        {
-            std::promise<{{$returnType}}> resultPromise;
-            static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "{{$operation.Name}}");
-            m_node->invokeRemote(operationId,
-                nlohmann::json::array({ {{- cppVars $operation.Params -}} }), [&resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {        
-                    {{- if .Return.IsVoid }}
-                    (void) arg;
-                    resultPromise.set_value();
-                    {{- else }}
-                    const {{$returnType}}& value = arg.value.get<{{$returnType}}>();
-                    resultPromise.set_value(value);
-                    {{- end }}
-                });
-            return resultPromise.get_future().get();
-        }
-    );
+    std::shared_ptr<std::promise<{{$returnType}}>> resultPromise = std::make_shared<std::promise<{{$returnType}}>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "{{$operation.Name}}");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({ {{- cppVars $operation.Params -}} }), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {        
+            {{- if .Return.IsVoid }}
+            (void) arg;
+            resultPromise->set_value();
+            {{- else }}
+            const {{$returnType}}& value = arg.value.get<{{$returnType}}>();
+            resultPromise->set_value(value);
+            {{- end }}
+        });
+    return resultPromise->get_future();
 }
 
 {{- end }}
