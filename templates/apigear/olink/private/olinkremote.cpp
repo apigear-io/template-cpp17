@@ -42,7 +42,9 @@ void OLinkRemote::handleTextMessage(const std::string& msg)
     AG_LOG_DEBUG("handleTextMessage " + msg);
     if (m_node)
     {
-        m_node->handleMessage(msg);
+        std::thread([this, msg]() {
+            m_node->handleMessage(msg);
+        }).detach();
     }
 }
 

@@ -173,7 +173,9 @@ void OlinkConnection::onDisconnected()
 
 void OlinkConnection::handleTextMessage(const std::string &message)
 {
-    m_node->handleMessage(message);
+    std::thread([this, message]() {
+        m_node->handleMessage(message);
+    }).detach();
 }
 
 void OlinkConnection::reconnect(Poco::Util::TimerTask& /*task*/)
