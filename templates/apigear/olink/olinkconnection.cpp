@@ -8,6 +8,7 @@
 #include "olink/clientregistry.h"
 #include "olink/iobjectsink.h"
 #include "utilities/logger.h"
+#include "utilities/threadpool.h"
 
 #include <memory>
 

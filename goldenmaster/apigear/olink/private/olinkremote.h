@@ -13,6 +13,10 @@
 
 namespace ApiGear {
 
+namespace Utilities {
+    class ThreadPool;
+}
+
 namespace ObjectLink {
 // Forward declaration of RemoteRegistry
 class RemoteRegistry;

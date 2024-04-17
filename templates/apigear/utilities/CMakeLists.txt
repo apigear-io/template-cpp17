@@ -7,6 +7,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set (SOURCES
     logger.cpp
+    threadpool.cpp
 )
 add_library(utilities SHARED ${SOURCES})
 add_library(apigear::utilities ALIAS utilities)

@@ -17,6 +17,10 @@
 
 namespace ApiGear {
 
+namespace Utilities {
+    class ThreadPool;
+}
+
 namespace ObjectLink {
 // Forward declaration for ApiGear::ObjectLink::IObjectSink
     class IObjectSink;
