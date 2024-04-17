@@ -17,6 +17,9 @@ using namespace ApiGear::PocoImpl;
 namespace{
     const std::string jsonContentType = "application/json";
     const std::string defaultGatewayUrl = "ws://localhost:8000/ws";
+    // when more than one thread is used per connection,
+    // the order of messages(e.g. property set) is not guaranteed
+    const size_t workerThreadsPerConnection = 1;
 
     long tryReconnectDelay = 500; //Milliseconds
     long repeatTaskInterval = 10000; //Milliseconds
@@ -28,6 +31,7 @@ OlinkConnection::OlinkConnection(ApiGear::ObjectLink::ClientRegistry& registry)
     m_socket(*this, sendPing),
     m_isConnecting(false)
 {
+    pool = std::make_unique<ApiGear::Utilities::ThreadPool>(workerThreadsPerConnection);
     auto writeFunction = [this](const auto& msg) {
         m_socket.writeMessageWithQueue(msg);
     };
@@ -174,9 +178,9 @@ void OlinkConnection::onDisconnected()
 
 void OlinkConnection::handleTextMessage(const std::string &message)
 {
-    std::thread([this, message]() {
+    pool->enqueue([this, message] {
         m_node->handleMessage(message);
-    }).detach();
+    });
 }
 
 void OlinkConnection::reconnect(Poco::Util::TimerTask& /*task*/)

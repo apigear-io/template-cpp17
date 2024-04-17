@@ -75,5 +75,8 @@ private:
     *   may serve several services associated with this node by the unique objectId given in link message.
     */
     std::shared_ptr<ApiGear::ObjectLink::RemoteNode> m_node;
+
+    /** A thread pool for to process incoming requests per client */
+    std::unique_ptr<ApiGear::Utilities::ThreadPool> pool;
 };
 }}   //namespace ApiGear::PocoImpl

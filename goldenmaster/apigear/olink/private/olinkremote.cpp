@@ -12,6 +12,12 @@
 
 #include <iostream>
 
+namespace{
+    // when more than one thread is used per connection,
+    // the order of messages(e.g. property set) is not guaranteed
+    const size_t workerThreadsPerConnection = 1;
+}
+
 namespace ApiGear {
 namespace PocoImpl {
 
@@ -23,6 +29,7 @@ OLinkRemote::OLinkRemote(std::unique_ptr<Poco::Net::WebSocket> socket,
      m_connectionStorage(connectionStorage),
      m_node(ApiGear::ObjectLink::RemoteNode::createRemoteNode(registry))
 {
+    pool = std::make_unique<ApiGear::Utilities::ThreadPool>(workerThreadsPerConnection);
     m_node->onLog(logFunc);
     m_node->onWrite([this](const std::string& msg) {
         m_socket.writeMessageWithQueue(msg);
@@ -43,9 +50,9 @@ void OLinkRemote::handleTextMessage(const std::string& msg)
     AG_LOG_DEBUG("handleTextMessage " + msg);
     if (m_node)
     {
-        std::thread([this, msg]() {
+        pool->enqueue([this, msg] {
             m_node->handleMessage(msg);
-        }).detach();
+        });
     }
 }
 

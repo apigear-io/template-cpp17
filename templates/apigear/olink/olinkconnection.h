@@ -123,5 +123,7 @@ private:
     Poco::Util::TimerTask::Ptr m_reconnectTask;
     /** A mutex for the process message*/
     std::mutex m_reconnectMutex;
+    /** A thread pool for to process incoming requests */
+    std::unique_ptr<ApiGear::Utilities::ThreadPool> pool;
 };
 }} // namespace ApiGear::PocoImpl
