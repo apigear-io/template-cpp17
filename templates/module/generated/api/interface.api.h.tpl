@@ -68,6 +68,7 @@ public:
 
 {{- range .Interface.Properties }}
 {{- $property := . }}
+{{- if not .IsReadOnly }}
     /**
     * Sets the value of the {{$property.Name}} property.
     {{- if $property.Description }}
@@ -75,6 +76,7 @@ public:
     {{- end }}    {{- /* end if property.Description */}}
     */
     virtual void set{{Camel $property.Name}}({{ cppParam "" $property }}) = 0;
+{{- end }}
     /**
     * Gets the value of the {{$property.Name}} property.
     {{- if $property.Description }}

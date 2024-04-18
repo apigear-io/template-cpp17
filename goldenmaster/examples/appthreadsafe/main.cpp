@@ -312,6 +312,8 @@ void testTbSimpleSimpleArrayInterface()
     auto l_propString = std::list<std::string>();
     l_propString = testSimpleArrayInterface->getPropString();
     testSimpleArrayInterface->setPropString(l_propString);
+    auto l_propReadOnlyString = std::string();
+    l_propReadOnlyString = testSimpleArrayInterface->getPropReadOnlyString();
 }
 
 void testTbSimpleNoPropertiesInterface()

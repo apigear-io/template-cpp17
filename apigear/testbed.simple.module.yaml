@@ -99,6 +99,7 @@ interfaces:
       - { name: propFloat32, type: float32, array: true  }
       - { name: propFloat64, type: float64, array: true  }
       - { name: propString, type: string, array: true }
+      - { name: propReadOnlyString, type: string, readonly: true }
     operations:
       - name: funcBool
         params:

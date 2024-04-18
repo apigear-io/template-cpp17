@@ -50,8 +50,10 @@ public:
     {{ end -}}
 {{- range .Interface.Properties}}
 {{- $property := . }}
+{{- if not .IsReadOnly }}
     /** Forwards call to {{$interfaceNameOriginal}} implementation. */
     void set{{Camel $property.Name}}({{cppParam  "" $property }}) override;
+{{- end }}
     /** Forwards call to {{$interfaceNameOriginal}} implementation. */
     {{cppTypeRef "" $property}} get{{Camel $property.Name}}() const override;
     {{ end -}}

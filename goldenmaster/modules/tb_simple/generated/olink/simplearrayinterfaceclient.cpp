@@ -307,6 +307,12 @@ const std::list<std::string>& SimpleArrayInterfaceClient::getPropString() const
     return m_data.m_propString;
 }
 
+const std::string& SimpleArrayInterfaceClient::getPropReadOnlyString() const
+{
+    std::shared_lock<std::shared_timed_mutex> lock(m_propReadOnlyStringMutex);
+    return m_data.m_propReadOnlyString;
+}
+
 std::list<bool> SimpleArrayInterfaceClient::funcBool(const std::list<bool>& paramBool)
 {
     return funcBoolAsync(paramBool).get();

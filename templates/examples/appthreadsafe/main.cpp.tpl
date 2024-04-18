@@ -24,7 +24,9 @@ void test{{ Camel $module.Name }}{{$class}}()
 {{- $property := . }}
     auto l_{{lower1 (Camel $property.Name)}} = {{cppDefault "" $property}};
     l_{{lower1 (Camel $property.Name)}} = test{{$class}}->get{{Camel $property.Name}}();
+{{- if not .IsReadOnly }}
     test{{$class}}->set{{Camel $property.Name}}(l_{{lower1 (Camel $property.Name)}});
+{{- end }}
 {{- end }}
 }{{nl}}
 {{- end }}

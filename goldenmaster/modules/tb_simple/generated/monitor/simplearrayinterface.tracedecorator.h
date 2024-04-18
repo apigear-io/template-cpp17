@@ -114,6 +114,9 @@ public:
     /** Forwards call to SimpleArrayInterface implementation. */
     const std::list<std::string>& getPropString() const override;
     
+    /** Forwards call to SimpleArrayInterface implementation. */
+    const std::string& getPropReadOnlyString() const override;
+    
     /**
     Traces sigBool emission.
     */
@@ -178,6 +181,10 @@ public:
     Traces propString changed.
     */
     void onPropStringChanged(const std::list<std::string>& propString) override;
+    /**
+    Traces propReadOnlyString changed.
+    */
+    void onPropReadOnlyStringChanged(const std::string& propReadOnlyString) override;
 
     /**
     * Access to a publisher, use it to subscribe for SimpleArrayInterface changes and signal emission.

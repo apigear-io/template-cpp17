@@ -31,9 +31,11 @@ void {{$class}}::applyState(const nlohmann::json& fields)
 {
 {{- range .Interface.Properties}}
 {{- $property := . }}
+{{- if not .IsReadOnly }}
     if(fields.contains("{{$property.Name}}")) {
         set{{Camel $property.Name}}Local(fields["{{$property.Name}}"].get<{{cppType "" $property}}>());
     }
+{{- end }}
 {{- else }}
     // no properties to apply state {{- /* we generate anyway for consistency */}}
     (void) fields;
@@ -43,9 +45,11 @@ void {{$class}}::applyState(const nlohmann::json& fields)
 void {{$class}}::applyProperty(const std::string& propertyName, const nlohmann::json& value)
 {
 {{- range $idx, $property := .Interface.Properties }}
+{{- if not .IsReadOnly }}
     {{ if $idx }}else {{ end -}}if ( propertyName == "{{$property.Name}}") {
         set{{Camel $property.Name}}Local(value.get<{{cppType "" $property}}>());
     }
+{{- end }}
 {{- else -}}
     // no properties to apply state {{- /* we generate anyway for consistency */}}
     (void) propertyName;
@@ -56,6 +60,7 @@ void {{$class}}::applyProperty(const std::string& propertyName, const nlohmann::
 {{- range .Interface.Properties}}
 {{- $property := . }}
 {{- $name := $property.Name }}
+{{- if not .IsReadOnly }}
 
 void {{$class}}::set{{Camel $name}}({{cppParam "" $property}})
 {
@@ -79,6 +84,7 @@ void {{$class}}::set{{Camel $name}}Local({{cppParam "" $property }})
 
     m_publisher->publish{{Camel $name}}Changed({{$name}});
 }
+{{- end }}
 
 {{cppTypeRef "" $property}} {{$class}}::get{{Camel $name}}() const
 {

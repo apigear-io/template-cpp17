@@ -30,11 +30,13 @@ std::future<{{cppReturn "" $operation.Return}}> {{$class}}::{{lower1 $operation.
 
 {{- range .Interface.Properties}}
 {{- $property := . }}
+{{- if not .IsReadOnly }}
 void {{$class}}::set{{Camel $property.Name}}({{cppParam "" $property}})
 {
     std::unique_lock<std::shared_timed_mutex> lock(m_{{lower1 ((Camel $property.Name))}}Mutex);
     m_impl->set{{Camel $property.Name}}({{$property.Name}});
 }
+{{- end }}
 
 {{cppTypeRef "" $property}} {{$class}}::get{{Camel $property.Name}}() const
 {

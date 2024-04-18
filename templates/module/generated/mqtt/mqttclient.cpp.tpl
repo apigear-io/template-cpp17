@@ -39,7 +39,9 @@ std::map<std::string, ApiGear::MQTT::CallbackFunction> {{$class}}::createTopicMa
     return {
     {{- range .Interface.Properties}}
     {{- $property := . }}
+    {{- if not .IsReadOnly }}
         { std::string("{{$.Module.Name}}/{{$interfaceName}}/prop/{{$property}}"), [this](const std::string& args, const std::string&, const std::string&){ this->set{{Camel $property.Name}}Local(args); } },
+    {{- end }}
     {{- end }}
     {{- range .Interface.Signals}}
     {{- $signal := . }}
@@ -69,6 +71,7 @@ void {{$class}}::onConnectionStatusChanged(bool connectionStatus)
 {{- range .Interface.Properties}}
 {{- $property := . }}
 {{- $name := $property.Name }}
+{{- if not .IsReadOnly }}
 
 void {{$class}}::set{{Camel $name}}({{cppParam "" $property}})
 {
@@ -93,6 +96,7 @@ void {{$class}}::set{{Camel $name}}Local(const std::string& args)
         m_publisher->publish{{Camel $name}}Changed({{$name}});
     }
 }
+{{- end }}
 
 {{cppTypeRef "" $property}} {{$class}}::get{{Camel $name}}() const
 {

@@ -34,7 +34,9 @@ std::unique_ptr<{{$interfaceClass}}> test{{$interfaceName}} = std::make_unique<{
 {{- range .Interface.Properties}}
 {{- $property := . }}
 auto {{lower1 (Camel $property.Name)}} = test{{$interfaceName}}->get{{Camel $property.Name}}();
+{{- if not .IsReadOnly }}
 test{{$interfaceName}}->set{{Camel $property.Name}}({{cppDefault "" $property}});
+{{- end }}
 {{- end }}
 \endcode
 */
@@ -62,8 +64,10 @@ public:
 {{- end }}
 {{- range .Interface.Properties}}
 {{- $property := . }}
+{{- if not .IsReadOnly }}
     /** Guards and forwards call to {{$interfaceNameOriginal}} implementation. */
     void set{{Camel $property.Name}}({{cppParam  "" $property }}) override;
+{{- end }}
     /** Guards and forwards call to {{$interfaceNameOriginal}} implementation. */
     {{cppTypeRef "" $property}} get{{Camel $property.Name}}() const override;
 {{- nl }}

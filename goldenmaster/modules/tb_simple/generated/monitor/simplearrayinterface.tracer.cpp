@@ -20,6 +20,7 @@ void SimpleArrayInterfaceTracer::capture_state(ISimpleArrayInterface* obj)
     fields_["propFloat32"] = obj->getPropFloat32();
     fields_["propFloat64"] = obj->getPropFloat64();
     fields_["propString"] = obj->getPropString();
+    fields_["propReadOnlyString"] = obj->getPropReadOnlyString();
     m_tracer.state("tb.simple.SimpleArrayInterface#_state", fields_);
 }
 

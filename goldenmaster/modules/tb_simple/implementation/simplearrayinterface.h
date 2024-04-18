@@ -41,6 +41,9 @@ public:
     void setPropString(const std::list<std::string>& propString) override;
     const std::list<std::string>& getPropString() const override;
     
+    void setPropReadOnlyString(const std::string& propReadOnlyString);
+    const std::string& getPropReadOnlyString() const override;
+    
     std::list<bool> funcBool(const std::list<bool>& paramBool) override;
     std::future<std::list<bool>> funcBoolAsync(const std::list<bool>& paramBool) override;
         

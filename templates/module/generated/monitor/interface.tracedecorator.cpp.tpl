@@ -43,10 +43,12 @@ std::future<{{cppReturn "" $operation.Return}}> {{$class}}::{{lower1 $operation.
 
 {{- range .Interface.Properties}}
 {{- $property := . }}
+{{- if not .IsReadOnly }}
 void {{$class}}::set{{Camel $property.Name}}({{cppParam "" $property}})
 {
     m_impl.set{{Camel $property.Name}}({{$property.Name}});
 }
+{{- end }}
 
 {{cppTypeRef "" $property}} {{$class}}::get{{Camel $property.Name}}() const
 {

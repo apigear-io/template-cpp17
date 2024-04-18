@@ -37,7 +37,9 @@ std::map<std::string, ApiGear::MQTT::CallbackFunction> {{$class}}::createTopicMa
     return {
     {{- range .Interface.Properties}}
     {{- $property := . }}
+    {{- if not .IsReadOnly }}
         {std::string("{{$.Module.Name}}/{{$interface}}/set/{{$property}}"), [this](const std::string& args, const std::string&, const std::string&){ this->onSet{{Camel $property.Name}}(args); } },
+    {{- end }}
     {{- end }}
     {{- range .Interface.Operations}}
     {{- $operation := . }}
@@ -67,6 +69,7 @@ void {{$class}}::onConnectionStatusChanged(bool connectionStatus)
 
 {{- range .Interface.Properties}}
 {{- $property := . }}
+{{- if not .IsReadOnly }}
 void {{$class}}::onSet{{Camel $property.Name}}(const std::string& args) const
 {
     nlohmann::json json_args = nlohmann::json::parse(args);
@@ -78,6 +81,7 @@ void {{$class}}::onSet{{Camel $property.Name}}(const std::string& args) const
     auto {{$property}} = json_args.get<{{cppType "" $property}}>();
     m_impl->set{{Camel $property.Name}}({{$property}});
 }
+{{- end }}
 {{- end }}
 
 {{- range .Interface.Operations}}

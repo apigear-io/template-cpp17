@@ -78,4 +78,8 @@ TEST_CASE("Testing SimpleArrayInterface", "[SimpleArrayInterface]"){
         testSimpleArrayInterface->setPropString(std::list<std::string>());
         REQUIRE( testSimpleArrayInterface->getPropString() == std::list<std::string>() );
     }
+    SECTION("Test property propReadOnlyString") {
+        // Do implement test here
+        REQUIRE( testSimpleArrayInterface->getPropReadOnlyString() == std::string() );
+    }
 }

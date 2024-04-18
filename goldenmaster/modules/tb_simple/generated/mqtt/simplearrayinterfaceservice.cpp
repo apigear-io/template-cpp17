@@ -70,6 +70,7 @@ void SimpleArrayInterfaceService::onConnectionStatusChanged(bool connectionStatu
     onPropFloat32Changed(m_impl->getPropFloat32());
     onPropFloat64Changed(m_impl->getPropFloat64());
     onPropStringChanged(m_impl->getPropString());
+    onPropReadOnlyStringChanged(m_impl->getPropReadOnlyString());
 }
 void SimpleArrayInterfaceService::onSetPropBool(const std::string& args) const
 {
@@ -333,5 +334,12 @@ void SimpleArrayInterfaceService::onPropStringChanged(const std::list<std::strin
     if(m_service != nullptr) {
         static const auto topic = std::string("tb.simple/SimpleArrayInterface/prop/propString");
         m_service->notifyPropertyChange(topic, nlohmann::json(propString).dump());
+    }
+}
+void SimpleArrayInterfaceService::onPropReadOnlyStringChanged(const std::string& propReadOnlyString)
+{
+    if(m_service != nullptr) {
+        static const auto topic = std::string("tb.simple/SimpleArrayInterface/prop/propReadOnlyString");
+        m_service->notifyPropertyChange(topic, nlohmann::json(propReadOnlyString).dump());
     }
 }

@@ -81,10 +81,12 @@ void {{$class}}::olinkSetProperty(const std::string& propertyId, const nlohmann:
     const auto& memberProperty = ApiGear::ObjectLink::Name::getMemberName(propertyId);
 {{- range .Interface.Properties}}
 {{- $property := . }}
+{{- if not .IsReadOnly }}
     if(memberProperty == "{{$property}}") {
         {{cppType "" $property}} {{$property}} = value.get<{{cppType "" $property}}>();
         m_{{$interfaceNameOriginal}}->set{{Camel $property.Name}}({{$property}});
     }
+{{- end }}
 {{- else }}
     // no properties to set {{- /* we generate anyway for consistency */}}
     (void) value;

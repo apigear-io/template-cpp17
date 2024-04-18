@@ -163,6 +163,11 @@ public:
     virtual const std::list<std::string>& getPropString() const = 0;
 
     /**
+    * Gets the value of the propReadOnlyString property.
+    */
+    virtual const std::string& getPropReadOnlyString() const = 0;
+
+    /**
     * Access to a publisher, use it to subscribe for SimpleArrayInterface changes and signal emission.
     * This function name doesn't follow the convention, because it is added to user defined interface,
     * to avoid potentially name clashes, it has the trailing underscore in the name.
@@ -287,6 +292,12 @@ public:
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
     virtual void onPropStringChanged(const std::list<std::string>& propString) = 0;
+    /**
+    * Called by the ISimpleArrayInterfacePublisher when propReadOnlyString value has changed if subscribed for the propReadOnlyString change.
+    *
+    * @warning the subscribed function shall not be blocking and must return immediately!
+    */
+    virtual void onPropReadOnlyStringChanged(const std::string& propReadOnlyString) = 0;
 };
 
 /** Callback for changes of propBool */
@@ -305,6 +316,8 @@ using SimpleArrayInterfacePropFloat32PropertyCb = std::function<void(const std::
 using SimpleArrayInterfacePropFloat64PropertyCb = std::function<void(const std::list<double>& propFloat64)>;
 /** Callback for changes of propString */
 using SimpleArrayInterfacePropStringPropertyCb = std::function<void(const std::list<std::string>& propString)>;
+/** Callback for changes of propReadOnlyString */
+using SimpleArrayInterfacePropReadOnlyStringPropertyCb = std::function<void(const std::string& propReadOnlyString)>;
 /** Callback for sigBool signal triggers */
 using SimpleArrayInterfaceSigBoolSignalCb = std::function<void(const std::list<bool>& paramBool)> ;
 /** Callback for sigInt signal triggers */
@@ -499,6 +512,24 @@ public:
     virtual void unsubscribeFromPropStringChanged(long handleId) = 0;
 
     /**
+    * Use this function to subscribe for propReadOnlyString value changes.
+    * If your subscriber uses subscription with ISimpleArrayInterfaceSubscriber interface, you will get two notifications, one for each subscription mechanism.
+    * @param SimpleArrayInterfacePropReadOnlyStringPropertyCb callback that will be executed on each change of the property.
+    * Make sure to remove subscription before the callback becomes invalid.
+    * @return subscription token for the subscription removal.
+    *
+    * @warning the subscribed function shall not be blocking and must return immediately!
+    */
+    virtual long subscribeToPropReadOnlyStringChanged(SimpleArrayInterfacePropReadOnlyStringPropertyCb callback) = 0;
+    /**
+    * Use this function to unsubscribe from propReadOnlyString property changes.
+    * If your subscriber uses subscription with ISimpleArrayInterfaceSubscriber interface, you will be still informed about this change,
+    * as those are two independent subscription mechanisms.
+    * @param subscription token received on subscription.
+    */
+    virtual void unsubscribeFromPropReadOnlyStringChanged(long handleId) = 0;
+
+    /**
     * Use this function to subscribe for sigBool signal changes.
     * @param SimpleArrayInterfaceSigBoolSignalCb callback that will be executed on each signal emission.
     * Make sure to remove subscription before the callback becomes invalid.
@@ -666,6 +697,12 @@ public:
     * @param The new value of propString.
     */
     virtual void publishPropStringChanged(const std::list<std::string>& propString) const = 0;
+    /**
+    * Publishes the property changed to all subscribed clients.
+    * Needs to be invoked by the SimpleArrayInterface implementation when property propReadOnlyString changes.
+    * @param The new value of propReadOnlyString.
+    */
+    virtual void publishPropReadOnlyStringChanged(const std::string& propReadOnlyString) const = 0;
     /**
     * Publishes the emitted signal to all subscribed clients.
     * Needs to be invoked by the SimpleArrayInterface implementation when sigBool is emitted.

@@ -21,6 +21,7 @@ struct SimpleArrayInterfaceData
     std::list<float> m_propFloat32 {std::list<float>()};
     std::list<double> m_propFloat64 {std::list<double>()};
     std::list<std::string> m_propString {std::list<std::string>()};
+    std::string m_propReadOnlyString {std::string()};
 };
 
 }

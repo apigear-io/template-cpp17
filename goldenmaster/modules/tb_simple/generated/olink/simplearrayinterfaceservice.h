@@ -133,6 +133,10 @@ public:
     * Forwards propString change through network if the connection is established.
     */
     void onPropStringChanged(const std::list<std::string>& propString) override;
+    /**
+    * Forwards propReadOnlyString change through network if the connection is established.
+    */
+    void onPropReadOnlyStringChanged(const std::string& propReadOnlyString) override;
 
 private:
     /**

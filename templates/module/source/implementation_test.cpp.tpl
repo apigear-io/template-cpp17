@@ -28,7 +28,9 @@ TEST_CASE("Testing {{$class}}", "[{{$class}}]"){
 {{- $property := . }}
     SECTION("Test property {{$property.Name}}") {
         // Do implement test here
+        {{- if not .IsReadOnly }}
         test{{$class}}->set{{Camel $property.Name}}({{cppDefault "" $property}});
+        {{- end }}
         REQUIRE( test{{$class}}->get{{Camel $property.Name}}() =={{ if ( eq (cppType "" $property) "float") }} Approx({{- end }} {{cppDefault "" $property}}{{ if ( eq (cppType "" $property) "float")}} ){{- end }} );
     }
 {{- end }}

@@ -171,6 +171,11 @@ const std::list<std::string>& SimpleArrayInterfaceTraceDecorator::getPropString(
 {
     return m_impl.getPropString();
 }
+
+const std::string& SimpleArrayInterfaceTraceDecorator::getPropReadOnlyString() const
+{
+    return m_impl.getPropReadOnlyString();
+}
 void SimpleArrayInterfaceTraceDecorator::onSigBool(const std::list<bool>& paramBool)
 {
     m_tracer->trace_sigBool(paramBool);
@@ -256,6 +261,12 @@ void SimpleArrayInterfaceTraceDecorator::onPropFloat64Changed(const std::list<do
 void SimpleArrayInterfaceTraceDecorator::onPropStringChanged(const std::list<std::string>& propString)
 {
     (void) propString; // suppress the 'Unreferenced Formal Parameter' warning.
+    m_tracer->capture_state(this);
+}
+
+void SimpleArrayInterfaceTraceDecorator::onPropReadOnlyStringChanged(const std::string& propReadOnlyString)
+{
+    (void) propReadOnlyString; // suppress the 'Unreferenced Formal Parameter' warning.
     m_tracer->capture_state(this);
 }
 

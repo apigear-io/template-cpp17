@@ -308,6 +308,41 @@ void SimpleArrayInterfacePublisher::publishPropStringChanged(const std::list<std
     }
 }
 
+long SimpleArrayInterfacePublisher::subscribeToPropReadOnlyStringChanged(SimpleArrayInterfacePropReadOnlyStringPropertyCb callback)
+{
+    auto handleId = m_propReadOnlyStringChangedCallbackNextId++;
+    std::unique_lock<std::shared_timed_mutex> lock(m_propReadOnlyStringCallbacksMutex);
+    m_propReadOnlyStringCallbacks[handleId] = callback;
+    return handleId;
+}
+
+void SimpleArrayInterfacePublisher::unsubscribeFromPropReadOnlyStringChanged(long handleId)
+{
+    std::unique_lock<std::shared_timed_mutex> lock(m_propReadOnlyStringCallbacksMutex);
+    m_propReadOnlyStringCallbacks.erase(handleId);
+}
+
+void SimpleArrayInterfacePublisher::publishPropReadOnlyStringChanged(const std::string& propReadOnlyString) const
+{
+    std::shared_lock<std::shared_timed_mutex> allChangesSubscribersLock(m_allChangesSubscribersMutex);
+    const auto allChangesSubscribers = m_allChangesSubscribers;
+    allChangesSubscribersLock.unlock();
+    for(const auto& subscriber: allChangesSubscribers)
+    {
+        subscriber.get().onPropReadOnlyStringChanged(propReadOnlyString);
+    }
+    std::shared_lock<std::shared_timed_mutex> propReadOnlyStringCallbacksLock(m_propReadOnlyStringCallbacksMutex);
+    const auto propReadOnlyStringCallbacks = m_propReadOnlyStringCallbacks;
+    propReadOnlyStringCallbacksLock.unlock();
+    for(const auto& callbackEntry: propReadOnlyStringCallbacks)
+    {
+        if(callbackEntry.second)
+        {
+            callbackEntry.second(propReadOnlyString);
+        }
+    }
+}
+
 long SimpleArrayInterfacePublisher::subscribeToSigBool(SimpleArrayInterfaceSigBoolSignalCb callback)
 {
     // this is a short term workaround - we need a better solution for unique handle identifiers

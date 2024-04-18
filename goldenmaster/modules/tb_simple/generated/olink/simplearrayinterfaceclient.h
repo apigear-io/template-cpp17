@@ -121,6 +121,11 @@ public:
     */
     void setPropString(const std::list<std::string>& propString) override;
     /**
+    * Property getter
+    * @return Locally stored locally value for PropReadOnlyString.
+    */
+    const std::string& getPropReadOnlyString() const override;
+    /**
     * Remote call of ISimpleArrayInterface::funcBool on the SimpleArrayInterface service.
     * Uses funcBoolAsync
     */
@@ -278,6 +283,10 @@ private:
     void setPropStringLocal(const std::list<std::string>& propString);
     /* Mutex for propString property */
     mutable std::shared_timed_mutex m_propStringMutex;
+    /**  Updates local value for PropReadOnlyString and informs subscriber about the change*/
+    void setPropReadOnlyStringLocal(const std::string& propReadOnlyString);
+    /* Mutex for propReadOnlyString property */
+    mutable std::shared_timed_mutex m_propReadOnlyStringMutex;
 
     /** Local storage for properties values. */
     SimpleArrayInterfaceData m_data;

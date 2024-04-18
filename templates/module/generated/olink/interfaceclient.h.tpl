@@ -56,11 +56,13 @@ public:
     * @return Locally stored locally value for {{Camel $property.Name}}.
     */
     {{cppTypeRef "" $property}} get{{Camel $property.Name}}() const override;
+{{- if not .IsReadOnly }}
     /**
     * Request setting a property on the {{$interfaceNameOriginal}} service.
     * @param The value to which set request is send for the {{Camel $property.Name}}.
     */
     void set{{Camel $property.Name}}({{cppParam "" $property}}) override;
+{{- end }}
 {{- end }}
 {{- range .Interface.Operations}}
 {{- $operation := . }}

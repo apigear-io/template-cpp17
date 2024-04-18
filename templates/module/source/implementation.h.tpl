@@ -30,9 +30,12 @@ public:
     {{- if $property.Description }}
     /**
     * {{$property.Name}} {{$property.Description}}
+{{- if .IsReadOnly }}
+    * WARNING: This property is read-only and thus can only be set within this implementation, not from the interface.
+{{- end }}
     */
 {{- end }}
-    void set{{Camel $property.Name}}({{ cppParam "" $property}}) override;
+    void set{{Camel $property.Name}}({{ cppParam "" $property}}){{- if not .IsReadOnly }} override{{ end }};
     {{cppTypeRef "" $property}} get{{Camel $property.Name}}() const override;
     {{/*  */ -}}    
 {{- end }}

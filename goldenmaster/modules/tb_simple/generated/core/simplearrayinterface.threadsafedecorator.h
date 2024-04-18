@@ -41,6 +41,7 @@ auto propFloat64 = testSimpleArrayInterface->getPropFloat64();
 testSimpleArrayInterface->setPropFloat64(std::list<double>());
 auto propString = testSimpleArrayInterface->getPropString();
 testSimpleArrayInterface->setPropString(std::list<std::string>());
+auto propReadOnlyString = testSimpleArrayInterface->getPropReadOnlyString();
 \endcode
 */
 class TEST_TB_SIMPLE_EXPORT SimpleArrayInterfaceThreadSafeDecorator : public ISimpleArrayInterface
@@ -180,6 +181,9 @@ public:
     /** Guards and forwards call to SimpleArrayInterface implementation. */
     const std::list<std::string>& getPropString() const override;
 
+    /** Guards and forwards call to SimpleArrayInterface implementation. */
+    const std::string& getPropReadOnlyString() const override;
+
     /**
     * Access to a publisher, use it to subscribe for SimpleArrayInterface changes and signal emission.
     * This call is thread safe.
@@ -205,6 +209,8 @@ private:
     mutable std::shared_timed_mutex m_propFloat64Mutex;
     // Mutex for propString property
     mutable std::shared_timed_mutex m_propStringMutex;
+    // Mutex for propReadOnlyString property
+    mutable std::shared_timed_mutex m_propReadOnlyStringMutex;
 };
 } // namespace TbSimple
 } // namespace Test

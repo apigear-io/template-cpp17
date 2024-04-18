@@ -41,9 +41,11 @@ private:
 {{- range .Interface.Properties}}
 {{- $property := . }}
     void on{{Camel $property.Name}}Changed({{cppParam "" $property}}) override;
+{{- if not .IsReadOnly }}
     /// @brief requests to set the value for the property {{Camel $property.Name}} coming from the client
     /// @param fields contains the param of the type {{cppType "" $property }}
     void onSet{{Camel $property.Name}}(const std::string& args) const;
+{{- end }}
 {{- end }}
 
     std::shared_ptr<{{$interfaceClass}}> m_impl;

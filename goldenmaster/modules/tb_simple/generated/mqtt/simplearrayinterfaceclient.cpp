@@ -304,6 +304,11 @@ const std::list<std::string>& SimpleArrayInterfaceClient::getPropString() const
     return m_data.m_propString;
 }
 
+const std::string& SimpleArrayInterfaceClient::getPropReadOnlyString() const
+{
+    return m_data.m_propReadOnlyString;
+}
+
 std::list<bool> SimpleArrayInterfaceClient::funcBool(const std::list<bool>& paramBool)
 {
     if(m_client == nullptr) {

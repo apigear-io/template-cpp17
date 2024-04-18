@@ -168,6 +168,12 @@ const std::list<std::string>& SimpleArrayInterfaceThreadSafeDecorator::getPropSt
     return m_impl->getPropString();
 }
 
+const std::string& SimpleArrayInterfaceThreadSafeDecorator::getPropReadOnlyString() const
+{
+    std::shared_lock<std::shared_timed_mutex> lock(m_propReadOnlyStringMutex);
+    return m_impl->getPropReadOnlyString();
+}
+
 ISimpleArrayInterfacePublisher& SimpleArrayInterfaceThreadSafeDecorator::_getPublisher() const
 {
     return m_impl->_getPublisher();

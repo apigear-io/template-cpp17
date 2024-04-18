@@ -69,6 +69,7 @@ private:
     /// @brief requests to set the value for the property PropString coming from the client
     /// @param fields contains the param of the type std::list<std::string>
     void onSetPropString(const std::string& args) const;
+    void onPropReadOnlyStringChanged(const std::string& propReadOnlyString) override;
 
     std::shared_ptr<ISimpleArrayInterface> m_impl;
     std::shared_ptr<ApiGear::MQTT::Service> m_service;

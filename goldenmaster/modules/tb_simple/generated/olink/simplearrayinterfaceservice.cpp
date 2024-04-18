@@ -136,7 +136,8 @@ nlohmann::json SimpleArrayInterfaceService::olinkCollectProperties()
         { "propFloat", m_SimpleArrayInterface->getPropFloat() },
         { "propFloat32", m_SimpleArrayInterface->getPropFloat32() },
         { "propFloat64", m_SimpleArrayInterface->getPropFloat64() },
-        { "propString", m_SimpleArrayInterface->getPropString() }
+        { "propString", m_SimpleArrayInterface->getPropString() },
+        { "propReadOnlyString", m_SimpleArrayInterface->getPropReadOnlyString() }
     });
 }
 void SimpleArrayInterfaceService::onSigBool(const std::list<bool>& paramBool)
@@ -320,6 +321,17 @@ void SimpleArrayInterfaceService::onPropStringChanged(const std::list<std::strin
         auto lockedNode = node.lock();
         if(lockedNode) {
             lockedNode->notifyPropertyChange(propertyId, propString);
+        }
+    }
+}
+void SimpleArrayInterfaceService::onPropReadOnlyStringChanged(const std::string& propReadOnlyString)
+{
+    static const auto propertyId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "propReadOnlyString");
+    static const auto objectId = olinkObjectName();
+    for(auto node: m_registry.getNodes(objectId)) {
+        auto lockedNode = node.lock();
+        if(lockedNode) {
+            lockedNode->notifyPropertyChange(propertyId, propReadOnlyString);
         }
     }
 }

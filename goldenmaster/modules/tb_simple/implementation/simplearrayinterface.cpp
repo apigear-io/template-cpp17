@@ -118,6 +118,19 @@ const std::list<std::string>& SimpleArrayInterface::getPropString() const
     return m_data.m_propString;
 }
 
+void SimpleArrayInterface::setPropReadOnlyString(const std::string& propReadOnlyString)
+{
+    if (m_data.m_propReadOnlyString != propReadOnlyString) {
+        m_data.m_propReadOnlyString = propReadOnlyString;
+        m_publisher->publishPropReadOnlyStringChanged(propReadOnlyString);
+    }
+}
+
+const std::string& SimpleArrayInterface::getPropReadOnlyString() const
+{
+    return m_data.m_propReadOnlyString;
+}
+
 std::list<bool> SimpleArrayInterface::funcBool(const std::list<bool>& paramBool)
 {
     (void) paramBool; // suppress the 'Unreferenced Formal Parameter' warning.

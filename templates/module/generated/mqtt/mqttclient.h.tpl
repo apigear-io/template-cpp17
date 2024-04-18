@@ -25,7 +25,9 @@ public:
 {{- range .Interface.Properties}}
 {{- $property := . }}
     {{cppTypeRef "" $property}} get{{Camel $property.Name}}() const override;
+{{- if not .IsReadOnly }}
     void set{{Camel $property.Name}}({{cppParam "" $property}}) override;
+{{- end }}
 {{- end }}
 
 {{- range .Interface.Operations}}
@@ -48,9 +50,11 @@ private:
 
 {{- range .Interface.Properties}}
 {{- $property := . }}
+{{- if not .IsReadOnly }}
     /// @brief sets the value for the property {{Camel $property.Name}} coming from the service
     /// @param args contains the param of the type {{cppType "" $property }}
     void set{{Camel $property.Name}}Local(const std::string& args);
+{{- end }}
 {{- end }}
 
 {{- range .Interface.Signals}}

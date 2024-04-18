@@ -30,6 +30,7 @@ public:
     void setPropFloat64(const std::list<double>& propFloat64) override;
     const std::list<std::string>& getPropString() const override;
     void setPropString(const std::list<std::string>& propString) override;
+    const std::string& getPropReadOnlyString() const override;
     std::list<bool> funcBool(const std::list<bool>& paramBool) override;
     std::future<std::list<bool>> funcBoolAsync(const std::list<bool>& paramBool) override;
     std::list<int> funcInt(const std::list<int>& paramInt) override;

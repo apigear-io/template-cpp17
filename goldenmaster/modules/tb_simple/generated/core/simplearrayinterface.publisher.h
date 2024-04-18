@@ -105,6 +105,15 @@ public:
     void unsubscribeFromPropStringChanged(long handleId) override;
 
     /**
+    * Implementation of ISimpleArrayInterfacePublisher::subscribeToPropReadOnlyStringChanged
+    */
+    long subscribeToPropReadOnlyStringChanged(SimpleArrayInterfacePropReadOnlyStringPropertyCb callback) override;
+    /**
+    * Implementation of ISimpleArrayInterfacePublisher::subscribeToPropReadOnlyStringChanged
+    */
+    void unsubscribeFromPropReadOnlyStringChanged(long handleId) override;
+
+    /**
     * Implementation of ISimpleArrayInterfacePublisher::subscribeToSigBool
     */
     long subscribeToSigBool(SimpleArrayInterfaceSigBoolSignalCb callback) override;
@@ -209,6 +218,10 @@ public:
     */
     void publishPropStringChanged(const std::list<std::string>& propString) const override;
     /**
+    * Implementation of ISimpleArrayInterfacePublisher::publishPropReadOnlyStringChanged
+    */
+    void publishPropReadOnlyStringChanged(const std::string& propReadOnlyString) const override;
+    /**
     * Implementation of ISimpleArrayInterfacePublisher::publishSigBool
     */
     void publishSigBool(const std::list<bool>& paramBool) const override;
@@ -293,6 +306,12 @@ private:
     std::map<long, SimpleArrayInterfacePropStringPropertyCb> m_propStringCallbacks;
     // Mutex for m_propStringCallbacks
     mutable std::shared_timed_mutex m_propStringCallbacksMutex;
+    // Next free unique identifier to subscribe for the PropReadOnlyString change.
+    std::atomic<long> m_propReadOnlyStringChangedCallbackNextId {0};
+    // Subscribed callbacks for the PropReadOnlyString change.
+    std::map<long, SimpleArrayInterfacePropReadOnlyStringPropertyCb> m_propReadOnlyStringCallbacks;
+    // Mutex for m_propReadOnlyStringCallbacks
+    mutable std::shared_timed_mutex m_propReadOnlyStringCallbacksMutex;
     // Next free unique identifier to subscribe for the SigBool emission.
     std::atomic<long> m_sigBoolSignalCallbackNextId {0};
     // Subscribed callbacks for the SigBool emission.
