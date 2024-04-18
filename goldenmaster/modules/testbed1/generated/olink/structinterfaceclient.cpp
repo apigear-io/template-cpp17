@@ -63,14 +63,20 @@ void StructInterfaceClient::setPropBool(const StructBool& propBool)
 
 void StructInterfaceClient::setPropBoolLocal(const StructBool& propBool)
 {
-    if (m_data.m_propBool != propBool) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_propBoolMutex);
+        if (m_data.m_propBool == propBool) {
+            return;
+        }
         m_data.m_propBool = propBool;
-        m_publisher->publishPropBoolChanged(propBool);
     }
+
+    m_publisher->publishPropBoolChanged(propBool);
 }
 
 const StructBool& StructInterfaceClient::getPropBool() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_propBoolMutex);
     return m_data.m_propBool;
 }
 
@@ -86,14 +92,20 @@ void StructInterfaceClient::setPropInt(const StructInt& propInt)
 
 void StructInterfaceClient::setPropIntLocal(const StructInt& propInt)
 {
-    if (m_data.m_propInt != propInt) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_propIntMutex);
+        if (m_data.m_propInt == propInt) {
+            return;
+        }
         m_data.m_propInt = propInt;
-        m_publisher->publishPropIntChanged(propInt);
     }
+
+    m_publisher->publishPropIntChanged(propInt);
 }
 
 const StructInt& StructInterfaceClient::getPropInt() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_propIntMutex);
     return m_data.m_propInt;
 }
 
@@ -109,14 +121,20 @@ void StructInterfaceClient::setPropFloat(const StructFloat& propFloat)
 
 void StructInterfaceClient::setPropFloatLocal(const StructFloat& propFloat)
 {
-    if (m_data.m_propFloat != propFloat) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_propFloatMutex);
+        if (m_data.m_propFloat == propFloat) {
+            return;
+        }
         m_data.m_propFloat = propFloat;
-        m_publisher->publishPropFloatChanged(propFloat);
     }
+
+    m_publisher->publishPropFloatChanged(propFloat);
 }
 
 const StructFloat& StructInterfaceClient::getPropFloat() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_propFloatMutex);
     return m_data.m_propFloat;
 }
 
@@ -132,14 +150,20 @@ void StructInterfaceClient::setPropString(const StructString& propString)
 
 void StructInterfaceClient::setPropStringLocal(const StructString& propString)
 {
-    if (m_data.m_propString != propString) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_propStringMutex);
+        if (m_data.m_propString == propString) {
+            return;
+        }
         m_data.m_propString = propString;
-        m_publisher->publishPropStringChanged(propString);
     }
+
+    m_publisher->publishPropStringChanged(propString);
 }
 
 const StructString& StructInterfaceClient::getPropString() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_propStringMutex);
     return m_data.m_propString;
 }
 

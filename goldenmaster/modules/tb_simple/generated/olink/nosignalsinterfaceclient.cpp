@@ -51,14 +51,20 @@ void NoSignalsInterfaceClient::setPropBool(bool propBool)
 
 void NoSignalsInterfaceClient::setPropBoolLocal(bool propBool)
 {
-    if (m_data.m_propBool != propBool) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_propBoolMutex);
+        if (m_data.m_propBool == propBool) {
+            return;
+        }
         m_data.m_propBool = propBool;
-        m_publisher->publishPropBoolChanged(propBool);
     }
+
+    m_publisher->publishPropBoolChanged(propBool);
 }
 
 bool NoSignalsInterfaceClient::getPropBool() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_propBoolMutex);
     return m_data.m_propBool;
 }
 
@@ -74,14 +80,20 @@ void NoSignalsInterfaceClient::setPropInt(int propInt)
 
 void NoSignalsInterfaceClient::setPropIntLocal(int propInt)
 {
-    if (m_data.m_propInt != propInt) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_propIntMutex);
+        if (m_data.m_propInt == propInt) {
+            return;
+        }
         m_data.m_propInt = propInt;
-        m_publisher->publishPropIntChanged(propInt);
     }
+
+    m_publisher->publishPropIntChanged(propInt);
 }
 
 int NoSignalsInterfaceClient::getPropInt() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_propIntMutex);
     return m_data.m_propInt;
 }
 

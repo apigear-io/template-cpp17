@@ -69,14 +69,20 @@ void {{$class}}::set{{Camel $name}}({{cppParam "" $property}})
 
 void {{$class}}::set{{Camel $name}}Local({{cppParam "" $property }})
 {
-    if (m_data.m_{{$name}} != {{$name}}) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_{{lower1 ((Camel $property.Name))}}Mutex);
+        if (m_data.m_{{$name}} == {{$name}}) {
+            return;
+        }
         m_data.m_{{$name}} = {{$name}};
-        m_publisher->publish{{Camel $name}}Changed({{$name}});
     }
+
+    m_publisher->publish{{Camel $name}}Changed({{$name}});
 }
 
 {{cppTypeRef "" $property}} {{$class}}::get{{Camel $name}}() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_{{lower1 ((Camel $property.Name))}}Mutex);
     return m_data.m_{{$name}};
 }
 

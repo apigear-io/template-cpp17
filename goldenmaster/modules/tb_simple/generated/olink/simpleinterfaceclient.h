@@ -8,6 +8,7 @@
 #include "olink/iobjectsink.h"
 
 #include <future>
+#include <shared_mutex>
 #include <memory>
 
 namespace ApiGear{
@@ -256,20 +257,36 @@ private:
     void applyProperty(const std::string& propertyName, const nlohmann::json& value);
     /**  Updates local value for PropBool and informs subscriber about the change*/
     void setPropBoolLocal(bool propBool);
+    /* Mutex for propBool property */
+    mutable std::shared_timed_mutex m_propBoolMutex;
     /**  Updates local value for PropInt and informs subscriber about the change*/
     void setPropIntLocal(int propInt);
+    /* Mutex for propInt property */
+    mutable std::shared_timed_mutex m_propIntMutex;
     /**  Updates local value for PropInt32 and informs subscriber about the change*/
     void setPropInt32Local(int32_t propInt32);
+    /* Mutex for propInt32 property */
+    mutable std::shared_timed_mutex m_propInt32Mutex;
     /**  Updates local value for PropInt64 and informs subscriber about the change*/
     void setPropInt64Local(int64_t propInt64);
+    /* Mutex for propInt64 property */
+    mutable std::shared_timed_mutex m_propInt64Mutex;
     /**  Updates local value for PropFloat and informs subscriber about the change*/
     void setPropFloatLocal(float propFloat);
+    /* Mutex for propFloat property */
+    mutable std::shared_timed_mutex m_propFloatMutex;
     /**  Updates local value for PropFloat32 and informs subscriber about the change*/
     void setPropFloat32Local(float propFloat32);
+    /* Mutex for propFloat32 property */
+    mutable std::shared_timed_mutex m_propFloat32Mutex;
     /**  Updates local value for PropFloat64 and informs subscriber about the change*/
     void setPropFloat64Local(double propFloat64);
+    /* Mutex for propFloat64 property */
+    mutable std::shared_timed_mutex m_propFloat64Mutex;
     /**  Updates local value for PropString and informs subscriber about the change*/
     void setPropStringLocal(const std::string& propString);
+    /* Mutex for propString property */
+    mutable std::shared_timed_mutex m_propStringMutex;
 
     /** Local storage for properties values. */
     SimpleInterfaceData m_data;

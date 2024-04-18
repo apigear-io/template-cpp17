@@ -63,14 +63,20 @@ void ManyParamInterfaceClient::setProp1(int prop1)
 
 void ManyParamInterfaceClient::setProp1Local(int prop1)
 {
-    if (m_data.m_prop1 != prop1) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_prop1Mutex);
+        if (m_data.m_prop1 == prop1) {
+            return;
+        }
         m_data.m_prop1 = prop1;
-        m_publisher->publishProp1Changed(prop1);
     }
+
+    m_publisher->publishProp1Changed(prop1);
 }
 
 int ManyParamInterfaceClient::getProp1() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_prop1Mutex);
     return m_data.m_prop1;
 }
 
@@ -86,14 +92,20 @@ void ManyParamInterfaceClient::setProp2(int prop2)
 
 void ManyParamInterfaceClient::setProp2Local(int prop2)
 {
-    if (m_data.m_prop2 != prop2) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_prop2Mutex);
+        if (m_data.m_prop2 == prop2) {
+            return;
+        }
         m_data.m_prop2 = prop2;
-        m_publisher->publishProp2Changed(prop2);
     }
+
+    m_publisher->publishProp2Changed(prop2);
 }
 
 int ManyParamInterfaceClient::getProp2() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_prop2Mutex);
     return m_data.m_prop2;
 }
 
@@ -109,14 +121,20 @@ void ManyParamInterfaceClient::setProp3(int prop3)
 
 void ManyParamInterfaceClient::setProp3Local(int prop3)
 {
-    if (m_data.m_prop3 != prop3) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_prop3Mutex);
+        if (m_data.m_prop3 == prop3) {
+            return;
+        }
         m_data.m_prop3 = prop3;
-        m_publisher->publishProp3Changed(prop3);
     }
+
+    m_publisher->publishProp3Changed(prop3);
 }
 
 int ManyParamInterfaceClient::getProp3() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_prop3Mutex);
     return m_data.m_prop3;
 }
 
@@ -132,14 +150,20 @@ void ManyParamInterfaceClient::setProp4(int prop4)
 
 void ManyParamInterfaceClient::setProp4Local(int prop4)
 {
-    if (m_data.m_prop4 != prop4) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_prop4Mutex);
+        if (m_data.m_prop4 == prop4) {
+            return;
+        }
         m_data.m_prop4 = prop4;
-        m_publisher->publishProp4Changed(prop4);
     }
+
+    m_publisher->publishProp4Changed(prop4);
 }
 
 int ManyParamInterfaceClient::getProp4() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_prop4Mutex);
     return m_data.m_prop4;
 }
 

@@ -45,14 +45,20 @@ void NestedStruct1InterfaceClient::setProp1(const NestedStruct1& prop1)
 
 void NestedStruct1InterfaceClient::setProp1Local(const NestedStruct1& prop1)
 {
-    if (m_data.m_prop1 != prop1) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_prop1Mutex);
+        if (m_data.m_prop1 == prop1) {
+            return;
+        }
         m_data.m_prop1 = prop1;
-        m_publisher->publishProp1Changed(prop1);
     }
+
+    m_publisher->publishProp1Changed(prop1);
 }
 
 const NestedStruct1& NestedStruct1InterfaceClient::getProp1() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_prop1Mutex);
     return m_data.m_prop1;
 }
 

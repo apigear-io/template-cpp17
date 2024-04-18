@@ -57,14 +57,20 @@ void Nam_EsClient::setSwitch(bool Switch)
 
 void Nam_EsClient::setSwitchLocal(bool Switch)
 {
-    if (m_data.m_Switch != Switch) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_switchMutex);
+        if (m_data.m_Switch == Switch) {
+            return;
+        }
         m_data.m_Switch = Switch;
-        m_publisher->publishSwitchChanged(Switch);
     }
+
+    m_publisher->publishSwitchChanged(Switch);
 }
 
 bool Nam_EsClient::getSwitch() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_switchMutex);
     return m_data.m_Switch;
 }
 
@@ -80,14 +86,20 @@ void Nam_EsClient::setSomeProperty(int SOME_PROPERTY)
 
 void Nam_EsClient::setSomePropertyLocal(int SOME_PROPERTY)
 {
-    if (m_data.m_SOME_PROPERTY != SOME_PROPERTY) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_somePropertyMutex);
+        if (m_data.m_SOME_PROPERTY == SOME_PROPERTY) {
+            return;
+        }
         m_data.m_SOME_PROPERTY = SOME_PROPERTY;
-        m_publisher->publishSomePropertyChanged(SOME_PROPERTY);
     }
+
+    m_publisher->publishSomePropertyChanged(SOME_PROPERTY);
 }
 
 int Nam_EsClient::getSomeProperty() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_somePropertyMutex);
     return m_data.m_SOME_PROPERTY;
 }
 
@@ -103,14 +115,20 @@ void Nam_EsClient::setSomePoperty2(int Some_Poperty2)
 
 void Nam_EsClient::setSomePoperty2Local(int Some_Poperty2)
 {
-    if (m_data.m_Some_Poperty2 != Some_Poperty2) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_somePoperty2Mutex);
+        if (m_data.m_Some_Poperty2 == Some_Poperty2) {
+            return;
+        }
         m_data.m_Some_Poperty2 = Some_Poperty2;
-        m_publisher->publishSomePoperty2Changed(Some_Poperty2);
     }
+
+    m_publisher->publishSomePoperty2Changed(Some_Poperty2);
 }
 
 int Nam_EsClient::getSomePoperty2() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_somePoperty2Mutex);
     return m_data.m_Some_Poperty2;
 }
 

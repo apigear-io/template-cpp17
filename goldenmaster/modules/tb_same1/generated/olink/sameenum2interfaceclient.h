@@ -8,6 +8,7 @@
 #include "olink/iobjectsink.h"
 
 #include <future>
+#include <shared_mutex>
 #include <memory>
 
 namespace ApiGear{
@@ -133,8 +134,12 @@ private:
     void applyProperty(const std::string& propertyName, const nlohmann::json& value);
     /**  Updates local value for Prop1 and informs subscriber about the change*/
     void setProp1Local(Enum1Enum prop1);
+    /* Mutex for prop1 property */
+    mutable std::shared_timed_mutex m_prop1Mutex;
     /**  Updates local value for Prop2 and informs subscriber about the change*/
     void setProp2Local(Enum2Enum prop2);
+    /* Mutex for prop2 property */
+    mutable std::shared_timed_mutex m_prop2Mutex;
 
     /** Local storage for properties values. */
     SameEnum2InterfaceData m_data;

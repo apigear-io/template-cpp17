@@ -57,14 +57,20 @@ void NestedStruct3InterfaceClient::setProp1(const NestedStruct1& prop1)
 
 void NestedStruct3InterfaceClient::setProp1Local(const NestedStruct1& prop1)
 {
-    if (m_data.m_prop1 != prop1) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_prop1Mutex);
+        if (m_data.m_prop1 == prop1) {
+            return;
+        }
         m_data.m_prop1 = prop1;
-        m_publisher->publishProp1Changed(prop1);
     }
+
+    m_publisher->publishProp1Changed(prop1);
 }
 
 const NestedStruct1& NestedStruct3InterfaceClient::getProp1() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_prop1Mutex);
     return m_data.m_prop1;
 }
 
@@ -80,14 +86,20 @@ void NestedStruct3InterfaceClient::setProp2(const NestedStruct2& prop2)
 
 void NestedStruct3InterfaceClient::setProp2Local(const NestedStruct2& prop2)
 {
-    if (m_data.m_prop2 != prop2) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_prop2Mutex);
+        if (m_data.m_prop2 == prop2) {
+            return;
+        }
         m_data.m_prop2 = prop2;
-        m_publisher->publishProp2Changed(prop2);
     }
+
+    m_publisher->publishProp2Changed(prop2);
 }
 
 const NestedStruct2& NestedStruct3InterfaceClient::getProp2() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_prop2Mutex);
     return m_data.m_prop2;
 }
 
@@ -103,14 +115,20 @@ void NestedStruct3InterfaceClient::setProp3(const NestedStruct3& prop3)
 
 void NestedStruct3InterfaceClient::setProp3Local(const NestedStruct3& prop3)
 {
-    if (m_data.m_prop3 != prop3) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_prop3Mutex);
+        if (m_data.m_prop3 == prop3) {
+            return;
+        }
         m_data.m_prop3 = prop3;
-        m_publisher->publishProp3Changed(prop3);
     }
+
+    m_publisher->publishProp3Changed(prop3);
 }
 
 const NestedStruct3& NestedStruct3InterfaceClient::getProp3() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_prop3Mutex);
     return m_data.m_prop3;
 }
 

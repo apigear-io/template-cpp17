@@ -14,6 +14,9 @@
 #include "olink/iobjectsink.h"
 
 #include <future>
+{{- if .Interface.Properties}}
+#include <shared_mutex>
+{{- end }}
 #include <memory>
 
 namespace ApiGear{
@@ -129,6 +132,9 @@ private:
 {{- $property := . }}
     /**  Updates local value for {{Camel $property.Name}} and informs subscriber about the change*/
     void set{{Camel $property.Name}}Local({{cppParam "" $property}});
+    /* Mutex for {{lower1 (Camel $property.Name)}} property */
+    mutable std::shared_timed_mutex m_{{lower1 (Camel $property.Name)}}Mutex;
+
 {{- end }}
 {{ if .Interface.Properties}}
     /** Local storage for properties values. */

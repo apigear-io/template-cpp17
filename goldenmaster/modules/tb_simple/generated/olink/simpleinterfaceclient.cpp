@@ -87,14 +87,20 @@ void SimpleInterfaceClient::setPropBool(bool propBool)
 
 void SimpleInterfaceClient::setPropBoolLocal(bool propBool)
 {
-    if (m_data.m_propBool != propBool) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_propBoolMutex);
+        if (m_data.m_propBool == propBool) {
+            return;
+        }
         m_data.m_propBool = propBool;
-        m_publisher->publishPropBoolChanged(propBool);
     }
+
+    m_publisher->publishPropBoolChanged(propBool);
 }
 
 bool SimpleInterfaceClient::getPropBool() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_propBoolMutex);
     return m_data.m_propBool;
 }
 
@@ -110,14 +116,20 @@ void SimpleInterfaceClient::setPropInt(int propInt)
 
 void SimpleInterfaceClient::setPropIntLocal(int propInt)
 {
-    if (m_data.m_propInt != propInt) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_propIntMutex);
+        if (m_data.m_propInt == propInt) {
+            return;
+        }
         m_data.m_propInt = propInt;
-        m_publisher->publishPropIntChanged(propInt);
     }
+
+    m_publisher->publishPropIntChanged(propInt);
 }
 
 int SimpleInterfaceClient::getPropInt() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_propIntMutex);
     return m_data.m_propInt;
 }
 
@@ -133,14 +145,20 @@ void SimpleInterfaceClient::setPropInt32(int32_t propInt32)
 
 void SimpleInterfaceClient::setPropInt32Local(int32_t propInt32)
 {
-    if (m_data.m_propInt32 != propInt32) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_propInt32Mutex);
+        if (m_data.m_propInt32 == propInt32) {
+            return;
+        }
         m_data.m_propInt32 = propInt32;
-        m_publisher->publishPropInt32Changed(propInt32);
     }
+
+    m_publisher->publishPropInt32Changed(propInt32);
 }
 
 int32_t SimpleInterfaceClient::getPropInt32() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_propInt32Mutex);
     return m_data.m_propInt32;
 }
 
@@ -156,14 +174,20 @@ void SimpleInterfaceClient::setPropInt64(int64_t propInt64)
 
 void SimpleInterfaceClient::setPropInt64Local(int64_t propInt64)
 {
-    if (m_data.m_propInt64 != propInt64) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_propInt64Mutex);
+        if (m_data.m_propInt64 == propInt64) {
+            return;
+        }
         m_data.m_propInt64 = propInt64;
-        m_publisher->publishPropInt64Changed(propInt64);
     }
+
+    m_publisher->publishPropInt64Changed(propInt64);
 }
 
 int64_t SimpleInterfaceClient::getPropInt64() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_propInt64Mutex);
     return m_data.m_propInt64;
 }
 
@@ -179,14 +203,20 @@ void SimpleInterfaceClient::setPropFloat(float propFloat)
 
 void SimpleInterfaceClient::setPropFloatLocal(float propFloat)
 {
-    if (m_data.m_propFloat != propFloat) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_propFloatMutex);
+        if (m_data.m_propFloat == propFloat) {
+            return;
+        }
         m_data.m_propFloat = propFloat;
-        m_publisher->publishPropFloatChanged(propFloat);
     }
+
+    m_publisher->publishPropFloatChanged(propFloat);
 }
 
 float SimpleInterfaceClient::getPropFloat() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_propFloatMutex);
     return m_data.m_propFloat;
 }
 
@@ -202,14 +232,20 @@ void SimpleInterfaceClient::setPropFloat32(float propFloat32)
 
 void SimpleInterfaceClient::setPropFloat32Local(float propFloat32)
 {
-    if (m_data.m_propFloat32 != propFloat32) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_propFloat32Mutex);
+        if (m_data.m_propFloat32 == propFloat32) {
+            return;
+        }
         m_data.m_propFloat32 = propFloat32;
-        m_publisher->publishPropFloat32Changed(propFloat32);
     }
+
+    m_publisher->publishPropFloat32Changed(propFloat32);
 }
 
 float SimpleInterfaceClient::getPropFloat32() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_propFloat32Mutex);
     return m_data.m_propFloat32;
 }
 
@@ -225,14 +261,20 @@ void SimpleInterfaceClient::setPropFloat64(double propFloat64)
 
 void SimpleInterfaceClient::setPropFloat64Local(double propFloat64)
 {
-    if (m_data.m_propFloat64 != propFloat64) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_propFloat64Mutex);
+        if (m_data.m_propFloat64 == propFloat64) {
+            return;
+        }
         m_data.m_propFloat64 = propFloat64;
-        m_publisher->publishPropFloat64Changed(propFloat64);
     }
+
+    m_publisher->publishPropFloat64Changed(propFloat64);
 }
 
 double SimpleInterfaceClient::getPropFloat64() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_propFloat64Mutex);
     return m_data.m_propFloat64;
 }
 
@@ -248,14 +290,20 @@ void SimpleInterfaceClient::setPropString(const std::string& propString)
 
 void SimpleInterfaceClient::setPropStringLocal(const std::string& propString)
 {
-    if (m_data.m_propString != propString) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_propStringMutex);
+        if (m_data.m_propString == propString) {
+            return;
+        }
         m_data.m_propString = propString;
-        m_publisher->publishPropStringChanged(propString);
     }
+
+    m_publisher->publishPropStringChanged(propString);
 }
 
 const std::string& SimpleInterfaceClient::getPropString() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_propStringMutex);
     return m_data.m_propString;
 }
 

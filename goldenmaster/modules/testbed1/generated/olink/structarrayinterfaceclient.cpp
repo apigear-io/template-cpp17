@@ -63,14 +63,20 @@ void StructArrayInterfaceClient::setPropBool(const std::list<StructBool>& propBo
 
 void StructArrayInterfaceClient::setPropBoolLocal(const std::list<StructBool>& propBool)
 {
-    if (m_data.m_propBool != propBool) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_propBoolMutex);
+        if (m_data.m_propBool == propBool) {
+            return;
+        }
         m_data.m_propBool = propBool;
-        m_publisher->publishPropBoolChanged(propBool);
     }
+
+    m_publisher->publishPropBoolChanged(propBool);
 }
 
 const std::list<StructBool>& StructArrayInterfaceClient::getPropBool() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_propBoolMutex);
     return m_data.m_propBool;
 }
 
@@ -86,14 +92,20 @@ void StructArrayInterfaceClient::setPropInt(const std::list<StructInt>& propInt)
 
 void StructArrayInterfaceClient::setPropIntLocal(const std::list<StructInt>& propInt)
 {
-    if (m_data.m_propInt != propInt) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_propIntMutex);
+        if (m_data.m_propInt == propInt) {
+            return;
+        }
         m_data.m_propInt = propInt;
-        m_publisher->publishPropIntChanged(propInt);
     }
+
+    m_publisher->publishPropIntChanged(propInt);
 }
 
 const std::list<StructInt>& StructArrayInterfaceClient::getPropInt() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_propIntMutex);
     return m_data.m_propInt;
 }
 
@@ -109,14 +121,20 @@ void StructArrayInterfaceClient::setPropFloat(const std::list<StructFloat>& prop
 
 void StructArrayInterfaceClient::setPropFloatLocal(const std::list<StructFloat>& propFloat)
 {
-    if (m_data.m_propFloat != propFloat) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_propFloatMutex);
+        if (m_data.m_propFloat == propFloat) {
+            return;
+        }
         m_data.m_propFloat = propFloat;
-        m_publisher->publishPropFloatChanged(propFloat);
     }
+
+    m_publisher->publishPropFloatChanged(propFloat);
 }
 
 const std::list<StructFloat>& StructArrayInterfaceClient::getPropFloat() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_propFloatMutex);
     return m_data.m_propFloat;
 }
 
@@ -132,14 +150,20 @@ void StructArrayInterfaceClient::setPropString(const std::list<StructString>& pr
 
 void StructArrayInterfaceClient::setPropStringLocal(const std::list<StructString>& propString)
 {
-    if (m_data.m_propString != propString) {
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_propStringMutex);
+        if (m_data.m_propString == propString) {
+            return;
+        }
         m_data.m_propString = propString;
-        m_publisher->publishPropStringChanged(propString);
     }
+
+    m_publisher->publishPropStringChanged(propString);
 }
 
 const std::list<StructString>& StructArrayInterfaceClient::getPropString() const
 {
+    std::shared_lock<std::shared_timed_mutex> lock(m_propStringMutex);
     return m_data.m_propString;
 }
 
