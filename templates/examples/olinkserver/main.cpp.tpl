@@ -4,6 +4,7 @@
 {{- $interface := . }}
 #include "{{snake $module.Name}}/implementation/{{ lower ( camel $interface.Name) }}.h"
 #include "{{snake $module.Name}}/generated/olink/{{ lower ( camel $interface.Name) }}service.h"
+#include "{{snake $module.Name}}/generated/core/{{ lower ( camel $interface.Name) }}.threadsafedecorator.h"
 {{- end }}
 {{- end }}
 
@@ -56,9 +57,11 @@ int main(){
     {{- $class := Camel $interface.Name }}
     {{- $modulePrefix := lower1 (Camel $module.Name)}}
     {{- $instanceName := printf "%s%s"  $modulePrefix $class }}
+    {{- $instanceNameTS := printf "%sThreadSafeDecorator" $class }}
     {{- $serviceInstanceName := printf "%sOlink%sService" $modulePrefix $class }}
     auto {{$instanceName}} = std::make_shared<{{ Camel $module.Name }}::{{$class}}>();
-    auto {{$serviceInstanceName}} = std::make_shared<{{ Camel $module.Name }}::olink::{{$interface.Name}}Service>({{$instanceName}}, registry);
+    auto {{$instanceName}}ThreadSafe = std::make_shared<{{ Camel $module.Name }}::{{$instanceNameTS}}>({{$instanceName}});
+    auto {{$serviceInstanceName}} = std::make_shared<{{ Camel $module.Name }}::olink::{{$interface.Name}}Service>({{$instanceName}}ThreadSafe, registry);
     registry.addSource({{$serviceInstanceName}});
 {{- end }}
 {{- end }}
