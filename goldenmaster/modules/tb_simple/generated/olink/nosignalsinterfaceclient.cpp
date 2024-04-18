@@ -87,14 +87,7 @@ int NoSignalsInterfaceClient::getPropInt() const
 
 void NoSignalsInterfaceClient::funcVoid()
 {
-    ApiGear::ObjectLink::InvokeReplyFunc func = [this](ApiGear::ObjectLink::InvokeReplyArg arg)
-        {
-            (void) this;
-            (void) arg;
-        };
-    const nlohmann::json &args = nlohmann::json::array({  });
-    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcVoid");
-    m_node->invokeRemote(operationId, args, func);
+    return funcVoidAsync().get();
 }
 
 std::future<void> NoSignalsInterfaceClient::funcVoidAsync()
@@ -115,8 +108,7 @@ std::future<void> NoSignalsInterfaceClient::funcVoidAsync()
 
 bool NoSignalsInterfaceClient::funcBool(bool paramBool)
 {
-    bool value(funcBoolAsync(paramBool).get());
-    return value;
+    return funcBoolAsync(paramBool).get();
 }
 
 std::future<bool> NoSignalsInterfaceClient::funcBoolAsync(bool paramBool)

@@ -58,8 +58,7 @@ Enum1Enum SameEnum1InterfaceClient::getProp1() const
 
 Enum1Enum SameEnum1InterfaceClient::func1(Enum1Enum param1)
 {
-    Enum1Enum value(func1Async(param1).get());
-    return value;
+    return func1Async(param1).get();
 }
 
 std::future<Enum1Enum> SameEnum1InterfaceClient::func1Async(Enum1Enum param1)

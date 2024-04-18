@@ -58,8 +58,7 @@ const NestedStruct1& NestedStruct1InterfaceClient::getProp1() const
 
 NestedStruct1 NestedStruct1InterfaceClient::func1(const NestedStruct1& param1)
 {
-    NestedStruct1 value(func1Async(param1).get());
-    return value;
+    return func1Async(param1).get();
 }
 
 std::future<NestedStruct1> NestedStruct1InterfaceClient::func1Async(const NestedStruct1& param1)

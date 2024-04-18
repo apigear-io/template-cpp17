@@ -261,14 +261,7 @@ const std::string& SimpleInterfaceClient::getPropString() const
 
 void SimpleInterfaceClient::funcNoReturnValue(bool paramBool)
 {
-    ApiGear::ObjectLink::InvokeReplyFunc func = [this](ApiGear::ObjectLink::InvokeReplyArg arg)
-        {
-            (void) this;
-            (void) arg;
-        };
-    const nlohmann::json &args = nlohmann::json::array({ paramBool });
-    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcNoReturnValue");
-    m_node->invokeRemote(operationId, args, func);
+    return funcNoReturnValueAsync(paramBool).get();
 }
 
 std::future<void> SimpleInterfaceClient::funcNoReturnValueAsync(bool paramBool)
@@ -289,8 +282,7 @@ std::future<void> SimpleInterfaceClient::funcNoReturnValueAsync(bool paramBool)
 
 bool SimpleInterfaceClient::funcBool(bool paramBool)
 {
-    bool value(funcBoolAsync(paramBool).get());
-    return value;
+    return funcBoolAsync(paramBool).get();
 }
 
 std::future<bool> SimpleInterfaceClient::funcBoolAsync(bool paramBool)
@@ -311,8 +303,7 @@ std::future<bool> SimpleInterfaceClient::funcBoolAsync(bool paramBool)
 
 int SimpleInterfaceClient::funcInt(int paramInt)
 {
-    int value(funcIntAsync(paramInt).get());
-    return value;
+    return funcIntAsync(paramInt).get();
 }
 
 std::future<int> SimpleInterfaceClient::funcIntAsync(int paramInt)
@@ -333,8 +324,7 @@ std::future<int> SimpleInterfaceClient::funcIntAsync(int paramInt)
 
 int32_t SimpleInterfaceClient::funcInt32(int32_t paramInt32)
 {
-    int32_t value(funcInt32Async(paramInt32).get());
-    return value;
+    return funcInt32Async(paramInt32).get();
 }
 
 std::future<int32_t> SimpleInterfaceClient::funcInt32Async(int32_t paramInt32)
@@ -355,8 +345,7 @@ std::future<int32_t> SimpleInterfaceClient::funcInt32Async(int32_t paramInt32)
 
 int64_t SimpleInterfaceClient::funcInt64(int64_t paramInt64)
 {
-    int64_t value(funcInt64Async(paramInt64).get());
-    return value;
+    return funcInt64Async(paramInt64).get();
 }
 
 std::future<int64_t> SimpleInterfaceClient::funcInt64Async(int64_t paramInt64)
@@ -377,8 +366,7 @@ std::future<int64_t> SimpleInterfaceClient::funcInt64Async(int64_t paramInt64)
 
 float SimpleInterfaceClient::funcFloat(float paramFloat)
 {
-    float value(funcFloatAsync(paramFloat).get());
-    return value;
+    return funcFloatAsync(paramFloat).get();
 }
 
 std::future<float> SimpleInterfaceClient::funcFloatAsync(float paramFloat)
@@ -399,8 +387,7 @@ std::future<float> SimpleInterfaceClient::funcFloatAsync(float paramFloat)
 
 float SimpleInterfaceClient::funcFloat32(float paramFloat32)
 {
-    float value(funcFloat32Async(paramFloat32).get());
-    return value;
+    return funcFloat32Async(paramFloat32).get();
 }
 
 std::future<float> SimpleInterfaceClient::funcFloat32Async(float paramFloat32)
@@ -421,8 +408,7 @@ std::future<float> SimpleInterfaceClient::funcFloat32Async(float paramFloat32)
 
 double SimpleInterfaceClient::funcFloat64(double paramFloat)
 {
-    double value(funcFloat64Async(paramFloat).get());
-    return value;
+    return funcFloat64Async(paramFloat).get();
 }
 
 std::future<double> SimpleInterfaceClient::funcFloat64Async(double paramFloat)
@@ -443,8 +429,7 @@ std::future<double> SimpleInterfaceClient::funcFloat64Async(double paramFloat)
 
 std::string SimpleInterfaceClient::funcString(const std::string& paramString)
 {
-    std::string value(funcStringAsync(paramString).get());
-    return value;
+    return funcStringAsync(paramString).get();
 }
 
 std::future<std::string> SimpleInterfaceClient::funcStringAsync(const std::string& paramString)

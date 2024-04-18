@@ -87,8 +87,7 @@ const Struct2& SameStruct2InterfaceClient::getProp2() const
 
 Struct1 SameStruct2InterfaceClient::func1(const Struct1& param1)
 {
-    Struct1 value(func1Async(param1).get());
-    return value;
+    return func1Async(param1).get();
 }
 
 std::future<Struct1> SameStruct2InterfaceClient::func1Async(const Struct1& param1)
@@ -109,8 +108,7 @@ std::future<Struct1> SameStruct2InterfaceClient::func1Async(const Struct1& param
 
 Struct1 SameStruct2InterfaceClient::func2(const Struct1& param1, const Struct2& param2)
 {
-    Struct1 value(func2Async(param1, param2).get());
-    return value;
+    return func2Async(param1, param2).get();
 }
 
 std::future<Struct1> SameStruct2InterfaceClient::func2Async(const Struct1& param1, const Struct2& param2)

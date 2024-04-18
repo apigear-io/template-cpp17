@@ -89,19 +89,7 @@ void {{$class}}::set{{Camel $name}}Local({{cppParam "" $property }})
 
 {{$returnType}} {{$class}}::{{lower1 $operation.Name}}({{cppParams "" $operation.Params}})
 {
-    {{- if .Return.IsVoid }}
-    ApiGear::ObjectLink::InvokeReplyFunc func = [this](ApiGear::ObjectLink::InvokeReplyArg arg)
-        {
-            (void) this;
-            (void) arg;
-        };
-    const nlohmann::json &args = nlohmann::json::array({ {{ cppVars $operation.Params}} });
-    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "{{$operation.Name}}");
-    m_node->invokeRemote(operationId, args, func);
-    {{- else }}
-    {{$returnType}} value({{lower1 $operation.Name}}Async({{ cppVars $operation.Params }}).get());
-    return value;
-    {{- end }}
+    return {{lower1 $operation.Name}}Async({{ cppVars $operation.Params }}).get();
 }
 
 std::future<{{$returnType}}> {{$class}}::{{$operation.Name| lower1}}Async({{cppParams "" $operation.Params}})

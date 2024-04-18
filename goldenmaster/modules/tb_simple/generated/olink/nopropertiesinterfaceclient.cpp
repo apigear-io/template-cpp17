@@ -33,14 +33,7 @@ void NoPropertiesInterfaceClient::applyProperty(const std::string& propertyName,
 
 void NoPropertiesInterfaceClient::funcVoid()
 {
-    ApiGear::ObjectLink::InvokeReplyFunc func = [this](ApiGear::ObjectLink::InvokeReplyArg arg)
-        {
-            (void) this;
-            (void) arg;
-        };
-    const nlohmann::json &args = nlohmann::json::array({  });
-    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcVoid");
-    m_node->invokeRemote(operationId, args, func);
+    return funcVoidAsync().get();
 }
 
 std::future<void> NoPropertiesInterfaceClient::funcVoidAsync()
@@ -61,8 +54,7 @@ std::future<void> NoPropertiesInterfaceClient::funcVoidAsync()
 
 bool NoPropertiesInterfaceClient::funcBool(bool paramBool)
 {
-    bool value(funcBoolAsync(paramBool).get());
-    return value;
+    return funcBoolAsync(paramBool).get();
 }
 
 std::future<bool> NoPropertiesInterfaceClient::funcBoolAsync(bool paramBool)

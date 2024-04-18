@@ -87,8 +87,7 @@ Enum2Enum SameEnum2InterfaceClient::getProp2() const
 
 Enum1Enum SameEnum2InterfaceClient::func1(Enum1Enum param1)
 {
-    Enum1Enum value(func1Async(param1).get());
-    return value;
+    return func1Async(param1).get();
 }
 
 std::future<Enum1Enum> SameEnum2InterfaceClient::func1Async(Enum1Enum param1)
@@ -109,8 +108,7 @@ std::future<Enum1Enum> SameEnum2InterfaceClient::func1Async(Enum1Enum param1)
 
 Enum1Enum SameEnum2InterfaceClient::func2(Enum1Enum param1, Enum2Enum param2)
 {
-    Enum1Enum value(func2Async(param1, param2).get());
-    return value;
+    return func2Async(param1, param2).get();
 }
 
 std::future<Enum1Enum> SameEnum2InterfaceClient::func2Async(Enum1Enum param1, Enum2Enum param2)

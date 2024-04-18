@@ -33,14 +33,7 @@ void VoidInterfaceClient::applyProperty(const std::string& propertyName, const n
 
 void VoidInterfaceClient::funcVoid()
 {
-    ApiGear::ObjectLink::InvokeReplyFunc func = [this](ApiGear::ObjectLink::InvokeReplyArg arg)
-        {
-            (void) this;
-            (void) arg;
-        };
-    const nlohmann::json &args = nlohmann::json::array({  });
-    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcVoid");
-    m_node->invokeRemote(operationId, args, func);
+    return funcVoidAsync().get();
 }
 
 std::future<void> VoidInterfaceClient::funcVoidAsync()

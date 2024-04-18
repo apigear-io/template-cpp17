@@ -261,8 +261,7 @@ const std::list<std::string>& SimpleArrayInterfaceClient::getPropString() const
 
 std::list<bool> SimpleArrayInterfaceClient::funcBool(const std::list<bool>& paramBool)
 {
-    std::list<bool> value(funcBoolAsync(paramBool).get());
-    return value;
+    return funcBoolAsync(paramBool).get();
 }
 
 std::future<std::list<bool>> SimpleArrayInterfaceClient::funcBoolAsync(const std::list<bool>& paramBool)
@@ -283,8 +282,7 @@ std::future<std::list<bool>> SimpleArrayInterfaceClient::funcBoolAsync(const std
 
 std::list<int> SimpleArrayInterfaceClient::funcInt(const std::list<int>& paramInt)
 {
-    std::list<int> value(funcIntAsync(paramInt).get());
-    return value;
+    return funcIntAsync(paramInt).get();
 }
 
 std::future<std::list<int>> SimpleArrayInterfaceClient::funcIntAsync(const std::list<int>& paramInt)
@@ -305,8 +303,7 @@ std::future<std::list<int>> SimpleArrayInterfaceClient::funcIntAsync(const std::
 
 std::list<int32_t> SimpleArrayInterfaceClient::funcInt32(const std::list<int32_t>& paramInt32)
 {
-    std::list<int32_t> value(funcInt32Async(paramInt32).get());
-    return value;
+    return funcInt32Async(paramInt32).get();
 }
 
 std::future<std::list<int32_t>> SimpleArrayInterfaceClient::funcInt32Async(const std::list<int32_t>& paramInt32)
@@ -327,8 +324,7 @@ std::future<std::list<int32_t>> SimpleArrayInterfaceClient::funcInt32Async(const
 
 std::list<int64_t> SimpleArrayInterfaceClient::funcInt64(const std::list<int64_t>& paramInt64)
 {
-    std::list<int64_t> value(funcInt64Async(paramInt64).get());
-    return value;
+    return funcInt64Async(paramInt64).get();
 }
 
 std::future<std::list<int64_t>> SimpleArrayInterfaceClient::funcInt64Async(const std::list<int64_t>& paramInt64)
@@ -349,8 +345,7 @@ std::future<std::list<int64_t>> SimpleArrayInterfaceClient::funcInt64Async(const
 
 std::list<float> SimpleArrayInterfaceClient::funcFloat(const std::list<float>& paramFloat)
 {
-    std::list<float> value(funcFloatAsync(paramFloat).get());
-    return value;
+    return funcFloatAsync(paramFloat).get();
 }
 
 std::future<std::list<float>> SimpleArrayInterfaceClient::funcFloatAsync(const std::list<float>& paramFloat)
@@ -371,8 +366,7 @@ std::future<std::list<float>> SimpleArrayInterfaceClient::funcFloatAsync(const s
 
 std::list<float> SimpleArrayInterfaceClient::funcFloat32(const std::list<float>& paramFloat32)
 {
-    std::list<float> value(funcFloat32Async(paramFloat32).get());
-    return value;
+    return funcFloat32Async(paramFloat32).get();
 }
 
 std::future<std::list<float>> SimpleArrayInterfaceClient::funcFloat32Async(const std::list<float>& paramFloat32)
@@ -393,8 +387,7 @@ std::future<std::list<float>> SimpleArrayInterfaceClient::funcFloat32Async(const
 
 std::list<double> SimpleArrayInterfaceClient::funcFloat64(const std::list<double>& paramFloat)
 {
-    std::list<double> value(funcFloat64Async(paramFloat).get());
-    return value;
+    return funcFloat64Async(paramFloat).get();
 }
 
 std::future<std::list<double>> SimpleArrayInterfaceClient::funcFloat64Async(const std::list<double>& paramFloat)
@@ -415,8 +408,7 @@ std::future<std::list<double>> SimpleArrayInterfaceClient::funcFloat64Async(cons
 
 std::list<std::string> SimpleArrayInterfaceClient::funcString(const std::list<std::string>& paramString)
 {
-    std::list<std::string> value(funcStringAsync(paramString).get());
-    return value;
+    return funcStringAsync(paramString).get();
 }
 
 std::future<std::list<std::string>> SimpleArrayInterfaceClient::funcStringAsync(const std::list<std::string>& paramString)

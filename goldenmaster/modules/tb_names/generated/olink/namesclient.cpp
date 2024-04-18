@@ -116,14 +116,7 @@ int Nam_EsClient::getSomePoperty2() const
 
 void Nam_EsClient::sOME_FUNCTION(bool SOME_PARAM)
 {
-    ApiGear::ObjectLink::InvokeReplyFunc func = [this](ApiGear::ObjectLink::InvokeReplyArg arg)
-        {
-            (void) this;
-            (void) arg;
-        };
-    const nlohmann::json &args = nlohmann::json::array({ SOME_PARAM });
-    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "SOME_FUNCTION");
-    m_node->invokeRemote(operationId, args, func);
+    return sOME_FUNCTIONAsync(SOME_PARAM).get();
 }
 
 std::future<void> Nam_EsClient::sOME_FUNCTIONAsync(bool SOME_PARAM)
@@ -144,14 +137,7 @@ std::future<void> Nam_EsClient::sOME_FUNCTIONAsync(bool SOME_PARAM)
 
 void Nam_EsClient::some_Function2(bool Some_Param)
 {
-    ApiGear::ObjectLink::InvokeReplyFunc func = [this](ApiGear::ObjectLink::InvokeReplyArg arg)
-        {
-            (void) this;
-            (void) arg;
-        };
-    const nlohmann::json &args = nlohmann::json::array({ Some_Param });
-    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "Some_Function2");
-    m_node->invokeRemote(operationId, args, func);
+    return some_Function2Async(Some_Param).get();
 }
 
 std::future<void> Nam_EsClient::some_Function2Async(bool Some_Param)

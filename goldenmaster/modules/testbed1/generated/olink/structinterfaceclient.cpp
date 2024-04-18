@@ -145,8 +145,7 @@ const StructString& StructInterfaceClient::getPropString() const
 
 StructBool StructInterfaceClient::funcBool(const StructBool& paramBool)
 {
-    StructBool value(funcBoolAsync(paramBool).get());
-    return value;
+    return funcBoolAsync(paramBool).get();
 }
 
 std::future<StructBool> StructInterfaceClient::funcBoolAsync(const StructBool& paramBool)
@@ -167,8 +166,7 @@ std::future<StructBool> StructInterfaceClient::funcBoolAsync(const StructBool& p
 
 StructBool StructInterfaceClient::funcInt(const StructInt& paramInt)
 {
-    StructBool value(funcIntAsync(paramInt).get());
-    return value;
+    return funcIntAsync(paramInt).get();
 }
 
 std::future<StructBool> StructInterfaceClient::funcIntAsync(const StructInt& paramInt)
@@ -189,8 +187,7 @@ std::future<StructBool> StructInterfaceClient::funcIntAsync(const StructInt& par
 
 StructFloat StructInterfaceClient::funcFloat(const StructFloat& paramFloat)
 {
-    StructFloat value(funcFloatAsync(paramFloat).get());
-    return value;
+    return funcFloatAsync(paramFloat).get();
 }
 
 std::future<StructFloat> StructInterfaceClient::funcFloatAsync(const StructFloat& paramFloat)
@@ -211,8 +208,7 @@ std::future<StructFloat> StructInterfaceClient::funcFloatAsync(const StructFloat
 
 StructString StructInterfaceClient::funcString(const StructString& paramString)
 {
-    StructString value(funcStringAsync(paramString).get());
-    return value;
+    return funcStringAsync(paramString).get();
 }
 
 std::future<StructString> StructInterfaceClient::funcStringAsync(const StructString& paramString)

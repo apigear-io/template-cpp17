@@ -145,8 +145,7 @@ Enum3Enum EnumInterfaceClient::getProp3() const
 
 Enum0Enum EnumInterfaceClient::func0(Enum0Enum param0)
 {
-    Enum0Enum value(func0Async(param0).get());
-    return value;
+    return func0Async(param0).get();
 }
 
 std::future<Enum0Enum> EnumInterfaceClient::func0Async(Enum0Enum param0)
@@ -167,8 +166,7 @@ std::future<Enum0Enum> EnumInterfaceClient::func0Async(Enum0Enum param0)
 
 Enum1Enum EnumInterfaceClient::func1(Enum1Enum param1)
 {
-    Enum1Enum value(func1Async(param1).get());
-    return value;
+    return func1Async(param1).get();
 }
 
 std::future<Enum1Enum> EnumInterfaceClient::func1Async(Enum1Enum param1)
@@ -189,8 +187,7 @@ std::future<Enum1Enum> EnumInterfaceClient::func1Async(Enum1Enum param1)
 
 Enum2Enum EnumInterfaceClient::func2(Enum2Enum param2)
 {
-    Enum2Enum value(func2Async(param2).get());
-    return value;
+    return func2Async(param2).get();
 }
 
 std::future<Enum2Enum> EnumInterfaceClient::func2Async(Enum2Enum param2)
@@ -211,8 +208,7 @@ std::future<Enum2Enum> EnumInterfaceClient::func2Async(Enum2Enum param2)
 
 Enum3Enum EnumInterfaceClient::func3(Enum3Enum param3)
 {
-    Enum3Enum value(func3Async(param3).get());
-    return value;
+    return func3Async(param3).get();
 }
 
 std::future<Enum3Enum> EnumInterfaceClient::func3Async(Enum3Enum param3)
