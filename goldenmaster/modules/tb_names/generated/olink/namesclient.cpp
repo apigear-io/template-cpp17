@@ -116,10 +116,6 @@ int Nam_EsClient::getSomePoperty2() const
 
 void Nam_EsClient::sOME_FUNCTION(bool SOME_PARAM)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return;
-    }
     ApiGear::ObjectLink::InvokeReplyFunc func = [this](ApiGear::ObjectLink::InvokeReplyArg arg)
         {
             (void) this;
@@ -148,10 +144,6 @@ std::future<void> Nam_EsClient::sOME_FUNCTIONAsync(bool SOME_PARAM)
 
 void Nam_EsClient::some_Function2(bool Some_Param)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return;
-    }
     ApiGear::ObjectLink::InvokeReplyFunc func = [this](ApiGear::ObjectLink::InvokeReplyArg arg)
         {
             (void) this;

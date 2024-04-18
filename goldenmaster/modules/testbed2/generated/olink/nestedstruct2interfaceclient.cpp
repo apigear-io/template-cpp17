@@ -87,10 +87,6 @@ const NestedStruct2& NestedStruct2InterfaceClient::getProp2() const
 
 NestedStruct1 NestedStruct2InterfaceClient::func1(const NestedStruct1& param1)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return NestedStruct1();
-    }
     NestedStruct1 value(func1Async(param1).get());
     return value;
 }
@@ -113,10 +109,6 @@ std::future<NestedStruct1> NestedStruct2InterfaceClient::func1Async(const Nested
 
 NestedStruct1 NestedStruct2InterfaceClient::func2(const NestedStruct1& param1, const NestedStruct2& param2)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return NestedStruct1();
-    }
     NestedStruct1 value(func2Async(param1, param2).get());
     return value;
 }

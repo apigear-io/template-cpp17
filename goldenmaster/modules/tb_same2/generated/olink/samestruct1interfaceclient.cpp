@@ -58,10 +58,6 @@ const Struct1& SameStruct1InterfaceClient::getProp1() const
 
 Struct1 SameStruct1InterfaceClient::func1(const Struct1& param1)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return Struct1();
-    }
     Struct1 value(func1Async(param1).get());
     return value;
 }

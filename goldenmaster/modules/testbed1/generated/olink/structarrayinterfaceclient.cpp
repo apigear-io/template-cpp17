@@ -145,10 +145,6 @@ const std::list<StructString>& StructArrayInterfaceClient::getPropString() const
 
 StructBool StructArrayInterfaceClient::funcBool(const std::list<StructBool>& paramBool)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return StructBool();
-    }
     StructBool value(funcBoolAsync(paramBool).get());
     return value;
 }
@@ -171,10 +167,6 @@ std::future<StructBool> StructArrayInterfaceClient::funcBoolAsync(const std::lis
 
 StructBool StructArrayInterfaceClient::funcInt(const std::list<StructInt>& paramInt)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return StructBool();
-    }
     StructBool value(funcIntAsync(paramInt).get());
     return value;
 }
@@ -197,10 +189,6 @@ std::future<StructBool> StructArrayInterfaceClient::funcIntAsync(const std::list
 
 StructBool StructArrayInterfaceClient::funcFloat(const std::list<StructFloat>& paramFloat)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return StructBool();
-    }
     StructBool value(funcFloatAsync(paramFloat).get());
     return value;
 }
@@ -223,10 +211,6 @@ std::future<StructBool> StructArrayInterfaceClient::funcFloatAsync(const std::li
 
 StructBool StructArrayInterfaceClient::funcString(const std::list<StructString>& paramString)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return StructBool();
-    }
     StructBool value(funcStringAsync(paramString).get());
     return value;
 }

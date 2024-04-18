@@ -87,10 +87,6 @@ const Struct2& SameStruct2InterfaceClient::getProp2() const
 
 Struct1 SameStruct2InterfaceClient::func1(const Struct1& param1)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return Struct1();
-    }
     Struct1 value(func1Async(param1).get());
     return value;
 }
@@ -113,10 +109,6 @@ std::future<Struct1> SameStruct2InterfaceClient::func1Async(const Struct1& param
 
 Struct1 SameStruct2InterfaceClient::func2(const Struct1& param1, const Struct2& param2)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return Struct1();
-    }
     Struct1 value(func2Async(param1, param2).get());
     return value;
 }

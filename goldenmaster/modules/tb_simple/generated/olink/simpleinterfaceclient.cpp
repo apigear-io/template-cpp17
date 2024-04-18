@@ -261,10 +261,6 @@ const std::string& SimpleInterfaceClient::getPropString() const
 
 void SimpleInterfaceClient::funcNoReturnValue(bool paramBool)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return;
-    }
     ApiGear::ObjectLink::InvokeReplyFunc func = [this](ApiGear::ObjectLink::InvokeReplyArg arg)
         {
             (void) this;
@@ -293,10 +289,6 @@ std::future<void> SimpleInterfaceClient::funcNoReturnValueAsync(bool paramBool)
 
 bool SimpleInterfaceClient::funcBool(bool paramBool)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return false;
-    }
     bool value(funcBoolAsync(paramBool).get());
     return value;
 }
@@ -319,10 +311,6 @@ std::future<bool> SimpleInterfaceClient::funcBoolAsync(bool paramBool)
 
 int SimpleInterfaceClient::funcInt(int paramInt)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return 0;
-    }
     int value(funcIntAsync(paramInt).get());
     return value;
 }
@@ -345,10 +333,6 @@ std::future<int> SimpleInterfaceClient::funcIntAsync(int paramInt)
 
 int32_t SimpleInterfaceClient::funcInt32(int32_t paramInt32)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return 0;
-    }
     int32_t value(funcInt32Async(paramInt32).get());
     return value;
 }
@@ -371,10 +355,6 @@ std::future<int32_t> SimpleInterfaceClient::funcInt32Async(int32_t paramInt32)
 
 int64_t SimpleInterfaceClient::funcInt64(int64_t paramInt64)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return 0LL;
-    }
     int64_t value(funcInt64Async(paramInt64).get());
     return value;
 }
@@ -397,10 +377,6 @@ std::future<int64_t> SimpleInterfaceClient::funcInt64Async(int64_t paramInt64)
 
 float SimpleInterfaceClient::funcFloat(float paramFloat)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return 0.0f;
-    }
     float value(funcFloatAsync(paramFloat).get());
     return value;
 }
@@ -423,10 +399,6 @@ std::future<float> SimpleInterfaceClient::funcFloatAsync(float paramFloat)
 
 float SimpleInterfaceClient::funcFloat32(float paramFloat32)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return 0.0f;
-    }
     float value(funcFloat32Async(paramFloat32).get());
     return value;
 }
@@ -449,10 +421,6 @@ std::future<float> SimpleInterfaceClient::funcFloat32Async(float paramFloat32)
 
 double SimpleInterfaceClient::funcFloat64(double paramFloat)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return 0.0;
-    }
     double value(funcFloat64Async(paramFloat).get());
     return value;
 }
@@ -475,10 +443,6 @@ std::future<double> SimpleInterfaceClient::funcFloat64Async(double paramFloat)
 
 std::string SimpleInterfaceClient::funcString(const std::string& paramString)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return std::string();
-    }
     std::string value(funcStringAsync(paramString).get());
     return value;
 }

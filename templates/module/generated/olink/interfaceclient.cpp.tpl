@@ -89,14 +89,6 @@ void {{$class}}::set{{Camel $name}}Local({{cppParam "" $property }})
 
 {{$returnType}} {{$class}}::{{lower1 $operation.Name}}({{cppParams "" $operation.Params}})
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        {{- if not .Return.IsVoid }}
-        return {{cppDefault "" $operation.Return}};
-        {{- else }}
-        return;
-        {{- end }}
-    }
     {{- if .Return.IsVoid }}
     ApiGear::ObjectLink::InvokeReplyFunc func = [this](ApiGear::ObjectLink::InvokeReplyArg arg)
         {

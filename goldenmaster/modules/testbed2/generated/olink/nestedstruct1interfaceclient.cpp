@@ -58,10 +58,6 @@ const NestedStruct1& NestedStruct1InterfaceClient::getProp1() const
 
 NestedStruct1 NestedStruct1InterfaceClient::func1(const NestedStruct1& param1)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return NestedStruct1();
-    }
     NestedStruct1 value(func1Async(param1).get());
     return value;
 }

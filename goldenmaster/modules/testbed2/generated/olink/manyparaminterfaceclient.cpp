@@ -145,10 +145,6 @@ int ManyParamInterfaceClient::getProp4() const
 
 int ManyParamInterfaceClient::func1(int param1)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return 0;
-    }
     int value(func1Async(param1).get());
     return value;
 }
@@ -171,10 +167,6 @@ std::future<int> ManyParamInterfaceClient::func1Async(int param1)
 
 int ManyParamInterfaceClient::func2(int param1, int param2)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return 0;
-    }
     int value(func2Async(param1, param2).get());
     return value;
 }
@@ -197,10 +189,6 @@ std::future<int> ManyParamInterfaceClient::func2Async(int param1, int param2)
 
 int ManyParamInterfaceClient::func3(int param1, int param2, int param3)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return 0;
-    }
     int value(func3Async(param1, param2, param3).get());
     return value;
 }
@@ -223,10 +211,6 @@ std::future<int> ManyParamInterfaceClient::func3Async(int param1, int param2, in
 
 int ManyParamInterfaceClient::func4(int param1, int param2, int param3, int param4)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return 0;
-    }
     int value(func4Async(param1, param2, param3, param4).get());
     return value;
 }

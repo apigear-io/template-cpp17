@@ -33,10 +33,6 @@ void NoPropertiesInterfaceClient::applyProperty(const std::string& propertyName,
 
 void NoPropertiesInterfaceClient::funcVoid()
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return;
-    }
     ApiGear::ObjectLink::InvokeReplyFunc func = [this](ApiGear::ObjectLink::InvokeReplyArg arg)
         {
             (void) this;
@@ -65,10 +61,6 @@ std::future<void> NoPropertiesInterfaceClient::funcVoidAsync()
 
 bool NoPropertiesInterfaceClient::funcBool(bool paramBool)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return false;
-    }
     bool value(funcBoolAsync(paramBool).get());
     return value;
 }

@@ -87,10 +87,6 @@ Enum2Enum SameEnum2InterfaceClient::getProp2() const
 
 Enum1Enum SameEnum2InterfaceClient::func1(Enum1Enum param1)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return Enum1Enum::value1;
-    }
     Enum1Enum value(func1Async(param1).get());
     return value;
 }
@@ -113,10 +109,6 @@ std::future<Enum1Enum> SameEnum2InterfaceClient::func1Async(Enum1Enum param1)
 
 Enum1Enum SameEnum2InterfaceClient::func2(Enum1Enum param1, Enum2Enum param2)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return Enum1Enum::value1;
-    }
     Enum1Enum value(func2Async(param1, param2).get());
     return value;
 }

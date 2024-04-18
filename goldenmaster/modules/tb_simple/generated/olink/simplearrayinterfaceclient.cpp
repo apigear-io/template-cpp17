@@ -261,10 +261,6 @@ const std::list<std::string>& SimpleArrayInterfaceClient::getPropString() const
 
 std::list<bool> SimpleArrayInterfaceClient::funcBool(const std::list<bool>& paramBool)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return std::list<bool>();
-    }
     std::list<bool> value(funcBoolAsync(paramBool).get());
     return value;
 }
@@ -287,10 +283,6 @@ std::future<std::list<bool>> SimpleArrayInterfaceClient::funcBoolAsync(const std
 
 std::list<int> SimpleArrayInterfaceClient::funcInt(const std::list<int>& paramInt)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return std::list<int>();
-    }
     std::list<int> value(funcIntAsync(paramInt).get());
     return value;
 }
@@ -313,10 +305,6 @@ std::future<std::list<int>> SimpleArrayInterfaceClient::funcIntAsync(const std::
 
 std::list<int32_t> SimpleArrayInterfaceClient::funcInt32(const std::list<int32_t>& paramInt32)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return std::list<int32_t>();
-    }
     std::list<int32_t> value(funcInt32Async(paramInt32).get());
     return value;
 }
@@ -339,10 +327,6 @@ std::future<std::list<int32_t>> SimpleArrayInterfaceClient::funcInt32Async(const
 
 std::list<int64_t> SimpleArrayInterfaceClient::funcInt64(const std::list<int64_t>& paramInt64)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return std::list<int64_t>();
-    }
     std::list<int64_t> value(funcInt64Async(paramInt64).get());
     return value;
 }
@@ -365,10 +349,6 @@ std::future<std::list<int64_t>> SimpleArrayInterfaceClient::funcInt64Async(const
 
 std::list<float> SimpleArrayInterfaceClient::funcFloat(const std::list<float>& paramFloat)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return std::list<float>();
-    }
     std::list<float> value(funcFloatAsync(paramFloat).get());
     return value;
 }
@@ -391,10 +371,6 @@ std::future<std::list<float>> SimpleArrayInterfaceClient::funcFloatAsync(const s
 
 std::list<float> SimpleArrayInterfaceClient::funcFloat32(const std::list<float>& paramFloat32)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return std::list<float>();
-    }
     std::list<float> value(funcFloat32Async(paramFloat32).get());
     return value;
 }
@@ -417,10 +393,6 @@ std::future<std::list<float>> SimpleArrayInterfaceClient::funcFloat32Async(const
 
 std::list<double> SimpleArrayInterfaceClient::funcFloat64(const std::list<double>& paramFloat)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return std::list<double>();
-    }
     std::list<double> value(funcFloat64Async(paramFloat).get());
     return value;
 }
@@ -443,10 +415,6 @@ std::future<std::list<double>> SimpleArrayInterfaceClient::funcFloat64Async(cons
 
 std::list<std::string> SimpleArrayInterfaceClient::funcString(const std::list<std::string>& paramString)
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return std::list<std::string>();
-    }
     std::list<std::string> value(funcStringAsync(paramString).get());
     return value;
 }

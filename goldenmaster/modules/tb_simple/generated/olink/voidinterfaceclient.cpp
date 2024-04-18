@@ -33,10 +33,6 @@ void VoidInterfaceClient::applyProperty(const std::string& propertyName, const n
 
 void VoidInterfaceClient::funcVoid()
 {
-     if(!m_node) {
-        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
-        return;
-    }
     ApiGear::ObjectLink::InvokeReplyFunc func = [this](ApiGear::ObjectLink::InvokeReplyArg arg)
         {
             (void) this;
