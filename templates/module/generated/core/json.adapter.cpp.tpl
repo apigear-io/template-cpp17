@@ -25,6 +25,13 @@ void to_json(nlohmann::json& j, const {{$class}}& p) {
 {{- end }}
         };
 }
+
+std::ostream& operator<<(std::ostream& os, const {{$class}}& obj)
+{
+    nlohmann::json j = obj;
+    os << j.dump(4);
+    return os;
+}
 {{- end }}
 } // namespace {{ Camel .Module.Name }}
 } // namespace {{ Camel .System.Name }}

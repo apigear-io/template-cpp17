@@ -25,6 +25,16 @@ void TEST_TB_SAME2_EXPORT from_json(const nlohmann::json& j, Struct1& p);
 ' from which json data will be filled
 */
 void TEST_TB_SAME2_EXPORT to_json(nlohmann::json& j, const Struct1& p);
+
+/**
+ * @brief Overloads the << operator to allow printing of Struct1 objects to an output stream.
+ * 
+ * @param os The output stream to write to.
+ * @param obj The Struct1 object to be printed.
+ * @return std::ostream& The modified output stream.
+ */
+TEST_TB_SAME2_EXPORT std::ostream& operator<<(std::ostream& os, const Struct1& obj);
+
 /** Function that converts json formated data into Struct2.
 * The functions signature must follow the nlohmann from_jason function rules.
 * It is automatically called in usage j.get<class>();
@@ -41,5 +51,15 @@ void TEST_TB_SAME2_EXPORT from_json(const nlohmann::json& j, Struct2& p);
 ' from which json data will be filled
 */
 void TEST_TB_SAME2_EXPORT to_json(nlohmann::json& j, const Struct2& p);
+
+/**
+ * @brief Overloads the << operator to allow printing of Struct2 objects to an output stream.
+ * 
+ * @param os The output stream to write to.
+ * @param obj The Struct2 object to be printed.
+ * @return std::ostream& The modified output stream.
+ */
+TEST_TB_SAME2_EXPORT std::ostream& operator<<(std::ostream& os, const Struct2& obj);
+
 } // namespace TbSame2
 } // namespace Test

@@ -29,6 +29,16 @@ void {{ SNAKE $system.Name  }}_{{ SNAKE $module.Name  }}_EXPORT from_json(const 
 ' from which json data will be filled
 */
 void {{ SNAKE $system.Name  }}_{{ SNAKE $module.Name  }}_EXPORT to_json(nlohmann::json& j, const {{$class}}& p);
+
+/**
+ * @brief Overloads the << operator to allow printing of {{$class}} objects to an output stream.
+ * 
+ * @param os The output stream to write to.
+ * @param obj The {{$class}} object to be printed.
+ * @return std::ostream& The modified output stream.
+ */
+{{ SNAKE $system.Name  }}_{{ SNAKE $module.Name  }}_EXPORT std::ostream& operator<<(std::ostream& os, const {{$class}}& obj);
+{{- nl}}
 {{- end }}
 } // namespace {{ Camel .Module.Name }}
 } // namespace {{ Camel .System.Name }}

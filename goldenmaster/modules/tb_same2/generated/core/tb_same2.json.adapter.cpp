@@ -16,6 +16,13 @@ void to_json(nlohmann::json& j, const Struct1& p) {
         {"field3", p.field3}
         };
 }
+
+std::ostream& operator<<(std::ostream& os, const Struct1& obj)
+{
+    nlohmann::json j = obj;
+    os << j.dump(4);
+    return os;
+}
 void from_json(const nlohmann::json& j, Struct2& p) {
     p = Struct2(
         j.at("field1").get<int>(),
@@ -29,6 +36,13 @@ void to_json(nlohmann::json& j, const Struct2& p) {
         {"field2", p.field2},
         {"field3", p.field3}
         };
+}
+
+std::ostream& operator<<(std::ostream& os, const Struct2& obj)
+{
+    nlohmann::json j = obj;
+    os << j.dump(4);
+    return os;
 }
 } // namespace TbSame2
 } // namespace Test
