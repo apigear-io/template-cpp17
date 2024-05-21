@@ -14,7 +14,9 @@ set (SOURCES_TEST
 add_executable(test_{{$module_id}}
     ${SOURCES_TEST}
 )
+{{- if ( len .Module.Interfaces ) }}
 target_link_libraries(test_{{$module_id}} {{$module_id}}::{{$module_id}}-implementation)
+{{- end }}
 add_test(NAME test_{{$module_id}} COMMAND $<TARGET_FILE:test_{{$module_id}}>)
 # ensure maximum compiler support
 if(NOT MSVC)

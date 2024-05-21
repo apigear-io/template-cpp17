@@ -25,15 +25,19 @@ endif()
 
 find_package(apigear REQUIRED COMPONENTS utilities)
 {{- range .System.Modules }}
+{{- $module := . }}
 {{- $module_id := snake .Name }}
-find_package({{$module_id}} REQUIRED COMPONENTS {{$module_id}}-core {{$module_id}}-implementation {{$module_id}}-olink)
+find_package({{$module_id}} REQUIRED COMPONENTS {{$module_id}}-core {{- if ( len $module.Interfaces ) }} {{$module_id}}-implementation {{$module_id}}-olink{{ end }})
 {{- end }}
 target_link_libraries(OLinkServer
 {{- range .System.Modules }}
+{{- $module := . }}
 {{- $module_id := snake .Name }}
     {{$module_id}}::{{$module_id}}-core
+    {{- if ( len $module.Interfaces ) }}
     {{$module_id}}::{{$module_id}}-implementation
     {{$module_id}}::{{$module_id}}-olink
+    {{- end }}
 {{- end }}
 )
 

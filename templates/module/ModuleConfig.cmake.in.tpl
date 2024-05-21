@@ -26,24 +26,26 @@ INCLUDE("${CMAKE_CURRENT_LIST_DIR}/{{$module_idFirstUpper}}ApiTargets.cmake")
 {{- if $features.core }}
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/{{$module_idFirstUpper}}CoreTargets.cmake")
 {{- end}}
-{{- if $features.monitor }}
+{{- if and $features.monitor ( len .Module.Interfaces ) }}
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/{{$module_idFirstUpper}}MonitorTargets.cmake")
 {{- end}}
-{{- if $features.olink }}
+{{- if and $features.olink ( len .Module.Interfaces ) }}
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/{{$module_idFirstUpper}}OLinkTargets.cmake")
 {{- end}}
-{{- if $features.mqtt }}
+{{- if and $features.mqtt ( len .Module.Interfaces ) }}
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/{{$module_idFirstUpper}}MqttTargets.cmake")
 {{- end}}
-{{- if $features.stubs }}
+{{- if and $features.stubs ( len .Module.Interfaces ) }}
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/{{$module_idFirstUpper}}ImplementationTargets.cmake")
 {{- end}}
 
 check_required_components(
 {{$module_idCamel}}-api
 {{if $features.core }}{{$module_idCamel}}-core {{- end}}
+{{- if ( len .Module.Interfaces ) }}
 {{if $features.monitor }}{{$module_idCamel}}-monitor {{- end}}
 {{if $features.olink }}{{$module_idCamel}}-olink {{- end}}
 {{if $features.mqtt }}{{$module_idCamel}}-mqtt {{- end}}
 {{if $features.stubs }}{{$module_idCamel}}-implementation {{- end}}
+{{- end }}
 )

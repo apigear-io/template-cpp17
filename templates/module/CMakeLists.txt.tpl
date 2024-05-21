@@ -26,16 +26,16 @@ add_subdirectory(generated/api)
 {{- if $features.core }}
 add_subdirectory(generated/core)
 {{- end}}
-{{- if $features.stubs }}
+{{- if and $features.stubs ( len .Module.Interfaces ) }}
 add_subdirectory(implementation)
 {{- end}}
-{{- if $features.monitor }}
+{{- if and $features.monitor ( len .Module.Interfaces ) }}
 add_subdirectory(generated/monitor)
 {{- end}}
-{{- if $features.olink }}
+{{- if and $features.olink ( len .Module.Interfaces ) }}
 add_subdirectory(generated/olink)
 {{- end}}
-{{- if $features.mqtt }}
+{{- if and $features.mqtt ( len .Module.Interfaces ) }}
 add_subdirectory(generated/mqtt)
 {{- end}}
 

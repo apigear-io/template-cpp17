@@ -16,16 +16,20 @@ add_executable(MQTTServer
 
 find_package(apigear REQUIRED COMPONENTS utilities)
 {{- range .System.Modules }}
+{{- $module := . }}
 {{- $module_id := snake .Name }}
-find_package({{$module_id}} REQUIRED COMPONENTS {{$module_id}}-core {{$module_id}}-implementation {{$module_id}}-mqtt)
+find_package({{$module_id}} REQUIRED COMPONENTS {{$module_id}}-core {{- if ( len $module.Interfaces ) }} {{$module_id}}-implementation {{$module_id}}-mqtt{{ end }})
 {{- end }}
 target_link_libraries(MQTTServer
     apigear::utilities
 {{- range .System.Modules }}
+{{- $module := . }}
 {{- $module_id := snake .Name }}
     {{$module_id}}::{{$module_id}}-core
+    {{- if ( len $module.Interfaces ) }}
     {{$module_id}}::{{$module_id}}-implementation
     {{$module_id}}::{{$module_id}}-mqtt
+    {{- end }}
 {{- end }}
 )
 

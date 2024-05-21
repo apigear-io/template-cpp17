@@ -26,13 +26,13 @@ class {{$module_id}}Conan(ConanFile):
         "build_testing": True,
         "shared": True,
         "fPIC": False,
-        {{- if $features.monitor }}
+        {{- if and $features.monitor ( len .Module.Interfaces ) }}
         "apigear/*:enable_monitor": True,
         {{- end}}
-        {{- if $features.olink }}
+        {{- if and $features.olink ( len .Module.Interfaces ) }}
         "apigear/*:enable_olink": True,
         {{- end}}
-        {{- if $features.mqtt }}
+        {{- if and $features.mqtt ( len .Module.Interfaces ) }}
         "apigear/*:enable_mqtt": True,
         {{- end}}
     }
@@ -47,7 +47,7 @@ class {{$module_id}}Conan(ConanFile):
 
     def requirements(self):
         self.requires("nlohmann_json/3.9.1", transitive_headers=True)
-        {{ if $features.apigear }}
+        {{ if and $features.apigear ( len .Module.Interfaces ) }}
         self.requires("apigear/3.6.0", transitive_headers=True)
         {{- end}}
 
@@ -119,22 +119,22 @@ class {{$module_id}}Conan(ConanFile):
         self.cpp_info.components["{{$module_id}}-core"].requires = ["nlohmann_json::nlohmann_json"]
         {{- end }}
         {{- end}}
-        {{- if $features.stubs }}
+        {{- if and $features.stubs ( len .Module.Interfaces ) }}
         self.cpp_info.components["{{$module_id}}-implementation"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["{{$module_id}}-implementation"].libs = ["{{$module_id}}-implementation"]
         self.cpp_info.components["{{$module_id}}-implementation"].requires = ["{{$module_id}}-core", "nlohmann_json::nlohmann_json"]
         {{- end}}
-        {{- if .Features.monitor }}
+        {{- if and .Features.monitor ( len .Module.Interfaces ) }}
         self.cpp_info.components["{{$module_id}}-monitor"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["{{$module_id}}-monitor"].libs = ["{{$module_id}}-monitor"]
         self.cpp_info.components["{{$module_id}}-monitor"].requires = ["{{$module_id}}-core", "nlohmann_json::nlohmann_json", "apigear::poco-tracer"]
         {{- end}}
-        {{- if $features.olink }}
+        {{- if and $features.olink ( len .Module.Interfaces ) }}
         self.cpp_info.components["{{$module_id}}-olink"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["{{$module_id}}-olink"].libs = ["{{$module_id}}-olink"]
         self.cpp_info.components["{{$module_id}}-olink"].requires = ["{{$module_id}}-core", "nlohmann_json::nlohmann_json", "apigear::poco-olink"]
         {{- end}}
-        {{- if $features.mqtt }}
+        {{- if and $features.mqtt ( len .Module.Interfaces ) }}
         self.cpp_info.components["{{$module_id}}-mqtt"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["{{$module_id}}-mqtt"].libs = ["{{$module_id}}-mqtt"]
         self.cpp_info.components["{{$module_id}}-mqtt"].requires = ["{{$module_id}}-core", "nlohmann_json::nlohmann_json", "apigear::paho-mqtt"]

@@ -30,20 +30,24 @@ find_package(apigear REQUIRED COMPONENTS poco-tracer)
 {{- end }}
 {{- $features := .Features}}
 {{- range .System.Modules }}
+{{- $module := . }}
 {{- $module_id := snake .Name }}
-find_package({{$module_id}} REQUIRED COMPONENTS {{$module_id}}-core {{$module_id}}-implementation 
-{{- if $features.monitor }} {{$module_id}}-monitor {{- end }} {{$module_id}}-olink)
+find_package({{$module_id}} REQUIRED COMPONENTS {{$module_id}}-core {{- if ( len $module.Interfaces ) }} {{$module_id}}-implementation 
+{{- if $features.monitor }} {{$module_id}}-monitor {{- end }} {{$module_id}}-olink{{ end }})
 {{- end }}
 target_link_libraries(OLinkClient
 {{- if $features.monitor }}
     apigear::poco-tracer
 {{- end }}
 {{- range .System.Modules }}
+{{- $module := . }}
 {{- $module_id := snake .Name }}
+    {{- if ( len $module.Interfaces ) }}
     {{$module_id}}::{{$module_id}}-core
     {{$module_id}}::{{$module_id}}-implementation
 {{ if $features.monitor }}    {{$module_id}}::{{$module_id}}-monitor {{- end }}
     {{$module_id}}::{{$module_id}}-olink
+    {{- end }}
 {{- end }}
 )
 

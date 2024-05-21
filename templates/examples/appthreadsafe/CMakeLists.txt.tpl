@@ -23,14 +23,18 @@ endif()
 {{- nl }}
 
 {{- range .System.Modules }}
+{{- $module := . }}
 {{- $module_id := snake .Name }}
-find_package({{$module_id}} REQUIRED COMPONENTS {{$module_id}}-core {{$module_id}}-implementation)
+find_package({{$module_id}} REQUIRED COMPONENTS {{$module_id}}-core {{- if ( len $module.Interfaces ) }} {{$module_id}}-implementation{{ end }})
 {{- end }}
 target_link_libraries(appthreadsafe
 {{- range .System.Modules }}
+{{- $module := . }}
 {{- $module_id := snake .Name }}
+    {{- if ( len $module.Interfaces ) }}
     {{$module_id}}::{{$module_id}}-core
     {{$module_id}}::{{$module_id}}-implementation
+    {{- end }}
 {{- end }}
 )
 

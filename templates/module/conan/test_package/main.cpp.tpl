@@ -4,7 +4,10 @@
 #include "{{$module_id}}/implementation/{{ lower ( camel $interface.Name) }}.h"
 {{- end }}
 
+{{- if  ( len .Module.Interfaces ) }}
+
 using namespace {{ Camel .System.Name }}::{{Camel .Module.Name }};
+{{- end }}
 
 int main(){
 {{- range .Module.Interfaces }}

@@ -24,8 +24,9 @@ endif()
 {{- nl }}
 
 {{- range .System.Modules }}
+{{- $module := . }}
 {{- $module_id := snake .Name }}
-find_package({{$module_id}} REQUIRED COMPONENTS {{$module_id}}-core {{$module_id}}-implementation {{ if $features.monitor }}{{$module_id}}-monitor {{- end}})
+find_package({{$module_id}} REQUIRED COMPONENTS {{$module_id}}-core {{- if ( len $module.Interfaces ) }} {{$module_id}}-implementation {{ if $features.monitor }}{{$module_id}}-monitor {{- end}} {{- end }})
 {{- end }}
 {{- if $features.monitor }}
 find_package(apigear REQUIRED COMPONENTS poco-tracer)
@@ -35,10 +36,13 @@ target_link_libraries(app
     apigear::poco-tracer
 {{- end }}
 {{- range .System.Modules }}
+{{- $module := . }}
 {{- $module_id := snake .Name }}
     {{$module_id}}::{{$module_id}}-core
+    {{- if ( len $module.Interfaces ) }}
     {{$module_id}}::{{$module_id}}-implementation
     {{ if $features.monitor }}{{$module_id}}::{{$module_id}}-monitor {{- end}}
+    {{- end }}
 {{- end }}
 )
 
