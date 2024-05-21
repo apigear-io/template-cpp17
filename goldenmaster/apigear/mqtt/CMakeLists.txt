@@ -1,5 +1,17 @@
 find_package(nlohmann_json REQUIRED)
-find_package(eclipse-paho-mqtt-c REQUIRED paho-mqtt3as-static)
+
+find_package(eclipse-paho-mqtt-c REQUIRED)
+if(TARGET eclipse-paho-mqtt-c::paho-mqtt3as-static)
+message(STATUS "eclipse-paho-mqtt-c library: found static library")
+set(MQTT_LIB eclipse-paho-mqtt-c::paho-mqtt3as-static)
+else()
+if(TARGET eclipse-paho-mqtt-c::paho-mqtt3as)
+message(STATUS "eclipse-paho-mqtt-c library: found dynamic library")
+set(MQTT_LIB eclipse-paho-mqtt-c::paho-mqtt3as)
+else()
+message(FATAL_ERROR "paho-mqtt3as library not found")
+endif()
+endif()
 # needed for paho-c, should be forwarded implicitly but is not
 find_package(OpenSSL REQUIRED)
 
@@ -18,7 +30,7 @@ target_include_directories(paho-mqtt
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../>
     $<INSTALL_INTERFACE:include>
 )
-target_link_libraries(paho-mqtt PRIVATE eclipse-paho-mqtt-c::paho-mqtt3as-static utilities PUBLIC nlohmann_json::nlohmann_json)
+target_link_libraries(paho-mqtt PRIVATE ${MQTT_LIB} utilities PUBLIC nlohmann_json::nlohmann_json)
 
 if(NOT MSVC)
   target_compile_options(paho-mqtt PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden -Wno-unknown-pragmas)
