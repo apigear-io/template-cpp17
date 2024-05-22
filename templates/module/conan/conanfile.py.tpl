@@ -47,6 +47,9 @@ class {{$module_id}}Conan(ConanFile):
 
     def requirements(self):
         self.requires("nlohmann_json/3.11.3", transitive_headers=True)
+{{- range .Module.Imports }}
+        self.requires("{{snake .Name}}/{{ ($.System.LookupModule .Name).Version }}", transitive_headers=True)
+{{- end }}
         {{ if and $features.apigear ( len .Module.Interfaces ) }}
         self.requires("apigear/3.6.0", transitive_headers=True)
         {{- end}}
@@ -110,10 +113,13 @@ class {{$module_id}}Conan(ConanFile):
         {{- if (eq $isApiHeaderOnly false) }}
         self.cpp_info.components["{{$module_id}}-api"].libs = ["{{$module_id}}-api"]
         {{- end}}
+        {{- range .Module.Imports }}
+        self.cpp_info.components["{{$module_id}}-api"].requires = ["{{snake .Name}}::{{snake .Name}}-api"]
+        {{- end }}
         {{- if $features.core }}
         self.cpp_info.components["{{$module_id}}-core"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["{{$module_id}}-core"].libs = ["{{$module_id}}-core"]
-        {{- if (eq $isApiHeaderOnly false) }}
+        {{- if or (eq $isApiHeaderOnly false) (len .Module.Imports )}}
         self.cpp_info.components["{{$module_id}}-core"].requires = ["{{$module_id}}-api", "nlohmann_json::nlohmann_json"]
         {{- else }}
         self.cpp_info.components["{{$module_id}}-core"].requires = ["nlohmann_json::nlohmann_json"]

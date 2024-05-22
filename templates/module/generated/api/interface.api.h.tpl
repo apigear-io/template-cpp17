@@ -4,6 +4,9 @@
 #include <future>
 #include "{{snake .Module.Name}}/generated/api/common.h"
 #include "{{snake .Module.Name}}/generated/api/datastructs.api.h"
+{{- range .Module.Imports }}
+#include "{{snake .Name}}/generated/api/datastructs.api.h"
+{{- end }}
 {{- $interfaceName := Camel .Interface.Name  }}
 {{- $class := printf "I%s" $interfaceName }}
 {{- $interface := .Interface }}

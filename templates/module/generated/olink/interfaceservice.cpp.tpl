@@ -8,6 +8,9 @@
 #include "{{snake .Module.Name}}/generated/api/datastructs.api.h"
 #include "{{snake .Module.Name}}/generated/olink/{{lower (camel .Interface.Name)}}service.h"
 #include "{{snake .Module.Name}}/generated/core/{{snake .Module.Name}}.json.adapter.h"
+{{- range .Module.Imports }}
+#include "{{snake .Name}}/generated/core/{{snake .Name}}.json.adapter.h"
+{{- end }}
 
 #include "olink/iremotenode.h"
 #include "olink/remoteregistry.h"

@@ -3,6 +3,9 @@
 {{- $SOURCES := printf "%s_SOURCES" $module_id -}}
 
 find_package(apigear OPTIONAL_COMPONENTS paho-mqtt)
+{{- range .Module.Imports }}
+find_package({{snake .Name}} REQUIRED COMPONENTS core)
+{{- end }}
 set (SOURCES_MQTT
 {{- range .Module.Interfaces }}
 {{- $interface:= . }}
@@ -20,6 +23,9 @@ target_include_directories({{$module_id}}-mqtt
 target_link_libraries({{$module_id}}-mqtt
     PRIVATE
     {{$module_id}}::{{$module_id}}-core
+{{- range .Module.Imports }}
+    {{snake .Name}}::{{snake .Name}}-core
+{{- end }}
     PUBLIC
     apigear::paho-mqtt
 )

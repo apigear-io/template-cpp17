@@ -6,6 +6,9 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(apigear REQUIRED COMPONENTS poco-olink)
+{{- range .Module.Imports }}
+find_package({{snake .Name}} REQUIRED COMPONENTS core)
+{{- end }}
 set (SOURCES_OLINK
 {{- range .Module.Interfaces }}
 {{- $interface:= . }}
@@ -23,6 +26,9 @@ target_include_directories({{$module_id}}-olink
 target_link_libraries({{$module_id}}-olink
     PRIVATE
     {{$module_id}}::{{$module_id}}-core
+{{- range .Module.Imports }}
+    {{snake .Name}}::{{snake .Name}}-core
+{{- end }}
     PUBLIC
     apigear::poco-olink
 )

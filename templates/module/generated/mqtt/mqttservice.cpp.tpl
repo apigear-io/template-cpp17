@@ -5,6 +5,9 @@
 {{- $interfaceClass := printf "I%s" $interfaceName -}}
 #include "{{snake .Module.Name}}/generated/mqtt/{{lower (camel .Interface.Name)}}service.h"
 #include "{{snake .Module.Name}}/generated/core/{{snake .Module.Name}}.json.adapter.h"
+{{- range .Module.Imports }}
+#include "{{snake .Name}}/generated/core/{{snake .Name}}.json.adapter.h"
+{{- end }}
 #include <iostream>
 
 using namespace {{ Camel .System.Name }}::{{ Camel .Module.Name }};

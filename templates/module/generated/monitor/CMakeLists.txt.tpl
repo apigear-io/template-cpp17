@@ -6,6 +6,9 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(apigear REQUIRED COMPONENTS poco-tracer)
+{{- range .Module.Imports }}
+find_package({{snake .Name}} REQUIRED COMPONENTS core)
+{{- end }}
 set (SOURCES_MONITOR
 {{- range .Module.Interfaces }}
 {{- $interface:= . }}
@@ -22,6 +25,9 @@ target_include_directories({{$module_id}}-monitor
 )
 target_link_libraries({{$module_id}}-monitor PRIVATE
     {{$module_id}}::{{$module_id}}-core
+{{- range .Module.Imports }}
+    {{snake .Name}}::{{snake .Name}}-core
+{{- end }}
     apigear::poco-tracer
 )
 # ensure maximum compiler support

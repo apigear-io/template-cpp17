@@ -11,6 +11,9 @@
 #include "{{snake .Module.Name}}/generated/olink/{{lower (camel .Interface.Name)}}client.h"
 #include "{{snake .Module.Name}}/generated/core/{{lower (camel .Interface.Name)}}.publisher.h"
 #include "{{snake .Module.Name}}/generated/core/{{snake .Module.Name}}.json.adapter.h"
+{{- range .Module.Imports }}
+#include "{{snake .Name}}/generated/core/{{snake .Name}}.json.adapter.h"
+{{- end }}
 
 #include "olink/iclientnode.h"
 #include "apigear/utilities/logger.h"

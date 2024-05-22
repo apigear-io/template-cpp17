@@ -1,6 +1,9 @@
 {{- /* Copyright (c) ApiGear UG 2020 */ -}}
 #include "apigear/tracer/tracer.h"
 #include "{{snake .Module.Name}}/generated/core/{{snake .Module.Name}}.json.adapter.h"
+{{- range .Module.Imports }}
+#include "{{snake .Name}}/generated/core/{{snake .Name}}.json.adapter.h"
+{{- end }}
 #include "{{snake .Module.Name}}/generated/monitor/{{lower (camel .Interface.Name)}}.tracer.h"
 
 using namespace {{ Camel .System.Name }}::{{ Camel .Module.Name }};
