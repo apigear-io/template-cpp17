@@ -5,6 +5,7 @@
 #define JSON_USE_IMPLICIT_CONVERSIONS 0
 #endif
 #include <nlohmann/json.hpp>
+{{- if len .Module.Structs }}
 #include "{{snake .Module.Name}}/generated/api/datastructs.api.h"
 #include "{{snake .Module.Name}}/generated/api/common.h"
 {{ $system:= .System }}
@@ -42,3 +43,4 @@ void {{ SNAKE $system.Name  }}_{{ SNAKE $module.Name  }}_EXPORT to_json(nlohmann
 {{- end }}
 } // namespace {{ Camel .Module.Name }}
 } // namespace {{ Camel .System.Name }}
+{{- end }}

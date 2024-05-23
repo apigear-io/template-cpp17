@@ -1,6 +1,8 @@
 {{- /* Copyright (c) ApiGear UG 2020 */ -}}
 #include "{{snake .Module.Name}}/generated/api/datastructs.api.h"
 
+{{- if or ( len .Module.Structs ) ( len .Module.Enums ) }}
+
 namespace {{ Camel .System.Name }} {
 namespace {{ Camel .Module.Name }} {
 
@@ -64,3 +66,4 @@ bool operator!=(const {{$class}}& lhs, const {{$class}}& rhs) noexcept
 {{- end }}
 } // namespace {{ Camel .Module.Name }}
 } // namespace {{ Camel .System.Name }}
+{{- end }}

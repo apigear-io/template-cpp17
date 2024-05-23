@@ -12,6 +12,8 @@
 
 #include "{{$module_id}}/generated/api/common.h"
 
+{{- if or ( len .Module.Structs ) ( len .Module.Enums ) }}
+
 namespace {{ $systemNamespace }} {
 namespace {{ $moduleNamespace }} {
   
@@ -81,3 +83,4 @@ bool {{ $systemUpper }}_{{ $moduleUpper }}_EXPORT operator!=(const {{$class}} &,
 {{- end }}
 } // namespace {{ $moduleNamespace }}
 } // namespace {{ $systemNamespace }}
+{{- end }}

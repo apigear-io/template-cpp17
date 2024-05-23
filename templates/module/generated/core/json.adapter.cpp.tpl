@@ -1,6 +1,8 @@
 {{- /* Copyright (c) ApiGear UG 2020 */ -}}
 #include "{{snake .Module.Name}}/generated/core/{{snake .Module.Name}}.json.adapter.h"
 
+{{- if len .Module.Structs }}
+
 namespace {{ Camel .System.Name }} {
 namespace {{ Camel .Module.Name }} {
 
@@ -35,3 +37,4 @@ std::ostream& operator<<(std::ostream& os, const {{$class}}& obj)
 {{- end }}
 } // namespace {{ Camel .Module.Name }}
 } // namespace {{ Camel .System.Name }}
+{{- end }}
