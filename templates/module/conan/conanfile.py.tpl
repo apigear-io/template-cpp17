@@ -46,7 +46,7 @@ class {{$module_id}}Conan(ConanFile):
             self.options.rm_safe("fPIC")
 
     def requirements(self):
-        self.requires("nlohmann_json/3.9.1", transitive_headers=True)
+        self.requires("nlohmann_json/3.11.3", transitive_headers=True)
         {{ if and $features.apigear ( len .Module.Interfaces ) }}
         self.requires("apigear/3.6.0", transitive_headers=True)
         {{- end}}

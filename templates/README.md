@@ -134,7 +134,7 @@ If you do not want or can not use conan, the poco libraries must installed separ
 3. Ubuntu 20.04 does not provide a newer nlohmann::json version within the packages sources. Therefore it has to be manually downloaded and installed.
 
     ```
-    $ git clone --branch v3.9.1 --depth 1 https://github.com/nlohmann/json.git
+    $ git clone --branch v3.11.3 --depth 1 https://github.com/nlohmann/json.git
     $ cd json
     $ cmake -Bbuild -H. -DBUILD_TESTING=OFF
     $ sudo cmake --build build/ --target install

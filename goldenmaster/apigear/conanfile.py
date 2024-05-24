@@ -69,7 +69,7 @@ class apigearConan(ConanFile):
 
     def requirements(self):
         if self.options.enable_monitor or self.options.enable_olink or self.options.enable_mqtt:
-              self.requires("nlohmann_json/3.9.1", transitive_headers=True)
+              self.requires("nlohmann_json/3.11.3", transitive_headers=True)
         if self.options.enable_monitor or self.options.enable_olink:
               self.requires("poco/1.12.4", transitive_headers=True, transitive_libs=True)
         if self.options.enable_mqtt:
