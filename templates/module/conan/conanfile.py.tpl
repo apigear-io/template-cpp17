@@ -50,6 +50,11 @@ class {{$module_id}}Conan(ConanFile):
 {{- range .Module.Imports }}
         self.requires("{{snake .Name}}/{{ ($.System.LookupModule .Name).Version }}", transitive_headers=True)
 {{- end }}
+{{- range .Module.Externs }}
+{{- if (not (eq (cppExtern .).ConanPackage "")) }}
+        self.requires("{{ (cppExtern .).ConanPackage }}/{{ (cppExtern .).ConanVersion }}", transitive_headers=True)
+{{- end }}
+{{- end }}
         {{ if and $features.apigear ( len .Module.Interfaces ) }}
         self.requires("apigear/3.6.0", transitive_headers=True)
         {{- end}}
@@ -113,8 +118,17 @@ class {{$module_id}}Conan(ConanFile):
         {{- if (eq $isApiHeaderOnly false) }}
         self.cpp_info.components["{{$module_id}}-api"].libs = ["{{$module_id}}-api"]
         {{- end}}
-        {{- range .Module.Imports }}
-        self.cpp_info.components["{{$module_id}}-api"].requires = ["{{snake .Name}}::{{snake .Name}}-api"]
+        {{- if or (len .Module.Imports ) (len .Module.Externs ) }}
+        self.cpp_info.components["{{$module_id}}-api"].requires = [
+        {{- range .Module.Imports -}}
+            "{{snake .Name}}::{{snake .Name}}-api", 
+        {{- end }}
+        {{- range .Module.Externs -}}
+        {{- if (not (eq (cppExtern .).ConanPackage "")) -}}
+            "{{ (cppExtern .).ConanPackage }}::{{ (cppExtern .).ConanPackage }}",
+        {{- end }}
+        {{- end -}}
+        ]
         {{- end }}
         {{- if $features.core }}
         self.cpp_info.components["{{$module_id}}-core"].includedirs.append(os.path.join(self.package_folder, "include"))

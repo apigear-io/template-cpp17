@@ -11,6 +11,18 @@
 #include <list>
 
 #include "{{$module_id}}/generated/api/common.h"
+{{- if len .Module.Externs }}
+THIRD_PARTY_INCLUDES_START
+{{- end }}
+{{- range .Module.Externs }}
+{{- $class := cppExtern . }}
+{{- if $class.Include }}
+#include <{{$class.Include}}>
+{{- end }}
+{{- end }}
+{{- if len .Module.Externs }}
+THIRD_PARTY_INCLUDES_END
+{{- end }}
 
 {{- if or ( len .Module.Structs ) ( len .Module.Enums ) }}
 

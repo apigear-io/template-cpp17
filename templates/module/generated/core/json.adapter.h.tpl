@@ -5,9 +5,12 @@
 #define JSON_USE_IMPLICIT_CONVERSIONS 0
 #endif
 #include <nlohmann/json.hpp>
-{{- if len .Module.Structs }}
+{{- if or ( len .Module.Structs ) ( len .Module.Externs ) }}
 #include "{{snake .Module.Name}}/generated/api/datastructs.api.h"
 #include "{{snake .Module.Name}}/generated/api/common.h"
+{{- end }}
+
+{{- if len .Module.Structs }}
 {{ $system:= .System }}
 {{- $module:= .Module }}
 namespace {{ Camel .System.Name }} {
@@ -43,4 +46,42 @@ void {{ SNAKE $system.Name  }}_{{ SNAKE $module.Name  }}_EXPORT to_json(nlohmann
 {{- end }}
 } // namespace {{ Camel .Module.Name }}
 } // namespace {{ Camel .System.Name }}
+{{- end }}
+
+{{- if len .Module.Externs }}
+
+// do the specialization of the adl_serializer for the in the nlohmann namespace
+// we do not want to modify the external namespace
+namespace nlohmann {
+{{- end }}
+{{- range $.Module.Externs }}
+{{- $system:= $.System }}
+{{- $module:= $.Module }}
+{{- $ext := (cppExtern .) }}
+{{- $class:= $ext.Name }}
+{{- $namespace :=  "" }}
+{{- if not (eq $ext.NameSpace "") }}
+{{- $namespace =  printf "%s::" $ext.NameSpace }}
+{{- end }}
+
+    template <>
+    struct {{ SNAKE $system.Name }}_{{ SNAKE $module.Name }}_EXPORT adl_serializer<{{ $namespace }}{{$class}}> {
+        static {{ $namespace }}{{$class}} from_json(const json& j) {
+            (void) j;
+            // Do deserialization here, e.g.
+            //return {j.template get<int>()};
+            return {};
+        }
+
+        static void to_json(json& j, {{ $namespace }}{{$class}} t) {
+            (void) j;
+            (void) t;
+            // Do serialization here, e.g.
+            // j = t.i;
+        }
+    };
+{{- nl}}
+{{- end }}
+{{- if len .Module.Externs }}
+} // namespace nlohmann
 {{- end }}

@@ -9,6 +9,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 {{- range .Module.Imports }}
 find_package({{snake .Name}} REQUIRED COMPONENTS api)
 {{- end }}
+{{- range .Module.Externs }}
+{{- $extern := cppExtern . }}
+{{- if (not (eq $extern.Package "")) }}
+find_package({{$extern.Package}} REQUIRED 
+{{- if (not ( eq $extern.Component "")) }} COMPONENTS{{ if (not ( eq $extern.Component "" ) ) }} {{$extern.Component -}}{{ end }}{{- end -}}
+)
+{{- end }}
+{{- end }}
 {{ if (eq $isApiHeaderOnly false) }}
 set (SOURCES
     datastructs.api.cpp
@@ -26,8 +34,8 @@ if(NOT MSVC)
 else()
   target_compile_options({{$module_id}}-api PRIVATE /W4 /WX /wd4251)
 endif()
-{{- if len .Module.Imports}}
-target_link_libraries({{$module_id}}-api PUBLIC {{- range .Module.Imports }} {{snake .Name}}::{{snake .Name}}-api {{- end -}} )
+{{- if or ( len .Module.Imports ) ( len .Module.Externs ) }}
+target_link_libraries({{$module_id}}-api PUBLIC {{- range .Module.Imports }} {{snake .Name}}::{{snake .Name}}-api {{- end -}} {{- range .Module.Externs }} {{ (cppExtern .).Package }}{{ if (not ( eq (cppExtern .).Component "" ) ) }}::{{ (cppExtern .).Component }} {{- end }}{{- end -}} )
 {{- end }}
 {{- else -}}
 add_library({{$module_id}}-api INTERFACE)
@@ -37,8 +45,8 @@ target_include_directories({{$module_id}}-api
     $<BUILD_INTERFACE:${MODULES_DIR}>
     $<INSTALL_INTERFACE:include>
 )
-{{- if len .Module.Imports}}
-target_link_libraries({{$module_id}}-api INTERFACE {{- range .Module.Imports }} {{snake .Name}}::{{snake .Name}}-api {{- end -}} )
+{{- if or ( len .Module.Imports ) ( len .Module.Externs ) }}
+target_link_libraries({{$module_id}}-api INTERFACE {{- range .Module.Imports }} {{snake .Name}}::{{snake .Name}}-api {{- end -}} {{- range .Module.Externs }} {{ (cppExtern .).Package }}{{ if (not ( eq (cppExtern .).Component "" ) ) }}::{{ (cppExtern .).Component }} {{- end }}{{- end -}} )
 {{- end }}
 {{- end}}
 

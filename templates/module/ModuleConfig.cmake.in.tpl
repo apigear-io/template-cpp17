@@ -24,6 +24,14 @@ find_dependency(apigear COMPONENTS paho-mqtt REQUIRED)
 {{- range .Module.Imports }}
 find_dependency({{snake .Name}} COMPONENTS api core REQUIRED)
 {{- end }}
+{{- range .Module.Externs }}
+{{- $extern := cppExtern . }}
+{{- if (not (eq $extern.Package "")) }}
+find_dependency({{$extern.Package}} REQUIRED 
+{{- if (not ( eq $extern.Component "")) }} COMPONENTS{{ if (not ( eq $extern.Component "" ) ) }} {{ (cppExtern .).Component }} {{- end }}{{- end -}}
+)
+{{- end }}
+{{- end }}
 
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/{{$module_idFirstUpper}}ApiTargets.cmake")
 {{- if $features.core }}

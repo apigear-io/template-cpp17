@@ -49,6 +49,7 @@ features:
             target: "{{snake .Module.Name}}.json.adapter.h"
           - source: "module/generated/core/json.adapter.cpp.tpl"
             target: "{{snake .Module.Name}}.json.adapter.cpp"
+            preserve: true
       - match: interface
         prefix: "modules/{{snake .Module.Name}}/generated/core/"
         documents:
