@@ -3,14 +3,12 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"os"
 	"runtime"
 
 	"github.com/apigear-io/helper"
-	"github.com/google/go-github/v48/github"
 	"github.com/magefile/mage/sh"
 )
 
@@ -58,35 +56,18 @@ func Install() error {
 		return err
 	}
 
-	gh := github.NewClient(nil)
-	release, _, err := gh.Repositories.GetLatestRelease(context.Background(), "apigear-io", "cli")
+	// asset name we are looking for
+	asset := fmt.Sprintf("apigear_%s_%s.zip", runtime.GOOS, runtime.GOARCH)
+	asset_url := fmt.Sprintf("https://github.com/apigear-io/cli/releases/latest/download/%s", asset)
+	err = helper.HttpDownload(asset_url, "tmp/"+asset)
 	if err != nil {
 		return err
 	}
-	log.Printf("using latest release: %s", release.GetTagName())
+	err = helper.ExtractZipFile("tmp/"+asset, "bin")
+	if err != nil {
+		return err
+	}
 
-	// asset name we are looking for
-	asset := fmt.Sprintf("apigear_%s_%s.zip", runtime.GOOS, runtime.GOARCH)
-	log.Printf("looking for asset %s in release assets", asset)
-	foundAsset := false
-	for _, a := range release.Assets {
-		if a.GetName() == asset {
-			log.Printf("found asset %s", asset)
-			foundAsset = true
-			err = helper.HttpDownload(a.GetBrowserDownloadURL(), "tmp/"+asset)
-			if err != nil {
-				return err
-			}
-			err = helper.ExtractZipFile("tmp/"+asset, "bin")
-			if err != nil {
-				return err
-			}
-			break
-		}
-	}
-	if !foundAsset {
-		return fmt.Errorf("could not find matching asset %s in release assets", asset)
-	}
 	src := helper.Join("tmp", apigear())
 	dst := helper.Join("bin", apigear())
 	helper.Rename(src, dst)
