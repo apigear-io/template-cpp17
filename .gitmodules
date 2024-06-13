@@ -2,3 +2,7 @@
 	path = packages/qtcpp/templates/thirdparty/objectlink
 	url = git@github.com:apigear-io/objectlink-core-cpp.git
 	branch = refs/tags/v0.1.0
+[submodule "apigear/test-apis"]
+	path = apigear/test-apis
+	url = git@github.com:apigear-io/test-apis.git
+	branch = main
