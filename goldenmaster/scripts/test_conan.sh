@@ -56,6 +56,12 @@ build_module "tb_simple"
 build_module "testbed1"
 # Building and testing TbNames module
 build_module "tb_names"
+# Building and testing CustomTypes module
+build_module "custom_types"
+# Building and testing ExternTypes module
+build_module "extern_types"
+# Building and testing Counter module
+build_module "counter"
 build_example "examples/app"
 build_example "examples/appthreadsafe"
 build_example "examples/olinkserver"

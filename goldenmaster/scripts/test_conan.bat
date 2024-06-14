@@ -32,6 +32,15 @@ if %ERRORLEVEL% GEQ 1 exit /b %ERRORLEVEL%
 @REM Building and testing tb_names module
 call :build_and_test_module "tb_names" "../../modules/tb_names/conan"
 if %ERRORLEVEL% GEQ 1 exit /b %ERRORLEVEL%
+@REM Building and testing custom_types module
+call :build_and_test_module "custom_types" "../../modules/custom_types/conan"
+if %ERRORLEVEL% GEQ 1 exit /b %ERRORLEVEL%
+@REM Building and testing extern_types module
+call :build_and_test_module "extern_types" "../../modules/extern_types/conan"
+if %ERRORLEVEL% GEQ 1 exit /b %ERRORLEVEL%
+@REM Building and testing counter module
+call :build_and_test_module "counter" "../../modules/counter/conan"
+if %ERRORLEVEL% GEQ 1 exit /b %ERRORLEVEL%
 
 @REM Leave build folder
 cd ..

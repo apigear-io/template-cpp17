@@ -21,6 +21,7 @@
 #include "testbed1/generated/mqtt/structinterfaceclient.h"
 #include "testbed1/generated/mqtt/structarrayinterfaceclient.h"
 #include "tb_names/generated/mqtt/namesclient.h"
+#include "counter/generated/mqtt/counterclient.h"
 #include "apigear/mqtt/mqttclient.h"
 #include "apigear/utilities/logger.h"
 #include <iostream>
@@ -87,6 +88,7 @@ int main(){
     std::unique_ptr<Testbed1::IStructInterface> testTestbed1StructInterface = std::make_unique<Testbed1::MQTT::StructInterfaceClient>(mqttclient);
     std::unique_ptr<Testbed1::IStructArrayInterface> testTestbed1StructArrayInterface = std::make_unique<Testbed1::MQTT::StructArrayInterfaceClient>(mqttclient);
     std::unique_ptr<TbNames::INamEs> testTbNamesNamEs = std::make_unique<TbNames::MQTT::Nam_EsClient>(mqttclient);
+    std::unique_ptr<Counter::ICounter> testCounterCounter = std::make_unique<Counter::MQTT::CounterClient>(mqttclient);
 
     // start mqtt connection
     mqttclient->connectToHost("");

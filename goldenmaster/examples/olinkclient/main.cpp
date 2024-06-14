@@ -43,6 +43,8 @@
 #include "testbed1/generated/monitor/structarrayinterface.tracedecorator.h"
 #include "tb_names/generated/olink/namesclient.h"
 #include "tb_names/generated/monitor/names.tracedecorator.h"
+#include "counter/generated/olink/counterclient.h"
+#include "counter/generated/monitor/counter.tracedecorator.h"
 
 #include "apigear/olink/olinkconnection.h"
 #include "apigear/tracer/tracer.h"
@@ -152,6 +154,9 @@ int main(){
     auto tbNamesNamEs = std::make_shared<TbNames::olink::Nam_EsClient>();
     clientNetworkEndpoint.connectAndLinkObject(tbNamesNamEs);
     std::unique_ptr<TbNames::INamEs> tbNamesNamEsTraced = TbNames::NamEsTraceDecorator::connect(*tbNamesNamEs, tracer);
+    auto counterCounter = std::make_shared<Counter::olink::CounterClient>();
+    clientNetworkEndpoint.connectAndLinkObject(counterCounter);
+    std::unique_ptr<Counter::ICounter> counterCounterTraced = Counter::CounterTraceDecorator::connect(*counterCounter, tracer);
     
     clientNetworkEndpoint.connectToHost(Poco::URI("ws://localhost:8000"));
 
@@ -188,6 +193,7 @@ int main(){
     clientNetworkEndpoint.disconnectAndUnlink(testbed1StructInterface->olinkObjectName());
     clientNetworkEndpoint.disconnectAndUnlink(testbed1StructArrayInterface->olinkObjectName());
     clientNetworkEndpoint.disconnectAndUnlink(tbNamesNamEs->olinkObjectName());
+    clientNetworkEndpoint.disconnectAndUnlink(counterCounter->olinkObjectName());
 
     return 0;
 }

@@ -65,6 +65,9 @@
 #include "tb_names/implementation/names.h"
 #include "tb_names/generated/olink/namesservice.h"
 #include "tb_names/generated/core/names.threadsafedecorator.h"
+#include "counter/implementation/counter.h"
+#include "counter/generated/olink/counterservice.h"
+#include "counter/generated/core/counter.threadsafedecorator.h"
 
 #include "apigear/olink/olinklogadapter.h"
 #include "olink/remoteregistry.h"
@@ -195,6 +198,10 @@ int main(){
     auto tbNamesNamEsThreadSafe = std::make_shared<TbNames::NamEsThreadSafeDecorator>(tbNamesNamEs);
     auto tbNamesOlinkNamEsService = std::make_shared<TbNames::olink::Nam_EsService>(tbNamesNamEsThreadSafe, registry);
     registry.addSource(tbNamesOlinkNamEsService);
+    auto counterCounter = std::make_shared<Counter::Counter>();
+    auto counterCounterThreadSafe = std::make_shared<Counter::CounterThreadSafeDecorator>(counterCounter);
+    auto counterOlinkCounterService = std::make_shared<Counter::olink::CounterService>(counterCounterThreadSafe, registry);
+    registry.addSource(counterOlinkCounterService);
 
     testserver.listen(8000);
 
@@ -231,6 +238,7 @@ int main(){
     registry.removeSource(testbed1OlinkStructInterfaceService->olinkObjectName());
     registry.removeSource(testbed1OlinkStructArrayInterfaceService->olinkObjectName());
     registry.removeSource(tbNamesOlinkNamEsService->olinkObjectName());
+    registry.removeSource(counterOlinkCounterService->olinkObjectName());
     
     return 0;
 }

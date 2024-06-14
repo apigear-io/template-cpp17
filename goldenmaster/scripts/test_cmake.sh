@@ -44,6 +44,12 @@ buildCMakeModule "modules/testbed1" $source_root
 if [ $buildresult -ne 0 ]; then exit 1; fi;
 buildCMakeModule "modules/tb_names" $source_root
 if [ $buildresult -ne 0 ]; then exit 1; fi;
+buildCMakeModule "modules/custom_types" $source_root
+if [ $buildresult -ne 0 ]; then exit 1; fi;
+buildCMakeModule "modules/extern_types" $source_root
+if [ $buildresult -ne 0 ]; then exit 1; fi;
+buildCMakeModule "modules/counter" $source_root
+if [ $buildresult -ne 0 ]; then exit 1; fi;
 # examples app
 buildCMakeBinary "examples/app" $source_root
 if [ $buildresult -ne 0 ]; then exit 1; fi;

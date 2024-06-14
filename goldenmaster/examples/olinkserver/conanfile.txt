@@ -6,6 +6,9 @@ tb_same2/1.0.0
 tb_simple/1.0.0
 testbed1/1.0.0
 tb_names/1.0.0
+custom_types/1.0.0
+extern_types/1.0.0
+counter/1.0.0
 apigear/3.6.0
 
 [generators]

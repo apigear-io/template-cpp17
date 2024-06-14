@@ -1,0 +1,15 @@
+set(CUSTOM_TYPES_VERSION 1.0.0)
+@PACKAGE_INIT@
+
+# make sure we have all needed dependencies
+include(CMakeFindDependencyMacro)
+find_dependency(Threads REQUIRED)
+find_dependency(nlohmann_json REQUIRED)
+
+INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Custom_typesApiTargets.cmake")
+INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Custom_typesCoreTargets.cmake")
+
+check_required_components(
+CustomTypes-api
+CustomTypes-core
+)

@@ -168,6 +168,39 @@ if(NOT tb_names_FOUND)
   )
   FetchContent_MakeAvailable(tb_names)
 endif()
+find_package(custom_types QUIET)
+if(NOT custom_types_FOUND)
+  # pull custom_types as dependency
+  message(STATUS "custom_types NOT FOUND, building from source folder")
+  include(FetchContent)
+  FetchContent_Declare(custom_types
+    SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/modules/custom_types"
+    OVERRIDE_FIND_PACKAGE
+  )
+  FetchContent_MakeAvailable(custom_types)
+endif()
+find_package(extern_types QUIET)
+if(NOT extern_types_FOUND)
+  # pull extern_types as dependency
+  message(STATUS "extern_types NOT FOUND, building from source folder")
+  include(FetchContent)
+  FetchContent_Declare(extern_types
+    SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/modules/extern_types"
+    OVERRIDE_FIND_PACKAGE
+  )
+  FetchContent_MakeAvailable(extern_types)
+endif()
+find_package(counter QUIET)
+if(NOT counter_FOUND)
+  # pull counter as dependency
+  message(STATUS "counter NOT FOUND, building from source folder")
+  include(FetchContent)
+  FetchContent_Declare(counter
+    SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/modules/counter"
+    OVERRIDE_FIND_PACKAGE
+  )
+  FetchContent_MakeAvailable(counter)
+endif()
 add_subdirectory(examples/app)
 add_subdirectory(examples/appthreadsafe)
 add_subdirectory(examples/olinkserver)

@@ -43,6 +43,8 @@
 #include "testbed1/generated/core/structarrayinterface.threadsafedecorator.h"
 #include "tb_names/implementation/names.h"
 #include "tb_names/generated/core/names.threadsafedecorator.h"
+#include "counter/implementation/counter.h"
+#include "counter/generated/core/counter.threadsafedecorator.h"
 
 void testTestbed2ManyParamInterface()
 {
@@ -415,6 +417,21 @@ void testTbNamesNamEs()
     testNamEs->setSomePoperty2(l_somePoperty2);
 }
 
+void testCounterCounter()
+{
+    using namespace Test::Counter;
+
+    std::unique_ptr<ICounter> testCounter = std::make_unique<CounterThreadSafeDecorator>(std::make_shared<Counter>());
+
+    // Thread safe access
+    auto l_vector = Test::CustomTypes::Vector3D();
+    l_vector = testCounter->getVector();
+    testCounter->setVector(l_vector);
+    auto l_externVector = Eigen::Vector3f(0,0,0);
+    l_externVector = testCounter->getExternVector();
+    testCounter->setExternVector(l_externVector);
+}
+
 
 int main(){
     testTestbed2ManyParamInterface();
@@ -439,6 +456,7 @@ int main(){
     testTestbed1StructInterface();
     testTestbed1StructArrayInterface();
     testTbNamesNamEs();
+    testCounterCounter();
 
     return 0;
 }
