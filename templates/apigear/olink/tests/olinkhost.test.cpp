@@ -20,6 +20,9 @@
 #include "Poco/Net/HTTPClientSession.h"
 
 #include "nlohmann/json.hpp"
+#include <mutex>
+#include <string>
+#include <condition_variable>
 
 namespace tests{
 
@@ -35,6 +38,7 @@ namespace {
         inFrame.payload = std::string(pocobuffer.begin(), receivedSize);
         return inFrame;
     }
+
 }
 
     TEST_CASE("OLinkHost tests")
@@ -59,6 +63,9 @@ namespace {
         std::string any_payload = "any";
 
         ApiGear::PocoImpl::OLinkHost testHost(registry, [](auto /*level*/, auto msg){ std::cout << msg << std::endl; });
+        std::condition_variable m_waitForMessageEffects;
+        std::mutex m_waitForMessageEffectsMutex;
+        std::unique_lock<std::mutex> lock(m_waitForMessageEffectsMutex, std::defer_lock);
 
         SECTION("Server creates two nodes for link messages from different sessions for same source and sends back init message. Unlink happens before server closes.")
         {
@@ -78,7 +85,9 @@ namespace {
             clientSocket1.sendFrame(preparedLinkMessage.c_str(), static_cast<int>(preparedLinkMessage.size()));
             clientSocket2.sendFrame(preparedLinkMessage.c_str(), static_cast<int>(preparedLinkMessage.size()));
             
-            Poco::Thread::sleep(50);
+            lock.lock();
+            m_waitForMessageEffects.wait_for(lock, std::chrono::milliseconds(500), [&registry, objectId]() {return registry.getNodes(objectId).size() == 2; });
+            lock.unlock();
             auto nodes = registry.getNodes(objectId);
             REQUIRE(nodes.size() == 2);
             auto nodeA = nodes[0];
@@ -109,7 +118,9 @@ namespace {
             auto unlinkMessage = converter.toString(ApiGear::ObjectLink::Protocol::unlinkMessage(objectId));
             clientSocket1.sendFrame(unlinkMessage.c_str(), static_cast<int>(unlinkMessage.size()));
             
-            Poco::Thread::sleep(50);
+            lock.lock();
+            m_waitForMessageEffects.wait_for(lock, std::chrono::milliseconds(500), [&registry, objectId]() {return registry.getNodes(objectId).size() == 1; });
+            lock.unlock();
             nodes = registry.getNodes(objectId);
             REQUIRE(nodes.size() == 1);
             auto node2 = nodes[0];
@@ -119,7 +130,9 @@ namespace {
 
             REQUIRE_CALL(*source1, olinkUnlinked(objectId));
             clientSocket2.sendFrame(unlinkMessage.c_str(), static_cast<int>(unlinkMessage.size()));
-            Poco::Thread::sleep(50);
+            lock.lock();
+            m_waitForMessageEffects.wait_for(lock, std::chrono::milliseconds(500), [&registry, objectId]() {return registry.getNodes(objectId).size() == 0; });
+            lock.unlock();
             nodes = registry.getNodes(objectId);
             REQUIRE(nodes.size() == 0);
             
@@ -145,7 +158,9 @@ namespace {
 
             clientSocket1.sendFrame(preparedLinkMessage.c_str(), static_cast<int>(preparedLinkMessage.size()));
 
-            Poco::Thread::sleep(50);
+            lock.lock();
+            m_waitForMessageEffects.wait_for(lock, std::chrono::milliseconds(500), [&registry, objectId]() {return registry.getNodes(objectId).size() == 1; });
+            lock.unlock();
             auto nodes = registry.getNodes(objectId);
             REQUIRE(nodes.size() == 1);
             REQUIRE(nodes[0].expired() == false);
@@ -159,7 +174,9 @@ namespace {
             }
 
             testHost.close();
-            Poco::Thread::sleep(50);
+            lock.lock();
+            m_waitForMessageEffects.wait_for(lock, std::chrono::milliseconds(500), [&registry, objectId]() {return registry.getNodes(objectId).size() == 0; });
+            lock.unlock();
             REQUIRE(registry.getNodes(objectId).size() == 0);
             REQUIRE(registry.getSource(objectId).lock() == source1);
 
@@ -183,7 +200,9 @@ namespace {
 
             clientSocket1.sendFrame(preparedLinkMessage.c_str(), static_cast<int>(preparedLinkMessage.size()));
 
-            Poco::Thread::sleep(50);
+            lock.lock();
+            m_waitForMessageEffects.wait_for(lock, std::chrono::milliseconds(500), [&registry, objectId]() {return registry.getNodes(objectId).size() == 1; });
+            lock.unlock();
             auto nodes = registry.getNodes(objectId);
             REQUIRE(nodes.size() == 1);
             REQUIRE(nodes[0].expired() == false);
@@ -197,7 +216,10 @@ namespace {
             }
             // start test
             registry.removeSource(objectId);
-            Poco::Thread::sleep(100);
+
+            lock.lock();
+            m_waitForMessageEffects.wait_for(lock, std::chrono::milliseconds(500), [&registry, objectId]() {return registry.getNodes(objectId).size() == 0; });
+            lock.unlock();
 
             REQUIRE(registry.getNodes(objectId).size() == 0);
             REQUIRE(registry.getSource(objectId).expired());
@@ -231,7 +253,10 @@ namespace {
             clientSocket1.sendFrame(preparedLinkMessage.c_str(), static_cast<int>(preparedLinkMessage.size()));
             clientSocket2.sendFrame(preparedLinkMessage.c_str(), static_cast<int>(preparedLinkMessage.size()));
 
-            Poco::Thread::sleep(50);
+
+            lock.lock();
+            m_waitForMessageEffects.wait_for(lock, std::chrono::milliseconds(500), [&registry, objectId]() {return registry.getNodes(objectId).size() == 2; });
+            lock.unlock();
             auto nodes = registry.getNodes(objectId);
             REQUIRE(nodes.size() == 2);
             auto nodeA = nodes[0];
@@ -260,7 +285,10 @@ namespace {
             // START TEST
             clientSocket1.sendFrame(any_payload.c_str(), static_cast<int>(any_payload.size()), Poco::Net::WebSocket::FRAME_OP_CLOSE);
             // Send close Frame
-            Poco::Thread::sleep(50);
+
+            lock.lock();
+            m_waitForMessageEffects.wait_for(lock, std::chrono::milliseconds(500), [&registry, objectId]() {return registry.getNodes(objectId).size() == 1; });
+            lock.unlock();
             nodes = registry.getNodes(objectId);
             // Node 2 still works for source
             REQUIRE(nodes.size() == 1);
@@ -288,7 +316,9 @@ namespace {
             REQUIRE_CALL(*source1, olinkCollectProperties()).RETURN(initProperties1);
             clientSocket1.sendFrame(preparedLinkMessage.c_str(), static_cast<int>(preparedLinkMessage.size()));
 
-            Poco::Thread::sleep(50);
+            lock.lock();
+            m_waitForMessageEffects.wait_for(lock, std::chrono::milliseconds(500), [&registry, objectId]() {return registry.getNodes(objectId).size() == 1; });
+            lock.unlock();
             auto nodes = registry.getNodes(objectId);
             REQUIRE(nodes.size() == 1);
             REQUIRE(!nodes[0].expired());
@@ -305,7 +335,9 @@ namespace {
             clientSocket1.sendFrame(any_payload.c_str(), static_cast<int>(any_payload.size()), Poco::Net::WebSocket::FRAME_OP_CLOSE);
 
             // Send close Frame
-            Poco::Thread::sleep(50);
+            lock.lock();
+            m_waitForMessageEffects.wait_for(lock, std::chrono::milliseconds(500), [&registry, objectId]() {return registry.getNodes(objectId).size() == 0; });
+            lock.unlock();
             nodes = registry.getNodes(objectId);
             REQUIRE(nodes.size() == 0);
 
@@ -317,7 +349,9 @@ namespace {
             REQUIRE_CALL(*source1, olinkCollectProperties()).RETURN(initProperties1);
             clientSocket2.sendFrame(preparedLinkMessage.c_str(), static_cast<int>(preparedLinkMessage.size()));
 
-            Poco::Thread::sleep(50);
+            lock.lock();
+            m_waitForMessageEffects.wait_for(lock, std::chrono::milliseconds(500), [&registry, objectId]() {return registry.getNodes(objectId).size() == 1; });
+            lock.unlock();
             nodes = registry.getNodes(objectId);
             REQUIRE(nodes.size() == 1);
             REQUIRE(!nodes[0].expired());
