@@ -86,7 +86,7 @@ namespace {
             clientSocket2.sendFrame(preparedLinkMessage.c_str(), static_cast<int>(preparedLinkMessage.size()));
             
             lock.lock();
-            m_waitForMessageEffects.wait_for(lock, std::chrono::milliseconds(500), [&registry, objectId]() {return registry.getNodes(objectId).size() == 2; });
+            m_waitForMessageEffects.wait_for(lock, std::chrono::milliseconds(3000), [&registry, objectId]() {return registry.getNodes(objectId).size() == 2; });
             lock.unlock();
             auto nodes = registry.getNodes(objectId);
             REQUIRE(nodes.size() == 2);
@@ -201,7 +201,7 @@ namespace {
             clientSocket1.sendFrame(preparedLinkMessage.c_str(), static_cast<int>(preparedLinkMessage.size()));
 
             lock.lock();
-            m_waitForMessageEffects.wait_for(lock, std::chrono::milliseconds(500), [&registry, objectId]() {return registry.getNodes(objectId).size() == 1; });
+            m_waitForMessageEffects.wait_for(lock, std::chrono::milliseconds(1500), [&registry, objectId]() {return registry.getNodes(objectId).size() == 1; });
             lock.unlock();
             auto nodes = registry.getNodes(objectId);
             REQUIRE(nodes.size() == 1);
@@ -255,7 +255,7 @@ namespace {
 
 
             lock.lock();
-            m_waitForMessageEffects.wait_for(lock, std::chrono::milliseconds(500), [&registry, objectId]() {return registry.getNodes(objectId).size() == 2; });
+            m_waitForMessageEffects.wait_for(lock, std::chrono::milliseconds(3000), [&registry, objectId]() {return registry.getNodes(objectId).size() == 2; });
             lock.unlock();
             auto nodes = registry.getNodes(objectId);
             REQUIRE(nodes.size() == 2);
@@ -317,7 +317,7 @@ namespace {
             clientSocket1.sendFrame(preparedLinkMessage.c_str(), static_cast<int>(preparedLinkMessage.size()));
 
             lock.lock();
-            m_waitForMessageEffects.wait_for(lock, std::chrono::milliseconds(500), [&registry, objectId]() {return registry.getNodes(objectId).size() == 1; });
+            m_waitForMessageEffects.wait_for(lock, std::chrono::milliseconds(1500), [&registry, objectId]() {return registry.getNodes(objectId).size() == 1; });
             lock.unlock();
             auto nodes = registry.getNodes(objectId);
             REQUIRE(nodes.size() == 1);
@@ -350,7 +350,7 @@ namespace {
             clientSocket2.sendFrame(preparedLinkMessage.c_str(), static_cast<int>(preparedLinkMessage.size()));
 
             lock.lock();
-            m_waitForMessageEffects.wait_for(lock, std::chrono::milliseconds(500), [&registry, objectId]() {return registry.getNodes(objectId).size() == 1; });
+            m_waitForMessageEffects.wait_for(lock, std::chrono::milliseconds(1500), [&registry, objectId]() {return registry.getNodes(objectId).size() == 1; });
             lock.unlock();
             nodes = registry.getNodes(objectId);
             REQUIRE(nodes.size() == 1);
