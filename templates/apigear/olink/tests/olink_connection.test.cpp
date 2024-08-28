@@ -143,9 +143,17 @@ TEST_CASE("OlinkConnection tests")
 
         // Send from server init message
         nlohmann::json initProperties = { {"property1", "some_string" }, { "property2",  9 }, { "property3", false } };
-        REQUIRE_CALL(*sink1, olinkOnInit(sink1Id, initProperties, testOlinkConnection->node().get()));
+
+        std::atomic<bool> isInitReceived{ false };
+        auto setInitReceived = [&isInitReceived]() {isInitReceived = true; };
+
+        REQUIRE_CALL(*sink1, olinkOnInit(sink1Id, initProperties, testOlinkConnection->node().get())).SIDE_EFFECT(setInitReceived(););
         auto preparedInitMessage = converter.toString(ApiGear::ObjectLink::Protocol::initMessage(sink1Id, initProperties));
         server.sendFrame(preparedInitMessage);
+        lock.lock();
+        m_messageArrived.wait_for(lock, std::chrono::milliseconds(500), [&isInitReceived]() {return isInitReceived == true; });
+        lock.unlock();
+
 
         // Stop connection
         REQUIRE_CALL(*sink1, olinkOnRelease());
