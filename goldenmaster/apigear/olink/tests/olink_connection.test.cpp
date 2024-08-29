@@ -24,18 +24,6 @@ namespace {
     // Message converter to translate messages for network format. Same should be used in tested classes.
     ApiGear::ObjectLink::MessageConverter converter(ApiGear::ObjectLink::MessageFormat::JSON);
     const std::string any_payload = "any";
-    // Removes ping messages from a vector of messages.
-    std::vector<Frame> removePingMessages(const std::vector<Frame>& in)
-    {
-        auto out = in;
-        if (out.size() > 0)
-        {
-            out.erase(std::remove_if(out.begin(), out.end(),
-                [](const auto& element) { return element.flags == Poco::Net::WebSocket::FRAME_OP_PING;}),
-                out.end());
-        }
-        return out;
-    }
 
     int getMessageIndex(const std::vector<Frame>& container, const std::string& payload)
     {
@@ -60,7 +48,8 @@ TEST_CASE("OlinkConnection tests")
     auto portNumber = 8000;
     auto localHostAddress = "ws://127.0.0.1:" + std::to_string(portNumber);
 
-    TestServer server(portNumber);
+    bool skipPingMessages = true;
+    TestServer server(portNumber, skipPingMessages);
     ApiGear::ObjectLink::ClientRegistry registry;
     auto testOlinkConnection = std::make_shared<ApiGear::PocoImpl::OlinkConnection>(registry);
 
@@ -80,7 +69,7 @@ TEST_CASE("OlinkConnection tests")
         // Check that server received link message
         auto expectedLinkMessage = converter.toString(ApiGear::ObjectLink::Protocol::linkMessage(sink1Id));
 
-        auto msgs = removePingMessages(server.getReceivedFrames());
+        auto msgs = server.getReceivedFrames();
         REQUIRE(msgs[0].payload == expectedLinkMessage );
         REQUIRE(msgs[0].flags == Poco::Net::WebSocket::FRAME_TEXT);
         
@@ -101,12 +90,12 @@ TEST_CASE("OlinkConnection tests")
 
         //Check the unlink message
         auto expectedUnlinkMessage = converter.toString(ApiGear::ObjectLink::Protocol::unlinkMessage(sink1Id));
-        msgs = removePingMessages(server.getReceivedFrames());
+        msgs = server.getReceivedFrames();
         REQUIRE(msgs[0].payload == expectedUnlinkMessage);
         REQUIRE(msgs[0].flags == Poco::Net::WebSocket::FRAME_TEXT);
         
         testOlinkConnection->disconnect();
-        msgs = removePingMessages(server.getReceivedFrames());
+        msgs = server.getReceivedFrames();
         REQUIRE(msgs.size() > 0);
         // Check close frame was sent
         REQUIRE(msgs[0].flags == Poco::Net::WebSocket::FRAME_OP_CLOSE);
@@ -124,7 +113,7 @@ TEST_CASE("OlinkConnection tests")
 
         // Connect to server
         testOlinkConnection->connectToHost(Poco::URI(localHostAddress));
-        auto msgs = removePingMessages(server.getReceivedFrames());
+        auto msgs = server.getReceivedFrames();
         // expect the link message to be received on server side 
         auto expectedLinkMessage = converter.toString(ApiGear::ObjectLink::Protocol::linkMessage(sink1Id));
         REQUIRE(msgs[0].payload == expectedLinkMessage);
@@ -145,7 +134,7 @@ TEST_CASE("OlinkConnection tests")
         REQUIRE(registry.getSink(sink1Id).lock() == sink1);
         REQUIRE(registry.getNode(sink1Id).lock() == nullptr);
 
-        msgs = removePingMessages(server.getReceivedFrames());
+        msgs = server.getReceivedFrames();
         auto expectedUnlinkMessage = converter.toString(ApiGear::ObjectLink::Protocol::unlinkMessage(sink1Id));
         REQUIRE(msgs.size() == 2);
         REQUIRE(msgs[0].payload == expectedUnlinkMessage);
@@ -170,7 +159,7 @@ TEST_CASE("OlinkConnection tests")
 
         // Connect to server
         testOlinkConnection->connectToHost(Poco::URI(localHostAddress));
-        auto msgs = removePingMessages(server.getReceivedFrames());
+        auto msgs = server.getReceivedFrames();
         // expect the link message to be received on server side 
         auto expectedLinkMessage1 = converter.toString(ApiGear::ObjectLink::Protocol::linkMessage(sink1Id));
         auto expectedLinkMessage2 = converter.toString(ApiGear::ObjectLink::Protocol::linkMessage(sink2Id));
@@ -184,7 +173,7 @@ TEST_CASE("OlinkConnection tests")
         testOlinkConnection->disconnect();
 
         // Check unlink and close connection messages.
-        msgs = removePingMessages(server.getReceivedFrames());
+        msgs = server.getReceivedFrames();
         auto expectedUnlinkMessage1 = converter.toString(ApiGear::ObjectLink::Protocol::unlinkMessage(sink1Id));
         auto expectedUnlinkMessage2 = converter.toString(ApiGear::ObjectLink::Protocol::unlinkMessage(sink2Id));
 
@@ -204,7 +193,7 @@ TEST_CASE("OlinkConnection tests")
         testOlinkConnection->disconnectAndUnlink(sink1Id);
         testOlinkConnection.reset();
 
-        msgs = removePingMessages(server.getReceivedFrames());
+        msgs = server.getReceivedFrames();
         REQUIRE(checkMessageInContainer(msgs, expectedUnlinkMessage1));
         REQUIRE(msgs[1].flags == Poco::Net::WebSocket::FRAME_OP_CLOSE);
 
@@ -224,7 +213,7 @@ TEST_CASE("OlinkConnection tests")
         // Wait for message to be sent with queue flush on tick, and action after sent happen.
         Poco::Thread::sleep(11);
         REQUIRE(registry.getNode(sink1Id).lock() == testOlinkConnection->node());
-        auto msgs = removePingMessages(server.getReceivedFrames());
+        auto msgs = server.getReceivedFrames();
         // expect the link message to be received on server side 
         auto expectedLinkMessage = converter.toString(ApiGear::ObjectLink::Protocol::linkMessage(sink1Id));
         REQUIRE(msgs[0].payload == expectedLinkMessage);
@@ -236,7 +225,7 @@ TEST_CASE("OlinkConnection tests")
         REQUIRE(registry.getNode(sink1Id).lock() == nullptr);
 
         // Check unlink was sent
-        msgs = removePingMessages(server.getReceivedFrames());
+        msgs = server.getReceivedFrames();
         auto expectedUnlinkMessage = converter.toString(ApiGear::ObjectLink::Protocol::unlinkMessage(sink1Id));
         REQUIRE(msgs.size() == 2);
         REQUIRE(msgs[0].payload == expectedUnlinkMessage);
@@ -258,7 +247,7 @@ TEST_CASE("OlinkConnection tests")
         // Check that server received link message
         auto expectedLinkMessage = converter.toString(ApiGear::ObjectLink::Protocol::linkMessage(sink1Id));
 
-        auto msgs = removePingMessages(server.getReceivedFrames());
+        auto msgs = server.getReceivedFrames();
         REQUIRE(msgs[0].payload == expectedLinkMessage);
         REQUIRE(msgs[0].flags == Poco::Net::WebSocket::FRAME_TEXT);
 
@@ -283,14 +272,14 @@ TEST_CASE("OlinkConnection tests")
         testOlinkConnection->disconnectAndUnlink(sink1Id);
         auto expectedUnlinkMessage = converter.toString(ApiGear::ObjectLink::Protocol::unlinkMessage(sink1Id));
 
-        msgs = removePingMessages(server.getReceivedFrames());
+        msgs = server.getReceivedFrames();
         // Expect socket re-connects, and sends link message on re-connection
         REQUIRE(msgs[0].payload == expectedLinkMessage);
         //Check the unlink message
         REQUIRE(msgs[1].payload == expectedUnlinkMessage);
 
          testOlinkConnection->disconnect();
-         msgs = removePingMessages(server.getReceivedFrames());
+         msgs = server.getReceivedFrames();
          REQUIRE(msgs.size() > 0);
          // Check close frame was sent
          REQUIRE(msgs[0].flags == Poco::Net::WebSocket::FRAME_OP_CLOSE);
@@ -336,7 +325,7 @@ TEST_CASE("OlinkConnection tests")
         // wait for re-connection
         Poco::Thread::sleep(501);
         
-        auto msgs = removePingMessages(server.getReceivedFrames());
+        auto msgs = server.getReceivedFrames();
         // Expect socket re-connects, and sends change property messages and link message
         for (auto i = 0; i< 80; i++)
         {
@@ -361,7 +350,7 @@ TEST_CASE("OlinkConnection tests")
         REQUIRE(checkMessageInContainer(server.getReceivedFrames(), expectedUnlinkMessage));
 
         testOlinkConnection->disconnect();
-        msgs = removePingMessages(server.getReceivedFrames());
+        msgs = server.getReceivedFrames();
         REQUIRE(msgs[0].flags == Poco::Net::WebSocket::FRAME_OP_CLOSE);
         server.stop();
     }
