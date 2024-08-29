@@ -45,9 +45,12 @@ public:
 				Frame inFrame;
 				auto receivedSize = socket->receiveFrame(pocobuffer, inFrame.flags);
 				inFrame.payload = std::string(pocobuffer.begin(), receivedSize);
-				m_frameStorage.storeFrame(inFrame);
-				stop = receivedSize == 0 ||
-					(inFrame.flags & Poco::Net::WebSocket::FRAME_OP_BITMASK) == Poco::Net::WebSocket::FRAME_OP_CLOSE;
+				bool isCloseFrame = (inFrame.flags & Poco::Net::WebSocket::FRAME_OP_BITMASK) == Poco::Net::WebSocket::FRAME_OP_CLOSE;
+				if (receivedSize != 0 || isCloseFrame)
+				{
+					m_frameStorage.storeFrame(inFrame);
+				}
+				stop = receivedSize == 0 || isCloseFrame;		
 			} while (!stop);
 			socket.reset();
 		}

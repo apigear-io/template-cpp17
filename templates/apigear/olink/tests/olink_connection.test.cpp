@@ -36,17 +36,6 @@ namespace {
         }
         return out;
     }
-    std::vector<Frame> removeAllNonTextMessages(const std::vector<Frame>& in)
-    {
-        auto out = in;
-        if (out.size() > 0)
-        {
-            out.erase(std::remove_if(out.begin(), out.end(),
-                [](const auto& element) { return element.flags != Poco::Net::WebSocket::FRAME_TEXT; }),
-                out.end());
-        }
-        return out;
-    }
 
     int getMessageIndex(const std::vector<Frame>& container, const std::string& payload)
     {
@@ -294,7 +283,7 @@ TEST_CASE("OlinkConnection tests")
         testOlinkConnection->disconnectAndUnlink(sink1Id);
         auto expectedUnlinkMessage = converter.toString(ApiGear::ObjectLink::Protocol::unlinkMessage(sink1Id));
 
-        msgs = removeAllNonTextMessages(server.getReceivedFrames());
+        msgs = removePingMessages(server.getReceivedFrames());
         // Expect socket re-connects, and sends link message on re-connection
         REQUIRE(msgs[0].payload == expectedLinkMessage);
         //Check the unlink message
@@ -347,7 +336,7 @@ TEST_CASE("OlinkConnection tests")
         // wait for re-connection
         Poco::Thread::sleep(501);
         
-        auto msgs = removeAllNonTextMessages(server.getReceivedFrames());
+        auto msgs = removePingMessages(server.getReceivedFrames());
         // Expect socket re-connects, and sends change property messages and link message
         for (auto i = 0; i< 80; i++)
         {
