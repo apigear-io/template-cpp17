@@ -63,19 +63,19 @@ public:
 
 	// Get all the frames received by server since last call of this function.
 	// The frames are cleared from server storage with this call, the only copy is on user side.
+	// Sending a message from a client to server takes some time. Make sure the expected frames are in a buffer with getReceivedFramesNumber.
 	std::vector<Frame> getReceivedFrames()
 	{
-		// Client send frames with some delay, here delay is long enough to make sure all messages are delivered
-		// also due to working in threads.
-		Poco::Thread::sleep(50);
 		std::vector<Frame> frames;
-		std::unique_lock<std::timed_mutex> lock(receivedFramesMutex, std::defer_lock);
-		if (lock.try_lock_for(std::chrono::milliseconds(100)))
-		{
-			std::swap(frames, receivedFrames);
-			lock.unlock();
-		}
+		std::unique_lock<std::timed_mutex> lock(receivedFramesMutex);
+		std::swap(frames, receivedFrames);
 		return frames;
+	}
+
+	uint32_t getReceivedFramesNumber()
+	{
+		std::unique_lock<std::timed_mutex> lock(receivedFramesMutex);
+		return receivedFrames.size();
 	}
 
 	// Implementation of IFrameStorage::storeFrame, 

@@ -17,6 +17,8 @@
 #include "nlohmann/json.hpp"
 #include <thread>
 #include <algorithm>
+#include <chrono>
+#include <condition_variable>
 
 namespace tests{
 
@@ -57,6 +59,10 @@ TEST_CASE("OlinkConnection tests")
     std::string sink1Id = "tests.sink1";
     ALLOW_CALL(*sink1, olinkObjectName()).RETURN(sink1Id);
 
+    std::condition_variable m_messageArrived;
+    std::mutex m_messageArrivedMutex;
+    std::unique_lock<std::mutex> lock(m_messageArrivedMutex, std::defer_lock);
+
     SECTION("Connect to host when sink is added and server is running. On teardown first disconnect sink then the client")
     {
         server.start();
@@ -69,14 +75,18 @@ TEST_CASE("OlinkConnection tests")
         // Check that server received link message
         auto expectedLinkMessage = converter.toString(ApiGear::ObjectLink::Protocol::linkMessage(sink1Id));
 
+        lock.lock();
+        m_messageArrived.wait_for(lock, std::chrono::milliseconds(500), [&server]() {return server.getReceivedFramesNumber() == 1; });
+        lock.unlock();
         auto msgs = server.getReceivedFrames();
-        REQUIRE(msgs[0].payload == expectedLinkMessage );
+        REQUIRE(msgs.size() == 1);
+        REQUIRE(msgs[0].payload == expectedLinkMessage);
         REQUIRE(msgs[0].flags == Poco::Net::WebSocket::FRAME_TEXT);
-        
+
         // Send init message from server and check it is delivered and decoded
         nlohmann::json initProperties = { {"property1", "some_string" }, { "property2",  9 }, { "property3", false } };
         REQUIRE_CALL(*sink1, olinkOnInit(sink1Id, initProperties, testOlinkConnection->node().get()));
-        
+
         auto preparedInitMessage = converter.toString(ApiGear::ObjectLink::Protocol::initMessage(sink1Id, initProperties));
         server.sendFrame(preparedInitMessage);
         // Wait for init message to be delivered and handled before the sink will be released
@@ -90,11 +100,18 @@ TEST_CASE("OlinkConnection tests")
 
         //Check the unlink message
         auto expectedUnlinkMessage = converter.toString(ApiGear::ObjectLink::Protocol::unlinkMessage(sink1Id));
+        lock.lock();
+        m_messageArrived.wait_for(lock, std::chrono::milliseconds(500), [&server]() {return server.getReceivedFramesNumber() == 1; });
+        lock.unlock();
         msgs = server.getReceivedFrames();
+        REQUIRE(msgs.size() == 1);
         REQUIRE(msgs[0].payload == expectedUnlinkMessage);
         REQUIRE(msgs[0].flags == Poco::Net::WebSocket::FRAME_TEXT);
-        
+
         testOlinkConnection->disconnect();
+        lock.lock();
+        m_messageArrived.wait_for(lock, std::chrono::milliseconds(500), [&server]() {return server.getReceivedFramesNumber() == 1; });
+        lock.unlock();
         msgs = server.getReceivedFrames();
         REQUIRE(msgs.size() > 0);
         // Check close frame was sent
@@ -113,7 +130,11 @@ TEST_CASE("OlinkConnection tests")
 
         // Connect to server
         testOlinkConnection->connectToHost(Poco::URI(localHostAddress));
+        lock.lock();
+        m_messageArrived.wait_for(lock, std::chrono::milliseconds(500), [&server]() {return server.getReceivedFramesNumber() == 1; });
+        lock.unlock();
         auto msgs = server.getReceivedFrames();
+        REQUIRE(msgs.size() == 1);
         // expect the link message to be received on server side 
         auto expectedLinkMessage = converter.toString(ApiGear::ObjectLink::Protocol::linkMessage(sink1Id));
         REQUIRE(msgs[0].payload == expectedLinkMessage);
@@ -125,7 +146,7 @@ TEST_CASE("OlinkConnection tests")
         REQUIRE_CALL(*sink1, olinkOnInit(sink1Id, initProperties, testOlinkConnection->node().get()));
         auto preparedInitMessage = converter.toString(ApiGear::ObjectLink::Protocol::initMessage(sink1Id, initProperties));
         server.sendFrame(preparedInitMessage);
-        
+
         // Stop connection
         REQUIRE_CALL(*sink1, olinkOnRelease());
         testOlinkConnection->disconnect();
@@ -134,6 +155,9 @@ TEST_CASE("OlinkConnection tests")
         REQUIRE(registry.getSink(sink1Id).lock() == sink1);
         REQUIRE(registry.getNode(sink1Id).lock() == nullptr);
 
+        lock.lock();
+        m_messageArrived.wait_for(lock, std::chrono::milliseconds(500), [&server]() {return server.getReceivedFramesNumber() == 2; });
+        lock.unlock();
         msgs = server.getReceivedFrames();
         auto expectedUnlinkMessage = converter.toString(ApiGear::ObjectLink::Protocol::unlinkMessage(sink1Id));
         REQUIRE(msgs.size() == 2);
@@ -159,11 +183,15 @@ TEST_CASE("OlinkConnection tests")
 
         // Connect to server
         testOlinkConnection->connectToHost(Poco::URI(localHostAddress));
+        lock.lock();
+        m_messageArrived.wait_for(lock, std::chrono::milliseconds(500), [&server]() {return server.getReceivedFramesNumber() == 2; });
+        lock.unlock();
         auto msgs = server.getReceivedFrames();
+        REQUIRE(msgs.size() == 2);
         // expect the link message to be received on server side 
         auto expectedLinkMessage1 = converter.toString(ApiGear::ObjectLink::Protocol::linkMessage(sink1Id));
         auto expectedLinkMessage2 = converter.toString(ApiGear::ObjectLink::Protocol::linkMessage(sink2Id));
-        
+
         REQUIRE(checkMessageInContainer(msgs, expectedLinkMessage1));
         REQUIRE(checkMessageInContainer(msgs, expectedLinkMessage2));
 
@@ -173,7 +201,11 @@ TEST_CASE("OlinkConnection tests")
         testOlinkConnection->disconnect();
 
         // Check unlink and close connection messages.
+        lock.lock();
+        m_messageArrived.wait_for(lock, std::chrono::milliseconds(500), [&server]() {return server.getReceivedFramesNumber() == 3; });
+        lock.unlock();
         msgs = server.getReceivedFrames();
+        REQUIRE(msgs.size() == 3);
         auto expectedUnlinkMessage1 = converter.toString(ApiGear::ObjectLink::Protocol::unlinkMessage(sink1Id));
         auto expectedUnlinkMessage2 = converter.toString(ApiGear::ObjectLink::Protocol::unlinkMessage(sink2Id));
 
@@ -186,14 +218,24 @@ TEST_CASE("OlinkConnection tests")
 
         // Connect again, node sends link message only for sink1.
         testOlinkConnection->connectToHost(Poco::URI(localHostAddress));
-        REQUIRE(checkMessageInContainer(server.getReceivedFrames(), expectedLinkMessage1));
+        lock.lock();
+        m_messageArrived.wait_for(lock, std::chrono::milliseconds(500), [&server]() {return server.getReceivedFramesNumber() == 1; });
+        lock.unlock();
+        msgs = server.getReceivedFrames();
+        REQUIRE(msgs.size() == 1);
+        REQUIRE(checkMessageInContainer(msgs, expectedLinkMessage1));
 
         //Test teardown and cleanup
         REQUIRE_CALL(*sink1, olinkOnRelease());
         testOlinkConnection->disconnectAndUnlink(sink1Id);
         testOlinkConnection.reset();
 
+        lock.lock();
+        //  Unlink and a close frame.
+        m_messageArrived.wait_for(lock, std::chrono::milliseconds(500), [&server]() {return server.getReceivedFramesNumber() == 2; });
+        lock.unlock();
         msgs = server.getReceivedFrames();
+        REQUIRE(msgs.size() == 2);
         REQUIRE(checkMessageInContainer(msgs, expectedUnlinkMessage1));
         REQUIRE(msgs[1].flags == Poco::Net::WebSocket::FRAME_OP_CLOSE);
 
@@ -213,7 +255,11 @@ TEST_CASE("OlinkConnection tests")
         // Wait for message to be sent with queue flush on tick, and action after sent happen.
         Poco::Thread::sleep(11);
         REQUIRE(registry.getNode(sink1Id).lock() == testOlinkConnection->node());
+        lock.lock();
+        m_messageArrived.wait_for(lock, std::chrono::milliseconds(500), [&server]() {return server.getReceivedFramesNumber() == 1; });
+        lock.unlock();
         auto msgs = server.getReceivedFrames();
+        REQUIRE(msgs.size() == 1);
         // expect the link message to be received on server side 
         auto expectedLinkMessage = converter.toString(ApiGear::ObjectLink::Protocol::linkMessage(sink1Id));
         REQUIRE(msgs[0].payload == expectedLinkMessage);
@@ -225,7 +271,11 @@ TEST_CASE("OlinkConnection tests")
         REQUIRE(registry.getNode(sink1Id).lock() == nullptr);
 
         // Check unlink was sent
+        lock.lock();
+        m_messageArrived.wait_for(lock, std::chrono::milliseconds(500), [&server]() {return server.getReceivedFramesNumber() == 2; });
+        lock.unlock();
         msgs = server.getReceivedFrames();
+        REQUIRE(msgs.size() == 2);
         auto expectedUnlinkMessage = converter.toString(ApiGear::ObjectLink::Protocol::unlinkMessage(sink1Id));
         REQUIRE(msgs.size() == 2);
         REQUIRE(msgs[0].payload == expectedUnlinkMessage);
@@ -247,7 +297,11 @@ TEST_CASE("OlinkConnection tests")
         // Check that server received link message
         auto expectedLinkMessage = converter.toString(ApiGear::ObjectLink::Protocol::linkMessage(sink1Id));
 
+        lock.lock();
+        m_messageArrived.wait_for(lock, std::chrono::milliseconds(500), [&server]() {return server.getReceivedFramesNumber() == 1; });
+        lock.unlock();
         auto msgs = server.getReceivedFrames();
+        REQUIRE(msgs.size() == 1);
         REQUIRE(msgs[0].payload == expectedLinkMessage);
         REQUIRE(msgs[0].flags == Poco::Net::WebSocket::FRAME_TEXT);
 
@@ -272,15 +326,22 @@ TEST_CASE("OlinkConnection tests")
         testOlinkConnection->disconnectAndUnlink(sink1Id);
         auto expectedUnlinkMessage = converter.toString(ApiGear::ObjectLink::Protocol::unlinkMessage(sink1Id));
 
+        lock.lock();
+        m_messageArrived.wait_for(lock, std::chrono::milliseconds(500), [&server]() {return server.getReceivedFramesNumber() == 2; });
+        lock.unlock();
         msgs = server.getReceivedFrames();
+        REQUIRE(msgs.size() == 2);
         // Expect socket re-connects, and sends link message on re-connection
         REQUIRE(msgs[0].payload == expectedLinkMessage);
         //Check the unlink message
         REQUIRE(msgs[1].payload == expectedUnlinkMessage);
 
          testOlinkConnection->disconnect();
+         lock.lock();
+         m_messageArrived.wait_for(lock, std::chrono::milliseconds(500), [&server]() {return server.getReceivedFramesNumber() == 1; });
+         lock.unlock();
          msgs = server.getReceivedFrames();
-         REQUIRE(msgs.size() > 0);
+         REQUIRE(msgs.size() == 1);
          // Check close frame was sent
          REQUIRE(msgs[0].flags == Poco::Net::WebSocket::FRAME_OP_CLOSE);
          server.stop();
@@ -294,12 +355,17 @@ TEST_CASE("OlinkConnection tests")
 
         // Check that server received link message
         auto expectedLinkMessage = converter.toString(ApiGear::ObjectLink::Protocol::linkMessage(sink1Id));
-        REQUIRE(checkMessageInContainer(server.getReceivedFrames(), expectedLinkMessage));
- 
+        lock.lock();
+        m_messageArrived.wait_for(lock, std::chrono::milliseconds(500), [&server]() {return server.getReceivedFramesNumber() == 1; });
+        lock.unlock();
+        auto msgs = server.getReceivedFrames();
+        REQUIRE(msgs.size() == 1);
+        REQUIRE(checkMessageInContainer(msgs, expectedLinkMessage));
+
         // Start test - Close connection with close frame
         server.sendFrame(any_payload, Poco::Net::WebSocket::FRAME_OP_CLOSE);
         Poco::Thread::sleep(30);
-        
+
         auto propertyName = "property2";
         auto propertyId = ApiGear::ObjectLink::Name::createMemberId(sink1Id, propertyName);
         auto node = testOlinkConnection->node();
@@ -316,7 +382,7 @@ TEST_CASE("OlinkConnection tests")
         auto future1 = std::async(std::launch::async, [sendTenSetPropertyMessages](){sendTenSetPropertyMessages(10);});
         auto future2 = std::async(std::launch::async, [sendTenSetPropertyMessages](){sendTenSetPropertyMessages(20);});
         auto future3 = std::async(std::launch::async, [sendTenSetPropertyMessages](){sendTenSetPropertyMessages(30);});
-        Poco::Thread::sleep(11); // add some delay between messages series                 
+        Poco::Thread::sleep(11); // add some delay between messages series
         auto future4 = std::async(std::launch::async, [sendTenSetPropertyMessages](){sendTenSetPropertyMessages(40);});
         auto future5 = std::async(std::launch::async, [sendTenSetPropertyMessages](){sendTenSetPropertyMessages(50);});
         auto future6 = std::async(std::launch::async, [sendTenSetPropertyMessages](){sendTenSetPropertyMessages(60);});
@@ -324,8 +390,13 @@ TEST_CASE("OlinkConnection tests")
 
         // wait for re-connection
         Poco::Thread::sleep(501);
-        
-        auto msgs = server.getReceivedFrames();
+
+        lock.lock();
+        // 80 messages and a link message
+        m_messageArrived.wait_for(lock, std::chrono::milliseconds(500), [&server]() {return server.getReceivedFramesNumber() == 81; });
+        lock.unlock();
+        msgs = server.getReceivedFrames();
+        REQUIRE(msgs.size() == 81);
         // Expect socket re-connects, and sends change property messages and link message
         for (auto i = 0; i< 80; i++)
         {
@@ -342,18 +413,27 @@ TEST_CASE("OlinkConnection tests")
         REQUIRE(expectedLinkMesageIndex > 0);
         REQUIRE(expectedLinkMesageIndex < msgs.size());
 
-        
+
         // Cleanup
         REQUIRE_CALL(*sink1, olinkOnRelease());
         testOlinkConnection->disconnectAndUnlink(sink1Id);
         auto expectedUnlinkMessage = converter.toString(ApiGear::ObjectLink::Protocol::unlinkMessage(sink1Id));
-        REQUIRE(checkMessageInContainer(server.getReceivedFrames(), expectedUnlinkMessage));
+        lock.lock();
+        m_messageArrived.wait_for(lock, std::chrono::milliseconds(500), [&server]() {return server.getReceivedFramesNumber() == 1; });
+        lock.unlock();
+        msgs = server.getReceivedFrames();
+        REQUIRE(msgs.size() == 1);
+        REQUIRE(checkMessageInContainer(msgs, expectedUnlinkMessage));
 
         testOlinkConnection->disconnect();
+        lock.lock();
+        m_messageArrived.wait_for(lock, std::chrono::milliseconds(500), [&server]() {return server.getReceivedFramesNumber() == 1; });
+        lock.unlock();
         msgs = server.getReceivedFrames();
+        REQUIRE(msgs.size() == 1);
         REQUIRE(msgs[0].flags == Poco::Net::WebSocket::FRAME_OP_CLOSE);
         server.stop();
     }
-}
 
+}
 }
