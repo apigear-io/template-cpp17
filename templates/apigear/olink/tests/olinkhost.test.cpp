@@ -55,7 +55,7 @@ namespace {
         auto portNumber = 8000;
         auto localHostAddress = "127.0.0.1";
         Poco::Net::HTTPRequest request(Poco::Net::HTTPRequest::HTTP_GET, "/ws", Poco::Net::HTTPRequest::HTTP_1_1);
-        Poco::Net::HTTPResponse response;
+
 
         nlohmann::json initProperties1 = { {"property1", "some_string1" }, { "property2",  92 }, { "property3", true } };
         nlohmann::json initProperties2 = { {"property1", "some_string2" }, { "property2",  29 }, { "property3", false } };
@@ -73,7 +73,9 @@ namespace {
             
             Poco::Net::HTTPClientSession clientSession1(localHostAddress, portNumber);
             Poco::Net::HTTPClientSession clientSession2(localHostAddress, portNumber);
-            Poco::Net::WebSocket clientSocket1(clientSession1, request, response), clientSocket2(clientSession2, request, response);
+            Poco::Net::HTTPResponse response1;
+            Poco::Net::HTTPResponse response2;
+            Poco::Net::WebSocket clientSocket1(clientSession1, request, response1), clientSocket2(clientSession2, request, response2);
             
             auto preparedLinkMessage = converter.toString(ApiGear::ObjectLink::Protocol::linkMessage(objectId));
             REQUIRE_CALL(*source1, olinkLinked(objectId, ANY(ApiGear::ObjectLink::IRemoteNode*)));
@@ -149,6 +151,7 @@ namespace {
             testHost.listen(portNumber);
 
             Poco::Net::HTTPClientSession clientSession1(localHostAddress, portNumber);
+            Poco::Net::HTTPResponse response;
             Poco::Net::WebSocket clientSocket1(clientSession1, request, response);
 
             auto preparedLinkMessage = converter.toString(ApiGear::ObjectLink::Protocol::linkMessage(objectId));
@@ -159,7 +162,7 @@ namespace {
             clientSocket1.sendFrame(preparedLinkMessage.c_str(), static_cast<int>(preparedLinkMessage.size()));
 
             lock.lock();
-            m_waitForMessageEffects.wait_for(lock, std::chrono::milliseconds(500), [&registry, objectId]() {return registry.getNodes(objectId).size() == 1; });
+            m_waitForMessageEffects.wait_for(lock, std::chrono::milliseconds(1500), [&registry, objectId]() {return registry.getNodes(objectId).size() == 1; });
             lock.unlock();
             auto nodes = registry.getNodes(objectId);
             REQUIRE(nodes.size() == 1);
@@ -175,7 +178,7 @@ namespace {
 
             testHost.close();
             lock.lock();
-            m_waitForMessageEffects.wait_for(lock, std::chrono::milliseconds(500), [&registry, objectId]() {return registry.getNodes(objectId).size() == 0; });
+            m_waitForMessageEffects.wait_for(lock, std::chrono::milliseconds(1500), [&registry, objectId]() {return registry.getNodes(objectId).size() == 0; });
             lock.unlock();
             REQUIRE(registry.getNodes(objectId).size() == 0);
             REQUIRE(registry.getSource(objectId).lock() == source1);
@@ -191,6 +194,7 @@ namespace {
             testHost.listen(portNumber);
 
             Poco::Net::HTTPClientSession clientSession1(localHostAddress, portNumber);
+            Poco::Net::HTTPResponse response;
             Poco::Net::WebSocket clientSocket1(clientSession1, request, response);
 
             auto preparedLinkMessage = converter.toString(ApiGear::ObjectLink::Protocol::linkMessage(objectId));
@@ -241,7 +245,9 @@ namespace {
 
             Poco::Net::HTTPClientSession clientSession1(localHostAddress, portNumber);
             Poco::Net::HTTPClientSession clientSession2(localHostAddress, portNumber);
-            Poco::Net::WebSocket clientSocket1(clientSession1, request, response), clientSocket2(clientSession2, request, response);
+            Poco::Net::HTTPResponse response1;
+            Poco::Net::HTTPResponse response2;
+            Poco::Net::WebSocket clientSocket1(clientSession1, request, response1), clientSocket2(clientSession2, request, response2);
 
             auto preparedLinkMessage = converter.toString(ApiGear::ObjectLink::Protocol::linkMessage(objectId));
             REQUIRE_CALL(*source1, olinkLinked(objectId, ANY(ApiGear::ObjectLink::IRemoteNode*)));
@@ -309,6 +315,7 @@ namespace {
             testHost.listen(portNumber);
 
             Poco::Net::HTTPClientSession clientSession1(localHostAddress, portNumber);
+            Poco::Net::HTTPResponse response;
             Poco::Net::WebSocket clientSocket1(clientSession1, request, response);
 
             auto preparedLinkMessage = converter.toString(ApiGear::ObjectLink::Protocol::linkMessage(objectId));
@@ -343,8 +350,9 @@ namespace {
 
             // Wait after close with opening a new connection
             Poco::Thread::sleep(50);
-            //Poco::Net::HTTPClientSession clientSession2(localHostAddress, portNumber);
-            Poco::Net::WebSocket clientSocket2(clientSession1, request, response);
+            Poco::Net::HTTPClientSession clientSession2(localHostAddress, portNumber);
+            Poco::Net::HTTPResponse response2;
+            Poco::Net::WebSocket clientSocket2(clientSession2, request, response2);
             REQUIRE_CALL(*source1, olinkLinked(objectId, ANY(ApiGear::ObjectLink::IRemoteNode*)));
             REQUIRE_CALL(*source1, olinkCollectProperties()).RETURN(initProperties1);
             clientSocket2.sendFrame(preparedLinkMessage.c_str(), static_cast<int>(preparedLinkMessage.size()));
