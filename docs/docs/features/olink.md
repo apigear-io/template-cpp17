@@ -213,6 +213,8 @@ auto ioWorldHello = std::make_shared<IoWorld::Hello>();
 auto ioWorldOlinkHelloService = std::make_shared<IoWorld::olink::HelloService>(ioWorldHello, registry);
 registry.addSource(ioWorldOlinkHelloService);
 auto portNumber = 8000;
+
+// Start your server with your service added to registry.
 testserver.listen(portNumber);
 
 

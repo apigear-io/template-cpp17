@@ -66,6 +66,8 @@ int main(){
 {{- end }}
 {{- end }}
 
+    // Start your server after all the services are added.
+    // This ensures that any new client that connects, will find the source it needs.
     testserver.listen(8000);
 
     bool keepRunning = true;

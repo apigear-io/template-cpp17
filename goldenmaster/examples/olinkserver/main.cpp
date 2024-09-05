@@ -203,6 +203,8 @@ int main(){
     auto counterOlinkCounterService = std::make_shared<Counter::olink::CounterService>(counterCounterThreadSafe, registry);
     registry.addSource(counterOlinkCounterService);
 
+    // Start your server after all the services are added.
+    // This ensures that any new client that connects, will find the source it needs.
     testserver.listen(8000);
 
     bool keepRunning = true;
