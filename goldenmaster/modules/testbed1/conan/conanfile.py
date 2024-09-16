@@ -38,7 +38,7 @@ class testbed1Conan(ConanFile):
     def requirements(self):
         self.requires("nlohmann_json/3.11.3", transitive_headers=True)
         
-        self.requires("apigear/3.6.0", transitive_headers=True)
+        self.requires("apigear/3.7.0", transitive_headers=True)
 
     def build_requirements(self):
         self.test_requires("catch2/2.13.7")

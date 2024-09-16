@@ -9,7 +9,7 @@ tb_names/1.0.0
 custom_types/1.0.0
 extern_types/1.0.0
 counter/1.0.0
-apigear/3.6.0
+apigear/3.7.0
 
 [generators]
 CMakeDeps

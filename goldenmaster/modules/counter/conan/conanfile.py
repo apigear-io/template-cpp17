@@ -40,7 +40,7 @@ class counterConan(ConanFile):
         self.requires("custom_types/1.0.0", transitive_headers=True)
         self.requires("extern_types/1.0.0", transitive_headers=True)
         
-        self.requires("apigear/3.6.0", transitive_headers=True)
+        self.requires("apigear/3.7.0", transitive_headers=True)
 
     def build_requirements(self):
         self.test_requires("catch2/2.13.7")

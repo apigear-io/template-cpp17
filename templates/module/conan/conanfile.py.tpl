@@ -56,7 +56,7 @@ class {{$module_id}}Conan(ConanFile):
 {{- end }}
 {{- end }}
         {{ if and $features.apigear ( len .Module.Interfaces ) }}
-        self.requires("apigear/3.6.0", transitive_headers=True)
+        self.requires("apigear/3.7.0", transitive_headers=True)
         {{- end}}
 
     def build_requirements(self):
