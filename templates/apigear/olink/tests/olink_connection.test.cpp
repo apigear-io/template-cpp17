@@ -85,12 +85,15 @@ TEST_CASE("OlinkConnection tests")
 
         // Send init message from server and check it is delivered and decoded
         nlohmann::json initProperties = { {"property1", "some_string" }, { "property2",  9 }, { "property3", false } };
-        REQUIRE_CALL(*sink1, olinkOnInit(sink1Id, initProperties, testOlinkConnection->node().get()));
+        std::atomic<bool> isInitReceived{ false };
+        auto setInitReceived = [&isInitReceived]() {isInitReceived = true; };
 
+        REQUIRE_CALL(*sink1, olinkOnInit(sink1Id, initProperties, testOlinkConnection->node().get())).SIDE_EFFECT(setInitReceived(););
         auto preparedInitMessage = converter.toString(ApiGear::ObjectLink::Protocol::initMessage(sink1Id, initProperties));
         server.sendFrame(preparedInitMessage);
-        // Wait for init message to be delivered and handled before the sink will be released
-        Poco::Thread::sleep(30);
+        lock.lock();
+        m_messageArrived.wait_for(lock, std::chrono::milliseconds(500), [&isInitReceived]() {return isInitReceived == true; });
+        lock.unlock();
 
         // Remove sink: unlink, detach from node, remove from registry.
         REQUIRE_CALL(*sink1, olinkOnRelease());
@@ -314,13 +317,15 @@ TEST_CASE("OlinkConnection tests")
         REQUIRE(msgs[0].flags == Poco::Net::WebSocket::FRAME_TEXT);
 
         // Send init message from server and check it is delivered and decoded
+        std::atomic<bool> isInitReceived{ false };
+        auto setInitReceived = [&isInitReceived]() {isInitReceived = true; };
         nlohmann::json initProperties = { {"property1", "some_string" }, { "property2",  9 }, { "property3", false } };
-        REQUIRE_CALL(*sink1, olinkOnInit(sink1Id, initProperties, testOlinkConnection->node().get()));
-
+        REQUIRE_CALL(*sink1, olinkOnInit(sink1Id, initProperties, testOlinkConnection->node().get())).SIDE_EFFECT(setInitReceived(););
         auto preparedInitMessage = converter.toString(ApiGear::ObjectLink::Protocol::initMessage(sink1Id, initProperties));
         server.sendFrame(preparedInitMessage);
-        // Wait for init message to be delivered and handled before the sink will be released
-        Poco::Thread::sleep(30);
+        lock.lock();
+        m_messageArrived.wait_for(lock, std::chrono::milliseconds(500), [&isInitReceived]() {return isInitReceived == true; });
+        lock.unlock();
 
 
         //send close frame from server side
