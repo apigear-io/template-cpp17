@@ -20,7 +20,7 @@ Basic c++ knowledge is necessary.
 
 ### Code generation
 
-Follow the documentation for the [code generation](/docs/guide/intro) in general and [CLI](/docs/cli/generate) or the [Studio](/docs/studio/intro) tools.
+Follow the documentation for the [code generation](/docs/guide/intro) in general and [CLI](/docs/tools/cli/generate) or the [Studio](/docs/tools/studio/intro) tools.
 Or try first the [quick start guide](../quickstart/index.md) which shows how to prepare api and generate code out of it.
 
 :::tip
@@ -50,11 +50,11 @@ Features generate a view model for the _API_ definition. This can be used to imp
 
 Features can be used in combination with _API_ and add more functionality on top, like simulation support (see [olink](olink.md#simulation))
 
-- [olink](olink.md) - provides a client and server adapters for each interface, that can be connected to any of the other technology templates with support for [ObjectLink](/docs/advanced/objectlink/intro). Use this feature to connect with ApiGear simulation tools.
+- [olink](olink.md) - provides a client and server adapters for each interface, that can be connected to any of the other technology templates with support for [ObjectLink](/docs/advanced/protocols/objectlink/intro). Use this feature to connect with ApiGear simulation tools.
 - examples_olink - examples of generated code for the olink feature. Contains:
 	- `olinkserver` shows use of your interfaces as an olink services.
 	- `olinkclient` shows use of your interfaces as an olink clients.
-- [monitor](monitor.md) - generates a middle-ware layer which logs all API events to the [CLI](/docs/cli/intro) or the [Studio](/docs/studio/intro)
+- [monitor](monitor.md) - generates a middle-ware layer which logs all API events to the [CLI](/docs/tools/cli/intro) or the [Studio](/docs/tools/studio/intro)
 - [MQTT](mqtt.md) _experimental_ - provides minimal working adapters for MQTT client and service side for each interfaces. Check also MQTT in other technology templates that supports it.
 - examples_mqtt - examples of generated code for the olink feature. Contains:
 	- `mqttserver` shows use of your interfaces with mqtt adapted for your services.

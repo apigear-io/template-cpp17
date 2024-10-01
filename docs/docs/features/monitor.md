@@ -7,7 +7,7 @@ import helloWorldModuleComponent from '!!raw-loader!./data/helloworld.module.yam
 
 # Monitor
 
-Use the monitor feature to examine the interface calls, state and signals during runtime. With this feature you obtain a monitor client and a monitored version of your interfaces. The monitoring server is embedded into the [ApiGear Studio](/docs/studio/intro) and [CLI version](/docs/cli/intro).
+Use the monitor feature to examine the interface calls, state and signals during runtime. With this feature you obtain a monitor client and a monitored version of your interfaces. The monitoring server is embedded into the [ApiGear Studio](/docs/tools/studio/intro) and [CLI version](/docs/tools/cli/intro).
 More details on [monitoring](/docs/advanced/monitor/intro)
 
 ## File overview for module
