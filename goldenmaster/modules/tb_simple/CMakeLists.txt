@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.24)
 project(tb_simple)
 
 # needed to access CMAKE_INSTALL_LIBDIR

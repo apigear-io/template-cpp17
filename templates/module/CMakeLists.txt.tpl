@@ -1,7 +1,7 @@
 {{- $module_id := snake .Module.Name -}}
 {{- $module_idFirstUpper := upper1 $module_id -}}
 {{- $features := .Features -}}
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.24)
 project({{$module_id}})
 
 # needed to access CMAKE_INSTALL_LIBDIR
