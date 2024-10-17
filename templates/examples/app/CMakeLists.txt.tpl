@@ -1,5 +1,5 @@
 {{- $features := .Features -}}
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.24)
 project(App)
 
 # append local binary directory for conan packages to be found
