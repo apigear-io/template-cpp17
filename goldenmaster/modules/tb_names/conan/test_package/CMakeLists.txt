@@ -3,7 +3,7 @@ project(Testtb_names)
 include(CTest)
 find_package(tb_names CONFIG REQUIRED)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # add test for tb_names

@@ -7,7 +7,7 @@ import QuickStartCommon from "@site/docs/_quickstart_common.md"
 
 The Quick-Start guide explains how in a few steps you get from an API definition to a functional c++ example.
 
-Steps one and two are universal for other technologies. In the step two you will choose a concrete _cpp14_ template.
+Steps one and two are universal for other technologies. In the step two you will choose a concrete _cpp17_ template.
 For more general information about first steps with ApiGear [First Steps](/docs/guide/intro)
 
 The quick start enables only basic features: the [api](features/api.md) generation and simple [stub](features/stubs.md) implementation.
@@ -102,7 +102,7 @@ project(MyExample)
 # append local binary directory for conan packages to be found
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR})
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(MyExample main.cpp)
