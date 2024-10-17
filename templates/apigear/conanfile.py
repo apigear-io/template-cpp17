@@ -81,7 +81,7 @@ class apigearConan(ConanFile):
               self.test_requires("trompeloeil/46")
 
     def validate(self):
-        check_min_cppstd(self, "14")
+        check_min_cppstd(self, "17")
 
     def layout(self):
         cmake_layout(self)

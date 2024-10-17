@@ -1,6 +1,6 @@
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_library(tb_simple-api INTERFACE)
 add_library(tb_simple::tb_simple-api ALIAS tb_simple-api)
