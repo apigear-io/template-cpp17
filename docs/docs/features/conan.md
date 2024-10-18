@@ -8,6 +8,10 @@ import helloWorldModuleComponent from '!!raw-loader!./data/helloworld.module.yam
 
 With this feature you we generate a conan support for your project. It helps with packaging and to managing dependencies for different platforms, OSs, compilers, architecture, cross-builds. Read more about conan and its all benefits [here](https://conan.io/).
 
+:::tip
+Please make sure your C++ standard is set to 17 in your conan profile i.e.:<br />
+`compiler.cppstd=17`
+:::
 
 ### File overview for module
 
