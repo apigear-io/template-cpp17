@@ -52,6 +52,9 @@ jobs:
         run: pip install -r .github/workflows/conan-requirements.txt
       - name: Create default profile
         run: conan profile detect
+      - name: make sure the conan profile uses cpp17 on Windows
+        if: ${{ matrix.config.os == 'windows-latest'}}
+        run: sed -i 's/compiler.cppstd=14/compiler.cppstd=17/' ~/.conan2/profiles/default
       - run: cmake --version
       - name: Run conan build Linux/macOS
         if: ${{ matrix.config.os != 'windows-latest'}}
