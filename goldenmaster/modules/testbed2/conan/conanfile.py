@@ -44,7 +44,7 @@ class testbed2Conan(ConanFile):
         self.test_requires("catch2/2.13.7")
 
     def validate(self):
-        check_min_cppstd(self, "14")
+        check_min_cppstd(self, "17")
 
     def layout(self):
         cmake_layout(self)

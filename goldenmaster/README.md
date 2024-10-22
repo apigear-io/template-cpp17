@@ -1,6 +1,6 @@
-# C++ 14 Blueprint
+# C++ 17 Blueprint
 
-A pure C++ 14 blueprint with [CMake](https://cmake.org/) build system support. [Poco](https://pocoproject.org/) is used for network connections. The generated code can be enhanced with support for the [Conan](https://conan.io/) package manager.
+A pure C++ 17 blueprint with [CMake](https://cmake.org/) build system support. [Poco](https://pocoproject.org/) is used for network connections. The generated code can be enhanced with support for the [Conan](https://conan.io/) package manager.
 
 ## Features
 The following list presents a set of features which can be individually enabled in the solution file for code generation.
@@ -124,7 +124,7 @@ If you do not want or can not use conan, the poco libraries must installed separ
     ```
     $ sudo apt install gcc-10 g++-10 git cmake libpoco-dev
     ```
-2. Set gcc-10 with C++14 support as default compiler
+2. Set gcc-10 with C++17 support as default compiler
    
     ```
     $ sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 10 --slave /usr/bin/g++ g++ /usr/bin/g++-10

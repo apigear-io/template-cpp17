@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.24)
 project({{lower1 (camel .System.Name)}})
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # on Windows it is helpful to have all binary files next to each other

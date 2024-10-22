@@ -1,6 +1,6 @@
-# C++ 14 Blueprint
+# C++ 17 Blueprint
 
-A pure C++ 14 blueprint with [CMake](https://cmake.org/) build system support.
+A pure C++ 17 blueprint with [CMake](https://cmake.org/) build system support.
 [Poco](https://pocoproject.org/) is used for network connections (feature: apigear).
 The generated code can be enhanced with support for the [Conan](https://conan.io/) package manager.
 
