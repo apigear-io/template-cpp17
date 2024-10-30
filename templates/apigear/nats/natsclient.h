@@ -5,23 +5,16 @@
 #include "nlohmann/json.hpp"
 #include "natscommon.h"
 #include "natstypes.h"
+#include "natsbase.h"
 
 namespace ApiGear {
 namespace Nats {
 
-class APIGEAR_NATS_EXPORT Client
+class APIGEAR_NATS_EXPORT Client :public Base
 {
 public:
     explicit Client();
     virtual ~Client() = default;
-
-    void connect(std::string address);
-    void subscribe(std::string topic);
-    void unsubscribe(std::string topic);
-    void publish(std::string topic, std::string payload);
-
-private:
-    std::shared_ptr<class CWrapper> m_cwrapper;
 };
 } // namespace Nats
 } // namespace ApiGear
