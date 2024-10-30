@@ -168,6 +168,10 @@ features:
           raw: true
         - source: "apigear/nats/private/natscwrapper.h"
           raw: true
+        - source: "apigear/nats/natsbase.cpp"
+          raw: true
+        - source: "apigear/nats/natsbase.h"
+          raw: true
         - source: "apigear/nats/natsclient.cpp"
           raw: true
         - source: "apigear/nats/natsclient.h"
