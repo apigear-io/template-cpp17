@@ -130,3 +130,7 @@ add_subdirectory(examples/olinkclient)
 add_subdirectory(examples/mqttserver)
 add_subdirectory(examples/mqttclient)
 {{- end }}
+{{- if .Features.examples_nats }}
+add_subdirectory(examples/natsserver)
+add_subdirectory(examples/natsclient)
+{{- end }}

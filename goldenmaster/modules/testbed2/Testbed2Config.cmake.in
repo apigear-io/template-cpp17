@@ -8,12 +8,14 @@ find_dependency(nlohmann_json REQUIRED)
 find_dependency(apigear COMPONENTS poco-tracer REQUIRED)
 find_dependency(apigear COMPONENTS poco-olink REQUIRED)
 find_dependency(apigear COMPONENTS paho-mqtt REQUIRED)
+find_dependency(apigear COMPONENTS nats REQUIRED)
 
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Testbed2ApiTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Testbed2CoreTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Testbed2MonitorTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Testbed2OLinkTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Testbed2MqttTargets.cmake")
+INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Testbed2NatsTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Testbed2ImplementationTargets.cmake")
 
 check_required_components(
@@ -22,5 +24,6 @@ Testbed2-core
 Testbed2-monitor
 Testbed2-olink
 Testbed2-mqtt
+Testbed2-nats
 Testbed2-implementation
 )

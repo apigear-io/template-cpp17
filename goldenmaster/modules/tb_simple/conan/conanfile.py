@@ -25,6 +25,7 @@ class tb_simpleConan(ConanFile):
         "apigear/*:enable_monitor": True,
         "apigear/*:enable_olink": True,
         "apigear/*:enable_mqtt": True,
+        "apigear/*:enable_nats": True,
     }
 
     def config_options(self):
@@ -109,3 +110,6 @@ class tb_simpleConan(ConanFile):
         self.cpp_info.components["tb_simple-mqtt"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["tb_simple-mqtt"].libs = ["tb_simple-mqtt"]
         self.cpp_info.components["tb_simple-mqtt"].requires = ["tb_simple-core", "nlohmann_json::nlohmann_json", "apigear::paho-mqtt"]
+        self.cpp_info.components["tb_simple-nats"].includedirs.append(os.path.join(self.package_folder, "include"))
+        self.cpp_info.components["tb_simple-nats"].libs = ["tb_simple-nats"]
+        self.cpp_info.components["tb_simple-nats"].requires = ["tb_simple-core", "nlohmann_json::nlohmann_json", "apigear::nats"]
