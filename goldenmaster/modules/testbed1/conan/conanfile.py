@@ -25,6 +25,7 @@ class testbed1Conan(ConanFile):
         "apigear/*:enable_monitor": True,
         "apigear/*:enable_olink": True,
         "apigear/*:enable_mqtt": True,
+        "apigear/*:enable_nats": True,
     }
 
     def config_options(self):
@@ -110,3 +111,6 @@ class testbed1Conan(ConanFile):
         self.cpp_info.components["testbed1-mqtt"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["testbed1-mqtt"].libs = ["testbed1-mqtt"]
         self.cpp_info.components["testbed1-mqtt"].requires = ["testbed1-core", "nlohmann_json::nlohmann_json", "apigear::paho-mqtt"]
+        self.cpp_info.components["testbed1-nats"].includedirs.append(os.path.join(self.package_folder, "include"))
+        self.cpp_info.components["testbed1-nats"].libs = ["testbed1-nats"]
+        self.cpp_info.components["testbed1-nats"].requires = ["testbed1-core", "nlohmann_json::nlohmann_json", "apigear::nats"]

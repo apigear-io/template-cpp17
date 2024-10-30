@@ -25,6 +25,7 @@ class tb_enumConan(ConanFile):
         "apigear/*:enable_monitor": True,
         "apigear/*:enable_olink": True,
         "apigear/*:enable_mqtt": True,
+        "apigear/*:enable_nats": True,
     }
 
     def config_options(self):
@@ -110,3 +111,6 @@ class tb_enumConan(ConanFile):
         self.cpp_info.components["tb_enum-mqtt"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["tb_enum-mqtt"].libs = ["tb_enum-mqtt"]
         self.cpp_info.components["tb_enum-mqtt"].requires = ["tb_enum-core", "nlohmann_json::nlohmann_json", "apigear::paho-mqtt"]
+        self.cpp_info.components["tb_enum-nats"].includedirs.append(os.path.join(self.package_folder, "include"))
+        self.cpp_info.components["tb_enum-nats"].libs = ["tb_enum-nats"]
+        self.cpp_info.components["tb_enum-nats"].requires = ["tb_enum-core", "nlohmann_json::nlohmann_json", "apigear::nats"]
