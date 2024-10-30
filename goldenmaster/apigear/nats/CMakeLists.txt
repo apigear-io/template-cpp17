@@ -3,6 +3,9 @@ find_package(cnats COMPONENTS nats_static REQUIRED)
 
 set (SOURCES
   private/natscwrapper.cpp
+  natsbase.cpp
+  natsclient.cpp
+  natsservice.cpp
 )
 add_library(nats SHARED ${SOURCES})
 add_library(apigear::nats ALIAS nats)
