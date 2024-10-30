@@ -2,6 +2,7 @@
 #include "natscwrapper.h"
 #include "utilities/logger.h"
 #include <memory>
+#include <functional>
 
 using namespace ApiGear::Nats;
 
@@ -21,6 +22,20 @@ static void asyncCb(natsConnection* /*connection*/, natsSubscription* subscripti
     std::cout << "subscribed for subscription" << natsSubscription_GetSubject(subscription);
 }
 
+static void conntectionHandler(natsConnection* connection, void* context)
+{
+    auto status = natsConnection_Status(connection);
+    std::cout << "connection handler " << static_cast<int>(status)<< std::endl;
+    auto callbackStruct = static_cast<CWrapper::ConnectionCallbackContext*>(context);
+    if (callbackStruct && callbackStruct->function)
+    {
+        callbackStruct->function();
+    }
+    else
+    {
+        //TODO LOG
+    }
+}
 
 CWrapper::CWrapper()
 {
@@ -35,8 +50,11 @@ CWrapper::~CWrapper()
     natsConnection_Destroy(m_connection);
 }
 
-void CWrapper::connect(std::string address)//"nats://localhost:4222"
+void CWrapper::connect(std::string address, std::function<void(void)> connectionStateChangedCallback)
 {
+    //TODO ensure that context is valid even if class is destroyed already;
+    m_connectionStateChangedCallback = ConnectionCallbackContext{ connectionStateChangedCallback };
+
     natsOptions* opts;
     auto status = natsOptions_Create(&opts);
     if (status != NATS_OK) { /*handle*/ return; }
@@ -46,6 +64,14 @@ void CWrapper::connect(std::string address)//"nats://localhost:4222"
     status = natsOptions_SetErrorHandler(opts, asyncCb, NULL);
     if (status != NATS_OK) { /*handle*/ return; }
     status = natsOptions_SetURL(opts, address.c_str());
+    if (status != NATS_OK) { /*handle*/ return; }
+    status = natsOptions_SetDisconnectedCB(opts, conntectionHandler, &m_connectionStateChangedCallback);
+    if (status != NATS_OK) { /*handle*/ return; }
+    status = natsOptions_SetReconnectedCB(opts, conntectionHandler, &m_connectionStateChangedCallback);
+    if (status != NATS_OK) { /*handle*/ return; }
+    status = natsOptions_SetRetryOnFailedConnect(opts, true, conntectionHandler, &m_connectionStateChangedCallback);
+    if (status != NATS_OK) { /*handle*/ return; }
+    status = natsOptions_SetClosedCB(opts, conntectionHandler, &m_connectionStateChangedCallback);
     if (status != NATS_OK) { /*handle*/ return; }
     status = natsConnection_Connect(&m_connection, opts);
     if (status != NATS_OK) { /*TODO HANDLE */ return;}

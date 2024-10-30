@@ -28,6 +28,11 @@ namespace Nats {
 class CWrapper : public std::enable_shared_from_this<CWrapper>
 {
 public:
+    struct ConnectionCallbackContext
+    {
+        std::function<void(void)> function;
+    };
+
     static std::shared_ptr<CWrapper> create()
     {
         return std::shared_ptr<CWrapper>(new CWrapper());
@@ -40,7 +45,7 @@ public:
         return shared_from_this();
     }
 
-    void connect(std::string address);
+    void connect(std::string address, std::function<void(void)> connectionStateChangedCallback);
 
     void subscribe(std::string topic);
     void unsubscribe(std::string topic);
@@ -48,8 +53,11 @@ public:
     ConnectionStatus getStatus();
 
 private:
+
     natsConnection* m_connection = NULL;
     natsSubscription* m_subscription = NULL;
+
+    ConnectionCallbackContext m_connectionStateChangedCallback;
 
     explicit CWrapper();
 };
