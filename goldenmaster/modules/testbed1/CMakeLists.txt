@@ -25,6 +25,7 @@ add_subdirectory(implementation)
 add_subdirectory(generated/monitor)
 add_subdirectory(generated/olink)
 add_subdirectory(generated/mqtt)
+add_subdirectory(generated/nats)
 
 include(CMakePackageConfigHelpers)
 configure_package_config_file(Testbed1Config.cmake.in

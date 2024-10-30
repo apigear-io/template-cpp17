@@ -25,6 +25,7 @@ class tb_namesConan(ConanFile):
         "apigear/*:enable_monitor": True,
         "apigear/*:enable_olink": True,
         "apigear/*:enable_mqtt": True,
+        "apigear/*:enable_nats": True,
     }
 
     def config_options(self):
@@ -110,3 +111,6 @@ class tb_namesConan(ConanFile):
         self.cpp_info.components["tb_names-mqtt"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["tb_names-mqtt"].libs = ["tb_names-mqtt"]
         self.cpp_info.components["tb_names-mqtt"].requires = ["tb_names-core", "nlohmann_json::nlohmann_json", "apigear::paho-mqtt"]
+        self.cpp_info.components["tb_names-nats"].includedirs.append(os.path.join(self.package_folder, "include"))
+        self.cpp_info.components["tb_names-nats"].libs = ["tb_names-nats"]
+        self.cpp_info.components["tb_names-nats"].requires = ["tb_names-core", "nlohmann_json::nlohmann_json", "apigear::nats"]

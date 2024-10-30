@@ -25,6 +25,7 @@ class counterConan(ConanFile):
         "apigear/*:enable_monitor": True,
         "apigear/*:enable_olink": True,
         "apigear/*:enable_mqtt": True,
+        "apigear/*:enable_nats": True,
     }
 
     def config_options(self):
@@ -112,3 +113,6 @@ class counterConan(ConanFile):
         self.cpp_info.components["counter-mqtt"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["counter-mqtt"].libs = ["counter-mqtt"]
         self.cpp_info.components["counter-mqtt"].requires = ["counter-core", "nlohmann_json::nlohmann_json", "apigear::paho-mqtt"]
+        self.cpp_info.components["counter-nats"].includedirs.append(os.path.join(self.package_folder, "include"))
+        self.cpp_info.components["counter-nats"].libs = ["counter-nats"]
+        self.cpp_info.components["counter-nats"].requires = ["counter-core", "nlohmann_json::nlohmann_json", "apigear::nats"]
