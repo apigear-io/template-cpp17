@@ -178,6 +178,19 @@ features:
           raw: true
         - source: "apigear/nats/natscommon.h"
           raw: true
+        - source: "module/generated/nats/CMakeLists.txt.tpl"
+          target: "modules/{{snake .Module.Name}}/generated/nats/CMakeLists.txt"
+    - match: interface
+      prefix: "modules/{{snake .Module.Name}}/generated/nats/"
+      documents:
+        - source: "module/generated/nats/natsservice.h.tpl"
+          target: "{{lower (camel .Interface.Name)}}service.h"
+        - source: "module/generated/nats/natsservice.cpp.tpl"
+          target: "{{lower (camel .Interface.Name)}}service.cpp"
+        - source: "module/generated/nats/natsclient.h.tpl"
+          target: "{{lower (camel .Interface.Name)}}client.h"
+        - source: "module/generated/nats/natsclient.cpp.tpl"
+          target: "{{lower (camel .Interface.Name)}}client.cpp"
   - name: apigear
     scopes:
     - match: system
