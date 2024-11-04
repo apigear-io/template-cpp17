@@ -51,14 +51,27 @@ public:
     int64_t subscribe(std::string topic, SimpleOnMessageCallback callback);
     void unsubscribe(int64_t id);
     void publish(std::string topic, std::string payload);
+
     ConnectionStatus getStatus();
 
+    struct SimpleCallbackWrapper
+    {
+        SimpleCallbackWrapper(SimpleOnMessageCallback cb)
+            :callback(cb)
+        {
+        }
+        int64_t id = -1;
+        SimpleOnMessageCallback callback;
+    };
+    void cleanSubscription(int64_t id);
 private:
     struct NatsConnectionDeleter
     {
         void operator()(natsConnection* connection);
     };
 
+    std::mutex m_simpleCallbacksMutex;
+    std::list<SimpleCallbackWrapper> m_simpleCallbacks;
     std::unique_ptr<natsConnection, NatsConnectionDeleter> m_connection;
     std::list<std::shared_ptr<natsSubscription>> m_subscriptions;
     std::mutex m_subscriptionsMutex;

@@ -6,10 +6,39 @@
 
 using namespace ApiGear::Nats;
 
-static void onMsg(natsConnection* /*connection*/, natsSubscription* /*subscription*/, natsMsg* msg, void* /*closure*/)
+struct NatsSubscriptionDeleter
 {
-    std::cout<<"Received msg: "<<  natsMsg_GetSubject(msg) << " : "<<natsMsg_GetData(msg) << std::endl;
-    natsMsg_Destroy(msg);
+    void operator()(natsSubscription* s)
+    {
+        natsSubscription_Destroy(s);
+    }
+};
+struct NatsMsgDeleter
+{
+    void operator()(natsMsg* msg)
+    {
+        natsMsg_Destroy(msg);
+    }
+};
+
+struct cleanSubscriptionResourcesContext {
+    int64_t id;
+    std::weak_ptr<CWrapper> client;
+};
+
+static void onMsg(natsConnection* /*connection*/, natsSubscription* /*subscription*/, natsMsg* msg, void* context)
+{
+    // Make sure msg will be properly destroyed.
+    std::shared_ptr<natsMsg> message(msg, NatsMsgDeleter());
+    CWrapper::SimpleCallbackWrapper* callbackWrapper = static_cast<CWrapper::SimpleCallbackWrapper*>(context);
+    if (callbackWrapper && callbackWrapper->callback)
+    {
+        callbackWrapper->callback(natsMsg_GetData(msg));
+    }
+    else
+    {
+        //TODO HANDLE / LOG 
+    }
 }
 
 static void onError(natsConnection* /*connection*/, natsSubscription* subscription, natsStatus status, void* /*closure*/)
@@ -18,7 +47,6 @@ static void onError(natsConnection* /*connection*/, natsSubscription* subscripti
     {
         //TODO LOG
     }
-    std::cout << "subscribed for subscription" << natsSubscription_GetSubject(subscription) << std::endl;
 }
 
 static void conntectionHandler(natsConnection* connection, void* context)
@@ -36,9 +64,17 @@ static void conntectionHandler(natsConnection* connection, void* context)
     }
 }
 
-static void alreadyUnsubscribed(void* /*closure*/)
+static void removeSubscriptionResources(void* context)
 {
-    std::cout << "received message for already unsubscribed subscription - TODO pass name" << std::endl;
+    cleanSubscriptionResourcesContext* ctx = static_cast<cleanSubscriptionResourcesContext*>(context);
+    if (!ctx)
+    {
+    }
+    else if (auto client = ctx->client.lock())
+    {
+        client->cleanSubscription(ctx->id);
+    }
+    delete ctx;
 }
 
 
@@ -50,17 +86,11 @@ CWrapper::CWrapper()
 
 CWrapper::~CWrapper()
 {
-    natsConnection_Close(m_connection);
+    natsConnection_Close(m_connection.get());
 }
 
 
-struct NatsSubscriptionDeleter
-{
-    void operator()(natsSubscription* s)
-    {
-        natsSubscription_Destroy(s);
-    }
-};
+
 
 void CWrapper::NatsConnectionDeleter::operator()(natsConnection* conn)
 {
@@ -95,9 +125,9 @@ void CWrapper::connect(std::string address, std::function<void(void)> connection
     if (status != NATS_OK) { /*handle*/ return; }
     status = natsOptions_UseGlobalMessageDelivery(opts, true);
     if (status != NATS_OK) { /*handle*/ return; }
-    natsConnection* connection = NULL
+    natsConnection* connection = NULL;
     status = natsConnection_Connect(&connection, opts);
-    n_connection.reset(connection);
+    m_connection.reset(connection);
     if (status != NATS_OK) { /*TODO HANDLE */ return;}
     natsOptions_Destroy(opts); // use custom deleter with this function call? and similar for all other nats *
 }
@@ -125,27 +155,50 @@ ConnectionStatus CWrapper::getStatus()
 //TODO pass eiher const& or string_view
 int64_t CWrapper::subscribe(std::string topic, SimpleOnMessageCallback callback)
 {
+    // store callback
+    std::unique_lock<std::mutex> lock(m_simpleCallbacksMutex);
+    m_simpleCallbacks.emplace_back(SimpleCallbackWrapper(callback));
+    SimpleCallbackWrapper* storedCallback = &m_simpleCallbacks.back();
+    lock.unlock();
+    // nats library prepares a subscription which later will be stored, it is this class responsibility to free the resources.
     natsSubscription* tmp;
-    auto status = natsConnection_Subscribe(&tmp, m_connection.get(), topic.c_str(), onMsg, NULL);
-    if (status != NATS_OK) { /*TODO HANDLE */ };
+    auto status = natsConnection_Subscribe(&tmp, m_connection.get(), topic.c_str(), onMsg, storedCallback);
     std::shared_ptr< natsSubscription> sub(tmp, NatsSubscriptionDeleter());
+
+    if (status != NATS_OK) { /*TODO HANDLE */ };
     m_subscriptions.push_back(sub);
     auto subscription_ptr = m_subscriptions.back().get();
-    status = natsSubscription_SetOnCompleteCB(subscription_ptr, &alreadyUnsubscribed, NULL);
+
+    // id can be obtained only after successful subscription
+    auto id = natsSubscription_GetID(subscription_ptr);
+    m_simpleCallbacks.back().id = id;
+    // This callback removes all resources, the nats library states that after unsubscribe call there might be still message to serve
+    // Nats library guarantees that after SetOnCompleteCB there will be no more calls for message handler for this subscription and resources can be safely cleaned up.
+    
+    status = natsSubscription_SetOnCompleteCB(subscription_ptr, &removeSubscriptionResources, new cleanSubscriptionResourcesContext{ id, shared_from_this() });
     if (status != NATS_OK) { /*TODO HANDLE */ };
-    return natsSubscription_GetID(subscription_ptr);
+    return id;
 }
 
-//TODO id not string
 void CWrapper::unsubscribe(int64_t id)
 {
     std::unique_lock<std::mutex> lock{ m_subscriptionsMutex };
     auto found = find_if(m_subscriptions.begin(), m_subscriptions.end(), [id](auto element) { return  natsSubscription_GetID(element.get()) == id; });
     lock.unlock();
     auto status = natsSubscription_Unsubscribe((*found).get());
-    m_subscriptions.erase(found);
-    lock.unlock();
     if (status != NATS_OK) { /*TODO HANDLE */ };
+}
+
+void CWrapper::cleanSubscription(int64_t id)
+{
+    std::unique_lock<std::mutex> lockSubscriptions{ m_subscriptionsMutex };
+    auto foundSubscription = find_if(m_subscriptions.begin(), m_subscriptions.end(), [id](auto element) { return  natsSubscription_GetID(element.get()) == id; });
+    m_subscriptions.erase(foundSubscription);
+    lockSubscriptions.unlock();
+    std::unique_lock<std::mutex> lockCallbacks{ m_simpleCallbacksMutex };
+    auto foundCallback = find_if(m_simpleCallbacks.begin(), m_simpleCallbacks.end(), [id](auto& element) { return  element.id == id; });
+    m_simpleCallbacks.erase(foundCallback);
+    lockCallbacks.unlock();
 }
 
 void CWrapper::publish(std::string topic, std::string payload)
