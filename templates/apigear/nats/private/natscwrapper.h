@@ -54,7 +54,12 @@ public:
     ConnectionStatus getStatus();
 
 private:
-    natsConnection* m_connection = NULL;
+    struct NatsConnectionDeleter
+    {
+        void operator()(natsConnection* connection);
+    };
+
+    std::unique_ptr<natsConnection, NatsConnectionDeleter> m_connection;
     std::list<std::shared_ptr<natsSubscription>> m_subscriptions;
     std::mutex m_subscriptionsMutex;
     ConnectionCallbackContext m_connectionStateChangedCallback;

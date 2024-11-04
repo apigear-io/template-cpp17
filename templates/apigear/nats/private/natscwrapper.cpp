@@ -51,8 +51,6 @@ CWrapper::CWrapper()
 CWrapper::~CWrapper()
 {
     natsConnection_Close(m_connection);
-    //natsSubscription_Destroy(m_subscription);
-    natsConnection_Destroy(m_connection);
 }
 
 
@@ -63,6 +61,13 @@ struct NatsSubscriptionDeleter
         natsSubscription_Destroy(s);
     }
 };
+
+void CWrapper::NatsConnectionDeleter::operator()(natsConnection* conn)
+{
+    natsConnection_Destroy(conn);
+};
+
+
 
 
 void CWrapper::connect(std::string address, std::function<void(void)> connectionStateChangedCallback)
@@ -90,7 +95,9 @@ void CWrapper::connect(std::string address, std::function<void(void)> connection
     if (status != NATS_OK) { /*handle*/ return; }
     status = natsOptions_UseGlobalMessageDelivery(opts, true);
     if (status != NATS_OK) { /*handle*/ return; }
-    status = natsConnection_Connect(&m_connection, opts);
+    natsConnection* connection = NULL
+    status = natsConnection_Connect(&connection, opts);
+    n_connection.reset(connection);
     if (status != NATS_OK) { /*TODO HANDLE */ return;}
     natsOptions_Destroy(opts); // use custom deleter with this function call? and similar for all other nats *
 }
@@ -101,7 +108,7 @@ ConnectionStatus CWrapper::getStatus()
     {
         return ConnectionStatus::disconnected;
     }
-    auto status = natsConnection_Status(m_connection);
+    auto status = natsConnection_Status(m_connection.get());
     switch (status)
     {
         case NATS_CONN_STATUS_DISCONNECTED: return ConnectionStatus::disconnected;
@@ -119,7 +126,7 @@ ConnectionStatus CWrapper::getStatus()
 int64_t CWrapper::subscribe(std::string topic, SimpleOnMessageCallback callback)
 {
     natsSubscription* tmp;
-    auto status = natsConnection_Subscribe(&tmp, m_connection, topic.c_str(), onMsg, NULL);
+    auto status = natsConnection_Subscribe(&tmp, m_connection.get(), topic.c_str(), onMsg, NULL);
     if (status != NATS_OK) { /*TODO HANDLE */ };
     std::shared_ptr< natsSubscription> sub(tmp, NatsSubscriptionDeleter());
     m_subscriptions.push_back(sub);
@@ -143,7 +150,7 @@ void CWrapper::unsubscribe(int64_t id)
 
 void CWrapper::publish(std::string topic, std::string payload)
 {
-    auto status = natsConnection_PublishString(m_connection, topic.c_str(), payload.c_str());
+    auto status = natsConnection_PublishString(m_connection.get(), topic.c_str(), payload.c_str());
     if (status != NATS_OK) { /*handle*/ return; }
 }
 
