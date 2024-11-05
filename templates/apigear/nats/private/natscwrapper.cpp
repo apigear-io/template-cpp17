@@ -76,15 +76,15 @@ static void conntectionHandler(natsConnection* connection, void* context)
 
 static void removeSubscriptionResources(void* context)
 {
-    cleanSubscriptionResourcesContext* ctx = static_cast<cleanSubscriptionResourcesContext*>(context);
+    std::unique_ptr<cleanSubscriptionResourcesContext> ctx(static_cast<cleanSubscriptionResourcesContext*>(context));
     if (!ctx)
     {
+        //TODO log
     }
     else if (auto client = ctx->client.lock())
     {
         ctx->function(ctx->id);
     }
-    delete ctx;
 }
 
 
