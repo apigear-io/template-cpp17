@@ -214,7 +214,7 @@ void CWrapper::cleanSubscription(int64_t id)
 {
     std::unique_lock<std::mutex> lockSubscriptions{ m_subscriptionsMutex };
     auto foundSubscription = m_subscriptions.find(id);
-    if (!foundSubscription == m_subscriptions.end())
+    if (foundSubscription != m_subscriptions.end())
     {
         m_subscriptions.erase(foundSubscription);
     }
@@ -225,7 +225,14 @@ void CWrapper::cleanSubscription(int64_t id)
     lockSubscriptions.unlock();
     std::unique_lock<std::mutex> lockCallbacks{ m_simpleCallbacksMutex };
     auto foundCallback = find_if(m_simpleCallbacks.begin(), m_simpleCallbacks.end(), [id](auto element) { return  element->id == id; });
-    m_simpleCallbacks.erase(foundCallback);
+    if (foundCallback != m_simpleCallbacks.end())
+    {
+        m_simpleCallbacks.erase(foundCallback);
+    }
+    else
+    {
+        //TODO LOG
+    }
     lockCallbacks.unlock();
 }
 
