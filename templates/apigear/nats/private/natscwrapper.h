@@ -64,7 +64,6 @@ public:
         std::function<void(uint64_t)> function;
     };
 
-    void cleanSubscription(int64_t id);
 private:
     struct NatsConnectionDeleter
     {
@@ -72,6 +71,7 @@ private:
     };
 
     void handleConnectionStateChanged(uint64_t connection_id);
+    void cleanSubscription(int64_t id);
 
     std::mutex m_simpleCallbacksMutex;
     // Container that does not reallocate.

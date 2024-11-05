@@ -33,6 +33,7 @@ struct NatsSOptionsDeleter
 struct cleanSubscriptionResourcesContext {
     int64_t id;
     std::weak_ptr<CWrapper> client;
+    std::function<void(int64_t)> function;
 };
 
 static void onMsg(natsConnection* /*connection*/, natsSubscription* /*subscription*/, natsMsg* msg, void* context)
@@ -81,7 +82,7 @@ static void removeSubscriptionResources(void* context)
     }
     else if (auto client = ctx->client.lock())
     {
-        client->cleanSubscription(ctx->id);
+        ctx->function(ctx->id);
     }
     delete ctx;
 }
@@ -196,7 +197,7 @@ int64_t CWrapper::subscribe(std::string topic, SimpleOnMessageCallback callback)
     storedCallback->id = sub_id;
     // This callback removes all resources, the nats library states that after unsubscribe call there might be still message to serve
     // Nats library guarantees that after SetOnCompleteCB there will be no more calls for message handler for this subscription and resources can be safely cleaned up.
-    status = natsSubscription_SetOnCompleteCB(subscription_ptr, &removeSubscriptionResources, new cleanSubscriptionResourcesContext{ sub_id, shared_from_this() });
+    status = natsSubscription_SetOnCompleteCB(subscription_ptr, &removeSubscriptionResources, new cleanSubscriptionResourcesContext{ sub_id, shared_from_this(), [this](uint64_t id) {cleanSubscription(id); } });
     if (status != NATS_OK) { /*TODO HANDLE */ };
     return sub_id;
 }
