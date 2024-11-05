@@ -2,7 +2,7 @@
 
 #include <queue>
 #include <set>
-#include <map>
+#include <unordered_map>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -70,12 +70,15 @@ private:
     {
         void operator()(natsConnection* connection);
     };
+
     void handleConnectionStateChanged(uint64_t connection_id);
 
     std::mutex m_simpleCallbacksMutex;
+    // Container that does not reallocate.
     std::list<std::shared_ptr<SimpleCallbackWrapper>> m_simpleCallbacks;
     std::unique_ptr<natsConnection, NatsConnectionDeleter> m_connection;
-    std::list<std::shared_ptr<natsSubscription>> m_subscriptions;
+    // Container that does not reallocate.
+    std::unordered_map<uint64_t, std::shared_ptr<natsSubscription>> m_subscriptions;
     std::mutex m_subscriptionsMutex;
     ConnectionCallbackContext m_connectionHandlerContext;
     std::function<void(void)> m_connectionStateChangedCallback;

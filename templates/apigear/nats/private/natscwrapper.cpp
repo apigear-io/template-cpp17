@@ -169,7 +169,6 @@ void CWrapper::handleConnectionStateChanged(uint64_t connection_id)
     natsConnection_GetClientID(m_connection.get(), &stored_connection_id);
     if (connection_id == stored_connection_id && m_connectionStateChangedCallback)
     {
-        auto status = natsConnection_Status(m_connection.get());
         m_connectionStateChangedCallback();
     }
 }
@@ -186,36 +185,43 @@ int64_t CWrapper::subscribe(std::string topic, SimpleOnMessageCallback callback)
     natsSubscription* tmp;
     auto status = natsConnection_Subscribe(&tmp, m_connection.get(), topic.c_str(), onMsg, storedCallback.get());
     std::shared_ptr< natsSubscription> sub(tmp, NatsSubscriptionDeleter());
+    auto sub_id = natsSubscription_GetID(sub.get());
 
     if (status != NATS_OK) { /*TODO HANDLE */ };
     std::unique_lock<std::mutex> lockSubscription{ m_subscriptionsMutex };
-    m_subscriptions.push_back(sub);
-    auto subscription_ptr = m_subscriptions.back().get();
+    m_subscriptions[sub_id] = sub;
+    auto subscription_ptr = m_subscriptions[sub_id].get();
     lockSubscription.unlock();
-    // id can be obtained only after successful subscription
-    auto id = natsSubscription_GetID(subscription_ptr);
-    storedCallback->id = id;
+
+    storedCallback->id = sub_id;
     // This callback removes all resources, the nats library states that after unsubscribe call there might be still message to serve
     // Nats library guarantees that after SetOnCompleteCB there will be no more calls for message handler for this subscription and resources can be safely cleaned up.
-    status = natsSubscription_SetOnCompleteCB(subscription_ptr, &removeSubscriptionResources, new cleanSubscriptionResourcesContext{ id, shared_from_this() });
+    status = natsSubscription_SetOnCompleteCB(subscription_ptr, &removeSubscriptionResources, new cleanSubscriptionResourcesContext{ sub_id, shared_from_this() });
     if (status != NATS_OK) { /*TODO HANDLE */ };
-    return id;
+    return sub_id;
 }
 
 void CWrapper::unsubscribe(int64_t id)
 {
     std::unique_lock<std::mutex> lock{ m_subscriptionsMutex };
-    auto found = find_if(m_subscriptions.begin(), m_subscriptions.end(), [id](auto element) { return  natsSubscription_GetID(element.get()) == id; });
+    auto found = m_subscriptions.find(id);
     lock.unlock();
-    auto status = natsSubscription_Unsubscribe((*found).get());
+    auto status = natsSubscription_Unsubscribe(found->second.get());
     if (status != NATS_OK) { /*TODO HANDLE */ };
 }
 
 void CWrapper::cleanSubscription(int64_t id)
 {
     std::unique_lock<std::mutex> lockSubscriptions{ m_subscriptionsMutex };
-    auto foundSubscription = find_if(m_subscriptions.begin(), m_subscriptions.end(), [id](auto element) { return  natsSubscription_GetID(element.get()) == id; });
-    m_subscriptions.erase(foundSubscription);
+    auto foundSubscription = m_subscriptions.find(id);
+    if (!foundSubscription == m_subscriptions.end())
+    {
+        m_subscriptions.erase(foundSubscription);
+    }
+    else
+    {
+        //TODO LOG
+    }
     lockSubscriptions.unlock();
     std::unique_lock<std::mutex> lockCallbacks{ m_simpleCallbacksMutex };
     auto foundCallback = find_if(m_simpleCallbacks.begin(), m_simpleCallbacks.end(), [id](auto element) { return  element->id == id; });
