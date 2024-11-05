@@ -71,7 +71,7 @@ private:
     };
 
     std::mutex m_simpleCallbacksMutex;
-    std::list<SimpleCallbackWrapper> m_simpleCallbacks;
+    std::list<std::shared_ptr<SimpleCallbackWrapper>> m_simpleCallbacks;
     std::unique_ptr<natsConnection, NatsConnectionDeleter> m_connection;
     std::list<std::shared_ptr<natsSubscription>> m_subscriptions;
     std::mutex m_subscriptionsMutex;

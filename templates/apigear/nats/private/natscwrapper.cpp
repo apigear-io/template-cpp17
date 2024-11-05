@@ -156,25 +156,25 @@ ConnectionStatus CWrapper::getStatus()
 int64_t CWrapper::subscribe(std::string topic, SimpleOnMessageCallback callback)
 {
     // store callback
-    std::unique_lock<std::mutex> lock(m_simpleCallbacksMutex);
-    m_simpleCallbacks.emplace_back(SimpleCallbackWrapper(callback));
-    SimpleCallbackWrapper* storedCallback = &m_simpleCallbacks.back();
-    lock.unlock();
+    std::unique_lock<std::mutex> lockCallback(m_simpleCallbacksMutex);
+    m_simpleCallbacks.emplace_back(std::make_shared<SimpleCallbackWrapper>(callback));
+    auto storedCallback = m_simpleCallbacks.back();
+    lockCallback.unlock();
     // nats library prepares a subscription which later will be stored, it is this class responsibility to free the resources.
     natsSubscription* tmp;
-    auto status = natsConnection_Subscribe(&tmp, m_connection.get(), topic.c_str(), onMsg, storedCallback);
+    auto status = natsConnection_Subscribe(&tmp, m_connection.get(), topic.c_str(), onMsg, storedCallback.get());
     std::shared_ptr< natsSubscription> sub(tmp, NatsSubscriptionDeleter());
 
     if (status != NATS_OK) { /*TODO HANDLE */ };
+    std::unique_lock<std::mutex> lockSubscription{ m_subscriptionsMutex };
     m_subscriptions.push_back(sub);
     auto subscription_ptr = m_subscriptions.back().get();
-
+    lockSubscription.unlock();
     // id can be obtained only after successful subscription
     auto id = natsSubscription_GetID(subscription_ptr);
-    m_simpleCallbacks.back().id = id;
+    storedCallback->id = id;
     // This callback removes all resources, the nats library states that after unsubscribe call there might be still message to serve
     // Nats library guarantees that after SetOnCompleteCB there will be no more calls for message handler for this subscription and resources can be safely cleaned up.
-    
     status = natsSubscription_SetOnCompleteCB(subscription_ptr, &removeSubscriptionResources, new cleanSubscriptionResourcesContext{ id, shared_from_this() });
     if (status != NATS_OK) { /*TODO HANDLE */ };
     return id;
@@ -196,7 +196,7 @@ void CWrapper::cleanSubscription(int64_t id)
     m_subscriptions.erase(foundSubscription);
     lockSubscriptions.unlock();
     std::unique_lock<std::mutex> lockCallbacks{ m_simpleCallbacksMutex };
-    auto foundCallback = find_if(m_simpleCallbacks.begin(), m_simpleCallbacks.end(), [id](auto& element) { return  element.id == id; });
+    auto foundCallback = find_if(m_simpleCallbacks.begin(), m_simpleCallbacks.end(), [id](auto element) { return  element->id == id; });
     m_simpleCallbacks.erase(foundCallback);
     lockCallbacks.unlock();
 }
