@@ -63,6 +63,10 @@ public:
         std::weak_ptr<CWrapper> object;
         std::function<void(uint64_t)> function;
     };
+    struct SubscriptionErrorContext {
+        std::weak_ptr<CWrapper> object;
+        std::function<void(uint64_t, int64_t, int)> function;
+    };
 
 private:
     struct NatsConnectionDeleter
@@ -72,6 +76,7 @@ private:
 
     void handleConnectionStateChanged(uint64_t connection_id);
     void cleanSubscription(int64_t id);
+    void handleSubscriptionError(uint64_t connection_id, int64_t subscription_id, int status);
 
     std::mutex m_simpleCallbacksMutex;
     // Container that does not reallocate.
@@ -81,6 +86,7 @@ private:
     std::unordered_map<uint64_t, std::shared_ptr<natsSubscription>> m_subscriptions;
     std::mutex m_subscriptionsMutex;
     ConnectionCallbackContext m_connectionHandlerContext;
+    SubscriptionErrorContext m_subscriptionErrorContext;
     std::function<void(void)> m_connectionStateChangedCallback;
 
     explicit CWrapper();

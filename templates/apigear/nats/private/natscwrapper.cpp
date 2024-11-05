@@ -51,16 +51,16 @@ static void onMsg(natsConnection* /*connection*/, natsSubscription* /*subscripti
     }
 }
 
-static void onError(natsConnection* connection, natsSubscription* subscription, natsStatus status, void* /*closure*/)
+static void onError(natsConnection* connection, natsSubscription* subscription, natsStatus status, void* context)
 {
-    if (status != NATS_OK)
+    uint64_t connection_id = 0;
+    natsConnection_GetClientID(connection, &connection_id);
+    auto subscription_id = natsSubscription_GetID(subscription);
+    auto callbackStruct = static_cast<CWrapper::SubscriptionErrorContext*>(context);
+    if (callbackStruct && callbackStruct->object.lock())
     {
-        //TODO LOG
+        callbackStruct->function(connection_id, subscription_id, status);
     }
-    uint64_t id = 0;
-    natsConnection_GetClientID(connection, &id);
-    auto s_id = natsSubscription_GetID(subscription);
-    std::cout << "error: connection: " << id << " subscription: "<< s_id<<std::endl;
 }
 
 static void conntectionHandler(natsConnection* connection, void* context)
@@ -116,6 +116,11 @@ void CWrapper::connect(std::string address, std::function<void(void)> connection
         m_connectionHandlerContext.object = shared_from_this();
         m_connectionHandlerContext.function = [this](uint64_t connection_id) {handleConnectionStateChanged(connection_id); };
     }
+    if (!m_subscriptionErrorContext.object.lock())
+    {
+        m_subscriptionErrorContext.object = shared_from_this();
+        m_subscriptionErrorContext.function = [this](uint64_t connection_id, int64_t subscription_id, int status) {handleSubscriptionError(connection_id, subscription_id, status); };
+    }
 
     natsOptions* tmp_opts;
     auto status = natsOptions_Create(&tmp_opts);
@@ -124,7 +129,7 @@ void CWrapper::connect(std::string address, std::function<void(void)> connection
     //status = natsOptions_SetEventLoop(natsOptions * opts, void* loop, natsEvLoop_Attach 	attachCb, natsEvLoop_ReadAddRemove 	readCb, natsEvLoop_WriteAddRemove 	writeCb, natsEvLoop_Detach 	detachCb);
     if (status != NATS_OK) { /*handle*/ return; }
     //set error handler
-    status = natsOptions_SetErrorHandler(opts.get(), onError, NULL);
+    status = natsOptions_SetErrorHandler(opts.get(), onError, &m_subscriptionErrorContext);
     if (status != NATS_OK) { /*handle*/ return; }
     status = natsOptions_SetURL(opts.get(), address.c_str());
     if (status != NATS_OK) { /*handle*/ return; }
@@ -172,6 +177,18 @@ void CWrapper::handleConnectionStateChanged(uint64_t connection_id)
     {
         m_connectionStateChangedCallback();
     }
+}
+
+void CWrapper::handleSubscriptionError(uint64_t connection_id, int64_t subscription_id, int status)
+{
+    uint64_t stored_connection_id;
+    natsConnection_GetClientID(m_connection.get(), &stored_connection_id);
+    if (connection_id != stored_connection_id)
+    {
+        return;
+    }
+    std::cout << "Error for subscription: " << subscription_id << " with status " << status;
+    
 }
 
 //TODO pass eiher const& or string_view
