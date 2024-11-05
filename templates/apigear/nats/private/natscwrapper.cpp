@@ -13,11 +13,20 @@ struct NatsSubscriptionDeleter
         natsSubscription_Destroy(s);
     }
 };
+
 struct NatsMsgDeleter
 {
     void operator()(natsMsg* msg)
     {
         natsMsg_Destroy(msg);
+    }
+};
+
+struct NatsSOptionsDeleter
+{
+    void operator()(natsOptions* o)
+    {
+        natsOptions_Destroy(o);
     }
 };
 
@@ -107,31 +116,31 @@ void CWrapper::connect(std::string address, std::function<void(void)> connection
         m_connectionHandlerContext.function = [this](uint64_t connection_id) {handleConnectionStateChanged(connection_id); };
     }
 
-    natsOptions* opts;
-    auto status = natsOptions_Create(&opts);
+    natsOptions* tmp_opts;
+    auto status = natsOptions_Create(&tmp_opts);
+    std::unique_ptr<natsOptions, NatsSOptionsDeleter> opts(tmp_opts, NatsSOptionsDeleter());
     if (status != NATS_OK) { /*handle*/ return; }
     //status = natsOptions_SetEventLoop(natsOptions * opts, void* loop, natsEvLoop_Attach 	attachCb, natsEvLoop_ReadAddRemove 	readCb, natsEvLoop_WriteAddRemove 	writeCb, natsEvLoop_Detach 	detachCb);
     if (status != NATS_OK) { /*handle*/ return; }
     //set error handler
-    status = natsOptions_SetErrorHandler(opts, onError, NULL);
+    status = natsOptions_SetErrorHandler(opts.get(), onError, NULL);
     if (status != NATS_OK) { /*handle*/ return; }
-    status = natsOptions_SetURL(opts, address.c_str());
+    status = natsOptions_SetURL(opts.get(), address.c_str());
     if (status != NATS_OK) { /*handle*/ return; }
-    status = natsOptions_SetDisconnectedCB(opts, conntectionHandler, &m_connectionHandlerContext);
+    status = natsOptions_SetDisconnectedCB(opts.get(), conntectionHandler, &m_connectionHandlerContext);
     if (status != NATS_OK) { /*handle*/ return; }
-    status = natsOptions_SetReconnectedCB(opts, conntectionHandler, &m_connectionHandlerContext);
+    status = natsOptions_SetReconnectedCB(opts.get(), conntectionHandler, &m_connectionHandlerContext);
     if (status != NATS_OK) { /*handle*/ return; }
-    status = natsOptions_SetRetryOnFailedConnect(opts, true, conntectionHandler, &m_connectionHandlerContext);
+    status = natsOptions_SetRetryOnFailedConnect(opts.get(), true, conntectionHandler, &m_connectionHandlerContext);
     if (status != NATS_OK) { /*handle*/ return; }
-    status = natsOptions_SetClosedCB(opts, conntectionHandler, &m_connectionHandlerContext);
+    status = natsOptions_SetClosedCB(opts.get(), conntectionHandler, &m_connectionHandlerContext);
     if (status != NATS_OK) { /*handle*/ return; }
-    status = natsOptions_UseGlobalMessageDelivery(opts, true);
+    status = natsOptions_UseGlobalMessageDelivery(opts.get(), true);
     if (status != NATS_OK) { /*handle*/ return; }
     natsConnection* connection = NULL;
-    status = natsConnection_Connect(&connection, opts);
+    status = natsConnection_Connect(&connection, opts.get());
     m_connection.reset(connection);
     if (status != NATS_OK) { /*TODO HANDLE */ return;}
-    natsOptions_Destroy(opts); // use custom deleter with this function call? and similar for all other nats *
 }
 
 ConnectionStatus CWrapper::getStatus()
