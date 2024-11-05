@@ -41,26 +41,26 @@ static void onMsg(natsConnection* /*connection*/, natsSubscription* /*subscripti
     }
 }
 
-static void onError(natsConnection* /*connection*/, natsSubscription* subscription, natsStatus status, void* /*closure*/)
+static void onError(natsConnection* connection, natsSubscription* subscription, natsStatus status, void* /*closure*/)
 {
     if (status != NATS_OK)
     {
         //TODO LOG
     }
+    uint64_t id = 0;
+    natsConnection_GetClientID(connection, &id);
+    auto s_id = natsSubscription_GetID(subscription);
+    std::cout << "error: connection: " << id << " subscription: "<< s_id<<std::endl;
 }
 
 static void conntectionHandler(natsConnection* connection, void* context)
 {
-    auto status = natsConnection_Status(connection);
-    std::cout << "connection handler " << static_cast<int>(status)<< std::endl;
+    uint64_t id;
+    natsConnection_GetClientID(connection, &id);
     auto callbackStruct = static_cast<CWrapper::ConnectionCallbackContext*>(context);
-    if (callbackStruct && callbackStruct->function)
+    if (callbackStruct && callbackStruct->object.lock())
     {
-        callbackStruct->function();
-    }
-    else
-    {
-        //TODO LOG
+        callbackStruct->function(id);
     }
 }
 
@@ -80,8 +80,6 @@ static void removeSubscriptionResources(void* context)
 
 CWrapper::CWrapper()
 {
-
-
 }
 
 CWrapper::~CWrapper()
@@ -102,8 +100,12 @@ void CWrapper::NatsConnectionDeleter::operator()(natsConnection* conn)
 
 void CWrapper::connect(std::string address, std::function<void(void)> connectionStateChangedCallback)
 {
-    //TODO ensure that context is valid even if class is destroyed already;
-    m_connectionStateChangedCallback = ConnectionCallbackContext{ connectionStateChangedCallback };
+    m_connectionStateChangedCallback = connectionStateChangedCallback;
+    if (!m_connectionHandlerContext.object.lock())
+    {
+        m_connectionHandlerContext.object = shared_from_this();
+        m_connectionHandlerContext.function = [this](uint64_t connection_id) {handleConnectionStateChanged(connection_id); };
+    }
 
     natsOptions* opts;
     auto status = natsOptions_Create(&opts);
@@ -115,13 +117,13 @@ void CWrapper::connect(std::string address, std::function<void(void)> connection
     if (status != NATS_OK) { /*handle*/ return; }
     status = natsOptions_SetURL(opts, address.c_str());
     if (status != NATS_OK) { /*handle*/ return; }
-    status = natsOptions_SetDisconnectedCB(opts, conntectionHandler, &m_connectionStateChangedCallback);
+    status = natsOptions_SetDisconnectedCB(opts, conntectionHandler, &m_connectionHandlerContext);
     if (status != NATS_OK) { /*handle*/ return; }
-    status = natsOptions_SetReconnectedCB(opts, conntectionHandler, &m_connectionStateChangedCallback);
+    status = natsOptions_SetReconnectedCB(opts, conntectionHandler, &m_connectionHandlerContext);
     if (status != NATS_OK) { /*handle*/ return; }
-    status = natsOptions_SetRetryOnFailedConnect(opts, true, conntectionHandler, &m_connectionStateChangedCallback);
+    status = natsOptions_SetRetryOnFailedConnect(opts, true, conntectionHandler, &m_connectionHandlerContext);
     if (status != NATS_OK) { /*handle*/ return; }
-    status = natsOptions_SetClosedCB(opts, conntectionHandler, &m_connectionStateChangedCallback);
+    status = natsOptions_SetClosedCB(opts, conntectionHandler, &m_connectionHandlerContext);
     if (status != NATS_OK) { /*handle*/ return; }
     status = natsOptions_UseGlobalMessageDelivery(opts, true);
     if (status != NATS_OK) { /*handle*/ return; }
@@ -150,6 +152,17 @@ ConnectionStatus CWrapper::getStatus()
         case NATS_CONN_STATUS_DRAINING_PUBS: return ConnectionStatus::draining_pubs;
     }
     return ConnectionStatus::disconnected;
+}
+
+void CWrapper::handleConnectionStateChanged(uint64_t connection_id)
+{
+    uint64_t stored_connection_id;
+    natsConnection_GetClientID(m_connection.get(), &stored_connection_id);
+    if (connection_id == stored_connection_id && m_connectionStateChangedCallback)
+    {
+        auto status = natsConnection_Status(m_connection.get());
+        m_connectionStateChangedCallback();
+    }
 }
 
 //TODO pass eiher const& or string_view

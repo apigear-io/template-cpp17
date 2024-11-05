@@ -29,11 +29,6 @@ namespace Nats {
 class CWrapper : public std::enable_shared_from_this<CWrapper>
 {
 public:
-    struct ConnectionCallbackContext
-    {
-        std::function<void(void)> function;
-    };
-
     static std::shared_ptr<CWrapper> create()
     {
         return std::shared_ptr<CWrapper>(new CWrapper());
@@ -63,19 +58,27 @@ public:
         int64_t id = -1;
         SimpleOnMessageCallback callback;
     };
+    struct ConnectionCallbackContext
+    {
+        std::weak_ptr<CWrapper> object;
+        std::function<void(uint64_t)> function;
+    };
+
     void cleanSubscription(int64_t id);
 private:
     struct NatsConnectionDeleter
     {
         void operator()(natsConnection* connection);
     };
+    void handleConnectionStateChanged(uint64_t connection_id);
 
     std::mutex m_simpleCallbacksMutex;
     std::list<std::shared_ptr<SimpleCallbackWrapper>> m_simpleCallbacks;
     std::unique_ptr<natsConnection, NatsConnectionDeleter> m_connection;
     std::list<std::shared_ptr<natsSubscription>> m_subscriptions;
     std::mutex m_subscriptionsMutex;
-    ConnectionCallbackContext m_connectionStateChangedCallback;
+    ConnectionCallbackContext m_connectionHandlerContext;
+    std::function<void(void)> m_connectionStateChangedCallback;
 
     explicit CWrapper();
 };
