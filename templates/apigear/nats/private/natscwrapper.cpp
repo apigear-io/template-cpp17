@@ -47,7 +47,7 @@ static void onMsg(natsConnection* /*connection*/, natsSubscription* /*subscripti
     }
     else
     {
-        //TODO HANDLE / LOG 
+        AG_LOG_WARNING("No handler for " + std::string(natsMsg_GetSubject(msg)));
     }
 }
 
@@ -216,6 +216,7 @@ void CWrapper::handleSubscriptionError(uint64_t connection_id, int64_t subscript
 //TODO pass eiher const& or string_view
 int64_t CWrapper::subscribe(std::string topic, SimpleOnMessageCallback callback)
 {
+    AG_LOG_DEBUG("nats client: subscribe " + topic);
     // store callback
     std::unique_lock<std::mutex> lockCallback(m_simpleCallbacksMutex);
     m_simpleCallbacks.emplace_back(std::make_shared<SimpleCallbackWrapper>(callback));
@@ -254,11 +255,15 @@ int64_t CWrapper::subscribe(std::string topic, SimpleOnMessageCallback callback)
 
 void CWrapper::unsubscribe(int64_t id)
 {
+    AG_LOG_DEBUG("nats client: unsubscribe " + std::to_string(id));
     std::unique_lock<std::mutex> lock{ m_subscriptionsMutex };
     auto found = m_subscriptions.find(id);
     lock.unlock();
     auto status = natsSubscription_Unsubscribe(found->second.get());
-    if (status != NATS_OK) { /*TODO HANDLE */ };
+    if (status != NATS_OK) {
+        AG_LOG_WARNING("Failed to unsubscribe " + std::to_string(id));
+        cleanSubscription(id);
+    };
 }
 
 void CWrapper::cleanSubscription(int64_t id)
@@ -271,7 +276,7 @@ void CWrapper::cleanSubscription(int64_t id)
     }
     else
     {
-        //TODO LOG
+        AG_LOG_WARNING("No subscription to remove with id " + std::to_string(id));
     }
     lockSubscriptions.unlock();
     std::unique_lock<std::mutex> lockCallbacks{ m_simpleCallbacksMutex };
@@ -282,14 +287,20 @@ void CWrapper::cleanSubscription(int64_t id)
     }
     else
     {
-        //TODO LOG
+        AG_LOG_WARNING("No callback to remove for subscription with id "+ std::to_string(id));
     }
     lockCallbacks.unlock();
 }
 
 void CWrapper::publish(std::string topic, std::string payload)
 {
+    //TODO add a function that takes n arguments - avoid creating a string in this often called function.
+    AG_LOG_DEBUG("nats client: publishing");
+    AG_LOG_DEBUG(topic);
+    AG_LOG_DEBUG(payload);
     auto status = natsConnection_PublishString(m_connection.get(), topic.c_str(), payload.c_str());
-    if (status != NATS_OK) { /*handle*/ return; }
+    if (status != NATS_OK) { 
+        AG_LOG_WARNING("Failed to publish message with status " + std::to_string(status) + " for topic " +  topic);
+    }
 }
 
