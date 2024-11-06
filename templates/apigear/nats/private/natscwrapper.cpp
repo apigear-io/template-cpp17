@@ -79,7 +79,7 @@ static void removeSubscriptionResources(void* context)
     std::unique_ptr<cleanSubscriptionResourcesContext> ctx(static_cast<cleanSubscriptionResourcesContext*>(context));
     if (!ctx)
     {
-        //TODO log
+        AG_LOG_WARNING("Removing subscription resources failed.");
     }
     else if (auto client = ctx->client.lock())
     {
@@ -98,14 +98,10 @@ CWrapper::~CWrapper()
 }
 
 
-
-
 void CWrapper::NatsConnectionDeleter::operator()(natsConnection* conn)
 {
     natsConnection_Destroy(conn);
 };
-
-
 
 
 void CWrapper::connect(std::string address, std::function<void(void)> connectionStateChangedCallback)
@@ -125,28 +121,53 @@ void CWrapper::connect(std::string address, std::function<void(void)> connection
     natsOptions* tmp_opts;
     auto status = natsOptions_Create(&tmp_opts);
     std::unique_ptr<natsOptions, NatsSOptionsDeleter> opts(tmp_opts, NatsSOptionsDeleter());
-    if (status != NATS_OK) { /*handle*/ return; }
-    //status = natsOptions_SetEventLoop(natsOptions * opts, void* loop, natsEvLoop_Attach 	attachCb, natsEvLoop_ReadAddRemove 	readCb, natsEvLoop_WriteAddRemove 	writeCb, natsEvLoop_Detach 	detachCb);
-    if (status != NATS_OK) { /*handle*/ return; }
-    //set error handler
+    if (status != NATS_OK) { 
+        AG_LOG_ERROR("Failed to connect. Could not configure connection. Check your connection");
+        return;
+    }
     status = natsOptions_SetErrorHandler(opts.get(), onError, &m_subscriptionErrorContext);
-    if (status != NATS_OK) { /*handle*/ return; }
+    if (status != NATS_OK) {
+        AG_LOG_ERROR("Failed to connect. Could not configure connection (On configuring Error Handler). Check your connection");
+        return;
+    }
     status = natsOptions_SetURL(opts.get(), address.c_str());
-    if (status != NATS_OK) { /*handle*/ return; }
+    if (status != NATS_OK) {
+        AG_LOG_ERROR("Failed to connect. Could not configure connection (On setting host address). Check your connection");
+        return;
+    }
     status = natsOptions_SetDisconnectedCB(opts.get(), conntectionHandler, &m_connectionHandlerContext);
-    if (status != NATS_OK) { /*handle*/ return; }
+    if (status != NATS_OK) {
+        AG_LOG_ERROR("Failed to connect. Could not configure connection (On configuring disconnect callback). Check your connection");
+        return;
+    }
     status = natsOptions_SetReconnectedCB(opts.get(), conntectionHandler, &m_connectionHandlerContext);
-    if (status != NATS_OK) { /*handle*/ return; }
+    if (status != NATS_OK) {
+        AG_LOG_ERROR("Failed to connect. Could not configure connection (On configuring reconnect callback). Check your connection");
+        return;
+    }
     status = natsOptions_SetRetryOnFailedConnect(opts.get(), true, conntectionHandler, &m_connectionHandlerContext);
-    if (status != NATS_OK) { /*handle*/ return; }
+    if (status != NATS_OK) {
+        AG_LOG_ERROR("Failed to connect. Could not configure connection (On configuring reconnect callback). Check your connection");
+        return;
+    }
     status = natsOptions_SetClosedCB(opts.get(), conntectionHandler, &m_connectionHandlerContext);
-    if (status != NATS_OK) { /*handle*/ return; }
+    if (status != NATS_OK) {
+        AG_LOG_ERROR("Failed to connect. Could not configure connection (On configuring closed callback). Check your connection");
+        return;
+    }
+    // Use thread pool for message delivery - if set to false each subscription gets own thread for receiving messages.
     status = natsOptions_UseGlobalMessageDelivery(opts.get(), true);
-    if (status != NATS_OK) { /*handle*/ return; }
+    if (status != NATS_OK) {
+        AG_LOG_ERROR("Failed to connect. Could not configure connection (On setting message thread options). Check your connection");
+        return;
+    }
     natsConnection* connection = NULL;
     status = natsConnection_Connect(&connection, opts.get());
     m_connection.reset(connection);
-    if (status != NATS_OK) { /*TODO HANDLE */ return;}
+    if (status != NATS_OK) {
+        AG_LOG_ERROR("Failed to connect. Check your connection");
+        return;
+    }
 }
 
 ConnectionStatus CWrapper::getStatus()
