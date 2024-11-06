@@ -104,7 +104,7 @@ void CWrapper::NatsConnectionDeleter::operator()(natsConnection* conn)
 };
 
 
-void CWrapper::connect(std::string address, std::function<void(void)> connectionStateChangedCallback)
+void CWrapper::connect(const std::string& address, std::function<void(void)> connectionStateChangedCallback)
 {
     m_connectionStateChangedCallback = connectionStateChangedCallback;
     if (!m_connectionHandlerContext.object.lock())
@@ -213,8 +213,7 @@ void CWrapper::handleSubscriptionError(uint64_t connection_id, int64_t subscript
     
 }
 
-//TODO pass eiher const& or string_view
-int64_t CWrapper::subscribe(std::string topic, SimpleOnMessageCallback callback)
+int64_t CWrapper::subscribe(const std::string& topic, SimpleOnMessageCallback callback)
 {
     AG_LOG_DEBUG("nats client: subscribe " + topic);
     // store callback
@@ -292,7 +291,7 @@ void CWrapper::cleanSubscription(int64_t id)
     lockCallbacks.unlock();
 }
 
-void CWrapper::publish(std::string topic, std::string payload)
+void CWrapper::publish(const std::string& topic, const std::string& payload)
 {
     //TODO add a function that takes n arguments - avoid creating a string in this often called function.
     AG_LOG_DEBUG("nats client: publishing");

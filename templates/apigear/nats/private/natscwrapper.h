@@ -41,11 +41,11 @@ public:
         return shared_from_this();
     }
 
-    void connect(std::string address, std::function<void(void)> connectionStateChangedCallback);
+    void connect(const std::string& address, std::function<void(void)> connectionStateChangedCallback);
 
-    int64_t subscribe(std::string topic, SimpleOnMessageCallback callback);
+    int64_t subscribe(const std::string& topic, SimpleOnMessageCallback callback);
     void unsubscribe(int64_t id);
-    void publish(std::string topic, std::string payload);
+    void publish(const std::string& topic, const std::string& payload);
 
     ConnectionStatus getStatus();
 
