@@ -13,7 +13,7 @@
 #include "natstypes.h"
 #include "nlohmann/json.hpp"
 #pragma warning (push, 0)
-#include <nats.h>
+#include <nats/nats.h>
 #pragma warning(pop)
 
 
