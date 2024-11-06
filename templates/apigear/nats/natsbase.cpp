@@ -26,7 +26,7 @@ Base::Base()
     m_cwrapper = CWrapper::create();
 }
 
-void Base::connect(std::string address)
+void Base::connect(const std::string& address)
 {
     // TODO this possibly should be called with std::async, 
     m_cwrapper->connect(address, [this]() {onConnectedChanged(); });
@@ -46,6 +46,7 @@ void Base::connect(std::string address)
 bool Base::onConnectedChanged()
 {
     auto status = m_cwrapper->getStatus();
+    std::cout << "base: connection handler " << static_cast<int>(status) << std::endl;
     if (status == ConnectionStatus::connected)
     {
         //TODO LOG AG_LOG_DEBUG("nats client connected");
@@ -79,7 +80,7 @@ bool Base::isConnected() const
 //                                              std::function<void>(uint64_t, std::string, bool?) onSubscribed,
 //                                              SimpleOnMessageCallback onMsg)
 // so subscribe will be called from different threads - and subscriptions stored in CWrapper have to be guarded with mutex
-int64_t Base::subscribe(std::string topic, SimpleOnMessageCallback callback)
+int64_t Base::subscribe(const std::string& topic, SimpleOnMessageCallback callback)
 {
     // TODO this possibly should be called with std::async, and have a callback to inform when subscription ready
     return m_cwrapper->subscribe(topic, callback);
@@ -92,7 +93,7 @@ void Base::unsubscribe(int64_t id)
 {
     m_cwrapper->unsubscribe(id);
 }
-void Base::publish(std::string topic, std::string payload)
+void Base::publish(const std::string& topic, const std::string& payload)
 {
     m_cwrapper->publish(topic, payload);
 }
