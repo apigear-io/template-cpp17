@@ -208,7 +208,8 @@ void CWrapper::handleSubscriptionError(uint64_t connection_id, int64_t subscript
     {
         return;
     }
-    std::cout << "Error for subscription: " << subscription_id << " with status " << status;
+    std::string errorMessage =  "Error for subscription: " + std::to_string(subscription_id) + " with status " + std::to_string(status);
+    AG_LOG_ERROR(errorMessage);
     
 }
 
@@ -226,7 +227,13 @@ int64_t CWrapper::subscribe(std::string topic, SimpleOnMessageCallback callback)
     std::shared_ptr< natsSubscription> subscription_ptr(tmp, NatsSubscriptionDeleter());
     auto sub_id = natsSubscription_GetID(subscription_ptr.get());
 
-    if (status != NATS_OK) { /*TODO HANDLE */ };
+    if (status != NATS_OK) {
+        AG_LOG_WARNING("Failed to subscribe " + topic);
+        lockCallback.lock();
+        m_simpleCallbacks.remove(storedCallback);
+        lockCallback.unlock();
+        return 0;
+    };
     std::unique_lock<std::mutex> lockSubscription{ m_subscriptionsMutex };
     m_subscriptions[sub_id] = subscription_ptr;
     lockSubscription.unlock();
@@ -234,8 +241,14 @@ int64_t CWrapper::subscribe(std::string topic, SimpleOnMessageCallback callback)
     storedCallback->id = sub_id;
     // This callback removes all resources, the nats library states that after unsubscribe call there might be still message to serve
     // Nats library guarantees that after SetOnCompleteCB there will be no more calls for message handler for this subscription and resources can be safely cleaned up.
-    status = natsSubscription_SetOnCompleteCB(subscription_ptr.get(), &removeSubscriptionResources, new cleanSubscriptionResourcesContext{sub_id, shared_from_this(), [this](uint64_t id) {cleanSubscription(id); }});
-    if (status != NATS_OK) { /*TODO HANDLE */ };
+    cleanSubscriptionResourcesContext* cleanCtx= new cleanSubscriptionResourcesContext{ sub_id, shared_from_this(), [this](uint64_t id) {cleanSubscription(id); } };
+
+    status = natsSubscription_SetOnCompleteCB(subscription_ptr.get(), &removeSubscriptionResources, cleanCtx);
+    if (status != NATS_OK) {
+        delete cleanCtx;
+        AG_LOG_WARNING("Failed to add subscription clean up callback " + topic +" id " + std::to_string(sub_id));
+        AG_LOG_WARNING("Please restart the client to clean up resources.");
+    };
     return sub_id;
 }
 
