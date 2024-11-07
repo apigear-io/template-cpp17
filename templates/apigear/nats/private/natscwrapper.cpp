@@ -259,7 +259,8 @@ int64_t CWrapper::subscribe(const std::string& topic, SimpleOnMessageCallback ca
     auto sub_id = natsSubscription_GetID(subscription_ptr.get());
 
     if (status != NATS_OK) {
-        AG_LOG_WARNING("Failed to subscribe " + topic);
+        auto log = "Failed to subscribe " + topic + " Status " + std::to_string(static_cast<int>(status));
+        AG_LOG_WARNING(log);
         lockCallback.lock();
         m_simpleCallbacks.remove(storedCallback);
         lockCallback.unlock();
