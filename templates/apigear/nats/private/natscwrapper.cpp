@@ -196,7 +196,8 @@ void CWrapper::connect(const std::string& address, std::function<void(void)> con
     status = natsConnection_Connect(&connection, opts.get());
     m_connection.reset(connection);
     if (status != NATS_OK) {
-        AG_LOG_ERROR("Failed to connect. Check your connection");
+        auto log = "Failed to connect. Check your connection. Status " + std::to_string(static_cast<int>(status));
+        AG_LOG_ERROR(log);
         return;
     }
 }
