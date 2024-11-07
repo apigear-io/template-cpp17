@@ -2,11 +2,18 @@
 #include "private/natscwrapper.h"
 #include <random>
 #include <iostream>
+#include "utilities/threadpool.h"
 
 using namespace ApiGear::Nats;
 
+namespace{
+
 std::mt19937 randomNumberGenerator(std::random_device{}());
 std::uniform_int_distribution<uint32_t> distribution(0, 0xFFFFFFFF);
+
+// when more than one thread is used per connection,
+// the order of messages(e.g. property set) is not guaranteed
+const size_t workerThreadsPerConnection = 1;
 
 template<typename StoredItem>
 uint32_t createUniqueMapId(const std::map<uint32_t, StoredItem>& existing_map, std::mutex& map_mutex)
@@ -20,11 +27,15 @@ uint32_t createUniqueMapId(const std::map<uint32_t, StoredItem>& existing_map, s
     return uniqueId;
 }
 
+}
 
 Base::Base()
 {
     m_cwrapper = CWrapper::create();
+    pool = std::make_unique<ApiGear::Utilities::ThreadPool>(workerThreadsPerConnection);
 }
+
+Base::~Base() = default;
 
 void Base::connect(const std::string& address)
 {
@@ -89,6 +100,12 @@ int64_t Base::subscribe(const std::string& topic, SimpleOnMessageCallback callba
     //WHAT WITH THREAD POOL - will using it be thread safe , threads are chosen on subscribe?
 }
 
+//similar as in subscribe, make it async as subscribe is blocking call in cwrapper
+int64_t Base::subscribeForRequest(const std::string& topic, MessageCallbackWithResult callback)
+{
+    return m_cwrapper->subscribeWithResponse(topic, callback);
+}
+
 void Base::unsubscribe(int64_t id)
 {
     m_cwrapper->unsubscribe(id);
@@ -96,6 +113,14 @@ void Base::unsubscribe(int64_t id)
 void Base::publish(const std::string& topic, const std::string& payload)
 {
     m_cwrapper->publish(topic, payload);
+}
+
+void Base::publishRequest(const std::string& topic, const std::string& payload, SimpleOnMessageCallback responseHandler)
+{
+    pool->enqueue([this, topic, payload, responseHandler] {
+        auto result = m_cwrapper->publishRequest(topic, payload);
+        responseHandler(result);
+        });
 }
 
 uint32_t Base::addOnConnectedCallback(OnConnectionStatusChangedCallBackFunction callBack)

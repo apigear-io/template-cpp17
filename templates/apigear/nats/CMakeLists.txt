@@ -1,5 +1,6 @@
 find_package(nlohmann_json REQUIRED)
 find_package(cnats COMPONENTS nats_static REQUIRED)
+find_package(apigear COMPONENTS utilities)
 
 set (SOURCES
   private/natscwrapper.cpp

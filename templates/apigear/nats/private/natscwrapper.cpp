@@ -6,6 +6,11 @@
 
 using namespace ApiGear::Nats;
 
+namespace
+{
+    uint32_t reply_timeout = 5000;//[ms]
+}
+
 struct NatsSubscriptionDeleter
 {
     void operator()(natsSubscription* s)
@@ -49,6 +54,32 @@ static void onMsg(natsConnection* /*connection*/, natsSubscription* /*subscripti
     {
         AG_LOG_WARNING("No handler for " + std::string(natsMsg_GetSubject(msg)));
     }
+}
+
+static void onRequest(natsConnection* connection, natsSubscription* /*subscription*/, natsMsg* msg, void* context)
+{
+    // Make sure msg will be properly destroyed.
+    std::shared_ptr<natsMsg> message(msg, NatsMsgDeleter());
+    CWrapper::MessageCallbackWithResultWrapper* callbackWrapper = static_cast<CWrapper::MessageCallbackWithResultWrapper*>(context);
+    if (callbackWrapper && callbackWrapper->callback)
+    {
+        std::string result = callbackWrapper->callback(natsMsg_GetData(msg));
+        auto replyTopic = natsMsg_GetReply(msg);
+        if (replyTopic != NULL)
+        {
+            natsConnection_PublishString(connection, replyTopic, result.c_str());
+        }
+        else
+        {
+            AG_LOG_ERROR("Could not send a reply to  " + std::string(natsMsg_GetSubject(msg)) + "no response topic." );
+        }
+    }
+    else
+    {
+        AG_LOG_WARNING("No handler for " + std::string(natsMsg_GetSubject(msg)));
+    }
+
+
 }
 
 static void onError(natsConnection* connection, natsSubscription* subscription, natsStatus status, void* context)
@@ -252,6 +283,45 @@ int64_t CWrapper::subscribe(const std::string& topic, SimpleOnMessageCallback ca
     return sub_id;
 }
 
+int64_t CWrapper::subscribeWithResponse(const std::string& topic, MessageCallbackWithResult callback)
+{
+    AG_LOG_DEBUG("nats client: subscribe " + topic);
+    std::unique_lock<std::mutex> lockCallback(m_requestCallbacksMutex);//Diff m_requestCallbacksMutex
+    m_requestCallbacks.emplace_back(std::make_shared<MessageCallbackWithResultWrapper>(callback));//Diff m_requestCallbacks && MessageCallbackWithResultWrapper
+    auto storedCallback = m_requestCallbacks.back();//Diff m_requestCallbacks
+    lockCallback.unlock();
+    // nats library prepares a subscription which later will be stored, it is this class responsibility to free the resources.
+    natsSubscription* tmp;
+    auto status = natsConnection_Subscribe(&tmp, m_connection.get(), topic.c_str(), onRequest, storedCallback.get());//Diff OnMsg -> onRequest
+    std::shared_ptr< natsSubscription> subscription_ptr(tmp, NatsSubscriptionDeleter());
+    auto sub_id = natsSubscription_GetID(subscription_ptr.get());
+
+    if (status != NATS_OK) {
+        AG_LOG_WARNING("Failed to subscribe " + topic);
+        lockCallback.lock();
+        m_requestCallbacks.remove(storedCallback);//m_requestCallbacks
+        lockCallback.unlock();
+        return 0;
+    };
+    std::unique_lock<std::mutex> lockSubscription{ m_subscriptionsMutex };
+    m_subscriptions[sub_id] = subscription_ptr;
+    lockSubscription.unlock();
+
+    storedCallback->id = sub_id;
+    // This callback removes all resources, the nats library states that after unsubscribe call there might be still message to serve
+    // Nats library guarantees that after SetOnCompleteCB there will be no more calls for message handler for this subscription and resources can be safely cleaned up.
+    cleanSubscriptionResourcesContext* cleanCtx = new cleanSubscriptionResourcesContext{ sub_id, shared_from_this(), [this](uint64_t id) {cleanSubscription(id); } };
+
+    status = natsSubscription_SetOnCompleteCB(subscription_ptr.get(), &removeSubscriptionResources, cleanCtx);
+    if (status != NATS_OK) {
+        delete cleanCtx;
+        AG_LOG_WARNING("Failed to add subscription clean up callback " + topic + " id " + std::to_string(sub_id));
+        AG_LOG_WARNING("Please restart the client to clean up resources.");
+    };
+    return sub_id;
+}
+
+
 void CWrapper::unsubscribe(int64_t id)
 {
     AG_LOG_DEBUG("nats client: unsubscribe " + std::to_string(id));
@@ -286,9 +356,19 @@ void CWrapper::cleanSubscription(int64_t id)
     }
     else
     {
-        AG_LOG_WARNING("No callback to remove for subscription with id "+ std::to_string(id));
+        lockCallbacks.lock();
+        std::unique_lock<std::mutex> lockRequestCallbacks{ m_requestCallbacksMutex };
+        auto requestCallback = find_if(m_requestCallbacks.begin(), m_requestCallbacks.end(), [id](auto element) { return  element->id == id; });
+        if (requestCallback != m_requestCallbacks.end())
+        {
+            m_requestCallbacks.erase(requestCallback);
+        }
+        else
+        {
+            lockRequestCallbacks.unlock();
+            AG_LOG_WARNING("No callback to remove for subscription with id " + std::to_string(id));
+        }
     }
-    lockCallbacks.unlock();
 }
 
 void CWrapper::publish(const std::string& topic, const std::string& payload)
@@ -303,3 +383,20 @@ void CWrapper::publish(const std::string& topic, const std::string& payload)
     }
 }
 
+
+std::string CWrapper::publishRequest(const std::string& topic, const std::string& payload)
+{
+    natsMsg* reply = NULL;
+    std::string result;
+    auto status = natsConnection_RequestString(&reply, m_connection.get(), topic.c_str(), payload.c_str(), reply_timeout);
+    std::unique_ptr<natsMsg, NatsMsgDeleter>(reply, NatsMsgDeleter());
+    if (status == NATS_OK)
+    {
+        result = std::string(natsMsg_GetData(reply));
+    }
+    else
+    {
+        AG_LOG_ERROR("No response received for "+ topic);
+    }
+    return result;
+}
