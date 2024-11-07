@@ -1,5 +1,7 @@
 #include "natsclient.h"
 #include "private/natscwrapper.h"
+#include "utilities/threadpool.h"
+#include "utilities/logger.h"
 #include <random>
 #include <iostream>
 #include "utilities/threadpool.h"
@@ -8,12 +10,11 @@ using namespace ApiGear::Nats;
 
 namespace{
 
+int64_t nats_invalid_subscription_id = 0;
 std::mt19937 randomNumberGenerator(std::random_device{}());
 std::uniform_int_distribution<uint32_t> distribution(0, 0xFFFFFFFF);
 
-// when more than one thread is used per connection,
-// the order of messages(e.g. property set) is not guaranteed
-const size_t workerThreadsPerConnection = 1;
+const size_t workerThreadsPerConnection = 10;
 
 template<typename StoredItem>
 uint32_t createUniqueMapId(const std::map<uint32_t, StoredItem>& existing_map, std::mutex& map_mutex)
@@ -32,25 +33,38 @@ uint32_t createUniqueMapId(const std::map<uint32_t, StoredItem>& existing_map, s
 Base::Base()
 {
     m_cwrapper = CWrapper::create();
-    pool = std::make_unique<ApiGear::Utilities::ThreadPool>(workerThreadsPerConnection);
+    m_requests_pool = std::make_unique<ApiGear::Utilities::ThreadPool>(workerThreadsPerConnection);
+    m_subscriptions_pool = std::make_unique<ApiGear::Utilities::ThreadPool>(workerThreadsPerConnection);
 }
 
 Base::~Base() = default;
 
 void Base::connect(const std::string& address)
 {
-    // TODO this possibly should be called with std::async, 
+    // TODO this is blocking call, but calling with std::async causes error with state NATS_NO_SERVER_SUPPORT 
     m_cwrapper->connect(address, [this]() {onConnectedChanged(); });
     auto status = m_cwrapper->getStatus();
-    if (status == ConnectionStatus::connected)
+    if (m_connecting || status == ConnectionStatus::connected)
     {
-        //TODO LOG AG_LOG_DEBUG("nats client connected");
-        m_onConnectionStatusChangedCallbacksMutex.lock();
-        auto onConnectionStatusChangedCallbacks{ m_onConnectionStatusChangedCallbacks };
-        m_onConnectionStatusChangedCallbacksMutex.unlock();
-        for (auto& callback : onConnectionStatusChangedCallbacks) {
-            callback.second(true);
-        }
+        return;
+    }
+    m_connecting= true;
+    m_cwrapper->connect(address, [this](){ onConnectedChanged(); });
+    m_connecting = false;
+    if (m_cwrapper->getStatus() == ConnectionStatus::connected)
+    {
+         AG_LOG_DEBUG("nats client connected");
+         handleConnectionState(true);
+    }
+}
+
+void Base::handleConnectionState(bool state) {
+    m_onConnectionStatusChangedCallbacksMutex.lock();
+    auto onConnectionStatusChangedCallbacks{ m_onConnectionStatusChangedCallbacks };
+    m_onConnectionStatusChangedCallbacksMutex.unlock();
+    for (auto& callback : onConnectionStatusChangedCallbacks)
+    {
+        callback.second(state);
     }
 }
 
@@ -60,23 +74,13 @@ bool Base::onConnectedChanged()
     std::cout << "base: connection handler " << static_cast<int>(status) << std::endl;
     if (status == ConnectionStatus::connected)
     {
-        //TODO LOG AG_LOG_DEBUG("nats client connected");
-        m_onConnectionStatusChangedCallbacksMutex.lock();
-        auto onConnectionStatusChangedCallbacks{ m_onConnectionStatusChangedCallbacks };
-        m_onConnectionStatusChangedCallbacksMutex.unlock();
-        for (auto& callback : onConnectionStatusChangedCallbacks) {
-            callback.second(true);
-        }
+        AG_LOG_DEBUG("nats client connected");
+        handleConnectionState(true);
     }
     else if (status == ConnectionStatus::disconnected || status == ConnectionStatus::closed)
     {
-        //TODO LOG AG_LOG_DEBUG("nats client disconnected");
-        m_onConnectionStatusChangedCallbacksMutex.lock();
-        auto onConnectionStatusChangedCallbacks{ m_onConnectionStatusChangedCallbacks };
-        m_onConnectionStatusChangedCallbacksMutex.unlock();
-        for (auto& callback : onConnectionStatusChangedCallbacks) {
-            callback.second(false);
-        }
+        AG_LOG_DEBUG("nats client disconnected");
+        handleConnectionState(false);
     }
     return false;
 }
@@ -86,24 +90,22 @@ bool Base::isConnected() const
     return m_cwrapper->getStatus() == ConnectionStatus::connected;
 }
 
-// MAKE SURE TO UNSUBSCRIBE BEFORE THE onMsg gets invalidated
-// TODO probably should by void Base::subscribe(std::string topic,
-//                                              std::function<void>(uint64_t, std::string, bool?) onSubscribed,
-//                                              SimpleOnMessageCallback onMsg)
-// so subscribe will be called from different threads - and subscriptions stored in CWrapper have to be guarded with mutex
-int64_t Base::subscribe(const std::string& topic, SimpleOnMessageCallback callback)
+void  Base::subscribe(const std::string& topic, SimpleOnMessageCallback callback, std::function<void(int64_t, std::string, bool)> subscribe_callback)
 {
-    // TODO this possibly should be called with std::async, and have a callback to inform when subscription ready
-    return m_cwrapper->subscribe(topic, callback);
-
-    //This object needs to store the futures - but it needs a handle with which the future will be destroyed - does it have to be unique id?
-    //WHAT WITH THREAD POOL - will using it be thread safe , threads are chosen on subscribe?
+    m_subscriptions_pool->enqueue([this, topic, callback, subscribe_callback]()
+        {
+            auto id = m_cwrapper->subscribe(topic, callback);
+            subscribe_callback(id, topic, id != nats_invalid_subscription_id);
+        });
 }
 
-//similar as in subscribe, make it async as subscribe is blocking call in cwrapper
-int64_t Base::subscribeForRequest(const std::string& topic, MessageCallbackWithResult callback)
+void Base::subscribeForRequest(const std::string& topic, MessageCallbackWithResult callback, std::function<void(int64_t, std::string, bool)> subscribe_callback)
 {
-    return m_cwrapper->subscribeWithResponse(topic, callback);
+    m_subscriptions_pool->enqueue([this, topic, callback, subscribe_callback]()
+        {
+            auto id = m_cwrapper->subscribeWithResponse(topic, callback);
+            subscribe_callback(id, topic, id != nats_invalid_subscription_id);
+        });
 }
 
 void Base::unsubscribe(int64_t id)
@@ -117,7 +119,7 @@ void Base::publish(const std::string& topic, const std::string& payload)
 
 void Base::publishRequest(const std::string& topic, const std::string& payload, SimpleOnMessageCallback responseHandler)
 {
-    pool->enqueue([this, topic, payload, responseHandler] {
+    m_requests_pool->enqueue([this, topic, payload, responseHandler] {
         auto result = m_cwrapper->publishRequest(topic, payload);
         responseHandler(result);
         });

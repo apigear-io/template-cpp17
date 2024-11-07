@@ -6,7 +6,8 @@
 #include "natscommon.h"
 #include "natstypes.h"
 #include <mutex>
-#include <condition_variable>
+#include <atomic>
+#include <future>
 
 namespace ApiGear {
 
@@ -23,8 +24,8 @@ public:
     virtual ~Base();
 
     void connect(const std::string& address);
-    int64_t subscribe(const std::string& topic, SimpleOnMessageCallback callback);
-    int64_t subscribeForRequest(const std::string& topic, MessageCallbackWithResult callback);
+    void subscribe(const std::string& topic, SimpleOnMessageCallback callback, std::function<void(int64_t, std::string, bool)> subscribe_callback);
+    void subscribeForRequest(const std::string& topic, MessageCallbackWithResult callback, std::function<void(int64_t, std::string, bool)> subscribe_callback);
     void unsubscribe(int64_t id);
     void publish(const std::string& topic, const std::string& payload);
     void publishRequest(const std::string& topic, const std::string& payload, SimpleOnMessageCallback responseHandler);
@@ -34,6 +35,7 @@ public:
     bool isConnected() const;
 private:
     bool onConnectedChanged();
+    void handleConnectionState(bool state);
     std::mutex m_onConnectionStatusChangedCallbacksMutex;
     std::map<uint32_t, OnConnectionStatusChangedCallBackFunction> m_onConnectionStatusChangedCallbacks;
 
@@ -41,7 +43,12 @@ private:
 
     std::map < uint64_t, SimpleMessageCallbackContext> callbacks;
     /** A thread pool*/
-    std::unique_ptr<ApiGear::Utilities::ThreadPool> pool;
+    std::unique_ptr<ApiGear::Utilities::ThreadPool> m_requests_pool;
+    /** subscriptions pool*/
+    std::unique_ptr<ApiGear::Utilities::ThreadPool> m_subscriptions_pool;
+
+    std::atomic<bool> m_connecting{ false };
+    std::future<void> m_connectionAwait;
 };
 } // namespace Nats
 } // namespace ApiGear
