@@ -5,7 +5,9 @@
 #include "natscommon.h"
 #include "natstypes.h"
 #include <mutex>
-#include <condition_variable>
+#include <atomic>
+#include <future>
+#include "apigear/utilities/threadpool.h"
 
 namespace ApiGear {
 namespace Nats {
@@ -16,8 +18,9 @@ public:
     explicit Base();
     virtual ~Base() = default;
 
+    // WARNING this is blocking call, but calling with std::async causes error with state NATS_NO_SERVER_SUPPORT 
     void connect(const std::string& address);
-    int64_t subscribe(const std::string& topic, SimpleOnMessageCallback callback);
+    void subscribe(const std::string& topic, SimpleOnMessageCallback callback, std::function<void(int64_t, std::string, bool)> subscribe_callback);
     void unsubscribe(int64_t id);
     void publish(const std::string& topic, const std::string& payload);
 
@@ -31,6 +34,9 @@ private:
     std::map<uint32_t, OnConnectionStatusChangedCallBackFunction> m_onConnectionStatusChangedCallbacks;
 
     std::shared_ptr<class CWrapper> m_cwrapper;
+
+    /** subscriptions pool*/
+    std::unique_ptr<ApiGear::Utilities::ThreadPool> m_subscriptions_pool;
 };
 } // namespace Nats
 } // namespace ApiGear

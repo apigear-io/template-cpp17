@@ -1,12 +1,19 @@
 #include "natsbase.h"
 #include "private/natscwrapper.h"
 #include "apigear/utilities/logger.h"
+#include "apigear/utilities/threadpool.h"
 #include <random>
 
 using namespace ApiGear::Nats;
 
+namespace
+{
+
+int64_t nats_invalid_subscription_id = 0;
 std::mt19937 randomNumberGenerator(std::random_device{}());
 std::uniform_int_distribution<uint32_t> distribution(0, 0xFFFFFFFF);
+
+const size_t workerThreadsPerConnection = 10;
 
 template<typename StoredItem>
 uint32_t createUniqueMapId(const std::map<uint32_t, StoredItem>& existing_map, std::mutex& map_mutex)
@@ -20,10 +27,12 @@ uint32_t createUniqueMapId(const std::map<uint32_t, StoredItem>& existing_map, s
     return uniqueId;
 }
 
+}
 
 Base::Base()
 {
     m_cwrapper = CWrapper::create();
+    m_subscriptions_pool = std::make_unique<ApiGear::Utilities::ThreadPool>(workerThreadsPerConnection);
 }
 
 void Base::connect(const std::string& address)
@@ -75,9 +84,13 @@ bool Base::isConnected() const
     return m_cwrapper->getStatus() == ConnectionStatus::connected;
 }
 
-int64_t Base::subscribe(const std::string& topic, SimpleOnMessageCallback callback)
+void Base::subscribe(const std::string& topic, SimpleOnMessageCallback callback, std::function<void(int64_t, std::string, bool)> subscribe_callback)
 {
-    return m_cwrapper->subscribe(topic, callback);
+    m_subscriptions_pool->enqueue([this, topic, callback, subscribe_callback]()
+        {
+            auto id = m_cwrapper->subscribe(topic, callback);
+            subscribe_callback(id, topic, id != nats_invalid_subscription_id);
+        });
 }
 
 void Base::unsubscribe(int64_t id)
