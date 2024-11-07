@@ -33,5 +33,10 @@ namespace Nats {
 	{
 		SimpleOnMessageCallback function;
 	};
+	typedef std::function<std::string(const std::string& args)> MessageCallbackWithResult;
+	struct MessageCallbackWithResultContext
+	{
+		MessageCallbackWithResult function;
+	};
 } // namespace Nats
 } // namespace ApiGear
