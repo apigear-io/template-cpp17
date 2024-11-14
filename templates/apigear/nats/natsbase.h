@@ -17,18 +17,23 @@ namespace Utilities {
 
 namespace Nats {
 
+
 class APIGEAR_NATS_EXPORT Base
 {
 public:
+
     explicit Base();
     virtual ~Base();
 
+    static const int64_t InvalidSubscriptionId = 0;
+
     void connect(const std::string& address);
+    void disconnect();
     void subscribe(const std::string& topic, SimpleOnMessageCallback callback, std::function<void(int64_t, std::string, bool)> subscribe_callback);
     void subscribeForRequest(const std::string& topic, MessageCallbackWithResult callback, std::function<void(int64_t, std::string, bool)> subscribe_callback);
     void unsubscribe(int64_t id);
     void publish(const std::string& topic, const std::string& payload);
-    void publishRequest(const std::string& topic, const std::string& payload, SimpleOnMessageCallback responseHandler);
+    void request(const std::string& topic, const std::string& payload, SimpleOnMessageCallback responseHandler);
 
     uint32_t addOnConnectedCallback(OnConnectionStatusChangedCallBackFunction callback);
     void removeOnConnectedCallback(uint32_t id);

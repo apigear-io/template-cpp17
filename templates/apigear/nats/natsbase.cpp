@@ -10,7 +10,6 @@ using namespace ApiGear::Nats;
 
 namespace{
 
-int64_t nats_invalid_subscription_id = 0;
 std::mt19937 randomNumberGenerator(std::random_device{}());
 std::uniform_int_distribution<uint32_t> distribution(0, 0xFFFFFFFF);
 
@@ -37,7 +36,11 @@ Base::Base()
     m_subscriptions_pool = std::make_unique<ApiGear::Utilities::ThreadPool>(workerThreadsPerConnection);
 }
 
-Base::~Base() = default;
+Base::~Base()
+{
+    //TODO check what needs to be cleaned up.
+    m_cwrapper->disconnect();
+}
 
 void Base::connect(const std::string& address)
 {
@@ -57,6 +60,11 @@ void Base::connect(const std::string& address)
          handleConnectionState(true);
     }
 }
+
+void Base::disconnect()
+{
+    m_cwrapper->disconnect();
+};
 
 void Base::handleConnectionState(bool state) {
     m_onConnectionStatusChangedCallbacksMutex.lock();
@@ -95,7 +103,7 @@ void  Base::subscribe(const std::string& topic, SimpleOnMessageCallback callback
     m_subscriptions_pool->enqueue([this, topic, callback, subscribe_callback]()
         {
             auto id = m_cwrapper->subscribe(topic, callback);
-            subscribe_callback(id, topic, id != nats_invalid_subscription_id);
+            subscribe_callback(id, topic, id != InvalidSubscriptionId);
         });
 }
 
@@ -104,7 +112,7 @@ void Base::subscribeForRequest(const std::string& topic, MessageCallbackWithResu
     m_subscriptions_pool->enqueue([this, topic, callback, subscribe_callback]()
         {
             auto id = m_cwrapper->subscribeWithResponse(topic, callback);
-            subscribe_callback(id, topic, id != nats_invalid_subscription_id);
+            subscribe_callback(id, topic, id != InvalidSubscriptionId);
         });
 }
 
@@ -117,10 +125,10 @@ void Base::publish(const std::string& topic, const std::string& payload)
     m_cwrapper->publish(topic, payload);
 }
 
-void Base::publishRequest(const std::string& topic, const std::string& payload, SimpleOnMessageCallback responseHandler)
+void Base::request(const std::string& topic, const std::string& payload, SimpleOnMessageCallback responseHandler)
 {
     m_requests_pool->enqueue([this, topic, payload, responseHandler] {
-        auto result = m_cwrapper->publishRequest(topic, payload);
+        auto result = m_cwrapper->request(topic, payload);
         responseHandler(result);
         });
 }
