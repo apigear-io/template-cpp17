@@ -7,20 +7,28 @@
 {{- $pub_class := printf "I%sPublisher" $interfaceName -}}
 #pragma once
 
-#include <future>
 #include "{{snake .Module.Name}}/generated/api/common.h"
 #include "{{snake .Module.Name}}/generated/api/{{snake .Module.Name}}.h"
 #include "{{snake .Module.Name}}/generated/core/{{lower $interfaceName}}.data.h"
 #include "apigear/nats/natsclient.h"
+#include "apigear/nats/natstypes.h"
+#include "apigear/nats/baseadapter.h"
+
+#include <future>
+#include <unordered_map>
 
 namespace {{ Camel .System.Name }} {
 namespace {{ Camel .Module.Name }} {
 namespace Nats {
-class {{ SNAKE .System.Name  }}_{{ SNAKE .Module.Name  }}_EXPORT {{$class}} : public {{$interfaceClass}}
+class {{ SNAKE .System.Name  }}_{{ SNAKE .Module.Name  }}_EXPORT {{$class}} : public {{$interfaceClass}}, public ApiGear::Nats::BaseAdapter
 {
 public:
     explicit {{$class}}(std::shared_ptr<ApiGear::Nats::Client> client);
     virtual ~{{$class}}() override;
+
+    unsigned long _subscribeForIsReady(std::function<void(bool)> sub_function);
+    void _unsubscribeFromIsReady(unsigned long id);
+    bool _is_ready();
 
 {{- range .Interface.Properties}}
 {{- $property := . }}
@@ -39,11 +47,9 @@ public:
 private:
 {{- range .Interface.Properties}}
 {{- $property := . }}
-{{- if not .IsReadOnly }}
     /// @brief sets the value for the property {{Camel $property.Name}} coming from the service
     /// @param args contains the param of the type {{cppType "" $property }}
     void set{{Camel $property.Name}}Local(const std::string& args);
-{{- end }}
 {{- end }}
 
 {{- range .Interface.Signals}}
@@ -58,9 +64,13 @@ private:
     {{$interfaceName}}Data m_data;
 {{- end }}
     std::shared_ptr<ApiGear::Nats::Client> m_client;
-
     /** The publisher for {{$interfaceName}} */
     std::unique_ptr<{{$pub_class}}> m_publisher;
+
+    /// Helper function for subscribing for messages.
+    void subscribeTopics() override;
+    void getInitialState() override;
+    uint32_t getPropertiesSize() override;
 
 };
 } // namespace Nats
