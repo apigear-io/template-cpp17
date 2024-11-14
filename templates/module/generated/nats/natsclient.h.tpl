@@ -7,21 +7,27 @@
 {{- $pub_class := printf "I%sPublisher" $interfaceName -}}
 #pragma once
 
-#include <future>
 #include "{{snake .Module.Name}}/generated/api/common.h"
 #include "{{snake .Module.Name}}/generated/api/{{snake .Module.Name}}.h"
 #include "{{snake .Module.Name}}/generated/core/{{lower $interfaceName}}.data.h"
 #include "apigear/nats/natsclient.h"
+#include "apigear/nats/natstypes.h"
+#include "apigear/nats/baseadapter.h"
+
+#include <future>
+#include <unordered_map>
 
 namespace {{ Camel .System.Name }} {
 namespace {{ Camel .Module.Name }} {
 namespace Nats {
-class {{ SNAKE .System.Name  }}_{{ SNAKE .Module.Name  }}_EXPORT {{$class}} : public {{$interfaceClass}}
+class {{ SNAKE .System.Name  }}_{{ SNAKE .Module.Name  }}_EXPORT {{$class}} : public {{$interfaceClass}}, public ApiGear::Nats::BaseAdapter,  public std::enable_shared_from_this<{{$class}}>
 {
-public:
+protected:
     explicit {{$class}}(std::shared_ptr<ApiGear::Nats::Client> client);
+public:
+    static std::shared_ptr<{{$class}}>create(std::shared_ptr<ApiGear::Nats::Client> client);
     virtual ~{{$class}}() override;
-
+    void init();
 {{- range .Interface.Properties}}
 {{- $property := . }}
     {{cppTypeRef "" $property}} get{{Camel $property.Name}}() const override;
@@ -37,13 +43,12 @@ public:
 {{- end }}
     {{$pub_class}}& _getPublisher() const override;
 private:
+    std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
 {{- range .Interface.Properties}}
 {{- $property := . }}
-{{- if not .IsReadOnly }}
     /// @brief sets the value for the property {{Camel $property.Name}} coming from the service
     /// @param args contains the param of the type {{cppType "" $property }}
     void set{{Camel $property.Name}}Local(const std::string& args);
-{{- end }}
 {{- end }}
 
 {{- range .Interface.Signals}}
@@ -58,9 +63,10 @@ private:
     {{$interfaceName}}Data m_data;
 {{- end }}
     std::shared_ptr<ApiGear::Nats::Client> m_client;
-
     /** The publisher for {{$interfaceName}} */
     std::unique_ptr<{{$pub_class}}> m_publisher;
+
+    void onConnected();
 
 };
 } // namespace Nats

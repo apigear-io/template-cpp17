@@ -1,28 +1,69 @@
 #include "testbed1/generated/nats/structinterfaceclient.h"
 #include "testbed1/generated/core/structinterface.publisher.h"
 #include "testbed1/generated/core/testbed1.json.adapter.h"
+#include "apigear/utilities/logger.h"
 
 using namespace Test::Testbed1;
 using namespace Test::Testbed1::Nats;
 
-
-StructInterfaceClient::StructInterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client)
-    : m_client(client)
-    , m_publisher(std::make_unique<StructInterfacePublisher>())
-{
+namespace{
+const uint32_t  expectedSingalsSubscriptions = 4;
+const uint32_t  expectedPropertiesSubscriptions = 4;
+constexpr uint32_t expectedSubscriptionsCount = expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
 }
 
-StructInterfaceClient::~StructInterfaceClient()
+std::shared_ptr<StructInterfaceClient> StructInterfaceClient::create(std::shared_ptr<ApiGear::Nats::Client> client)
 {
+    std::shared_ptr<StructInterfaceClient> obj(new StructInterfaceClient(client));
+    obj->init();
+    return obj;
+}
+
+std::shared_ptr<ApiGear::Nats::BaseAdapter> StructInterfaceClient::getSharedFromDerrived()
+{
+    return shared_from_this();
+}
+
+StructInterfaceClient::StructInterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client)
+    :BaseAdapter(client, expectedSubscriptionsCount)
+    , m_client(client)
+    , m_publisher(std::make_unique<StructInterfacePublisher>())
+{}
+
+void StructInterfaceClient::init()
+{
+    BaseAdapter::init([this](){onConnected();});
+}
+
+StructInterfaceClient::~StructInterfaceClient() = default;
+
+void StructInterfaceClient::onConnected()
+{
+    const std::string topic_propBool =  "testbed1.StructInterface.prop.propBool";
+    subscribeTopic(topic_propBool, [this](const auto& value){ setPropBoolLocal(value); });
+    const std::string topic_propInt =  "testbed1.StructInterface.prop.propInt";
+    subscribeTopic(topic_propInt, [this](const auto& value){ setPropIntLocal(value); });
+    const std::string topic_propFloat =  "testbed1.StructInterface.prop.propFloat";
+    subscribeTopic(topic_propFloat, [this](const auto& value){ setPropFloatLocal(value); });
+    const std::string topic_propString =  "testbed1.StructInterface.prop.propString";
+    subscribeTopic(topic_propString, [this](const auto& value){ setPropStringLocal(value); });
+    const std::string topic_sigBool = "testbed1.StructInterface.sig.sigBool";
+    subscribeTopic(topic_sigBool, [this](const auto& args){onSigBool(args);});
+    const std::string topic_sigInt = "testbed1.StructInterface.sig.sigInt";
+    subscribeTopic(topic_sigInt, [this](const auto& args){onSigInt(args);});
+    const std::string topic_sigFloat = "testbed1.StructInterface.sig.sigFloat";
+    subscribeTopic(topic_sigFloat, [this](const auto& args){onSigFloat(args);});
+    const std::string topic_sigString = "testbed1.StructInterface.sig.sigString";
+    subscribeTopic(topic_sigString, [this](const auto& args){onSigString(args);});
 }
 
 void StructInterfaceClient::setPropBool(const StructBool& propBool)
 {
+    static const auto topic = std::string("testbed1.StructInterface.set.propBool");
     if(m_client == nullptr) {
         return;
     }
-    (void) propBool;
-    //TODO
+    m_client->publish(topic, nlohmann::json(propBool).dump());
 }
 
 void StructInterfaceClient::setPropBoolLocal(const std::string& args)
@@ -47,11 +88,11 @@ const StructBool& StructInterfaceClient::getPropBool() const
 
 void StructInterfaceClient::setPropInt(const StructInt& propInt)
 {
+    static const auto topic = std::string("testbed1.StructInterface.set.propInt");
     if(m_client == nullptr) {
         return;
     }
-    (void) propInt;
-    //TODO
+    m_client->publish(topic, nlohmann::json(propInt).dump());
 }
 
 void StructInterfaceClient::setPropIntLocal(const std::string& args)
@@ -76,11 +117,11 @@ const StructInt& StructInterfaceClient::getPropInt() const
 
 void StructInterfaceClient::setPropFloat(const StructFloat& propFloat)
 {
+    static const auto topic = std::string("testbed1.StructInterface.set.propFloat");
     if(m_client == nullptr) {
         return;
     }
-    (void) propFloat;
-    //TODO
+    m_client->publish(topic, nlohmann::json(propFloat).dump());
 }
 
 void StructInterfaceClient::setPropFloatLocal(const std::string& args)
@@ -105,11 +146,11 @@ const StructFloat& StructInterfaceClient::getPropFloat() const
 
 void StructInterfaceClient::setPropString(const StructString& propString)
 {
+    static const auto topic = std::string("testbed1.StructInterface.set.propString");
     if(m_client == nullptr) {
         return;
     }
-    (void) propString;
-    //TODO
+    m_client->publish(topic, nlohmann::json(propString).dump());
 }
 
 void StructInterfaceClient::setPropStringLocal(const std::string& args)
@@ -146,14 +187,26 @@ std::future<StructBool> StructInterfaceClient::funcBoolAsync(const StructBool& p
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
-                    paramBool]()
+    static const auto topic = std::string("testbed1.StructInterface.rpc.funcBool");
+
+    return std::async(std::launch::async, [this,paramBool]()
+    {
+        std::promise<StructBool> resultPromise;
+        auto callback = [&resultPromise](const auto& result)
         {
-            std::promise<StructBool> resultPromise;
-            //TODO 
-            return resultPromise.get_future().get();
-        }
-    );
+            if (result.empty())
+            {
+                resultPromise.set_value(StructBool());
+                return;
+            }
+            nlohmann::json field = nlohmann::json::parse(result);
+            const StructBool value = field.get<StructBool>();
+            resultPromise.set_value(value);
+        };
+
+        m_client->request(topic,  nlohmann::json::array({paramBool}).dump(), callback);
+        return resultPromise.get_future().get();
+    });
 }
 
 StructInt StructInterfaceClient::funcInt(const StructInt& paramInt)
@@ -170,14 +223,26 @@ std::future<StructInt> StructInterfaceClient::funcIntAsync(const StructInt& para
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
-                    paramInt]()
+    static const auto topic = std::string("testbed1.StructInterface.rpc.funcInt");
+
+    return std::async(std::launch::async, [this,paramInt]()
+    {
+        std::promise<StructInt> resultPromise;
+        auto callback = [&resultPromise](const auto& result)
         {
-            std::promise<StructInt> resultPromise;
-            //TODO 
-            return resultPromise.get_future().get();
-        }
-    );
+            if (result.empty())
+            {
+                resultPromise.set_value(StructInt());
+                return;
+            }
+            nlohmann::json field = nlohmann::json::parse(result);
+            const StructInt value = field.get<StructInt>();
+            resultPromise.set_value(value);
+        };
+
+        m_client->request(topic,  nlohmann::json::array({paramInt}).dump(), callback);
+        return resultPromise.get_future().get();
+    });
 }
 
 StructFloat StructInterfaceClient::funcFloat(const StructFloat& paramFloat)
@@ -194,14 +259,26 @@ std::future<StructFloat> StructInterfaceClient::funcFloatAsync(const StructFloat
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
-                    paramFloat]()
+    static const auto topic = std::string("testbed1.StructInterface.rpc.funcFloat");
+
+    return std::async(std::launch::async, [this,paramFloat]()
+    {
+        std::promise<StructFloat> resultPromise;
+        auto callback = [&resultPromise](const auto& result)
         {
-            std::promise<StructFloat> resultPromise;
-            //TODO 
-            return resultPromise.get_future().get();
-        }
-    );
+            if (result.empty())
+            {
+                resultPromise.set_value(StructFloat());
+                return;
+            }
+            nlohmann::json field = nlohmann::json::parse(result);
+            const StructFloat value = field.get<StructFloat>();
+            resultPromise.set_value(value);
+        };
+
+        m_client->request(topic,  nlohmann::json::array({paramFloat}).dump(), callback);
+        return resultPromise.get_future().get();
+    });
 }
 
 StructString StructInterfaceClient::funcString(const StructString& paramString)
@@ -218,14 +295,26 @@ std::future<StructString> StructInterfaceClient::funcStringAsync(const StructStr
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
-                    paramString]()
+    static const auto topic = std::string("testbed1.StructInterface.rpc.funcString");
+
+    return std::async(std::launch::async, [this,paramString]()
+    {
+        std::promise<StructString> resultPromise;
+        auto callback = [&resultPromise](const auto& result)
         {
-            std::promise<StructString> resultPromise;
-            //TODO 
-            return resultPromise.get_future().get();
-        }
-    );
+            if (result.empty())
+            {
+                resultPromise.set_value(StructString());
+                return;
+            }
+            nlohmann::json field = nlohmann::json::parse(result);
+            const StructString value = field.get<StructString>();
+            resultPromise.set_value(value);
+        };
+
+        m_client->request(topic,  nlohmann::json::array({paramString}).dump(), callback);
+        return resultPromise.get_future().get();
+    });
 }
 void StructInterfaceClient::onSigBool(const std::string& args) const
 {

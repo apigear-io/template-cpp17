@@ -1,19 +1,26 @@
 #pragma once
 
-#include <future>
 #include "tb_same1/generated/api/common.h"
 #include "tb_same1/generated/api/tb_same1.h"
 #include "tb_same1/generated/core/sameenum2interface.data.h"
 #include "apigear/nats/natsclient.h"
+#include "apigear/nats/natstypes.h"
+#include "apigear/nats/baseadapter.h"
+
+#include <future>
+#include <unordered_map>
 
 namespace Test {
 namespace TbSame1 {
 namespace Nats {
-class TEST_TB_SAME1_EXPORT SameEnum2InterfaceClient : public ISameEnum2Interface
+class TEST_TB_SAME1_EXPORT SameEnum2InterfaceClient : public ISameEnum2Interface, public ApiGear::Nats::BaseAdapter,  public std::enable_shared_from_this<SameEnum2InterfaceClient>
 {
-public:
+protected:
     explicit SameEnum2InterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client);
+public:
+    static std::shared_ptr<SameEnum2InterfaceClient>create(std::shared_ptr<ApiGear::Nats::Client> client);
     virtual ~SameEnum2InterfaceClient() override;
+    void init();
     Enum1Enum getProp1() const override;
     void setProp1(Enum1Enum prop1) override;
     Enum2Enum getProp2() const override;
@@ -24,6 +31,7 @@ public:
     std::future<Enum1Enum> func2Async(Enum1Enum param1, Enum2Enum param2) override;
     ISameEnum2InterfacePublisher& _getPublisher() const override;
 private:
+    std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
     /// @brief sets the value for the property Prop1 coming from the service
     /// @param args contains the param of the type Enum1Enum
     void setProp1Local(const std::string& args);
@@ -39,9 +47,10 @@ private:
     /** Local storage for properties values. */
     SameEnum2InterfaceData m_data;
     std::shared_ptr<ApiGear::Nats::Client> m_client;
-
     /** The publisher for SameEnum2Interface */
     std::unique_ptr<ISameEnum2InterfacePublisher> m_publisher;
+
+    void onConnected();
 
 };
 } // namespace Nats

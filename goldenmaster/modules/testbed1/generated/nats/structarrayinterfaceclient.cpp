@@ -1,28 +1,69 @@
 #include "testbed1/generated/nats/structarrayinterfaceclient.h"
 #include "testbed1/generated/core/structarrayinterface.publisher.h"
 #include "testbed1/generated/core/testbed1.json.adapter.h"
+#include "apigear/utilities/logger.h"
 
 using namespace Test::Testbed1;
 using namespace Test::Testbed1::Nats;
 
-
-StructArrayInterfaceClient::StructArrayInterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client)
-    : m_client(client)
-    , m_publisher(std::make_unique<StructArrayInterfacePublisher>())
-{
+namespace{
+const uint32_t  expectedSingalsSubscriptions = 4;
+const uint32_t  expectedPropertiesSubscriptions = 4;
+constexpr uint32_t expectedSubscriptionsCount = expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
 }
 
-StructArrayInterfaceClient::~StructArrayInterfaceClient()
+std::shared_ptr<StructArrayInterfaceClient> StructArrayInterfaceClient::create(std::shared_ptr<ApiGear::Nats::Client> client)
 {
+    std::shared_ptr<StructArrayInterfaceClient> obj(new StructArrayInterfaceClient(client));
+    obj->init();
+    return obj;
+}
+
+std::shared_ptr<ApiGear::Nats::BaseAdapter> StructArrayInterfaceClient::getSharedFromDerrived()
+{
+    return shared_from_this();
+}
+
+StructArrayInterfaceClient::StructArrayInterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client)
+    :BaseAdapter(client, expectedSubscriptionsCount)
+    , m_client(client)
+    , m_publisher(std::make_unique<StructArrayInterfacePublisher>())
+{}
+
+void StructArrayInterfaceClient::init()
+{
+    BaseAdapter::init([this](){onConnected();});
+}
+
+StructArrayInterfaceClient::~StructArrayInterfaceClient() = default;
+
+void StructArrayInterfaceClient::onConnected()
+{
+    const std::string topic_propBool =  "testbed1.StructArrayInterface.prop.propBool";
+    subscribeTopic(topic_propBool, [this](const auto& value){ setPropBoolLocal(value); });
+    const std::string topic_propInt =  "testbed1.StructArrayInterface.prop.propInt";
+    subscribeTopic(topic_propInt, [this](const auto& value){ setPropIntLocal(value); });
+    const std::string topic_propFloat =  "testbed1.StructArrayInterface.prop.propFloat";
+    subscribeTopic(topic_propFloat, [this](const auto& value){ setPropFloatLocal(value); });
+    const std::string topic_propString =  "testbed1.StructArrayInterface.prop.propString";
+    subscribeTopic(topic_propString, [this](const auto& value){ setPropStringLocal(value); });
+    const std::string topic_sigBool = "testbed1.StructArrayInterface.sig.sigBool";
+    subscribeTopic(topic_sigBool, [this](const auto& args){onSigBool(args);});
+    const std::string topic_sigInt = "testbed1.StructArrayInterface.sig.sigInt";
+    subscribeTopic(topic_sigInt, [this](const auto& args){onSigInt(args);});
+    const std::string topic_sigFloat = "testbed1.StructArrayInterface.sig.sigFloat";
+    subscribeTopic(topic_sigFloat, [this](const auto& args){onSigFloat(args);});
+    const std::string topic_sigString = "testbed1.StructArrayInterface.sig.sigString";
+    subscribeTopic(topic_sigString, [this](const auto& args){onSigString(args);});
 }
 
 void StructArrayInterfaceClient::setPropBool(const std::list<StructBool>& propBool)
 {
+    static const auto topic = std::string("testbed1.StructArrayInterface.set.propBool");
     if(m_client == nullptr) {
         return;
     }
-    (void) propBool;
-    //TODO
+    m_client->publish(topic, nlohmann::json(propBool).dump());
 }
 
 void StructArrayInterfaceClient::setPropBoolLocal(const std::string& args)
@@ -47,11 +88,11 @@ const std::list<StructBool>& StructArrayInterfaceClient::getPropBool() const
 
 void StructArrayInterfaceClient::setPropInt(const std::list<StructInt>& propInt)
 {
+    static const auto topic = std::string("testbed1.StructArrayInterface.set.propInt");
     if(m_client == nullptr) {
         return;
     }
-    (void) propInt;
-    //TODO
+    m_client->publish(topic, nlohmann::json(propInt).dump());
 }
 
 void StructArrayInterfaceClient::setPropIntLocal(const std::string& args)
@@ -76,11 +117,11 @@ const std::list<StructInt>& StructArrayInterfaceClient::getPropInt() const
 
 void StructArrayInterfaceClient::setPropFloat(const std::list<StructFloat>& propFloat)
 {
+    static const auto topic = std::string("testbed1.StructArrayInterface.set.propFloat");
     if(m_client == nullptr) {
         return;
     }
-    (void) propFloat;
-    //TODO
+    m_client->publish(topic, nlohmann::json(propFloat).dump());
 }
 
 void StructArrayInterfaceClient::setPropFloatLocal(const std::string& args)
@@ -105,11 +146,11 @@ const std::list<StructFloat>& StructArrayInterfaceClient::getPropFloat() const
 
 void StructArrayInterfaceClient::setPropString(const std::list<StructString>& propString)
 {
+    static const auto topic = std::string("testbed1.StructArrayInterface.set.propString");
     if(m_client == nullptr) {
         return;
     }
-    (void) propString;
-    //TODO
+    m_client->publish(topic, nlohmann::json(propString).dump());
 }
 
 void StructArrayInterfaceClient::setPropStringLocal(const std::string& args)
@@ -146,14 +187,26 @@ std::future<std::list<StructBool>> StructArrayInterfaceClient::funcBoolAsync(con
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
-                    paramBool]()
+    static const auto topic = std::string("testbed1.StructArrayInterface.rpc.funcBool");
+
+    return std::async(std::launch::async, [this,paramBool]()
+    {
+        std::promise<std::list<StructBool>> resultPromise;
+        auto callback = [&resultPromise](const auto& result)
         {
-            std::promise<std::list<StructBool>> resultPromise;
-            //TODO 
-            return resultPromise.get_future().get();
-        }
-    );
+            if (result.empty())
+            {
+                resultPromise.set_value(std::list<StructBool>());
+                return;
+            }
+            nlohmann::json field = nlohmann::json::parse(result);
+            const std::list<StructBool> value = field.get<std::list<StructBool>>();
+            resultPromise.set_value(value);
+        };
+
+        m_client->request(topic,  nlohmann::json::array({paramBool}).dump(), callback);
+        return resultPromise.get_future().get();
+    });
 }
 
 std::list<StructInt> StructArrayInterfaceClient::funcInt(const std::list<StructInt>& paramInt)
@@ -170,14 +223,26 @@ std::future<std::list<StructInt>> StructArrayInterfaceClient::funcIntAsync(const
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
-                    paramInt]()
+    static const auto topic = std::string("testbed1.StructArrayInterface.rpc.funcInt");
+
+    return std::async(std::launch::async, [this,paramInt]()
+    {
+        std::promise<std::list<StructInt>> resultPromise;
+        auto callback = [&resultPromise](const auto& result)
         {
-            std::promise<std::list<StructInt>> resultPromise;
-            //TODO 
-            return resultPromise.get_future().get();
-        }
-    );
+            if (result.empty())
+            {
+                resultPromise.set_value(std::list<StructInt>());
+                return;
+            }
+            nlohmann::json field = nlohmann::json::parse(result);
+            const std::list<StructInt> value = field.get<std::list<StructInt>>();
+            resultPromise.set_value(value);
+        };
+
+        m_client->request(topic,  nlohmann::json::array({paramInt}).dump(), callback);
+        return resultPromise.get_future().get();
+    });
 }
 
 std::list<StructFloat> StructArrayInterfaceClient::funcFloat(const std::list<StructFloat>& paramFloat)
@@ -194,14 +259,26 @@ std::future<std::list<StructFloat>> StructArrayInterfaceClient::funcFloatAsync(c
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
-                    paramFloat]()
+    static const auto topic = std::string("testbed1.StructArrayInterface.rpc.funcFloat");
+
+    return std::async(std::launch::async, [this,paramFloat]()
+    {
+        std::promise<std::list<StructFloat>> resultPromise;
+        auto callback = [&resultPromise](const auto& result)
         {
-            std::promise<std::list<StructFloat>> resultPromise;
-            //TODO 
-            return resultPromise.get_future().get();
-        }
-    );
+            if (result.empty())
+            {
+                resultPromise.set_value(std::list<StructFloat>());
+                return;
+            }
+            nlohmann::json field = nlohmann::json::parse(result);
+            const std::list<StructFloat> value = field.get<std::list<StructFloat>>();
+            resultPromise.set_value(value);
+        };
+
+        m_client->request(topic,  nlohmann::json::array({paramFloat}).dump(), callback);
+        return resultPromise.get_future().get();
+    });
 }
 
 std::list<StructString> StructArrayInterfaceClient::funcString(const std::list<StructString>& paramString)
@@ -218,14 +295,26 @@ std::future<std::list<StructString>> StructArrayInterfaceClient::funcStringAsync
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
-                    paramString]()
+    static const auto topic = std::string("testbed1.StructArrayInterface.rpc.funcString");
+
+    return std::async(std::launch::async, [this,paramString]()
+    {
+        std::promise<std::list<StructString>> resultPromise;
+        auto callback = [&resultPromise](const auto& result)
         {
-            std::promise<std::list<StructString>> resultPromise;
-            //TODO 
-            return resultPromise.get_future().get();
-        }
-    );
+            if (result.empty())
+            {
+                resultPromise.set_value(std::list<StructString>());
+                return;
+            }
+            nlohmann::json field = nlohmann::json::parse(result);
+            const std::list<StructString> value = field.get<std::list<StructString>>();
+            resultPromise.set_value(value);
+        };
+
+        m_client->request(topic,  nlohmann::json::array({paramString}).dump(), callback);
+        return resultPromise.get_future().get();
+    });
 }
 void StructArrayInterfaceClient::onSigBool(const std::string& args) const
 {
