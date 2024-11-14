@@ -207,6 +207,8 @@ features:
           raw: true
         - source: "apigear/utilities/threadpool.h"
           raw: true
+        - source: "apigear/utilities/single_pub.hpp"
+          raw: true
         - source: "apigear/utilities/CMakeLists.txt"
           raw: true
         - source: "apigear/utilities/tests/CMakeLists.txt"
