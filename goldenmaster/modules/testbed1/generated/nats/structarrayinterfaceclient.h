@@ -1,19 +1,26 @@
 #pragma once
 
-#include <future>
 #include "testbed1/generated/api/common.h"
 #include "testbed1/generated/api/testbed1.h"
 #include "testbed1/generated/core/structarrayinterface.data.h"
 #include "apigear/nats/natsclient.h"
+#include "apigear/nats/natstypes.h"
+#include "apigear/nats/baseadapter.h"
+
+#include <future>
+#include <unordered_map>
 
 namespace Test {
 namespace Testbed1 {
 namespace Nats {
-class TEST_TESTBED1_EXPORT StructArrayInterfaceClient : public IStructArrayInterface
+class TEST_TESTBED1_EXPORT StructArrayInterfaceClient : public IStructArrayInterface, public ApiGear::Nats::BaseAdapter,  public std::enable_shared_from_this<StructArrayInterfaceClient>
 {
-public:
+protected:
     explicit StructArrayInterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client);
+public:
+    static std::shared_ptr<StructArrayInterfaceClient>create(std::shared_ptr<ApiGear::Nats::Client> client);
     virtual ~StructArrayInterfaceClient() override;
+    void init();
     const std::list<StructBool>& getPropBool() const override;
     void setPropBool(const std::list<StructBool>& propBool) override;
     const std::list<StructInt>& getPropInt() const override;
@@ -32,6 +39,7 @@ public:
     std::future<std::list<StructString>> funcStringAsync(const std::list<StructString>& paramString) override;
     IStructArrayInterfacePublisher& _getPublisher() const override;
 private:
+    std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
     /// @brief sets the value for the property PropBool coming from the service
     /// @param args contains the param of the type std::list<StructBool>
     void setPropBoolLocal(const std::string& args);
@@ -59,9 +67,10 @@ private:
     /** Local storage for properties values. */
     StructArrayInterfaceData m_data;
     std::shared_ptr<ApiGear::Nats::Client> m_client;
-
     /** The publisher for StructArrayInterface */
     std::unique_ptr<IStructArrayInterfacePublisher> m_publisher;
+
+    void onConnected();
 
 };
 } // namespace Nats
