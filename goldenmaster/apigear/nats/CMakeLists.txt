@@ -7,6 +7,7 @@ set (SOURCES
   natsbase.cpp
   natsclient.cpp
   natsservice.cpp
+  baseadapter.cpp
 )
 add_library(nats SHARED ${SOURCES})
 add_library(apigear::nats ALIAS nats)
