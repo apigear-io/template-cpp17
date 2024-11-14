@@ -1,28 +1,63 @@
 #include "tb_names/generated/nats/namesclient.h"
 #include "tb_names/generated/core/names.publisher.h"
 #include "tb_names/generated/core/tb_names.json.adapter.h"
+#include "apigear/utilities/logger.h"
 
 using namespace Test::TbNames;
 using namespace Test::TbNames::Nats;
 
-
-Nam_EsClient::Nam_EsClient(std::shared_ptr<ApiGear::Nats::Client> client)
-    : m_client(client)
-    , m_publisher(std::make_unique<NamEsPublisher>())
-{
+namespace{
+const uint32_t  expectedSingalsSubscriptions = 2;
+const uint32_t  expectedPropertiesSubscriptions = 3;
+constexpr uint32_t expectedSubscriptionsCount = expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
 }
 
-Nam_EsClient::~Nam_EsClient()
+std::shared_ptr<Nam_EsClient> Nam_EsClient::create(std::shared_ptr<ApiGear::Nats::Client> client)
 {
+    std::shared_ptr<Nam_EsClient> obj(new Nam_EsClient(client));
+    obj->init();
+    return obj;
+}
+
+std::shared_ptr<ApiGear::Nats::BaseAdapter> Nam_EsClient::getSharedFromDerrived()
+{
+    return shared_from_this();
+}
+
+Nam_EsClient::Nam_EsClient(std::shared_ptr<ApiGear::Nats::Client> client)
+    :BaseAdapter(client, expectedSubscriptionsCount)
+    , m_client(client)
+    , m_publisher(std::make_unique<NamEsPublisher>())
+{}
+
+void Nam_EsClient::init()
+{
+    BaseAdapter::init([this](){onConnected();});
+}
+
+Nam_EsClient::~Nam_EsClient() = default;
+
+void Nam_EsClient::onConnected()
+{
+    const std::string topic_Switch =  "tb.names.Nam_Es.prop.Switch";
+    subscribeTopic(topic_Switch, [this](const auto& value){ setSwitchLocal(value); });
+    const std::string topic_SOME_PROPERTY =  "tb.names.Nam_Es.prop.SOME_PROPERTY";
+    subscribeTopic(topic_SOME_PROPERTY, [this](const auto& value){ setSomePropertyLocal(value); });
+    const std::string topic_Some_Poperty2 =  "tb.names.Nam_Es.prop.Some_Poperty2";
+    subscribeTopic(topic_Some_Poperty2, [this](const auto& value){ setSomePoperty2Local(value); });
+    const std::string topic_SOME_SIGNAL = "tb.names.Nam_Es.sig.SOME_SIGNAL";
+    subscribeTopic(topic_SOME_SIGNAL, [this](const auto& args){onSomeSignal(args);});
+    const std::string topic_Some_Signal2 = "tb.names.Nam_Es.sig.Some_Signal2";
+    subscribeTopic(topic_Some_Signal2, [this](const auto& args){onSomeSignal2(args);});
 }
 
 void Nam_EsClient::setSwitch(bool Switch)
 {
+    static const auto topic = std::string("tb.names.Nam_Es.set.Switch");
     if(m_client == nullptr) {
         return;
     }
-    (void) Switch;
-    //TODO
+    m_client->publish(topic, nlohmann::json(Switch).dump());
 }
 
 void Nam_EsClient::setSwitchLocal(const std::string& args)
@@ -47,11 +82,11 @@ bool Nam_EsClient::getSwitch() const
 
 void Nam_EsClient::setSomeProperty(int SOME_PROPERTY)
 {
+    static const auto topic = std::string("tb.names.Nam_Es.set.SOME_PROPERTY");
     if(m_client == nullptr) {
         return;
     }
-    (void) SOME_PROPERTY;
-    //TODO
+    m_client->publish(topic, nlohmann::json(SOME_PROPERTY).dump());
 }
 
 void Nam_EsClient::setSomePropertyLocal(const std::string& args)
@@ -76,11 +111,11 @@ int Nam_EsClient::getSomeProperty() const
 
 void Nam_EsClient::setSomePoperty2(int Some_Poperty2)
 {
+    static const auto topic = std::string("tb.names.Nam_Es.set.Some_Poperty2");
     if(m_client == nullptr) {
         return;
     }
-    (void) Some_Poperty2;
-    //TODO
+    m_client->publish(topic, nlohmann::json(Some_Poperty2).dump());
 }
 
 void Nam_EsClient::setSomePoperty2Local(const std::string& args)
@@ -116,14 +151,20 @@ std::future<void> Nam_EsClient::sOME_FUNCTIONAsync(bool SOME_PARAM)
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
-                    SOME_PARAM]()
+    static const auto topic = std::string("tb.names.Nam_Es.rpc.SOME_FUNCTION");
+
+    return std::async(std::launch::async, [this,SOME_PARAM]()
+    {
+        std::promise<void> resultPromise;
+        auto callback = [&resultPromise](const auto& result)
         {
-            std::promise<void> resultPromise;
-            //TODO 
-            return resultPromise.get_future().get();
-        }
-    );
+            (void) result;
+            resultPromise.set_value();
+        };
+
+        m_client->request(topic,  nlohmann::json::array({SOME_PARAM}).dump(), callback);
+        return resultPromise.get_future().get();
+    });
 }
 
 void Nam_EsClient::some_Function2(bool Some_Param)
@@ -139,14 +180,20 @@ std::future<void> Nam_EsClient::some_Function2Async(bool Some_Param)
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
-                    Some_Param]()
+    static const auto topic = std::string("tb.names.Nam_Es.rpc.Some_Function2");
+
+    return std::async(std::launch::async, [this,Some_Param]()
+    {
+        std::promise<void> resultPromise;
+        auto callback = [&resultPromise](const auto& result)
         {
-            std::promise<void> resultPromise;
-            //TODO 
-            return resultPromise.get_future().get();
-        }
-    );
+            (void) result;
+            resultPromise.set_value();
+        };
+
+        m_client->request(topic,  nlohmann::json::array({Some_Param}).dump(), callback);
+        return resultPromise.get_future().get();
+    });
 }
 void Nam_EsClient::onSomeSignal(const std::string& args) const
 {
