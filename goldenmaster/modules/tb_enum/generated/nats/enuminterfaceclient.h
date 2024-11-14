@@ -1,19 +1,26 @@
 #pragma once
 
-#include <future>
 #include "tb_enum/generated/api/common.h"
 #include "tb_enum/generated/api/tb_enum.h"
 #include "tb_enum/generated/core/enuminterface.data.h"
 #include "apigear/nats/natsclient.h"
+#include "apigear/nats/natstypes.h"
+#include "apigear/nats/baseadapter.h"
+
+#include <future>
+#include <unordered_map>
 
 namespace Test {
 namespace TbEnum {
 namespace Nats {
-class TEST_TB_ENUM_EXPORT EnumInterfaceClient : public IEnumInterface
+class TEST_TB_ENUM_EXPORT EnumInterfaceClient : public IEnumInterface, public ApiGear::Nats::BaseAdapter,  public std::enable_shared_from_this<EnumInterfaceClient>
 {
-public:
+protected:
     explicit EnumInterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client);
+public:
+    static std::shared_ptr<EnumInterfaceClient>create(std::shared_ptr<ApiGear::Nats::Client> client);
     virtual ~EnumInterfaceClient() override;
+    void init();
     Enum0Enum getProp0() const override;
     void setProp0(Enum0Enum prop0) override;
     Enum1Enum getProp1() const override;
@@ -32,6 +39,7 @@ public:
     std::future<Enum3Enum> func3Async(Enum3Enum param3) override;
     IEnumInterfacePublisher& _getPublisher() const override;
 private:
+    std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
     /// @brief sets the value for the property Prop0 coming from the service
     /// @param args contains the param of the type Enum0Enum
     void setProp0Local(const std::string& args);
@@ -59,9 +67,10 @@ private:
     /** Local storage for properties values. */
     EnumInterfaceData m_data;
     std::shared_ptr<ApiGear::Nats::Client> m_client;
-
     /** The publisher for EnumInterface */
     std::unique_ptr<IEnumInterfacePublisher> m_publisher;
+
+    void onConnected();
 
 };
 } // namespace Nats

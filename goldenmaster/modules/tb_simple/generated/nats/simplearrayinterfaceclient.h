@@ -1,19 +1,26 @@
 #pragma once
 
-#include <future>
 #include "tb_simple/generated/api/common.h"
 #include "tb_simple/generated/api/tb_simple.h"
 #include "tb_simple/generated/core/simplearrayinterface.data.h"
 #include "apigear/nats/natsclient.h"
+#include "apigear/nats/natstypes.h"
+#include "apigear/nats/baseadapter.h"
+
+#include <future>
+#include <unordered_map>
 
 namespace Test {
 namespace TbSimple {
 namespace Nats {
-class TEST_TB_SIMPLE_EXPORT SimpleArrayInterfaceClient : public ISimpleArrayInterface
+class TEST_TB_SIMPLE_EXPORT SimpleArrayInterfaceClient : public ISimpleArrayInterface, public ApiGear::Nats::BaseAdapter,  public std::enable_shared_from_this<SimpleArrayInterfaceClient>
 {
-public:
+protected:
     explicit SimpleArrayInterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client);
+public:
+    static std::shared_ptr<SimpleArrayInterfaceClient>create(std::shared_ptr<ApiGear::Nats::Client> client);
     virtual ~SimpleArrayInterfaceClient() override;
+    void init();
     const std::list<bool>& getPropBool() const override;
     void setPropBool(const std::list<bool>& propBool) override;
     const std::list<int>& getPropInt() const override;
@@ -49,6 +56,7 @@ public:
     std::future<std::list<std::string>> funcStringAsync(const std::list<std::string>& paramString) override;
     ISimpleArrayInterfacePublisher& _getPublisher() const override;
 private:
+    std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
     /// @brief sets the value for the property PropBool coming from the service
     /// @param args contains the param of the type std::list<bool>
     void setPropBoolLocal(const std::string& args);
@@ -73,6 +81,9 @@ private:
     /// @brief sets the value for the property PropString coming from the service
     /// @param args contains the param of the type std::list<std::string>
     void setPropStringLocal(const std::string& args);
+    /// @brief sets the value for the property PropReadOnlyString coming from the service
+    /// @param args contains the param of the type std::string
+    void setPropReadOnlyStringLocal(const std::string& args);
     /// @brief publishes the value for the signal SigBool coming from the service
     /// @param args contains the param(s) of the type(s) const std::list<bool>& paramBool
     void onSigBool(const std::string& args) const;
@@ -100,9 +111,10 @@ private:
     /** Local storage for properties values. */
     SimpleArrayInterfaceData m_data;
     std::shared_ptr<ApiGear::Nats::Client> m_client;
-
     /** The publisher for SimpleArrayInterface */
     std::unique_ptr<ISimpleArrayInterfacePublisher> m_publisher;
+
+    void onConnected();
 
 };
 } // namespace Nats
