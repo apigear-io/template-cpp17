@@ -199,13 +199,15 @@ features:
           raw: true
         - source: "apigear/utilities/fuzzy_compare.h"
           raw: true
-        - source: "apigear/utilities/tests/test_fuzzy_compare.cpp"
+        - source: "apigear/utilities/single_pub.hpp"
           raw: true
         - source: "apigear/utilities/CMakeLists.txt"
           raw: true
         - source: "apigear/utilities/tests/CMakeLists.txt"
           raw: true
         - source: "apigear/utilities/tests/logger.test.cpp"
+          raw: true
+        - source: "apigear/utilities/tests/test_fuzzy_compare.cpp"
           raw: true
         - source: "apigear/utilities/tests/test_main.cpp"
           raw: true
