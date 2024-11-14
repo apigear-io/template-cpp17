@@ -15,6 +15,7 @@ target_include_directories(utilities
     PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../>
     PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../>
     $<INSTALL_INTERFACE:include>
@@ -24,7 +25,7 @@ target_include_directories(utilities
 install(TARGETS utilities
         EXPORT ApiGearUtilitiesTargets)
 # install includes
-FILE(GLOB_RECURSE APIGEAR_INCLUDES *.h)
+FILE(GLOB_RECURSE APIGEAR_INCLUDES *.h *.hpp)
 install(FILES ${APIGEAR_INCLUDES}
         DESTINATION include/apigear/utilities)
 
