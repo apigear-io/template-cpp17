@@ -1,19 +1,26 @@
 #pragma once
 
-#include <future>
 #include "testbed2/generated/api/common.h"
 #include "testbed2/generated/api/testbed2.h"
 #include "testbed2/generated/core/manyparaminterface.data.h"
 #include "apigear/nats/natsclient.h"
+#include "apigear/nats/natstypes.h"
+#include "apigear/nats/baseadapter.h"
+
+#include <future>
+#include <unordered_map>
 
 namespace Test {
 namespace Testbed2 {
 namespace Nats {
-class TEST_TESTBED2_EXPORT ManyParamInterfaceClient : public IManyParamInterface
+class TEST_TESTBED2_EXPORT ManyParamInterfaceClient : public IManyParamInterface, public ApiGear::Nats::BaseAdapter,  public std::enable_shared_from_this<ManyParamInterfaceClient>
 {
-public:
+protected:
     explicit ManyParamInterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client);
+public:
+    static std::shared_ptr<ManyParamInterfaceClient>create(std::shared_ptr<ApiGear::Nats::Client> client);
     virtual ~ManyParamInterfaceClient() override;
+    void init();
     int getProp1() const override;
     void setProp1(int prop1) override;
     int getProp2() const override;
@@ -32,6 +39,7 @@ public:
     std::future<int> func4Async(int param1, int param2, int param3, int param4) override;
     IManyParamInterfacePublisher& _getPublisher() const override;
 private:
+    std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
     /// @brief sets the value for the property Prop1 coming from the service
     /// @param args contains the param of the type int
     void setProp1Local(const std::string& args);
@@ -59,9 +67,10 @@ private:
     /** Local storage for properties values. */
     ManyParamInterfaceData m_data;
     std::shared_ptr<ApiGear::Nats::Client> m_client;
-
     /** The publisher for ManyParamInterface */
     std::unique_ptr<IManyParamInterfacePublisher> m_publisher;
+
+    void onConnected();
 
 };
 } // namespace Nats

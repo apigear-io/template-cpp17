@@ -1,28 +1,85 @@
 #include "tb_simple/generated/nats/simpleinterfaceclient.h"
 #include "tb_simple/generated/core/simpleinterface.publisher.h"
 #include "tb_simple/generated/core/tb_simple.json.adapter.h"
+#include "apigear/utilities/logger.h"
 
 using namespace Test::TbSimple;
 using namespace Test::TbSimple::Nats;
 
-
-SimpleInterfaceClient::SimpleInterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client)
-    : m_client(client)
-    , m_publisher(std::make_unique<SimpleInterfacePublisher>())
-{
+namespace{
+const uint32_t  expectedSingalsSubscriptions = 8;
+const uint32_t  expectedPropertiesSubscriptions = 8;
+constexpr uint32_t expectedSubscriptionsCount = expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
 }
 
-SimpleInterfaceClient::~SimpleInterfaceClient()
+std::shared_ptr<SimpleInterfaceClient> SimpleInterfaceClient::create(std::shared_ptr<ApiGear::Nats::Client> client)
 {
+    std::shared_ptr<SimpleInterfaceClient> obj(new SimpleInterfaceClient(client));
+    obj->init();
+    return obj;
+}
+
+std::shared_ptr<ApiGear::Nats::BaseAdapter> SimpleInterfaceClient::getSharedFromDerrived()
+{
+    return shared_from_this();
+}
+
+SimpleInterfaceClient::SimpleInterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client)
+    :BaseAdapter(client, expectedSubscriptionsCount)
+    , m_client(client)
+    , m_publisher(std::make_unique<SimpleInterfacePublisher>())
+{}
+
+void SimpleInterfaceClient::init()
+{
+    BaseAdapter::init([this](){onConnected();});
+}
+
+SimpleInterfaceClient::~SimpleInterfaceClient() = default;
+
+void SimpleInterfaceClient::onConnected()
+{
+    const std::string topic_propBool =  "tb.simple.SimpleInterface.prop.propBool";
+    subscribeTopic(topic_propBool, [this](const auto& value){ setPropBoolLocal(value); });
+    const std::string topic_propInt =  "tb.simple.SimpleInterface.prop.propInt";
+    subscribeTopic(topic_propInt, [this](const auto& value){ setPropIntLocal(value); });
+    const std::string topic_propInt32 =  "tb.simple.SimpleInterface.prop.propInt32";
+    subscribeTopic(topic_propInt32, [this](const auto& value){ setPropInt32Local(value); });
+    const std::string topic_propInt64 =  "tb.simple.SimpleInterface.prop.propInt64";
+    subscribeTopic(topic_propInt64, [this](const auto& value){ setPropInt64Local(value); });
+    const std::string topic_propFloat =  "tb.simple.SimpleInterface.prop.propFloat";
+    subscribeTopic(topic_propFloat, [this](const auto& value){ setPropFloatLocal(value); });
+    const std::string topic_propFloat32 =  "tb.simple.SimpleInterface.prop.propFloat32";
+    subscribeTopic(topic_propFloat32, [this](const auto& value){ setPropFloat32Local(value); });
+    const std::string topic_propFloat64 =  "tb.simple.SimpleInterface.prop.propFloat64";
+    subscribeTopic(topic_propFloat64, [this](const auto& value){ setPropFloat64Local(value); });
+    const std::string topic_propString =  "tb.simple.SimpleInterface.prop.propString";
+    subscribeTopic(topic_propString, [this](const auto& value){ setPropStringLocal(value); });
+    const std::string topic_sigBool = "tb.simple.SimpleInterface.sig.sigBool";
+    subscribeTopic(topic_sigBool, [this](const auto& args){onSigBool(args);});
+    const std::string topic_sigInt = "tb.simple.SimpleInterface.sig.sigInt";
+    subscribeTopic(topic_sigInt, [this](const auto& args){onSigInt(args);});
+    const std::string topic_sigInt32 = "tb.simple.SimpleInterface.sig.sigInt32";
+    subscribeTopic(topic_sigInt32, [this](const auto& args){onSigInt32(args);});
+    const std::string topic_sigInt64 = "tb.simple.SimpleInterface.sig.sigInt64";
+    subscribeTopic(topic_sigInt64, [this](const auto& args){onSigInt64(args);});
+    const std::string topic_sigFloat = "tb.simple.SimpleInterface.sig.sigFloat";
+    subscribeTopic(topic_sigFloat, [this](const auto& args){onSigFloat(args);});
+    const std::string topic_sigFloat32 = "tb.simple.SimpleInterface.sig.sigFloat32";
+    subscribeTopic(topic_sigFloat32, [this](const auto& args){onSigFloat32(args);});
+    const std::string topic_sigFloat64 = "tb.simple.SimpleInterface.sig.sigFloat64";
+    subscribeTopic(topic_sigFloat64, [this](const auto& args){onSigFloat64(args);});
+    const std::string topic_sigString = "tb.simple.SimpleInterface.sig.sigString";
+    subscribeTopic(topic_sigString, [this](const auto& args){onSigString(args);});
 }
 
 void SimpleInterfaceClient::setPropBool(bool propBool)
 {
+    static const auto topic = std::string("tb.simple.SimpleInterface.set.propBool");
     if(m_client == nullptr) {
         return;
     }
-    (void) propBool;
-    //TODO
+    m_client->publish(topic, nlohmann::json(propBool).dump());
 }
 
 void SimpleInterfaceClient::setPropBoolLocal(const std::string& args)
@@ -47,11 +104,11 @@ bool SimpleInterfaceClient::getPropBool() const
 
 void SimpleInterfaceClient::setPropInt(int propInt)
 {
+    static const auto topic = std::string("tb.simple.SimpleInterface.set.propInt");
     if(m_client == nullptr) {
         return;
     }
-    (void) propInt;
-    //TODO
+    m_client->publish(topic, nlohmann::json(propInt).dump());
 }
 
 void SimpleInterfaceClient::setPropIntLocal(const std::string& args)
@@ -76,11 +133,11 @@ int SimpleInterfaceClient::getPropInt() const
 
 void SimpleInterfaceClient::setPropInt32(int32_t propInt32)
 {
+    static const auto topic = std::string("tb.simple.SimpleInterface.set.propInt32");
     if(m_client == nullptr) {
         return;
     }
-    (void) propInt32;
-    //TODO
+    m_client->publish(topic, nlohmann::json(propInt32).dump());
 }
 
 void SimpleInterfaceClient::setPropInt32Local(const std::string& args)
@@ -105,11 +162,11 @@ int32_t SimpleInterfaceClient::getPropInt32() const
 
 void SimpleInterfaceClient::setPropInt64(int64_t propInt64)
 {
+    static const auto topic = std::string("tb.simple.SimpleInterface.set.propInt64");
     if(m_client == nullptr) {
         return;
     }
-    (void) propInt64;
-    //TODO
+    m_client->publish(topic, nlohmann::json(propInt64).dump());
 }
 
 void SimpleInterfaceClient::setPropInt64Local(const std::string& args)
@@ -134,11 +191,11 @@ int64_t SimpleInterfaceClient::getPropInt64() const
 
 void SimpleInterfaceClient::setPropFloat(float propFloat)
 {
+    static const auto topic = std::string("tb.simple.SimpleInterface.set.propFloat");
     if(m_client == nullptr) {
         return;
     }
-    (void) propFloat;
-    //TODO
+    m_client->publish(topic, nlohmann::json(propFloat).dump());
 }
 
 void SimpleInterfaceClient::setPropFloatLocal(const std::string& args)
@@ -163,11 +220,11 @@ float SimpleInterfaceClient::getPropFloat() const
 
 void SimpleInterfaceClient::setPropFloat32(float propFloat32)
 {
+    static const auto topic = std::string("tb.simple.SimpleInterface.set.propFloat32");
     if(m_client == nullptr) {
         return;
     }
-    (void) propFloat32;
-    //TODO
+    m_client->publish(topic, nlohmann::json(propFloat32).dump());
 }
 
 void SimpleInterfaceClient::setPropFloat32Local(const std::string& args)
@@ -192,11 +249,11 @@ float SimpleInterfaceClient::getPropFloat32() const
 
 void SimpleInterfaceClient::setPropFloat64(double propFloat64)
 {
+    static const auto topic = std::string("tb.simple.SimpleInterface.set.propFloat64");
     if(m_client == nullptr) {
         return;
     }
-    (void) propFloat64;
-    //TODO
+    m_client->publish(topic, nlohmann::json(propFloat64).dump());
 }
 
 void SimpleInterfaceClient::setPropFloat64Local(const std::string& args)
@@ -221,11 +278,11 @@ double SimpleInterfaceClient::getPropFloat64() const
 
 void SimpleInterfaceClient::setPropString(const std::string& propString)
 {
+    static const auto topic = std::string("tb.simple.SimpleInterface.set.propString");
     if(m_client == nullptr) {
         return;
     }
-    (void) propString;
-    //TODO
+    m_client->publish(topic, nlohmann::json(propString).dump());
 }
 
 void SimpleInterfaceClient::setPropStringLocal(const std::string& args)
@@ -261,14 +318,20 @@ std::future<void> SimpleInterfaceClient::funcNoReturnValueAsync(bool paramBool)
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
-                    paramBool]()
+    static const auto topic = std::string("tb.simple.SimpleInterface.rpc.funcNoReturnValue");
+
+    return std::async(std::launch::async, [this,paramBool]()
+    {
+        std::promise<void> resultPromise;
+        auto callback = [&resultPromise](const auto& result)
         {
-            std::promise<void> resultPromise;
-            //TODO 
-            return resultPromise.get_future().get();
-        }
-    );
+            (void) result;
+            resultPromise.set_value();
+        };
+
+        m_client->request(topic,  nlohmann::json::array({paramBool}).dump(), callback);
+        return resultPromise.get_future().get();
+    });
 }
 
 bool SimpleInterfaceClient::funcBool(bool paramBool)
@@ -285,14 +348,26 @@ std::future<bool> SimpleInterfaceClient::funcBoolAsync(bool paramBool)
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
-                    paramBool]()
+    static const auto topic = std::string("tb.simple.SimpleInterface.rpc.funcBool");
+
+    return std::async(std::launch::async, [this,paramBool]()
+    {
+        std::promise<bool> resultPromise;
+        auto callback = [&resultPromise](const auto& result)
         {
-            std::promise<bool> resultPromise;
-            //TODO 
-            return resultPromise.get_future().get();
-        }
-    );
+            if (result.empty())
+            {
+                resultPromise.set_value(false);
+                return;
+            }
+            nlohmann::json field = nlohmann::json::parse(result);
+            const bool value = field.get<bool>();
+            resultPromise.set_value(value);
+        };
+
+        m_client->request(topic,  nlohmann::json::array({paramBool}).dump(), callback);
+        return resultPromise.get_future().get();
+    });
 }
 
 int SimpleInterfaceClient::funcInt(int paramInt)
@@ -309,14 +384,26 @@ std::future<int> SimpleInterfaceClient::funcIntAsync(int paramInt)
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
-                    paramInt]()
+    static const auto topic = std::string("tb.simple.SimpleInterface.rpc.funcInt");
+
+    return std::async(std::launch::async, [this,paramInt]()
+    {
+        std::promise<int> resultPromise;
+        auto callback = [&resultPromise](const auto& result)
         {
-            std::promise<int> resultPromise;
-            //TODO 
-            return resultPromise.get_future().get();
-        }
-    );
+            if (result.empty())
+            {
+                resultPromise.set_value(0);
+                return;
+            }
+            nlohmann::json field = nlohmann::json::parse(result);
+            const int value = field.get<int>();
+            resultPromise.set_value(value);
+        };
+
+        m_client->request(topic,  nlohmann::json::array({paramInt}).dump(), callback);
+        return resultPromise.get_future().get();
+    });
 }
 
 int32_t SimpleInterfaceClient::funcInt32(int32_t paramInt32)
@@ -333,14 +420,26 @@ std::future<int32_t> SimpleInterfaceClient::funcInt32Async(int32_t paramInt32)
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
-                    paramInt32]()
+    static const auto topic = std::string("tb.simple.SimpleInterface.rpc.funcInt32");
+
+    return std::async(std::launch::async, [this,paramInt32]()
+    {
+        std::promise<int32_t> resultPromise;
+        auto callback = [&resultPromise](const auto& result)
         {
-            std::promise<int32_t> resultPromise;
-            //TODO 
-            return resultPromise.get_future().get();
-        }
-    );
+            if (result.empty())
+            {
+                resultPromise.set_value(0);
+                return;
+            }
+            nlohmann::json field = nlohmann::json::parse(result);
+            const int32_t value = field.get<int32_t>();
+            resultPromise.set_value(value);
+        };
+
+        m_client->request(topic,  nlohmann::json::array({paramInt32}).dump(), callback);
+        return resultPromise.get_future().get();
+    });
 }
 
 int64_t SimpleInterfaceClient::funcInt64(int64_t paramInt64)
@@ -357,14 +456,26 @@ std::future<int64_t> SimpleInterfaceClient::funcInt64Async(int64_t paramInt64)
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
-                    paramInt64]()
+    static const auto topic = std::string("tb.simple.SimpleInterface.rpc.funcInt64");
+
+    return std::async(std::launch::async, [this,paramInt64]()
+    {
+        std::promise<int64_t> resultPromise;
+        auto callback = [&resultPromise](const auto& result)
         {
-            std::promise<int64_t> resultPromise;
-            //TODO 
-            return resultPromise.get_future().get();
-        }
-    );
+            if (result.empty())
+            {
+                resultPromise.set_value(0LL);
+                return;
+            }
+            nlohmann::json field = nlohmann::json::parse(result);
+            const int64_t value = field.get<int64_t>();
+            resultPromise.set_value(value);
+        };
+
+        m_client->request(topic,  nlohmann::json::array({paramInt64}).dump(), callback);
+        return resultPromise.get_future().get();
+    });
 }
 
 float SimpleInterfaceClient::funcFloat(float paramFloat)
@@ -381,14 +492,26 @@ std::future<float> SimpleInterfaceClient::funcFloatAsync(float paramFloat)
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
-                    paramFloat]()
+    static const auto topic = std::string("tb.simple.SimpleInterface.rpc.funcFloat");
+
+    return std::async(std::launch::async, [this,paramFloat]()
+    {
+        std::promise<float> resultPromise;
+        auto callback = [&resultPromise](const auto& result)
         {
-            std::promise<float> resultPromise;
-            //TODO 
-            return resultPromise.get_future().get();
-        }
-    );
+            if (result.empty())
+            {
+                resultPromise.set_value(0.0f);
+                return;
+            }
+            nlohmann::json field = nlohmann::json::parse(result);
+            const float value = field.get<float>();
+            resultPromise.set_value(value);
+        };
+
+        m_client->request(topic,  nlohmann::json::array({paramFloat}).dump(), callback);
+        return resultPromise.get_future().get();
+    });
 }
 
 float SimpleInterfaceClient::funcFloat32(float paramFloat32)
@@ -405,14 +528,26 @@ std::future<float> SimpleInterfaceClient::funcFloat32Async(float paramFloat32)
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
-                    paramFloat32]()
+    static const auto topic = std::string("tb.simple.SimpleInterface.rpc.funcFloat32");
+
+    return std::async(std::launch::async, [this,paramFloat32]()
+    {
+        std::promise<float> resultPromise;
+        auto callback = [&resultPromise](const auto& result)
         {
-            std::promise<float> resultPromise;
-            //TODO 
-            return resultPromise.get_future().get();
-        }
-    );
+            if (result.empty())
+            {
+                resultPromise.set_value(0.0f);
+                return;
+            }
+            nlohmann::json field = nlohmann::json::parse(result);
+            const float value = field.get<float>();
+            resultPromise.set_value(value);
+        };
+
+        m_client->request(topic,  nlohmann::json::array({paramFloat32}).dump(), callback);
+        return resultPromise.get_future().get();
+    });
 }
 
 double SimpleInterfaceClient::funcFloat64(double paramFloat)
@@ -429,14 +564,26 @@ std::future<double> SimpleInterfaceClient::funcFloat64Async(double paramFloat)
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
-                    paramFloat]()
+    static const auto topic = std::string("tb.simple.SimpleInterface.rpc.funcFloat64");
+
+    return std::async(std::launch::async, [this,paramFloat]()
+    {
+        std::promise<double> resultPromise;
+        auto callback = [&resultPromise](const auto& result)
         {
-            std::promise<double> resultPromise;
-            //TODO 
-            return resultPromise.get_future().get();
-        }
-    );
+            if (result.empty())
+            {
+                resultPromise.set_value(0.0);
+                return;
+            }
+            nlohmann::json field = nlohmann::json::parse(result);
+            const double value = field.get<double>();
+            resultPromise.set_value(value);
+        };
+
+        m_client->request(topic,  nlohmann::json::array({paramFloat}).dump(), callback);
+        return resultPromise.get_future().get();
+    });
 }
 
 std::string SimpleInterfaceClient::funcString(const std::string& paramString)
@@ -453,14 +600,26 @@ std::future<std::string> SimpleInterfaceClient::funcStringAsync(const std::strin
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
-                    paramString]()
+    static const auto topic = std::string("tb.simple.SimpleInterface.rpc.funcString");
+
+    return std::async(std::launch::async, [this,paramString]()
+    {
+        std::promise<std::string> resultPromise;
+        auto callback = [&resultPromise](const auto& result)
         {
-            std::promise<std::string> resultPromise;
-            //TODO 
-            return resultPromise.get_future().get();
-        }
-    );
+            if (result.empty())
+            {
+                resultPromise.set_value(std::string());
+                return;
+            }
+            nlohmann::json field = nlohmann::json::parse(result);
+            const std::string value = field.get<std::string>();
+            resultPromise.set_value(value);
+        };
+
+        m_client->request(topic,  nlohmann::json::array({paramString}).dump(), callback);
+        return resultPromise.get_future().get();
+    });
 }
 void SimpleInterfaceClient::onSigBool(const std::string& args) const
 {

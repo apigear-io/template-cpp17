@@ -1,19 +1,26 @@
 #pragma once
 
-#include <future>
 #include "testbed1/generated/api/common.h"
 #include "testbed1/generated/api/testbed1.h"
 #include "testbed1/generated/core/structinterface.data.h"
 #include "apigear/nats/natsclient.h"
+#include "apigear/nats/natstypes.h"
+#include "apigear/nats/baseadapter.h"
+
+#include <future>
+#include <unordered_map>
 
 namespace Test {
 namespace Testbed1 {
 namespace Nats {
-class TEST_TESTBED1_EXPORT StructInterfaceClient : public IStructInterface
+class TEST_TESTBED1_EXPORT StructInterfaceClient : public IStructInterface, public ApiGear::Nats::BaseAdapter,  public std::enable_shared_from_this<StructInterfaceClient>
 {
-public:
+protected:
     explicit StructInterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client);
+public:
+    static std::shared_ptr<StructInterfaceClient>create(std::shared_ptr<ApiGear::Nats::Client> client);
     virtual ~StructInterfaceClient() override;
+    void init();
     const StructBool& getPropBool() const override;
     void setPropBool(const StructBool& propBool) override;
     const StructInt& getPropInt() const override;
@@ -32,6 +39,7 @@ public:
     std::future<StructString> funcStringAsync(const StructString& paramString) override;
     IStructInterfacePublisher& _getPublisher() const override;
 private:
+    std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
     /// @brief sets the value for the property PropBool coming from the service
     /// @param args contains the param of the type StructBool
     void setPropBoolLocal(const std::string& args);
@@ -59,9 +67,10 @@ private:
     /** Local storage for properties values. */
     StructInterfaceData m_data;
     std::shared_ptr<ApiGear::Nats::Client> m_client;
-
     /** The publisher for StructInterface */
     std::unique_ptr<IStructInterfacePublisher> m_publisher;
+
+    void onConnected();
 
 };
 } // namespace Nats

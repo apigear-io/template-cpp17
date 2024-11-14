@@ -1,28 +1,61 @@
 #include "tb_simple/generated/nats/nooperationsinterfaceclient.h"
 #include "tb_simple/generated/core/nooperationsinterface.publisher.h"
 #include "tb_simple/generated/core/tb_simple.json.adapter.h"
+#include "apigear/utilities/logger.h"
 
 using namespace Test::TbSimple;
 using namespace Test::TbSimple::Nats;
 
-
-NoOperationsInterfaceClient::NoOperationsInterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client)
-    : m_client(client)
-    , m_publisher(std::make_unique<NoOperationsInterfacePublisher>())
-{
+namespace{
+const uint32_t  expectedSingalsSubscriptions = 2;
+const uint32_t  expectedPropertiesSubscriptions = 2;
+constexpr uint32_t expectedSubscriptionsCount = expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
 }
 
-NoOperationsInterfaceClient::~NoOperationsInterfaceClient()
+std::shared_ptr<NoOperationsInterfaceClient> NoOperationsInterfaceClient::create(std::shared_ptr<ApiGear::Nats::Client> client)
 {
+    std::shared_ptr<NoOperationsInterfaceClient> obj(new NoOperationsInterfaceClient(client));
+    obj->init();
+    return obj;
+}
+
+std::shared_ptr<ApiGear::Nats::BaseAdapter> NoOperationsInterfaceClient::getSharedFromDerrived()
+{
+    return shared_from_this();
+}
+
+NoOperationsInterfaceClient::NoOperationsInterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client)
+    :BaseAdapter(client, expectedSubscriptionsCount)
+    , m_client(client)
+    , m_publisher(std::make_unique<NoOperationsInterfacePublisher>())
+{}
+
+void NoOperationsInterfaceClient::init()
+{
+    BaseAdapter::init([this](){onConnected();});
+}
+
+NoOperationsInterfaceClient::~NoOperationsInterfaceClient() = default;
+
+void NoOperationsInterfaceClient::onConnected()
+{
+    const std::string topic_propBool =  "tb.simple.NoOperationsInterface.prop.propBool";
+    subscribeTopic(topic_propBool, [this](const auto& value){ setPropBoolLocal(value); });
+    const std::string topic_propInt =  "tb.simple.NoOperationsInterface.prop.propInt";
+    subscribeTopic(topic_propInt, [this](const auto& value){ setPropIntLocal(value); });
+    const std::string topic_sigVoid = "tb.simple.NoOperationsInterface.sig.sigVoid";
+    subscribeTopic(topic_sigVoid, [this](const auto& args){onSigVoid(args);});
+    const std::string topic_sigBool = "tb.simple.NoOperationsInterface.sig.sigBool";
+    subscribeTopic(topic_sigBool, [this](const auto& args){onSigBool(args);});
 }
 
 void NoOperationsInterfaceClient::setPropBool(bool propBool)
 {
+    static const auto topic = std::string("tb.simple.NoOperationsInterface.set.propBool");
     if(m_client == nullptr) {
         return;
     }
-    (void) propBool;
-    //TODO
+    m_client->publish(topic, nlohmann::json(propBool).dump());
 }
 
 void NoOperationsInterfaceClient::setPropBoolLocal(const std::string& args)
@@ -47,11 +80,11 @@ bool NoOperationsInterfaceClient::getPropBool() const
 
 void NoOperationsInterfaceClient::setPropInt(int propInt)
 {
+    static const auto topic = std::string("tb.simple.NoOperationsInterface.set.propInt");
     if(m_client == nullptr) {
         return;
     }
-    (void) propInt;
-    //TODO
+    m_client->publish(topic, nlohmann::json(propInt).dump());
 }
 
 void NoOperationsInterfaceClient::setPropIntLocal(const std::string& args)

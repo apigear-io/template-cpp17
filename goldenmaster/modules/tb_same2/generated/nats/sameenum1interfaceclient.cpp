@@ -1,28 +1,57 @@
 #include "tb_same2/generated/nats/sameenum1interfaceclient.h"
 #include "tb_same2/generated/core/sameenum1interface.publisher.h"
 #include "tb_same2/generated/core/tb_same2.json.adapter.h"
+#include "apigear/utilities/logger.h"
 
 using namespace Test::TbSame2;
 using namespace Test::TbSame2::Nats;
 
-
-SameEnum1InterfaceClient::SameEnum1InterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client)
-    : m_client(client)
-    , m_publisher(std::make_unique<SameEnum1InterfacePublisher>())
-{
+namespace{
+const uint32_t  expectedSingalsSubscriptions = 1;
+const uint32_t  expectedPropertiesSubscriptions = 1;
+constexpr uint32_t expectedSubscriptionsCount = expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
 }
 
-SameEnum1InterfaceClient::~SameEnum1InterfaceClient()
+std::shared_ptr<SameEnum1InterfaceClient> SameEnum1InterfaceClient::create(std::shared_ptr<ApiGear::Nats::Client> client)
 {
+    std::shared_ptr<SameEnum1InterfaceClient> obj(new SameEnum1InterfaceClient(client));
+    obj->init();
+    return obj;
+}
+
+std::shared_ptr<ApiGear::Nats::BaseAdapter> SameEnum1InterfaceClient::getSharedFromDerrived()
+{
+    return shared_from_this();
+}
+
+SameEnum1InterfaceClient::SameEnum1InterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client)
+    :BaseAdapter(client, expectedSubscriptionsCount)
+    , m_client(client)
+    , m_publisher(std::make_unique<SameEnum1InterfacePublisher>())
+{}
+
+void SameEnum1InterfaceClient::init()
+{
+    BaseAdapter::init([this](){onConnected();});
+}
+
+SameEnum1InterfaceClient::~SameEnum1InterfaceClient() = default;
+
+void SameEnum1InterfaceClient::onConnected()
+{
+    const std::string topic_prop1 =  "tb.same2.SameEnum1Interface.prop.prop1";
+    subscribeTopic(topic_prop1, [this](const auto& value){ setProp1Local(value); });
+    const std::string topic_sig1 = "tb.same2.SameEnum1Interface.sig.sig1";
+    subscribeTopic(topic_sig1, [this](const auto& args){onSig1(args);});
 }
 
 void SameEnum1InterfaceClient::setProp1(Enum1Enum prop1)
 {
+    static const auto topic = std::string("tb.same2.SameEnum1Interface.set.prop1");
     if(m_client == nullptr) {
         return;
     }
-    (void) prop1;
-    //TODO
+    m_client->publish(topic, nlohmann::json(prop1).dump());
 }
 
 void SameEnum1InterfaceClient::setProp1Local(const std::string& args)
@@ -59,14 +88,26 @@ std::future<Enum1Enum> SameEnum1InterfaceClient::func1Async(Enum1Enum param1)
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
-                    param1]()
+    static const auto topic = std::string("tb.same2.SameEnum1Interface.rpc.func1");
+
+    return std::async(std::launch::async, [this,param1]()
+    {
+        std::promise<Enum1Enum> resultPromise;
+        auto callback = [&resultPromise](const auto& result)
         {
-            std::promise<Enum1Enum> resultPromise;
-            //TODO 
-            return resultPromise.get_future().get();
-        }
-    );
+            if (result.empty())
+            {
+                resultPromise.set_value(Enum1Enum::value1);
+                return;
+            }
+            nlohmann::json field = nlohmann::json::parse(result);
+            const Enum1Enum value = field.get<Enum1Enum>();
+            resultPromise.set_value(value);
+        };
+
+        m_client->request(topic,  nlohmann::json::array({param1}).dump(), callback);
+        return resultPromise.get_future().get();
+    });
 }
 void SameEnum1InterfaceClient::onSig1(const std::string& args) const
 {

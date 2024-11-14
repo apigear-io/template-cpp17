@@ -1,28 +1,57 @@
 #include "testbed2/generated/nats/nestedstruct1interfaceclient.h"
 #include "testbed2/generated/core/nestedstruct1interface.publisher.h"
 #include "testbed2/generated/core/testbed2.json.adapter.h"
+#include "apigear/utilities/logger.h"
 
 using namespace Test::Testbed2;
 using namespace Test::Testbed2::Nats;
 
-
-NestedStruct1InterfaceClient::NestedStruct1InterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client)
-    : m_client(client)
-    , m_publisher(std::make_unique<NestedStruct1InterfacePublisher>())
-{
+namespace{
+const uint32_t  expectedSingalsSubscriptions = 1;
+const uint32_t  expectedPropertiesSubscriptions = 1;
+constexpr uint32_t expectedSubscriptionsCount = expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
 }
 
-NestedStruct1InterfaceClient::~NestedStruct1InterfaceClient()
+std::shared_ptr<NestedStruct1InterfaceClient> NestedStruct1InterfaceClient::create(std::shared_ptr<ApiGear::Nats::Client> client)
 {
+    std::shared_ptr<NestedStruct1InterfaceClient> obj(new NestedStruct1InterfaceClient(client));
+    obj->init();
+    return obj;
+}
+
+std::shared_ptr<ApiGear::Nats::BaseAdapter> NestedStruct1InterfaceClient::getSharedFromDerrived()
+{
+    return shared_from_this();
+}
+
+NestedStruct1InterfaceClient::NestedStruct1InterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client)
+    :BaseAdapter(client, expectedSubscriptionsCount)
+    , m_client(client)
+    , m_publisher(std::make_unique<NestedStruct1InterfacePublisher>())
+{}
+
+void NestedStruct1InterfaceClient::init()
+{
+    BaseAdapter::init([this](){onConnected();});
+}
+
+NestedStruct1InterfaceClient::~NestedStruct1InterfaceClient() = default;
+
+void NestedStruct1InterfaceClient::onConnected()
+{
+    const std::string topic_prop1 =  "testbed2.NestedStruct1Interface.prop.prop1";
+    subscribeTopic(topic_prop1, [this](const auto& value){ setProp1Local(value); });
+    const std::string topic_sig1 = "testbed2.NestedStruct1Interface.sig.sig1";
+    subscribeTopic(topic_sig1, [this](const auto& args){onSig1(args);});
 }
 
 void NestedStruct1InterfaceClient::setProp1(const NestedStruct1& prop1)
 {
+    static const auto topic = std::string("testbed2.NestedStruct1Interface.set.prop1");
     if(m_client == nullptr) {
         return;
     }
-    (void) prop1;
-    //TODO
+    m_client->publish(topic, nlohmann::json(prop1).dump());
 }
 
 void NestedStruct1InterfaceClient::setProp1Local(const std::string& args)
@@ -59,14 +88,26 @@ std::future<NestedStruct1> NestedStruct1InterfaceClient::func1Async(const Nested
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
-                    param1]()
+    static const auto topic = std::string("testbed2.NestedStruct1Interface.rpc.func1");
+
+    return std::async(std::launch::async, [this,param1]()
+    {
+        std::promise<NestedStruct1> resultPromise;
+        auto callback = [&resultPromise](const auto& result)
         {
-            std::promise<NestedStruct1> resultPromise;
-            //TODO 
-            return resultPromise.get_future().get();
-        }
-    );
+            if (result.empty())
+            {
+                resultPromise.set_value(NestedStruct1());
+                return;
+            }
+            nlohmann::json field = nlohmann::json::parse(result);
+            const NestedStruct1 value = field.get<NestedStruct1>();
+            resultPromise.set_value(value);
+        };
+
+        m_client->request(topic,  nlohmann::json::array({param1}).dump(), callback);
+        return resultPromise.get_future().get();
+    });
 }
 void NestedStruct1InterfaceClient::onSig1(const std::string& args) const
 {

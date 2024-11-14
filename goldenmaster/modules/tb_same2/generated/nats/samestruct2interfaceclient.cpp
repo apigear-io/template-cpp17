@@ -1,28 +1,61 @@
 #include "tb_same2/generated/nats/samestruct2interfaceclient.h"
 #include "tb_same2/generated/core/samestruct2interface.publisher.h"
 #include "tb_same2/generated/core/tb_same2.json.adapter.h"
+#include "apigear/utilities/logger.h"
 
 using namespace Test::TbSame2;
 using namespace Test::TbSame2::Nats;
 
-
-SameStruct2InterfaceClient::SameStruct2InterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client)
-    : m_client(client)
-    , m_publisher(std::make_unique<SameStruct2InterfacePublisher>())
-{
+namespace{
+const uint32_t  expectedSingalsSubscriptions = 2;
+const uint32_t  expectedPropertiesSubscriptions = 2;
+constexpr uint32_t expectedSubscriptionsCount = expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
 }
 
-SameStruct2InterfaceClient::~SameStruct2InterfaceClient()
+std::shared_ptr<SameStruct2InterfaceClient> SameStruct2InterfaceClient::create(std::shared_ptr<ApiGear::Nats::Client> client)
 {
+    std::shared_ptr<SameStruct2InterfaceClient> obj(new SameStruct2InterfaceClient(client));
+    obj->init();
+    return obj;
+}
+
+std::shared_ptr<ApiGear::Nats::BaseAdapter> SameStruct2InterfaceClient::getSharedFromDerrived()
+{
+    return shared_from_this();
+}
+
+SameStruct2InterfaceClient::SameStruct2InterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client)
+    :BaseAdapter(client, expectedSubscriptionsCount)
+    , m_client(client)
+    , m_publisher(std::make_unique<SameStruct2InterfacePublisher>())
+{}
+
+void SameStruct2InterfaceClient::init()
+{
+    BaseAdapter::init([this](){onConnected();});
+}
+
+SameStruct2InterfaceClient::~SameStruct2InterfaceClient() = default;
+
+void SameStruct2InterfaceClient::onConnected()
+{
+    const std::string topic_prop1 =  "tb.same2.SameStruct2Interface.prop.prop1";
+    subscribeTopic(topic_prop1, [this](const auto& value){ setProp1Local(value); });
+    const std::string topic_prop2 =  "tb.same2.SameStruct2Interface.prop.prop2";
+    subscribeTopic(topic_prop2, [this](const auto& value){ setProp2Local(value); });
+    const std::string topic_sig1 = "tb.same2.SameStruct2Interface.sig.sig1";
+    subscribeTopic(topic_sig1, [this](const auto& args){onSig1(args);});
+    const std::string topic_sig2 = "tb.same2.SameStruct2Interface.sig.sig2";
+    subscribeTopic(topic_sig2, [this](const auto& args){onSig2(args);});
 }
 
 void SameStruct2InterfaceClient::setProp1(const Struct2& prop1)
 {
+    static const auto topic = std::string("tb.same2.SameStruct2Interface.set.prop1");
     if(m_client == nullptr) {
         return;
     }
-    (void) prop1;
-    //TODO
+    m_client->publish(topic, nlohmann::json(prop1).dump());
 }
 
 void SameStruct2InterfaceClient::setProp1Local(const std::string& args)
@@ -47,11 +80,11 @@ const Struct2& SameStruct2InterfaceClient::getProp1() const
 
 void SameStruct2InterfaceClient::setProp2(const Struct2& prop2)
 {
+    static const auto topic = std::string("tb.same2.SameStruct2Interface.set.prop2");
     if(m_client == nullptr) {
         return;
     }
-    (void) prop2;
-    //TODO
+    m_client->publish(topic, nlohmann::json(prop2).dump());
 }
 
 void SameStruct2InterfaceClient::setProp2Local(const std::string& args)
@@ -88,14 +121,26 @@ std::future<Struct1> SameStruct2InterfaceClient::func1Async(const Struct1& param
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
-                    param1]()
+    static const auto topic = std::string("tb.same2.SameStruct2Interface.rpc.func1");
+
+    return std::async(std::launch::async, [this,param1]()
+    {
+        std::promise<Struct1> resultPromise;
+        auto callback = [&resultPromise](const auto& result)
         {
-            std::promise<Struct1> resultPromise;
-            //TODO 
-            return resultPromise.get_future().get();
-        }
-    );
+            if (result.empty())
+            {
+                resultPromise.set_value(Struct1());
+                return;
+            }
+            nlohmann::json field = nlohmann::json::parse(result);
+            const Struct1 value = field.get<Struct1>();
+            resultPromise.set_value(value);
+        };
+
+        m_client->request(topic,  nlohmann::json::array({param1}).dump(), callback);
+        return resultPromise.get_future().get();
+    });
 }
 
 Struct1 SameStruct2InterfaceClient::func2(const Struct1& param1, const Struct2& param2)
@@ -112,15 +157,26 @@ std::future<Struct1> SameStruct2InterfaceClient::func2Async(const Struct1& param
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
-                    param1,
-                    param2]()
+    static const auto topic = std::string("tb.same2.SameStruct2Interface.rpc.func2");
+
+    return std::async(std::launch::async, [this,param1,param2]()
+    {
+        std::promise<Struct1> resultPromise;
+        auto callback = [&resultPromise](const auto& result)
         {
-            std::promise<Struct1> resultPromise;
-            //TODO 
-            return resultPromise.get_future().get();
-        }
-    );
+            if (result.empty())
+            {
+                resultPromise.set_value(Struct1());
+                return;
+            }
+            nlohmann::json field = nlohmann::json::parse(result);
+            const Struct1 value = field.get<Struct1>();
+            resultPromise.set_value(value);
+        };
+
+        m_client->request(topic,  nlohmann::json::array({param1, param2}).dump(), callback);
+        return resultPromise.get_future().get();
+    });
 }
 void SameStruct2InterfaceClient::onSig1(const std::string& args) const
 {
