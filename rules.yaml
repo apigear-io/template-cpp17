@@ -180,6 +180,10 @@ features:
           raw: true
         - source: "apigear/nats/natsservice.h"
           raw: true
+        - source: "apigear/nats/baseadapter.cpp"
+          raw: true
+        - source: "apigear/nats/baseadapter.h"
+          raw: true
         - source: "apigear/nats/natscommon.h"
           raw: true
         - source: "module/generated/nats/CMakeLists.txt.tpl"
