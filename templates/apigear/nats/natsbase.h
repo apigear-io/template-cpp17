@@ -51,9 +51,6 @@ private:
     std::unique_ptr<ApiGear::Utilities::ThreadPool> m_requests_pool;
     /** subscriptions pool*/
     std::unique_ptr<ApiGear::Utilities::ThreadPool> m_subscriptions_pool;
-
-    std::atomic<bool> m_connecting{ false };
-    std::future<void> m_connectionAwait;
 };
 } // namespace Nats
 } // namespace ApiGear

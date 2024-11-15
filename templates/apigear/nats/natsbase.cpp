@@ -45,15 +45,14 @@ Base::~Base()
 void Base::connect(const std::string& address)
 {
     // TODO this is blocking call, but calling with std::async causes error with state NATS_NO_SERVER_SUPPORT 
-    m_cwrapper->connect(address, [this]() {onConnectedChanged(); });
     auto status = m_cwrapper->getStatus();
-    if (m_connecting || status == ConnectionStatus::connected)
+    if (status == ConnectionStatus::reconnecting ||
+        status == ConnectionStatus::connected ||
+        status == ConnectionStatus::connecting)
     {
         return;
     }
-    m_connecting= true;
     m_cwrapper->connect(address, [this](){ onConnectedChanged(); });
-    m_connecting = false;
     if (m_cwrapper->getStatus() == ConnectionStatus::connected)
     {
          AG_LOG_DEBUG("nats client connected");
