@@ -7,12 +7,37 @@
 using namespace Test::Counter;
 using namespace Test::Counter::Nats;
 
+namespace{
+const uint32_t  expectedMethodSubscriptions = 4;
+const uint32_t  expectedPropertiesSubscriptions = 4;
+constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+}
+
 CounterService::CounterService(std::shared_ptr<ICounter> impl, std::shared_ptr<ApiGear::Nats::Service> service)
-    : m_impl(impl)
+    :BaseAdapter(service, expectedSubscriptionsCount)
+    , m_impl(impl)
     , m_service(service)
 {
     m_impl->_getPublisher().subscribeToAllChanges(*this);
 }
+
+void CounterService::init()
+{
+    BaseAdapter::init([this](){onConnected();});
+}
+
+std::shared_ptr<CounterService> CounterService::create(std::shared_ptr<ICounter> impl, std::shared_ptr<ApiGear::Nats::Service> service)
+{
+    std::shared_ptr<CounterService> obj(new CounterService(impl, service));
+    obj->init();
+    return obj;
+}
+
+std::shared_ptr<ApiGear::Nats::BaseAdapter> CounterService::getSharedFromDerrived()
+{
+    return shared_from_this();
+}
+
 
 CounterService::~CounterService()
 {
@@ -20,13 +45,16 @@ CounterService::~CounterService()
 }
 
 
-void CounterService::onConnectionStatusChanged(bool connectionStatus)
+void CounterService::onConnected()
 {
-    if(!connectionStatus)
-    {
-        return;
-    }
-    // TODO send current values through service
+    subscribeTopic("counter.Counter.set.vector", [this](const auto& value){ onSetVector(value); });
+    subscribeTopic("counter.Counter.set.extern_vector", [this](const auto& value){ onSetExternVector(value); });
+    subscribeTopic("counter.Counter.set.vectorArray", [this](const auto& value){ onSetVectorArray(value); });
+    subscribeTopic("counter.Counter.set.extern_vectorArray", [this](const auto& value){ onSetExternVectorArray(value); });
+    subscribeRequest("counter.Counter.rpc.increment", [this](const auto& args){  return onInvokeIncrement(args); });
+    subscribeRequest("counter.Counter.rpc.incrementArray", [this](const auto& args){  return onInvokeIncrementArray(args); });
+    subscribeRequest("counter.Counter.rpc.decrement", [this](const auto& args){  return onInvokeDecrement(args); });
+    subscribeRequest("counter.Counter.rpc.decrementArray", [this](const auto& args){  return onInvokeDecrementArray(args); });
 }
 void CounterService::onSetVector(const std::string& args) const
 {
@@ -78,25 +106,55 @@ void CounterService::onValueChanged(const Test::CustomTypes::Vector3D& vector, c
     (void) extern_vector;
     (void) vectorArray;
     (void) extern_vectorArray;
-//TODO use service to notify clients
+    static const std::string topic = "counter.Counter.sig.valueChanged";
+    nlohmann::json args = { vector, extern_vector, vectorArray, extern_vectorArray };
+    m_service->publish(topic, nlohmann::json(args).dump());
 }
 void CounterService::onVectorChanged(const Test::CustomTypes::Vector3D& vector)
 {
-    (void)vector;
-    //TODO use service to notify clients
+    static const std::string topic = "counter.Counter.prop.vector";
+    m_service->publish(topic, nlohmann::json(vector).dump());
 }
 void CounterService::onExternVectorChanged(const Eigen::Vector3f& extern_vector)
 {
-    (void)extern_vector;
-    //TODO use service to notify clients
+    static const std::string topic = "counter.Counter.prop.extern_vector";
+    m_service->publish(topic, nlohmann::json(extern_vector).dump());
 }
 void CounterService::onVectorArrayChanged(const std::list<Test::CustomTypes::Vector3D>& vectorArray)
 {
-    (void)vectorArray;
-    //TODO use service to notify clients
+    static const std::string topic = "counter.Counter.prop.vectorArray";
+    m_service->publish(topic, nlohmann::json(vectorArray).dump());
 }
 void CounterService::onExternVectorArrayChanged(const std::list<Eigen::Vector3f>& extern_vectorArray)
 {
-    (void)extern_vectorArray;
-    //TODO use service to notify clients
+    static const std::string topic = "counter.Counter.prop.extern_vectorArray";
+    m_service->publish(topic, nlohmann::json(extern_vectorArray).dump());
+}
+std::string CounterService::onInvokeIncrement(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const Eigen::Vector3f& vec = json_args.at(0).get<Eigen::Vector3f>();
+    auto result = m_impl->increment(vec);
+    return nlohmann::json(result).dump();
+}
+std::string CounterService::onInvokeIncrementArray(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const std::list<Eigen::Vector3f>& vec = json_args.at(0).get<std::list<Eigen::Vector3f>>();
+    auto result = m_impl->incrementArray(vec);
+    return nlohmann::json(result).dump();
+}
+std::string CounterService::onInvokeDecrement(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const Test::CustomTypes::Vector3D& vec = json_args.at(0).get<Test::CustomTypes::Vector3D>();
+    auto result = m_impl->decrement(vec);
+    return nlohmann::json(result).dump();
+}
+std::string CounterService::onInvokeDecrementArray(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const std::list<Test::CustomTypes::Vector3D>& vec = json_args.at(0).get<std::list<Test::CustomTypes::Vector3D>>();
+    auto result = m_impl->decrementArray(vec);
+    return nlohmann::json(result).dump();
 }
