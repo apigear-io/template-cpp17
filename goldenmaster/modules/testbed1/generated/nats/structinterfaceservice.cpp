@@ -5,12 +5,37 @@
 using namespace Test::Testbed1;
 using namespace Test::Testbed1::Nats;
 
+namespace{
+const uint32_t  expectedMethodSubscriptions = 4;
+const uint32_t  expectedPropertiesSubscriptions = 4;
+constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+}
+
 StructInterfaceService::StructInterfaceService(std::shared_ptr<IStructInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
-    : m_impl(impl)
+    :BaseAdapter(service, expectedSubscriptionsCount)
+    , m_impl(impl)
     , m_service(service)
 {
     m_impl->_getPublisher().subscribeToAllChanges(*this);
 }
+
+void StructInterfaceService::init()
+{
+    BaseAdapter::init([this](){onConnected();});
+}
+
+std::shared_ptr<StructInterfaceService> StructInterfaceService::create(std::shared_ptr<IStructInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
+{
+    std::shared_ptr<StructInterfaceService> obj(new StructInterfaceService(impl, service));
+    obj->init();
+    return obj;
+}
+
+std::shared_ptr<ApiGear::Nats::BaseAdapter> StructInterfaceService::getSharedFromDerrived()
+{
+    return shared_from_this();
+}
+
 
 StructInterfaceService::~StructInterfaceService()
 {
@@ -18,13 +43,16 @@ StructInterfaceService::~StructInterfaceService()
 }
 
 
-void StructInterfaceService::onConnectionStatusChanged(bool connectionStatus)
+void StructInterfaceService::onConnected()
 {
-    if(!connectionStatus)
-    {
-        return;
-    }
-    // TODO send current values through service
+    subscribeTopic("testbed1.StructInterface.set.propBool", [this](const auto& value){ onSetPropBool(value); });
+    subscribeTopic("testbed1.StructInterface.set.propInt", [this](const auto& value){ onSetPropInt(value); });
+    subscribeTopic("testbed1.StructInterface.set.propFloat", [this](const auto& value){ onSetPropFloat(value); });
+    subscribeTopic("testbed1.StructInterface.set.propString", [this](const auto& value){ onSetPropString(value); });
+    subscribeRequest("testbed1.StructInterface.rpc.funcBool", [this](const auto& args){  return onInvokeFuncBool(args); });
+    subscribeRequest("testbed1.StructInterface.rpc.funcInt", [this](const auto& args){  return onInvokeFuncInt(args); });
+    subscribeRequest("testbed1.StructInterface.rpc.funcFloat", [this](const auto& args){  return onInvokeFuncFloat(args); });
+    subscribeRequest("testbed1.StructInterface.rpc.funcString", [this](const auto& args){  return onInvokeFuncString(args); });
 }
 void StructInterfaceService::onSetPropBool(const std::string& args) const
 {
@@ -73,40 +101,76 @@ void StructInterfaceService::onSetPropString(const std::string& args) const
 void StructInterfaceService::onSigBool(const StructBool& paramBool)
 {
     (void) paramBool;
-//TODO use service to notify clients
+    static const std::string topic = "testbed1.StructInterface.sig.sigBool";
+    nlohmann::json args = { paramBool };
+    m_service->publish(topic, nlohmann::json(args).dump());
 }
 void StructInterfaceService::onSigInt(const StructInt& paramInt)
 {
     (void) paramInt;
-//TODO use service to notify clients
+    static const std::string topic = "testbed1.StructInterface.sig.sigInt";
+    nlohmann::json args = { paramInt };
+    m_service->publish(topic, nlohmann::json(args).dump());
 }
 void StructInterfaceService::onSigFloat(const StructFloat& paramFloat)
 {
     (void) paramFloat;
-//TODO use service to notify clients
+    static const std::string topic = "testbed1.StructInterface.sig.sigFloat";
+    nlohmann::json args = { paramFloat };
+    m_service->publish(topic, nlohmann::json(args).dump());
 }
 void StructInterfaceService::onSigString(const StructString& paramString)
 {
     (void) paramString;
-//TODO use service to notify clients
+    static const std::string topic = "testbed1.StructInterface.sig.sigString";
+    nlohmann::json args = { paramString };
+    m_service->publish(topic, nlohmann::json(args).dump());
 }
 void StructInterfaceService::onPropBoolChanged(const StructBool& propBool)
 {
-    (void)propBool;
-    //TODO use service to notify clients
+    static const std::string topic = "testbed1.StructInterface.prop.propBool";
+    m_service->publish(topic, nlohmann::json(propBool).dump());
 }
 void StructInterfaceService::onPropIntChanged(const StructInt& propInt)
 {
-    (void)propInt;
-    //TODO use service to notify clients
+    static const std::string topic = "testbed1.StructInterface.prop.propInt";
+    m_service->publish(topic, nlohmann::json(propInt).dump());
 }
 void StructInterfaceService::onPropFloatChanged(const StructFloat& propFloat)
 {
-    (void)propFloat;
-    //TODO use service to notify clients
+    static const std::string topic = "testbed1.StructInterface.prop.propFloat";
+    m_service->publish(topic, nlohmann::json(propFloat).dump());
 }
 void StructInterfaceService::onPropStringChanged(const StructString& propString)
 {
-    (void)propString;
-    //TODO use service to notify clients
+    static const std::string topic = "testbed1.StructInterface.prop.propString";
+    m_service->publish(topic, nlohmann::json(propString).dump());
+}
+std::string StructInterfaceService::onInvokeFuncBool(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const StructBool& paramBool = json_args.at(0).get<StructBool>();
+    auto result = m_impl->funcBool(paramBool);
+    return nlohmann::json(result).dump();
+}
+std::string StructInterfaceService::onInvokeFuncInt(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const StructInt& paramInt = json_args.at(0).get<StructInt>();
+    auto result = m_impl->funcInt(paramInt);
+    return nlohmann::json(result).dump();
+}
+std::string StructInterfaceService::onInvokeFuncFloat(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const StructFloat& paramFloat = json_args.at(0).get<StructFloat>();
+    auto result = m_impl->funcFloat(paramFloat);
+    return nlohmann::json(result).dump();
+}
+std::string StructInterfaceService::onInvokeFuncString(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const StructString& paramString = json_args.at(0).get<StructString>();
+    auto result = m_impl->funcString(paramString);
+    return nlohmann::json(result).dump();
 }
