@@ -8,17 +8,17 @@
 #include "{{snake .Module.Name}}/generated/api/{{snake .Module.Name}}.h"
 #include "{{snake .Module.Name}}/generated/api/common.h"
 #include "apigear/nats/natsservice.h"
+#include "apigear/nats/natstypes.h"
+#include "apigear/nats/baseadapter.h"
 
 namespace {{ Camel .System.Name }} {
 namespace {{ Camel .Module.Name }} {
 namespace Nats {
-class {{ SNAKE .System.Name  }}_{{ SNAKE .Module.Name  }}_EXPORT {{$class}} : public {{$interfaceClass}}Subscriber
+class {{ SNAKE .System.Name  }}_{{ SNAKE .Module.Name  }}_EXPORT {{$class}} : public {{$interfaceClass}}Subscriber, public ApiGear::Nats::BaseAdapter
 {
 public:
     explicit {{$class}}(std::shared_ptr<{{$interfaceClass}}> impl, std::shared_ptr<ApiGear::Nats::Service> service);
     virtual ~{{$class}}() override;
-
-    void onConnectionStatusChanged(bool connectionStatus);
 
 {{- if len .Interface.Signals}}{{nl}}
     // {{$interfaceClass}}Subscriber interface
@@ -30,6 +30,7 @@ public:
 
 private:
 
+    void onConnected();
 {{- range .Interface.Properties}}
 {{- $property := . }}
     void on{{Camel $property.Name}}Changed({{cppParam "" $property}}) override;
@@ -38,6 +39,10 @@ private:
     /// @param fields contains the param of the type {{cppType "" $property }}
     void onSet{{Camel $property.Name}}(const std::string& args) const;
 {{- end }}
+{{- end }}
+{{- range .Interface.Operations}}
+{{- $operation := . }}
+std::string onInvoke{{ Camel $operation.Name }}(const std::string& args) const;
 {{- end }}
 
     std::shared_ptr<{{$interfaceClass}}> m_impl;
