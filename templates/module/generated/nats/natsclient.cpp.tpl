@@ -21,34 +21,23 @@ using namespace {{ Camel .System.Name }}::{{ Camel .Module.Name }}::Nats;
     , m_client(client)
     , m_publisher(std::make_unique<{{$pub_class}}>())
 {
+    BaseAdapter::init([this](){onConnected();});
 }
 
 {{$class}}::~{{$class}}() = default;
 
-void {{$class}}::subscribeTopics()
+void {{$class}}::onConnected()
 {
     {{- range .Interface.Properties }}
-    const std::string topic_{{.Name}} =  "{{$interfaceName}}.prop.{{.Name}}";
+    const std::string topic_{{.Name}} =  "{{$.Module.Name}}.{{$interfaceName}}.prop.{{.Name}}";
     subscribeTopic(topic_{{.Name}}, [this](const auto& value){ set{{Camel .Name}}Local(value); });
 
     {{- end }}
     {{- range .Interface.Signals }}
-    const std::string topic_{{.Name}} = "{{$interfaceName}}.sig.{{.Name}}";
+    const std::string topic_{{.Name}} = "{{$.Module.Name}}.{{$interfaceName}}.sig.{{.Name}}";
     subscribeTopic(topic_{{.Name}}, [this](const auto& args){on{{Camel .Name }}(args);});
 
     {{- end }}
-}
-
-void {{$class}}::getInitialState()
-{
-    {{- range  $idx, $elem := .Interface.Properties }}
-    getInitValue("{{$interfaceName}}.get_prop.{{.Name}}",{{$idx}} ,[this](std::string value) {set{{Camel .Name}}Local(value); });
-    {{- end }}
-}
-
-uint32_t {{$class}}::getPropertiesSize()
-{
-    return {{ len .Interface.Properties }};
 }
 
 {{- range .Interface.Properties}}

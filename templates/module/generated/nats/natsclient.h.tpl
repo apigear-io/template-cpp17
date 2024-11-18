@@ -26,10 +26,6 @@ public:
     explicit {{$class}}(std::shared_ptr<ApiGear::Nats::Client> client);
     virtual ~{{$class}}() override;
 
-    unsigned long _subscribeForIsReady(std::function<void(bool)> sub_function);
-    void _unsubscribeFromIsReady(unsigned long id);
-    bool _is_ready();
-
 {{- range .Interface.Properties}}
 {{- $property := . }}
     {{cppTypeRef "" $property}} get{{Camel $property.Name}}() const override;
@@ -67,10 +63,7 @@ private:
     /** The publisher for {{$interfaceName}} */
     std::unique_ptr<{{$pub_class}}> m_publisher;
 
-    /// Helper function for subscribing for messages.
-    void subscribeTopics() override;
-    void getInitialState() override;
-    uint32_t getPropertiesSize() override;
+    void onConnected();
 
 };
 } // namespace Nats
