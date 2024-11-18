@@ -3,17 +3,20 @@
 #include "tb_simple/generated/api/tb_simple.h"
 #include "tb_simple/generated/api/common.h"
 #include "apigear/nats/natsservice.h"
+#include "apigear/nats/natstypes.h"
+#include "apigear/nats/baseadapter.h"
 
 namespace Test {
 namespace TbSimple {
 namespace Nats {
-class TEST_TB_SIMPLE_EXPORT SimpleInterfaceService : public ISimpleInterfaceSubscriber
+class TEST_TB_SIMPLE_EXPORT SimpleInterfaceService : public ISimpleInterfaceSubscriber, public ApiGear::Nats::BaseAdapter,  public std::enable_shared_from_this<SimpleInterfaceService>
 {
-public:
+protected:
     explicit SimpleInterfaceService(std::shared_ptr<ISimpleInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
+public:
+    static std::shared_ptr<SimpleInterfaceService>create(std::shared_ptr<ISimpleInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
     virtual ~SimpleInterfaceService() override;
-
-    void onConnectionStatusChanged(bool connectionStatus);
+    void init();
 
     // ISimpleInterfaceSubscriber interface
     void onSigBool(bool paramBool) override;
@@ -26,6 +29,8 @@ public:
     void onSigString(const std::string& paramString) override;
 
 private:
+    std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
+    void onConnected();
     void onPropBoolChanged(bool propBool) override;
     /// @brief requests to set the value for the property PropBool coming from the client
     /// @param fields contains the param of the type bool
@@ -58,6 +63,15 @@ private:
     /// @brief requests to set the value for the property PropString coming from the client
     /// @param fields contains the param of the type std::string
     void onSetPropString(const std::string& args) const;
+    std::string onInvokeFuncNoReturnValue(const std::string& args) const;
+    std::string onInvokeFuncBool(const std::string& args) const;
+    std::string onInvokeFuncInt(const std::string& args) const;
+    std::string onInvokeFuncInt32(const std::string& args) const;
+    std::string onInvokeFuncInt64(const std::string& args) const;
+    std::string onInvokeFuncFloat(const std::string& args) const;
+    std::string onInvokeFuncFloat32(const std::string& args) const;
+    std::string onInvokeFuncFloat64(const std::string& args) const;
+    std::string onInvokeFuncString(const std::string& args) const;
 
     std::shared_ptr<ISimpleInterface> m_impl;
     std::shared_ptr<ApiGear::Nats::Service> m_service;

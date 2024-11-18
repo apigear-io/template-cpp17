@@ -3,17 +3,20 @@
 #include "testbed1/generated/api/testbed1.h"
 #include "testbed1/generated/api/common.h"
 #include "apigear/nats/natsservice.h"
+#include "apigear/nats/natstypes.h"
+#include "apigear/nats/baseadapter.h"
 
 namespace Test {
 namespace Testbed1 {
 namespace Nats {
-class TEST_TESTBED1_EXPORT StructInterfaceService : public IStructInterfaceSubscriber
+class TEST_TESTBED1_EXPORT StructInterfaceService : public IStructInterfaceSubscriber, public ApiGear::Nats::BaseAdapter,  public std::enable_shared_from_this<StructInterfaceService>
 {
-public:
+protected:
     explicit StructInterfaceService(std::shared_ptr<IStructInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
+public:
+    static std::shared_ptr<StructInterfaceService>create(std::shared_ptr<IStructInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
     virtual ~StructInterfaceService() override;
-
-    void onConnectionStatusChanged(bool connectionStatus);
+    void init();
 
     // IStructInterfaceSubscriber interface
     void onSigBool(const StructBool& paramBool) override;
@@ -22,6 +25,8 @@ public:
     void onSigString(const StructString& paramString) override;
 
 private:
+    std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
+    void onConnected();
     void onPropBoolChanged(const StructBool& propBool) override;
     /// @brief requests to set the value for the property PropBool coming from the client
     /// @param fields contains the param of the type StructBool
@@ -38,6 +43,10 @@ private:
     /// @brief requests to set the value for the property PropString coming from the client
     /// @param fields contains the param of the type StructString
     void onSetPropString(const std::string& args) const;
+    std::string onInvokeFuncBool(const std::string& args) const;
+    std::string onInvokeFuncInt(const std::string& args) const;
+    std::string onInvokeFuncFloat(const std::string& args) const;
+    std::string onInvokeFuncString(const std::string& args) const;
 
     std::shared_ptr<IStructInterface> m_impl;
     std::shared_ptr<ApiGear::Nats::Service> m_service;

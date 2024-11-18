@@ -5,12 +5,37 @@
 using namespace Test::TbSimple;
 using namespace Test::TbSimple::Nats;
 
+namespace{
+const uint32_t  expectedMethodSubscriptions = 0;
+const uint32_t  expectedPropertiesSubscriptions = 0;
+constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+}
+
 EmptyInterfaceService::EmptyInterfaceService(std::shared_ptr<IEmptyInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
-    : m_impl(impl)
+    :BaseAdapter(service, expectedSubscriptionsCount)
+    , m_impl(impl)
     , m_service(service)
 {
     m_impl->_getPublisher().subscribeToAllChanges(*this);
 }
+
+void EmptyInterfaceService::init()
+{
+    BaseAdapter::init([this](){onConnected();});
+}
+
+std::shared_ptr<EmptyInterfaceService> EmptyInterfaceService::create(std::shared_ptr<IEmptyInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
+{
+    std::shared_ptr<EmptyInterfaceService> obj(new EmptyInterfaceService(impl, service));
+    obj->init();
+    return obj;
+}
+
+std::shared_ptr<ApiGear::Nats::BaseAdapter> EmptyInterfaceService::getSharedFromDerrived()
+{
+    return shared_from_this();
+}
+
 
 EmptyInterfaceService::~EmptyInterfaceService()
 {
@@ -18,11 +43,6 @@ EmptyInterfaceService::~EmptyInterfaceService()
 }
 
 
-void EmptyInterfaceService::onConnectionStatusChanged(bool connectionStatus)
+void EmptyInterfaceService::onConnected()
 {
-    if(!connectionStatus)
-    {
-        return;
-    }
-    // TODO send current values through service
 }

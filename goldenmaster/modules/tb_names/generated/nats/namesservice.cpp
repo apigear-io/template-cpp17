@@ -5,12 +5,37 @@
 using namespace Test::TbNames;
 using namespace Test::TbNames::Nats;
 
+namespace{
+const uint32_t  expectedMethodSubscriptions = 2;
+const uint32_t  expectedPropertiesSubscriptions = 4;
+constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+}
+
 Nam_EsService::Nam_EsService(std::shared_ptr<INamEs> impl, std::shared_ptr<ApiGear::Nats::Service> service)
-    : m_impl(impl)
+    :BaseAdapter(service, expectedSubscriptionsCount)
+    , m_impl(impl)
     , m_service(service)
 {
     m_impl->_getPublisher().subscribeToAllChanges(*this);
 }
+
+void Nam_EsService::init()
+{
+    BaseAdapter::init([this](){onConnected();});
+}
+
+std::shared_ptr<Nam_EsService> Nam_EsService::create(std::shared_ptr<INamEs> impl, std::shared_ptr<ApiGear::Nats::Service> service)
+{
+    std::shared_ptr<Nam_EsService> obj(new Nam_EsService(impl, service));
+    obj->init();
+    return obj;
+}
+
+std::shared_ptr<ApiGear::Nats::BaseAdapter> Nam_EsService::getSharedFromDerrived()
+{
+    return shared_from_this();
+}
+
 
 Nam_EsService::~Nam_EsService()
 {
@@ -18,13 +43,14 @@ Nam_EsService::~Nam_EsService()
 }
 
 
-void Nam_EsService::onConnectionStatusChanged(bool connectionStatus)
+void Nam_EsService::onConnected()
 {
-    if(!connectionStatus)
-    {
-        return;
-    }
-    // TODO send current values through service
+    subscribeTopic("tb.names.Nam_Es.set.Switch", [this](const auto& value){ onSetSwitch(value); });
+    subscribeTopic("tb.names.Nam_Es.set.SOME_PROPERTY", [this](const auto& value){ onSetSomeProperty(value); });
+    subscribeTopic("tb.names.Nam_Es.set.Some_Poperty2", [this](const auto& value){ onSetSomePoperty2(value); });
+    subscribeTopic("tb.names.Nam_Es.set.enum_property", [this](const auto& value){ onSetEnumProperty(value); });
+    subscribeRequest("tb.names.Nam_Es.rpc.SOME_FUNCTION", [this](const auto& args){  return onInvokeSomeFunction(args); });
+    subscribeRequest("tb.names.Nam_Es.rpc.Some_Function2", [this](const auto& args){  return onInvokeSomeFunction2(args); });
 }
 void Nam_EsService::onSetSwitch(const std::string& args) const
 {
@@ -73,30 +99,48 @@ void Nam_EsService::onSetEnumProperty(const std::string& args) const
 void Nam_EsService::onSomeSignal(bool SOME_PARAM)
 {
     (void) SOME_PARAM;
-//TODO use service to notify clients
+    static const std::string topic = "tb.names.Nam_Es.sig.SOME_SIGNAL";
+    nlohmann::json args = { SOME_PARAM };
+    m_service->publish(topic, nlohmann::json(args).dump());
 }
 void Nam_EsService::onSomeSignal2(bool Some_Param)
 {
     (void) Some_Param;
-//TODO use service to notify clients
+    static const std::string topic = "tb.names.Nam_Es.sig.Some_Signal2";
+    nlohmann::json args = { Some_Param };
+    m_service->publish(topic, nlohmann::json(args).dump());
 }
 void Nam_EsService::onSwitchChanged(bool Switch)
 {
-    (void)Switch;
-    //TODO use service to notify clients
+    static const std::string topic = "tb.names.Nam_Es.prop.Switch";
+    m_service->publish(topic, nlohmann::json(Switch).dump());
 }
 void Nam_EsService::onSomePropertyChanged(int SOME_PROPERTY)
 {
-    (void)SOME_PROPERTY;
-    //TODO use service to notify clients
+    static const std::string topic = "tb.names.Nam_Es.prop.SOME_PROPERTY";
+    m_service->publish(topic, nlohmann::json(SOME_PROPERTY).dump());
 }
 void Nam_EsService::onSomePoperty2Changed(int Some_Poperty2)
 {
-    (void)Some_Poperty2;
-    //TODO use service to notify clients
+    static const std::string topic = "tb.names.Nam_Es.prop.Some_Poperty2";
+    m_service->publish(topic, nlohmann::json(Some_Poperty2).dump());
 }
 void Nam_EsService::onEnumPropertyChanged(Enum_With_Under_scoresEnum enum_property)
 {
-    (void)enum_property;
-    //TODO use service to notify clients
+    static const std::string topic = "tb.names.Nam_Es.prop.enum_property";
+    m_service->publish(topic, nlohmann::json(enum_property).dump());
+}
+std::string Nam_EsService::onInvokeSomeFunction(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const bool& SOME_PARAM = json_args.at(0).get<bool>();
+    m_impl->sOME_FUNCTION(SOME_PARAM);
+    return "0";
+}
+std::string Nam_EsService::onInvokeSomeFunction2(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const bool& Some_Param = json_args.at(0).get<bool>();
+    m_impl->some_Function2(Some_Param);
+    return "0";
 }

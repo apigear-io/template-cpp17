@@ -5,12 +5,37 @@
 using namespace Test::Testbed2;
 using namespace Test::Testbed2::Nats;
 
+namespace{
+const uint32_t  expectedMethodSubscriptions = 1;
+const uint32_t  expectedPropertiesSubscriptions = 1;
+constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+}
+
 NestedStruct1InterfaceService::NestedStruct1InterfaceService(std::shared_ptr<INestedStruct1Interface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
-    : m_impl(impl)
+    :BaseAdapter(service, expectedSubscriptionsCount)
+    , m_impl(impl)
     , m_service(service)
 {
     m_impl->_getPublisher().subscribeToAllChanges(*this);
 }
+
+void NestedStruct1InterfaceService::init()
+{
+    BaseAdapter::init([this](){onConnected();});
+}
+
+std::shared_ptr<NestedStruct1InterfaceService> NestedStruct1InterfaceService::create(std::shared_ptr<INestedStruct1Interface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
+{
+    std::shared_ptr<NestedStruct1InterfaceService> obj(new NestedStruct1InterfaceService(impl, service));
+    obj->init();
+    return obj;
+}
+
+std::shared_ptr<ApiGear::Nats::BaseAdapter> NestedStruct1InterfaceService::getSharedFromDerrived()
+{
+    return shared_from_this();
+}
+
 
 NestedStruct1InterfaceService::~NestedStruct1InterfaceService()
 {
@@ -18,13 +43,10 @@ NestedStruct1InterfaceService::~NestedStruct1InterfaceService()
 }
 
 
-void NestedStruct1InterfaceService::onConnectionStatusChanged(bool connectionStatus)
+void NestedStruct1InterfaceService::onConnected()
 {
-    if(!connectionStatus)
-    {
-        return;
-    }
-    // TODO send current values through service
+    subscribeTopic("testbed2.NestedStruct1Interface.set.prop1", [this](const auto& value){ onSetProp1(value); });
+    subscribeRequest("testbed2.NestedStruct1Interface.rpc.func1", [this](const auto& args){  return onInvokeFunc1(args); });
 }
 void NestedStruct1InterfaceService::onSetProp1(const std::string& args) const
 {
@@ -40,10 +62,19 @@ void NestedStruct1InterfaceService::onSetProp1(const std::string& args) const
 void NestedStruct1InterfaceService::onSig1(const NestedStruct1& param1)
 {
     (void) param1;
-//TODO use service to notify clients
+    static const std::string topic = "testbed2.NestedStruct1Interface.sig.sig1";
+    nlohmann::json args = { param1 };
+    m_service->publish(topic, nlohmann::json(args).dump());
 }
 void NestedStruct1InterfaceService::onProp1Changed(const NestedStruct1& prop1)
 {
-    (void)prop1;
-    //TODO use service to notify clients
+    static const std::string topic = "testbed2.NestedStruct1Interface.prop.prop1";
+    m_service->publish(topic, nlohmann::json(prop1).dump());
+}
+std::string NestedStruct1InterfaceService::onInvokeFunc1(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const NestedStruct1& param1 = json_args.at(0).get<NestedStruct1>();
+    auto result = m_impl->func1(param1);
+    return nlohmann::json(result).dump();
 }

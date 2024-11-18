@@ -3,17 +3,20 @@
 #include "tb_simple/generated/api/tb_simple.h"
 #include "tb_simple/generated/api/common.h"
 #include "apigear/nats/natsservice.h"
+#include "apigear/nats/natstypes.h"
+#include "apigear/nats/baseadapter.h"
 
 namespace Test {
 namespace TbSimple {
 namespace Nats {
-class TEST_TB_SIMPLE_EXPORT SimpleArrayInterfaceService : public ISimpleArrayInterfaceSubscriber
+class TEST_TB_SIMPLE_EXPORT SimpleArrayInterfaceService : public ISimpleArrayInterfaceSubscriber, public ApiGear::Nats::BaseAdapter,  public std::enable_shared_from_this<SimpleArrayInterfaceService>
 {
-public:
+protected:
     explicit SimpleArrayInterfaceService(std::shared_ptr<ISimpleArrayInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
+public:
+    static std::shared_ptr<SimpleArrayInterfaceService>create(std::shared_ptr<ISimpleArrayInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
     virtual ~SimpleArrayInterfaceService() override;
-
-    void onConnectionStatusChanged(bool connectionStatus);
+    void init();
 
     // ISimpleArrayInterfaceSubscriber interface
     void onSigBool(const std::list<bool>& paramBool) override;
@@ -26,6 +29,8 @@ public:
     void onSigString(const std::list<std::string>& paramString) override;
 
 private:
+    std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
+    void onConnected();
     void onPropBoolChanged(const std::list<bool>& propBool) override;
     /// @brief requests to set the value for the property PropBool coming from the client
     /// @param fields contains the param of the type std::list<bool>
@@ -59,6 +64,14 @@ private:
     /// @param fields contains the param of the type std::list<std::string>
     void onSetPropString(const std::string& args) const;
     void onPropReadOnlyStringChanged(const std::string& propReadOnlyString) override;
+    std::string onInvokeFuncBool(const std::string& args) const;
+    std::string onInvokeFuncInt(const std::string& args) const;
+    std::string onInvokeFuncInt32(const std::string& args) const;
+    std::string onInvokeFuncInt64(const std::string& args) const;
+    std::string onInvokeFuncFloat(const std::string& args) const;
+    std::string onInvokeFuncFloat32(const std::string& args) const;
+    std::string onInvokeFuncFloat64(const std::string& args) const;
+    std::string onInvokeFuncString(const std::string& args) const;
 
     std::shared_ptr<ISimpleArrayInterface> m_impl;
     std::shared_ptr<ApiGear::Nats::Service> m_service;
