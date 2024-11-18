@@ -3,26 +3,25 @@
 
 using namespace ApiGear::Nats;
 
-BaseAdapter::BaseAdapter(std::shared_ptr<Client> client)
+BaseAdapter::BaseAdapter(std::shared_ptr<Base> client)
     : m_client(client)
     , m_isAlive(std::make_shared<bool>(true))
 {
+}
 
-    m_initialized = std::vector<bool>(getPropertiesSize(), false);
+void BaseAdapter::init(std::function<void(void)> onConnectedCallback)
+{
     if (m_client->isConnected())
     {
-        subscribeTopics();
-        getInitialState();
+        onConnectedCallback();
     }
     else
     {
-        m_client->addOnConnectedCallback([this](bool is_connected)
+        m_client->addOnConnectedCallback([this, onConnectedCallback](bool is_connected)
             {
                 if (is_connected)
                 {
-                    subscribeTopics();
-                    // on reconnect always get the latest state, the server side might have changed.
-                    getInitialState();
+                    onConnectedCallback();
                     if (_is_ready())
                     {
                         _is_readyChanges.publishChange(true);
@@ -30,7 +29,6 @@ BaseAdapter::BaseAdapter(std::shared_ptr<Client> client)
                 }
                 else
                 {
-                    m_initialized = std::vector<bool>(getPropertiesSize(), false);
                     _is_readyChanges.publishChange(false);
                 }
             });
@@ -45,7 +43,7 @@ BaseAdapter::~BaseAdapter()
 void BaseAdapter::subscribeTopic(const std::string& topic, SimpleOnMessageCallback callback)
 {
     std::weak_ptr<bool> isAlive(m_isAlive);
-    std::shared_ptr<Client> client = m_client;
+    std::shared_ptr<Base> client = m_client;
     auto safeOnSubscribed = [isAlive, client, this](int64_t id, const std::string& topic, bool is_subscribed)
         {
             if (isAlive.lock())
@@ -63,19 +61,28 @@ void BaseAdapter::subscribeTopic(const std::string& topic, SimpleOnMessageCallba
     }
 }
 
-void BaseAdapter::getInitValue(const std::string& topic, uint32_t index, std::function<void(std::string)> valueSetter)
+void BaseAdapter::subscribeRequest(const std::string& topic, MessageCallbackWithResult callback)
 {
-    m_client->request(topic, "", 
-        [this, index, valueSetter](std::string value) {
-            valueSetter(value);
-            m_initialized[index] = true;
-            if (_is_ready()) 
-            { 
-                _is_readyChanges.publishChange(true);
-            } 
-        });
+    std::weak_ptr<bool> isAlive(m_isAlive);
+    std::shared_ptr<Base> client = m_client;
+    auto safeOnSubscribed = [isAlive, client, this](int64_t id, const std::string& topic, bool is_subscribed)
+        {
+            if (isAlive.lock())
+            {
+                onSubscribed(id, topic, is_subscribed);
+            }
+            else if (is_subscribed)
+            {
+                client->unsubscribe(id);
+            }
+        };
+    if (!isAlreadyAdded(topic))
+    {
+        m_client->subscribeForRequest(topic, callback, safeOnSubscribed);
+    }
 }
-//TODO mutex encore
+
+//TODO mutex
 bool BaseAdapter::isAlreadyAdded(const std::string& topic)
 {
     auto already_added = m_subscribedTopics.find(topic);
@@ -110,7 +117,10 @@ void BaseAdapter::onSubscribed(int64_t id, const std::string& topic, bool is_sub
             m_client->unsubscribe(id);
             m_subscribedTopics[topic] = SubscriptionInfo(ApiGear::Nats::SubscriptionStatus::unsubscribing);
         }
-        m_subscribedTopics[topic] = SubscriptionInfo(ApiGear::Nats::SubscriptionStatus::subscribed, id);
+        else
+        {
+            m_subscribedTopics[topic] = SubscriptionInfo(ApiGear::Nats::SubscriptionStatus::subscribed, id);
+        }
     }
     else
     {
@@ -149,9 +159,6 @@ bool BaseAdapter::_is_ready()
         m_subscribedTopics.end(),
         [this](auto& element) {return element.second.status != ApiGear::Nats::SubscriptionStatus::subscribed; })
         != m_subscribedTopics.end();
-    auto still_not_initialized = std::find_if(m_initialized.begin(), m_initialized.end(), [this](auto element) { return element == false; })
-        != m_initialized.end();
     return m_client->isConnected() &&
-        !still_not_all_subscribed &&
-        !still_not_initialized;
+        !still_not_all_subscribed;
 }

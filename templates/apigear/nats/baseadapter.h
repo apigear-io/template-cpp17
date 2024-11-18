@@ -1,6 +1,6 @@
 #pragma once
 
-#include "apigear/nats/natsclient.h"
+#include "apigear/nats/natsbase.h"
 #include "apigear/nats/natstypes.h"
 #include "apigear/utilities/single_pub.hpp"
 
@@ -15,7 +15,7 @@ namespace Nats {
 class APIGEAR_NATS_EXPORT BaseAdapter
 {
 public:
-    explicit BaseAdapter(std::shared_ptr<Client> client);
+    explicit BaseAdapter(std::shared_ptr<Base> client);
     virtual ~BaseAdapter();
 
     unsigned long _subscribeForIsReady(std::function<void(bool)> sub_function);
@@ -24,14 +24,11 @@ public:
 
 protected:
     void subscribeTopic(const std::string& topic, SimpleOnMessageCallback callback);
-    void getInitValue(const std::string& topic, uint32_t index, std::function<void(std::string)> valueSetter);
+    void subscribeRequest(const std::string& topic, MessageCallbackWithResult callback);
+    void init(std::function<void(void)> onConnectedCallback);
 
 private:
-    std::shared_ptr<Client> m_client;
-    /// Helper function for subscribing for messages.
-    virtual void subscribeTopics() {};
-    virtual void getInitialState() {};
-    virtual uint32_t getPropertiesSize() { return 0; };
+    std::shared_ptr<Base> m_client;
     void unsubscribeTopics();
     void onSubscribed(int64_t id, const std::string& topic, bool is_subscribed);
     bool isAlreadyAdded(const std::string& topic);
@@ -53,7 +50,6 @@ private:
         int64_t id = ApiGear::Nats::Base::InvalidSubscriptionId;
     };
     std::unordered_map<std::string, SubscriptionInfo> m_subscribedTopics;
-    std::vector<bool> m_initialized;
     std::shared_ptr<bool> m_isAlive;
 
 };
