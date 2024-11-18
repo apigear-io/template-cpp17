@@ -5,12 +5,37 @@
 using namespace Test::Testbed1;
 using namespace Test::Testbed1::Nats;
 
+namespace{
+const uint32_t  expectedMethodSubscriptions = 4;
+const uint32_t  expectedPropertiesSubscriptions = 4;
+constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+}
+
 StructArrayInterfaceService::StructArrayInterfaceService(std::shared_ptr<IStructArrayInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
-    : m_impl(impl)
+    :BaseAdapter(service, expectedSubscriptionsCount)
+    , m_impl(impl)
     , m_service(service)
 {
     m_impl->_getPublisher().subscribeToAllChanges(*this);
 }
+
+void StructArrayInterfaceService::init()
+{
+    BaseAdapter::init([this](){onConnected();});
+}
+
+std::shared_ptr<StructArrayInterfaceService> StructArrayInterfaceService::create(std::shared_ptr<IStructArrayInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
+{
+    std::shared_ptr<StructArrayInterfaceService> obj(new StructArrayInterfaceService(impl, service));
+    obj->init();
+    return obj;
+}
+
+std::shared_ptr<ApiGear::Nats::BaseAdapter> StructArrayInterfaceService::getSharedFromDerrived()
+{
+    return shared_from_this();
+}
+
 
 StructArrayInterfaceService::~StructArrayInterfaceService()
 {
@@ -18,13 +43,16 @@ StructArrayInterfaceService::~StructArrayInterfaceService()
 }
 
 
-void StructArrayInterfaceService::onConnectionStatusChanged(bool connectionStatus)
+void StructArrayInterfaceService::onConnected()
 {
-    if(!connectionStatus)
-    {
-        return;
-    }
-    // TODO send current values through service
+    subscribeTopic("testbed1.StructArrayInterface.set.propBool", [this](const auto& value){ onSetPropBool(value); });
+    subscribeTopic("testbed1.StructArrayInterface.set.propInt", [this](const auto& value){ onSetPropInt(value); });
+    subscribeTopic("testbed1.StructArrayInterface.set.propFloat", [this](const auto& value){ onSetPropFloat(value); });
+    subscribeTopic("testbed1.StructArrayInterface.set.propString", [this](const auto& value){ onSetPropString(value); });
+    subscribeRequest("testbed1.StructArrayInterface.rpc.funcBool", [this](const auto& args){  return onInvokeFuncBool(args); });
+    subscribeRequest("testbed1.StructArrayInterface.rpc.funcInt", [this](const auto& args){  return onInvokeFuncInt(args); });
+    subscribeRequest("testbed1.StructArrayInterface.rpc.funcFloat", [this](const auto& args){  return onInvokeFuncFloat(args); });
+    subscribeRequest("testbed1.StructArrayInterface.rpc.funcString", [this](const auto& args){  return onInvokeFuncString(args); });
 }
 void StructArrayInterfaceService::onSetPropBool(const std::string& args) const
 {
@@ -73,40 +101,76 @@ void StructArrayInterfaceService::onSetPropString(const std::string& args) const
 void StructArrayInterfaceService::onSigBool(const std::list<StructBool>& paramBool)
 {
     (void) paramBool;
-//TODO use service to notify clients
+    static const std::string topic = "testbed1.StructArrayInterface.sig.sigBool";
+    nlohmann::json args = { paramBool };
+    m_service->publish(topic, nlohmann::json(args).dump());
 }
 void StructArrayInterfaceService::onSigInt(const std::list<StructInt>& paramInt)
 {
     (void) paramInt;
-//TODO use service to notify clients
+    static const std::string topic = "testbed1.StructArrayInterface.sig.sigInt";
+    nlohmann::json args = { paramInt };
+    m_service->publish(topic, nlohmann::json(args).dump());
 }
 void StructArrayInterfaceService::onSigFloat(const std::list<StructFloat>& paramFloat)
 {
     (void) paramFloat;
-//TODO use service to notify clients
+    static const std::string topic = "testbed1.StructArrayInterface.sig.sigFloat";
+    nlohmann::json args = { paramFloat };
+    m_service->publish(topic, nlohmann::json(args).dump());
 }
 void StructArrayInterfaceService::onSigString(const std::list<StructString>& paramString)
 {
     (void) paramString;
-//TODO use service to notify clients
+    static const std::string topic = "testbed1.StructArrayInterface.sig.sigString";
+    nlohmann::json args = { paramString };
+    m_service->publish(topic, nlohmann::json(args).dump());
 }
 void StructArrayInterfaceService::onPropBoolChanged(const std::list<StructBool>& propBool)
 {
-    (void)propBool;
-    //TODO use service to notify clients
+    static const std::string topic = "testbed1.StructArrayInterface.prop.propBool";
+    m_service->publish(topic, nlohmann::json(propBool).dump());
 }
 void StructArrayInterfaceService::onPropIntChanged(const std::list<StructInt>& propInt)
 {
-    (void)propInt;
-    //TODO use service to notify clients
+    static const std::string topic = "testbed1.StructArrayInterface.prop.propInt";
+    m_service->publish(topic, nlohmann::json(propInt).dump());
 }
 void StructArrayInterfaceService::onPropFloatChanged(const std::list<StructFloat>& propFloat)
 {
-    (void)propFloat;
-    //TODO use service to notify clients
+    static const std::string topic = "testbed1.StructArrayInterface.prop.propFloat";
+    m_service->publish(topic, nlohmann::json(propFloat).dump());
 }
 void StructArrayInterfaceService::onPropStringChanged(const std::list<StructString>& propString)
 {
-    (void)propString;
-    //TODO use service to notify clients
+    static const std::string topic = "testbed1.StructArrayInterface.prop.propString";
+    m_service->publish(topic, nlohmann::json(propString).dump());
+}
+std::string StructArrayInterfaceService::onInvokeFuncBool(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const std::list<StructBool>& paramBool = json_args.at(0).get<std::list<StructBool>>();
+    auto result = m_impl->funcBool(paramBool);
+    return nlohmann::json(result).dump();
+}
+std::string StructArrayInterfaceService::onInvokeFuncInt(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const std::list<StructInt>& paramInt = json_args.at(0).get<std::list<StructInt>>();
+    auto result = m_impl->funcInt(paramInt);
+    return nlohmann::json(result).dump();
+}
+std::string StructArrayInterfaceService::onInvokeFuncFloat(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const std::list<StructFloat>& paramFloat = json_args.at(0).get<std::list<StructFloat>>();
+    auto result = m_impl->funcFloat(paramFloat);
+    return nlohmann::json(result).dump();
+}
+std::string StructArrayInterfaceService::onInvokeFuncString(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const std::list<StructString>& paramString = json_args.at(0).get<std::list<StructString>>();
+    auto result = m_impl->funcString(paramString);
+    return nlohmann::json(result).dump();
 }

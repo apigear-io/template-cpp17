@@ -5,12 +5,37 @@
 using namespace Test::Testbed2;
 using namespace Test::Testbed2::Nats;
 
+namespace{
+const uint32_t  expectedMethodSubscriptions = 2;
+const uint32_t  expectedPropertiesSubscriptions = 2;
+constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+}
+
 NestedStruct2InterfaceService::NestedStruct2InterfaceService(std::shared_ptr<INestedStruct2Interface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
-    : m_impl(impl)
+    :BaseAdapter(service, expectedSubscriptionsCount)
+    , m_impl(impl)
     , m_service(service)
 {
     m_impl->_getPublisher().subscribeToAllChanges(*this);
 }
+
+void NestedStruct2InterfaceService::init()
+{
+    BaseAdapter::init([this](){onConnected();});
+}
+
+std::shared_ptr<NestedStruct2InterfaceService> NestedStruct2InterfaceService::create(std::shared_ptr<INestedStruct2Interface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
+{
+    std::shared_ptr<NestedStruct2InterfaceService> obj(new NestedStruct2InterfaceService(impl, service));
+    obj->init();
+    return obj;
+}
+
+std::shared_ptr<ApiGear::Nats::BaseAdapter> NestedStruct2InterfaceService::getSharedFromDerrived()
+{
+    return shared_from_this();
+}
+
 
 NestedStruct2InterfaceService::~NestedStruct2InterfaceService()
 {
@@ -18,13 +43,12 @@ NestedStruct2InterfaceService::~NestedStruct2InterfaceService()
 }
 
 
-void NestedStruct2InterfaceService::onConnectionStatusChanged(bool connectionStatus)
+void NestedStruct2InterfaceService::onConnected()
 {
-    if(!connectionStatus)
-    {
-        return;
-    }
-    // TODO send current values through service
+    subscribeTopic("testbed2.NestedStruct2Interface.set.prop1", [this](const auto& value){ onSetProp1(value); });
+    subscribeTopic("testbed2.NestedStruct2Interface.set.prop2", [this](const auto& value){ onSetProp2(value); });
+    subscribeRequest("testbed2.NestedStruct2Interface.rpc.func1", [this](const auto& args){  return onInvokeFunc1(args); });
+    subscribeRequest("testbed2.NestedStruct2Interface.rpc.func2", [this](const auto& args){  return onInvokeFunc2(args); });
 }
 void NestedStruct2InterfaceService::onSetProp1(const std::string& args) const
 {
@@ -51,21 +75,40 @@ void NestedStruct2InterfaceService::onSetProp2(const std::string& args) const
 void NestedStruct2InterfaceService::onSig1(const NestedStruct1& param1)
 {
     (void) param1;
-//TODO use service to notify clients
+    static const std::string topic = "testbed2.NestedStruct2Interface.sig.sig1";
+    nlohmann::json args = { param1 };
+    m_service->publish(topic, nlohmann::json(args).dump());
 }
 void NestedStruct2InterfaceService::onSig2(const NestedStruct1& param1, const NestedStruct2& param2)
 {
     (void) param1;
     (void) param2;
-//TODO use service to notify clients
+    static const std::string topic = "testbed2.NestedStruct2Interface.sig.sig2";
+    nlohmann::json args = { param1, param2 };
+    m_service->publish(topic, nlohmann::json(args).dump());
 }
 void NestedStruct2InterfaceService::onProp1Changed(const NestedStruct1& prop1)
 {
-    (void)prop1;
-    //TODO use service to notify clients
+    static const std::string topic = "testbed2.NestedStruct2Interface.prop.prop1";
+    m_service->publish(topic, nlohmann::json(prop1).dump());
 }
 void NestedStruct2InterfaceService::onProp2Changed(const NestedStruct2& prop2)
 {
-    (void)prop2;
-    //TODO use service to notify clients
+    static const std::string topic = "testbed2.NestedStruct2Interface.prop.prop2";
+    m_service->publish(topic, nlohmann::json(prop2).dump());
+}
+std::string NestedStruct2InterfaceService::onInvokeFunc1(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const NestedStruct1& param1 = json_args.at(0).get<NestedStruct1>();
+    auto result = m_impl->func1(param1);
+    return nlohmann::json(result).dump();
+}
+std::string NestedStruct2InterfaceService::onInvokeFunc2(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const NestedStruct1& param1 = json_args.at(0).get<NestedStruct1>();
+    const NestedStruct2& param2 = json_args.at(1).get<NestedStruct2>();
+    auto result = m_impl->func2(param1, param2);
+    return nlohmann::json(result).dump();
 }

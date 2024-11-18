@@ -5,12 +5,37 @@
 using namespace Test::TbSame1;
 using namespace Test::TbSame1::Nats;
 
+namespace{
+const uint32_t  expectedMethodSubscriptions = 1;
+const uint32_t  expectedPropertiesSubscriptions = 1;
+constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+}
+
 SameEnum1InterfaceService::SameEnum1InterfaceService(std::shared_ptr<ISameEnum1Interface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
-    : m_impl(impl)
+    :BaseAdapter(service, expectedSubscriptionsCount)
+    , m_impl(impl)
     , m_service(service)
 {
     m_impl->_getPublisher().subscribeToAllChanges(*this);
 }
+
+void SameEnum1InterfaceService::init()
+{
+    BaseAdapter::init([this](){onConnected();});
+}
+
+std::shared_ptr<SameEnum1InterfaceService> SameEnum1InterfaceService::create(std::shared_ptr<ISameEnum1Interface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
+{
+    std::shared_ptr<SameEnum1InterfaceService> obj(new SameEnum1InterfaceService(impl, service));
+    obj->init();
+    return obj;
+}
+
+std::shared_ptr<ApiGear::Nats::BaseAdapter> SameEnum1InterfaceService::getSharedFromDerrived()
+{
+    return shared_from_this();
+}
+
 
 SameEnum1InterfaceService::~SameEnum1InterfaceService()
 {
@@ -18,13 +43,10 @@ SameEnum1InterfaceService::~SameEnum1InterfaceService()
 }
 
 
-void SameEnum1InterfaceService::onConnectionStatusChanged(bool connectionStatus)
+void SameEnum1InterfaceService::onConnected()
 {
-    if(!connectionStatus)
-    {
-        return;
-    }
-    // TODO send current values through service
+    subscribeTopic("tb.same1.SameEnum1Interface.set.prop1", [this](const auto& value){ onSetProp1(value); });
+    subscribeRequest("tb.same1.SameEnum1Interface.rpc.func1", [this](const auto& args){  return onInvokeFunc1(args); });
 }
 void SameEnum1InterfaceService::onSetProp1(const std::string& args) const
 {
@@ -40,10 +62,19 @@ void SameEnum1InterfaceService::onSetProp1(const std::string& args) const
 void SameEnum1InterfaceService::onSig1(Enum1Enum param1)
 {
     (void) param1;
-//TODO use service to notify clients
+    static const std::string topic = "tb.same1.SameEnum1Interface.sig.sig1";
+    nlohmann::json args = { param1 };
+    m_service->publish(topic, nlohmann::json(args).dump());
 }
 void SameEnum1InterfaceService::onProp1Changed(Enum1Enum prop1)
 {
-    (void)prop1;
-    //TODO use service to notify clients
+    static const std::string topic = "tb.same1.SameEnum1Interface.prop.prop1";
+    m_service->publish(topic, nlohmann::json(prop1).dump());
+}
+std::string SameEnum1InterfaceService::onInvokeFunc1(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const Enum1Enum& param1 = json_args.at(0).get<Enum1Enum>();
+    auto result = m_impl->func1(param1);
+    return nlohmann::json(result).dump();
 }

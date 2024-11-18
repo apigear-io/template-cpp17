@@ -5,12 +5,37 @@
 using namespace Test::TbSimple;
 using namespace Test::TbSimple::Nats;
 
+namespace{
+const uint32_t  expectedMethodSubscriptions = 8;
+const uint32_t  expectedPropertiesSubscriptions = 8;
+constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+}
+
 SimpleArrayInterfaceService::SimpleArrayInterfaceService(std::shared_ptr<ISimpleArrayInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
-    : m_impl(impl)
+    :BaseAdapter(service, expectedSubscriptionsCount)
+    , m_impl(impl)
     , m_service(service)
 {
     m_impl->_getPublisher().subscribeToAllChanges(*this);
 }
+
+void SimpleArrayInterfaceService::init()
+{
+    BaseAdapter::init([this](){onConnected();});
+}
+
+std::shared_ptr<SimpleArrayInterfaceService> SimpleArrayInterfaceService::create(std::shared_ptr<ISimpleArrayInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
+{
+    std::shared_ptr<SimpleArrayInterfaceService> obj(new SimpleArrayInterfaceService(impl, service));
+    obj->init();
+    return obj;
+}
+
+std::shared_ptr<ApiGear::Nats::BaseAdapter> SimpleArrayInterfaceService::getSharedFromDerrived()
+{
+    return shared_from_this();
+}
+
 
 SimpleArrayInterfaceService::~SimpleArrayInterfaceService()
 {
@@ -18,13 +43,24 @@ SimpleArrayInterfaceService::~SimpleArrayInterfaceService()
 }
 
 
-void SimpleArrayInterfaceService::onConnectionStatusChanged(bool connectionStatus)
+void SimpleArrayInterfaceService::onConnected()
 {
-    if(!connectionStatus)
-    {
-        return;
-    }
-    // TODO send current values through service
+    subscribeTopic("tb.simple.SimpleArrayInterface.set.propBool", [this](const auto& value){ onSetPropBool(value); });
+    subscribeTopic("tb.simple.SimpleArrayInterface.set.propInt", [this](const auto& value){ onSetPropInt(value); });
+    subscribeTopic("tb.simple.SimpleArrayInterface.set.propInt32", [this](const auto& value){ onSetPropInt32(value); });
+    subscribeTopic("tb.simple.SimpleArrayInterface.set.propInt64", [this](const auto& value){ onSetPropInt64(value); });
+    subscribeTopic("tb.simple.SimpleArrayInterface.set.propFloat", [this](const auto& value){ onSetPropFloat(value); });
+    subscribeTopic("tb.simple.SimpleArrayInterface.set.propFloat32", [this](const auto& value){ onSetPropFloat32(value); });
+    subscribeTopic("tb.simple.SimpleArrayInterface.set.propFloat64", [this](const auto& value){ onSetPropFloat64(value); });
+    subscribeTopic("tb.simple.SimpleArrayInterface.set.propString", [this](const auto& value){ onSetPropString(value); });
+    subscribeRequest("tb.simple.SimpleArrayInterface.rpc.funcBool", [this](const auto& args){  return onInvokeFuncBool(args); });
+    subscribeRequest("tb.simple.SimpleArrayInterface.rpc.funcInt", [this](const auto& args){  return onInvokeFuncInt(args); });
+    subscribeRequest("tb.simple.SimpleArrayInterface.rpc.funcInt32", [this](const auto& args){  return onInvokeFuncInt32(args); });
+    subscribeRequest("tb.simple.SimpleArrayInterface.rpc.funcInt64", [this](const auto& args){  return onInvokeFuncInt64(args); });
+    subscribeRequest("tb.simple.SimpleArrayInterface.rpc.funcFloat", [this](const auto& args){  return onInvokeFuncFloat(args); });
+    subscribeRequest("tb.simple.SimpleArrayInterface.rpc.funcFloat32", [this](const auto& args){  return onInvokeFuncFloat32(args); });
+    subscribeRequest("tb.simple.SimpleArrayInterface.rpc.funcFloat64", [this](const auto& args){  return onInvokeFuncFloat64(args); });
+    subscribeRequest("tb.simple.SimpleArrayInterface.rpc.funcString", [this](const auto& args){  return onInvokeFuncString(args); });
 }
 void SimpleArrayInterfaceService::onSetPropBool(const std::string& args) const
 {
@@ -117,85 +153,157 @@ void SimpleArrayInterfaceService::onSetPropString(const std::string& args) const
 void SimpleArrayInterfaceService::onSigBool(const std::list<bool>& paramBool)
 {
     (void) paramBool;
-//TODO use service to notify clients
+    static const std::string topic = "tb.simple.SimpleArrayInterface.sig.sigBool";
+    nlohmann::json args = { paramBool };
+    m_service->publish(topic, nlohmann::json(args).dump());
 }
 void SimpleArrayInterfaceService::onSigInt(const std::list<int>& paramInt)
 {
     (void) paramInt;
-//TODO use service to notify clients
+    static const std::string topic = "tb.simple.SimpleArrayInterface.sig.sigInt";
+    nlohmann::json args = { paramInt };
+    m_service->publish(topic, nlohmann::json(args).dump());
 }
 void SimpleArrayInterfaceService::onSigInt32(const std::list<int32_t>& paramInt32)
 {
     (void) paramInt32;
-//TODO use service to notify clients
+    static const std::string topic = "tb.simple.SimpleArrayInterface.sig.sigInt32";
+    nlohmann::json args = { paramInt32 };
+    m_service->publish(topic, nlohmann::json(args).dump());
 }
 void SimpleArrayInterfaceService::onSigInt64(const std::list<int64_t>& paramInt64)
 {
     (void) paramInt64;
-//TODO use service to notify clients
+    static const std::string topic = "tb.simple.SimpleArrayInterface.sig.sigInt64";
+    nlohmann::json args = { paramInt64 };
+    m_service->publish(topic, nlohmann::json(args).dump());
 }
 void SimpleArrayInterfaceService::onSigFloat(const std::list<float>& paramFloat)
 {
     (void) paramFloat;
-//TODO use service to notify clients
+    static const std::string topic = "tb.simple.SimpleArrayInterface.sig.sigFloat";
+    nlohmann::json args = { paramFloat };
+    m_service->publish(topic, nlohmann::json(args).dump());
 }
 void SimpleArrayInterfaceService::onSigFloat32(const std::list<float>& paramFloa32)
 {
     (void) paramFloa32;
-//TODO use service to notify clients
+    static const std::string topic = "tb.simple.SimpleArrayInterface.sig.sigFloat32";
+    nlohmann::json args = { paramFloa32 };
+    m_service->publish(topic, nlohmann::json(args).dump());
 }
 void SimpleArrayInterfaceService::onSigFloat64(const std::list<double>& paramFloat64)
 {
     (void) paramFloat64;
-//TODO use service to notify clients
+    static const std::string topic = "tb.simple.SimpleArrayInterface.sig.sigFloat64";
+    nlohmann::json args = { paramFloat64 };
+    m_service->publish(topic, nlohmann::json(args).dump());
 }
 void SimpleArrayInterfaceService::onSigString(const std::list<std::string>& paramString)
 {
     (void) paramString;
-//TODO use service to notify clients
+    static const std::string topic = "tb.simple.SimpleArrayInterface.sig.sigString";
+    nlohmann::json args = { paramString };
+    m_service->publish(topic, nlohmann::json(args).dump());
 }
 void SimpleArrayInterfaceService::onPropBoolChanged(const std::list<bool>& propBool)
 {
-    (void)propBool;
-    //TODO use service to notify clients
+    static const std::string topic = "tb.simple.SimpleArrayInterface.prop.propBool";
+    m_service->publish(topic, nlohmann::json(propBool).dump());
 }
 void SimpleArrayInterfaceService::onPropIntChanged(const std::list<int>& propInt)
 {
-    (void)propInt;
-    //TODO use service to notify clients
+    static const std::string topic = "tb.simple.SimpleArrayInterface.prop.propInt";
+    m_service->publish(topic, nlohmann::json(propInt).dump());
 }
 void SimpleArrayInterfaceService::onPropInt32Changed(const std::list<int32_t>& propInt32)
 {
-    (void)propInt32;
-    //TODO use service to notify clients
+    static const std::string topic = "tb.simple.SimpleArrayInterface.prop.propInt32";
+    m_service->publish(topic, nlohmann::json(propInt32).dump());
 }
 void SimpleArrayInterfaceService::onPropInt64Changed(const std::list<int64_t>& propInt64)
 {
-    (void)propInt64;
-    //TODO use service to notify clients
+    static const std::string topic = "tb.simple.SimpleArrayInterface.prop.propInt64";
+    m_service->publish(topic, nlohmann::json(propInt64).dump());
 }
 void SimpleArrayInterfaceService::onPropFloatChanged(const std::list<float>& propFloat)
 {
-    (void)propFloat;
-    //TODO use service to notify clients
+    static const std::string topic = "tb.simple.SimpleArrayInterface.prop.propFloat";
+    m_service->publish(topic, nlohmann::json(propFloat).dump());
 }
 void SimpleArrayInterfaceService::onPropFloat32Changed(const std::list<float>& propFloat32)
 {
-    (void)propFloat32;
-    //TODO use service to notify clients
+    static const std::string topic = "tb.simple.SimpleArrayInterface.prop.propFloat32";
+    m_service->publish(topic, nlohmann::json(propFloat32).dump());
 }
 void SimpleArrayInterfaceService::onPropFloat64Changed(const std::list<double>& propFloat64)
 {
-    (void)propFloat64;
-    //TODO use service to notify clients
+    static const std::string topic = "tb.simple.SimpleArrayInterface.prop.propFloat64";
+    m_service->publish(topic, nlohmann::json(propFloat64).dump());
 }
 void SimpleArrayInterfaceService::onPropStringChanged(const std::list<std::string>& propString)
 {
-    (void)propString;
-    //TODO use service to notify clients
+    static const std::string topic = "tb.simple.SimpleArrayInterface.prop.propString";
+    m_service->publish(topic, nlohmann::json(propString).dump());
 }
 void SimpleArrayInterfaceService::onPropReadOnlyStringChanged(const std::string& propReadOnlyString)
 {
-    (void)propReadOnlyString;
-    //TODO use service to notify clients
+    static const std::string topic = "tb.simple.SimpleArrayInterface.prop.propReadOnlyString";
+    m_service->publish(topic, nlohmann::json(propReadOnlyString).dump());
+}
+std::string SimpleArrayInterfaceService::onInvokeFuncBool(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const std::list<bool>& paramBool = json_args.at(0).get<std::list<bool>>();
+    auto result = m_impl->funcBool(paramBool);
+    return nlohmann::json(result).dump();
+}
+std::string SimpleArrayInterfaceService::onInvokeFuncInt(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const std::list<int>& paramInt = json_args.at(0).get<std::list<int>>();
+    auto result = m_impl->funcInt(paramInt);
+    return nlohmann::json(result).dump();
+}
+std::string SimpleArrayInterfaceService::onInvokeFuncInt32(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const std::list<int32_t>& paramInt32 = json_args.at(0).get<std::list<int32_t>>();
+    auto result = m_impl->funcInt32(paramInt32);
+    return nlohmann::json(result).dump();
+}
+std::string SimpleArrayInterfaceService::onInvokeFuncInt64(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const std::list<int64_t>& paramInt64 = json_args.at(0).get<std::list<int64_t>>();
+    auto result = m_impl->funcInt64(paramInt64);
+    return nlohmann::json(result).dump();
+}
+std::string SimpleArrayInterfaceService::onInvokeFuncFloat(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const std::list<float>& paramFloat = json_args.at(0).get<std::list<float>>();
+    auto result = m_impl->funcFloat(paramFloat);
+    return nlohmann::json(result).dump();
+}
+std::string SimpleArrayInterfaceService::onInvokeFuncFloat32(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const std::list<float>& paramFloat32 = json_args.at(0).get<std::list<float>>();
+    auto result = m_impl->funcFloat32(paramFloat32);
+    return nlohmann::json(result).dump();
+}
+std::string SimpleArrayInterfaceService::onInvokeFuncFloat64(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const std::list<double>& paramFloat = json_args.at(0).get<std::list<double>>();
+    auto result = m_impl->funcFloat64(paramFloat);
+    return nlohmann::json(result).dump();
+}
+std::string SimpleArrayInterfaceService::onInvokeFuncString(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const std::list<std::string>& paramString = json_args.at(0).get<std::list<std::string>>();
+    auto result = m_impl->funcString(paramString);
+    return nlohmann::json(result).dump();
 }

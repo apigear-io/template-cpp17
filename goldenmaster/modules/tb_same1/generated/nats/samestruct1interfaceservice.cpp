@@ -5,12 +5,37 @@
 using namespace Test::TbSame1;
 using namespace Test::TbSame1::Nats;
 
+namespace{
+const uint32_t  expectedMethodSubscriptions = 1;
+const uint32_t  expectedPropertiesSubscriptions = 1;
+constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+}
+
 SameStruct1InterfaceService::SameStruct1InterfaceService(std::shared_ptr<ISameStruct1Interface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
-    : m_impl(impl)
+    :BaseAdapter(service, expectedSubscriptionsCount)
+    , m_impl(impl)
     , m_service(service)
 {
     m_impl->_getPublisher().subscribeToAllChanges(*this);
 }
+
+void SameStruct1InterfaceService::init()
+{
+    BaseAdapter::init([this](){onConnected();});
+}
+
+std::shared_ptr<SameStruct1InterfaceService> SameStruct1InterfaceService::create(std::shared_ptr<ISameStruct1Interface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
+{
+    std::shared_ptr<SameStruct1InterfaceService> obj(new SameStruct1InterfaceService(impl, service));
+    obj->init();
+    return obj;
+}
+
+std::shared_ptr<ApiGear::Nats::BaseAdapter> SameStruct1InterfaceService::getSharedFromDerrived()
+{
+    return shared_from_this();
+}
+
 
 SameStruct1InterfaceService::~SameStruct1InterfaceService()
 {
@@ -18,13 +43,10 @@ SameStruct1InterfaceService::~SameStruct1InterfaceService()
 }
 
 
-void SameStruct1InterfaceService::onConnectionStatusChanged(bool connectionStatus)
+void SameStruct1InterfaceService::onConnected()
 {
-    if(!connectionStatus)
-    {
-        return;
-    }
-    // TODO send current values through service
+    subscribeTopic("tb.same1.SameStruct1Interface.set.prop1", [this](const auto& value){ onSetProp1(value); });
+    subscribeRequest("tb.same1.SameStruct1Interface.rpc.func1", [this](const auto& args){  return onInvokeFunc1(args); });
 }
 void SameStruct1InterfaceService::onSetProp1(const std::string& args) const
 {
@@ -40,10 +62,19 @@ void SameStruct1InterfaceService::onSetProp1(const std::string& args) const
 void SameStruct1InterfaceService::onSig1(const Struct1& param1)
 {
     (void) param1;
-//TODO use service to notify clients
+    static const std::string topic = "tb.same1.SameStruct1Interface.sig.sig1";
+    nlohmann::json args = { param1 };
+    m_service->publish(topic, nlohmann::json(args).dump());
 }
 void SameStruct1InterfaceService::onProp1Changed(const Struct1& prop1)
 {
-    (void)prop1;
-    //TODO use service to notify clients
+    static const std::string topic = "tb.same1.SameStruct1Interface.prop.prop1";
+    m_service->publish(topic, nlohmann::json(prop1).dump());
+}
+std::string SameStruct1InterfaceService::onInvokeFunc1(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const Struct1& param1 = json_args.at(0).get<Struct1>();
+    auto result = m_impl->func1(param1);
+    return nlohmann::json(result).dump();
 }

@@ -3,17 +3,20 @@
 #include "testbed1/generated/api/testbed1.h"
 #include "testbed1/generated/api/common.h"
 #include "apigear/nats/natsservice.h"
+#include "apigear/nats/natstypes.h"
+#include "apigear/nats/baseadapter.h"
 
 namespace Test {
 namespace Testbed1 {
 namespace Nats {
-class TEST_TESTBED1_EXPORT StructArrayInterfaceService : public IStructArrayInterfaceSubscriber
+class TEST_TESTBED1_EXPORT StructArrayInterfaceService : public IStructArrayInterfaceSubscriber, public ApiGear::Nats::BaseAdapter,  public std::enable_shared_from_this<StructArrayInterfaceService>
 {
-public:
+protected:
     explicit StructArrayInterfaceService(std::shared_ptr<IStructArrayInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
+public:
+    static std::shared_ptr<StructArrayInterfaceService>create(std::shared_ptr<IStructArrayInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
     virtual ~StructArrayInterfaceService() override;
-
-    void onConnectionStatusChanged(bool connectionStatus);
+    void init();
 
     // IStructArrayInterfaceSubscriber interface
     void onSigBool(const std::list<StructBool>& paramBool) override;
@@ -22,6 +25,8 @@ public:
     void onSigString(const std::list<StructString>& paramString) override;
 
 private:
+    std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
+    void onConnected();
     void onPropBoolChanged(const std::list<StructBool>& propBool) override;
     /// @brief requests to set the value for the property PropBool coming from the client
     /// @param fields contains the param of the type std::list<StructBool>
@@ -38,6 +43,10 @@ private:
     /// @brief requests to set the value for the property PropString coming from the client
     /// @param fields contains the param of the type std::list<StructString>
     void onSetPropString(const std::string& args) const;
+    std::string onInvokeFuncBool(const std::string& args) const;
+    std::string onInvokeFuncInt(const std::string& args) const;
+    std::string onInvokeFuncFloat(const std::string& args) const;
+    std::string onInvokeFuncString(const std::string& args) const;
 
     std::shared_ptr<IStructArrayInterface> m_impl;
     std::shared_ptr<ApiGear::Nats::Service> m_service;
