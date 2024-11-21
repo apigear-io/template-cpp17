@@ -4,7 +4,6 @@
 #include "utilities/logger.h"
 #include <random>
 #include <iostream>
-#include "utilities/threadpool.h"
 
 using namespace ApiGear::Nats;
 
