@@ -1,5 +1,5 @@
-#include "apigear/nats/baseadapter.h"
-#include "apigear/utilities/logger.h"
+#include "baseadapter.h"
+#include "utilities/logger.h"
 
 using namespace ApiGear::Nats;
 
@@ -17,8 +17,13 @@ void BaseAdapter::init(std::function<void(void)> onConnectedCallback)
     }
     else
     {
-        m_client->addOnConnectedCallback([this, onConnectedCallback](bool is_connected)
+        std::weak_ptr<bool> isAlive(m_isAlive);
+        m_client->addOnConnectedCallback([this, onConnectedCallback, isAlive](bool is_connected)
             {
+                if (!isAlive.lock())
+                {
+                    return;
+                }
                 if (is_connected)
                 {
                     onConnectedCallback();
@@ -29,7 +34,14 @@ void BaseAdapter::init(std::function<void(void)> onConnectedCallback)
                 }
                 else
                 {
+                    // In this case the nats client will clean up all the subscriptions.
                     _is_readyChanges.publishChange(false);
+                    std::unique_lock<std::mutex> lock{ m_subscribedTopicsMutex };
+                    for (auto topic : m_subscribedTopics)
+                    {
+                        topic.second.status = ApiGear::Nats::SubscriptionStatus::unsubscribed;
+                    }
+                    lock.unlock();
                 }
             });
     }
@@ -82,10 +94,11 @@ void BaseAdapter::subscribeRequest(const std::string& topic, MessageCallbackWith
     }
 }
 
-//TODO mutex
 bool BaseAdapter::isAlreadyAdded(const std::string& topic)
 {
+    std::unique_lock<std::mutex> lock{m_subscribedTopicsMutex};
     auto already_added = m_subscribedTopics.find(topic);
+    lock.unlock();
     return already_added != m_subscribedTopics.end() &&
         (already_added->second.status == ApiGear::Nats::SubscriptionStatus::subscribed ||
             already_added->second.status == ApiGear::Nats::SubscriptionStatus::subscribing);
@@ -93,29 +106,38 @@ bool BaseAdapter::isAlreadyAdded(const std::string& topic)
 
 void BaseAdapter::unsubscribeTopics()
 {
+    std::vector<int64_t> ids_to_unsubscribe;
+    std::unique_lock<std::mutex> lock{ m_subscribedTopicsMutex };
     for (auto topic : m_subscribedTopics)
     {
         if (topic.second.status == ApiGear::Nats::SubscriptionStatus::subscribed)
         {
             topic.second.status = ApiGear::Nats::SubscriptionStatus::unsubscribing;
-            m_client->unsubscribe(topic.second.id);
+            ids_to_unsubscribe.push_back(topic.second.id);
         }
         else if (topic.second.status != ApiGear::Nats::SubscriptionStatus::subscribing)
         {
             topic.second.status = ApiGear::Nats::SubscriptionStatus::to_unsubscribe;
         }
     }
+    for (auto id : ids_to_unsubscribe)
+    {
+        m_client->unsubscribe(id);
+    }
 }
 
 void BaseAdapter::onSubscribed(int64_t id, const std::string& topic, bool is_subscribed)
 {
+    std::unique_lock<std::mutex> lock{ m_subscribedTopicsMutex };
     auto subscription = m_subscribedTopics.find(topic);
     if (is_subscribed)
     {
         if (subscription != m_subscribedTopics.end() && subscription->second.status == ApiGear::Nats::SubscriptionStatus::to_unsubscribe)
         {
-            m_client->unsubscribe(id);
             m_subscribedTopics[topic] = SubscriptionInfo(ApiGear::Nats::SubscriptionStatus::unsubscribing);
+            lock.unlock();
+            m_client->unsubscribe(id);
+            return;
         }
         else
         {
@@ -130,15 +152,10 @@ void BaseAdapter::onSubscribed(int64_t id, const std::string& topic, bool is_sub
         }
         AG_LOG_ERROR("failed to subscribe " + topic);
     }
-    auto still_not_all_subscribed = std::find_if(m_subscribedTopics.begin(), m_subscribedTopics.end(),
-        [](auto& element) {return element.second.status != ApiGear::Nats::SubscriptionStatus::subscribed; })
-        != m_subscribedTopics.end();
-    if (!still_not_all_subscribed)
+    lock.unlock();
+    if (_is_ready())
     {
-        if (_is_ready())
-        {
-            _is_readyChanges.publishChange(true);
-        }
+        _is_readyChanges.publishChange(true);
     }
 
 }
@@ -153,11 +170,11 @@ void BaseAdapter::_unsubscribeFromIsReady(unsigned long id)
     _is_readyChanges.unsubscribeFromChange(id);
 }
 
-bool BaseAdapter::_is_ready()
+bool BaseAdapter::_is_ready() const
 {
-    auto still_not_all_subscribed = std::find_if(m_subscribedTopics.begin(),
-        m_subscribedTopics.end(),
-        [this](auto& element) {return element.second.status != ApiGear::Nats::SubscriptionStatus::subscribed; })
+    auto still_not_all_subscribed = std::find_if(m_subscribedTopics.cbegin(),
+        m_subscribedTopics.cend(),
+        [this](const auto& element) {return element.second.status != ApiGear::Nats::SubscriptionStatus::subscribed; })
         != m_subscribedTopics.end();
     return m_client->isConnected() &&
         !still_not_all_subscribed;

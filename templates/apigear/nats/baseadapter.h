@@ -1,7 +1,7 @@
 #pragma once
 
-#include "apigear/nats/natsbase.h"
-#include "apigear/nats/natstypes.h"
+#include "natsbase.h"
+#include "natstypes.h"
 #include "apigear/utilities/single_pub.hpp"
 
 #include <future>
@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <string>
 #include <memory>
+#include <mutex>
 
 namespace ApiGear {
 namespace Nats {
@@ -20,7 +21,7 @@ public:
 
     unsigned long _subscribeForIsReady(std::function<void(bool)> sub_function);
     void _unsubscribeFromIsReady(unsigned long id);
-    bool _is_ready();
+    bool _is_ready() const;
 
 protected:
     void subscribeTopic(const std::string& topic, SimpleOnMessageCallback callback);
@@ -49,6 +50,8 @@ private:
         ApiGear::Nats::SubscriptionStatus status = ApiGear::Nats::SubscriptionStatus::unsubscribed;
         int64_t id = ApiGear::Nats::Base::InvalidSubscriptionId;
     };
+
+    std::mutex m_subscribedTopicsMutex;
     std::unordered_map<std::string, SubscriptionInfo> m_subscribedTopics;
     std::shared_ptr<bool> m_isAlive;
 
