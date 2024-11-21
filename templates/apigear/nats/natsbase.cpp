@@ -1,4 +1,4 @@
-#include "natsclient.h"
+#include "natsbase.h"
 #include "private/natscwrapper.h"
 #include "utilities/threadpool.h"
 #include "utilities/logger.h"
