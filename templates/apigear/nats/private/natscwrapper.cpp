@@ -261,7 +261,7 @@ int64_t CWrapper::subscribe(const std::string& topic, SimpleOnMessageCallback ca
     lockCallback.unlock();
     // nats library prepares a subscription which later will be stored, it is this class responsibility to free the resources.
     natsSubscription* tmp;
-    auto status = natsConnection_Subscribe(&tmp, m_connection.get(), topic.c_str(), onMsg, storedCallback.get());
+    auto status = natsConnection_Subscribe(&tmp, m_connection.get(), topic.c_str(), onMsg, storedCallback.get());//TODO it was not allcated it cannot be taken
     std::shared_ptr< natsSubscription> subscription_ptr(tmp, NatsSubscriptionDeleter());
     auto sub_id = natsSubscription_GetID(subscription_ptr.get());
 
@@ -335,6 +335,11 @@ void CWrapper::unsubscribe(int64_t id)
     AG_LOG_DEBUG("nats client: unsubscribe " + std::to_string(id));
     std::unique_lock<std::mutex> lock{ m_subscriptionsMutex };
     auto found = m_subscriptions.find(id);
+    if (found == m_subscriptions.end())
+    {
+        // May happen if unsubscribe after connection gets disconnected, the disconnect request removes the subscriptions.
+        return;
+    }
     lock.unlock();
     auto status = natsSubscription_Unsubscribe(found->second.get());
     if (status != NATS_OK) {
@@ -364,7 +369,7 @@ void CWrapper::cleanSubscription(int64_t id)
     }
     else
     {
-        lockCallbacks.lock();
+        lockCallbacks.unlock();
         std::unique_lock<std::mutex> lockRequestCallbacks{ m_requestCallbacksMutex };
         auto requestCallback = find_if(m_requestCallbacks.begin(), m_requestCallbacks.end(), [id](auto element) { return  element->id == id; });
         if (requestCallback != m_requestCallbacks.end())
