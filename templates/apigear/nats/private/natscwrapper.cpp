@@ -48,11 +48,11 @@ static void onMsg(natsConnection* /*connection*/, natsSubscription* /*subscripti
     CWrapper::SimpleCallbackWrapper* callbackWrapper = static_cast<CWrapper::SimpleCallbackWrapper*>(context);
     if (callbackWrapper && callbackWrapper->callback)
     {
-        callbackWrapper->callback(natsMsg_GetData(msg));
+        callbackWrapper->callback(natsMsg_GetData(message.get()));
     }
     else
     {
-        AG_LOG_WARNING("No handler for " + std::string(natsMsg_GetSubject(msg)));
+        AG_LOG_WARNING("No handler for " + std::string(natsMsg_GetSubject(message.get())));
     }
 }
 
@@ -63,20 +63,20 @@ static void onRequest(natsConnection* connection, natsSubscription* /*subscripti
     CWrapper::MessageCallbackWithResultWrapper* callbackWrapper = static_cast<CWrapper::MessageCallbackWithResultWrapper*>(context);
     if (callbackWrapper && callbackWrapper->callback)
     {
-        std::string result = callbackWrapper->callback(natsMsg_GetData(msg));
-        auto replyTopic = natsMsg_GetReply(msg);
+        std::string result = callbackWrapper->callback(natsMsg_GetData(message.get()));
+        auto replyTopic = natsMsg_GetReply(message.get());
         if (replyTopic != NULL)
         {
             natsConnection_PublishString(connection, replyTopic, result.c_str());
         }
         else
         {
-            AG_LOG_ERROR("Could not send a reply to  " + std::string(natsMsg_GetSubject(msg)) + "no response topic." );
+            AG_LOG_ERROR("Could not send a reply to  " + std::string(natsMsg_GetSubject(message.get())) + "no response topic." );
         }
     }
     else
     {
-        AG_LOG_WARNING("No handler for " + std::string(natsMsg_GetSubject(msg)));
+        AG_LOG_WARNING("No handler for " + std::string(natsMsg_GetSubject(message.get())));
     }
 
 
@@ -151,11 +151,12 @@ void CWrapper::connect(const std::string& address, std::function<void(void)> con
 
     natsOptions* tmp_opts;
     auto status = natsOptions_Create(&tmp_opts);
-    std::unique_ptr<natsOptions, NatsSOptionsDeleter> opts(tmp_opts, NatsSOptionsDeleter());
     if (status != NATS_OK) { 
-        AG_LOG_ERROR("Failed to connect. Could not configure connection. Check your connection");
+        auto log = "Failed to connect. Could not configure connection. Check your connection. Error code " + std::to_string(static_cast<int>(status));
+        AG_LOG_ERROR(log);
         return;
     }
+    std::unique_ptr<natsOptions, NatsSOptionsDeleter> opts(tmp_opts, NatsSOptionsDeleter());
     status = natsOptions_SetErrorHandler(opts.get(), onError, &m_subscriptionErrorContext);
     if (status != NATS_OK) {
         AG_LOG_ERROR("Failed to connect. Could not configure connection (On configuring Error Handler). Check your connection");
@@ -163,33 +164,39 @@ void CWrapper::connect(const std::string& address, std::function<void(void)> con
     }
     status = natsOptions_SetURL(opts.get(), address.c_str());
     if (status != NATS_OK) {
-        AG_LOG_ERROR("Failed to connect. Could not configure connection (On setting host address). Check your connection");
+        auto log = "Failed to connect. Could not configure connection (On setting host address). Error code " + std::to_string(static_cast<int>(status));
+        AG_LOG_ERROR(log);
         return;
     }
     status = natsOptions_SetDisconnectedCB(opts.get(), conntectionHandler, &m_connectionHandlerContext);
     if (status != NATS_OK) {
-        AG_LOG_ERROR("Failed to connect. Could not configure connection (On configuring disconnect callback). Check your connection");
+        auto log = "Failed to connect. Could not configure connection (On configuring disconnect callback). Error code " + std::to_string(static_cast<int>(status));
+        AG_LOG_ERROR(log);
         return;
     }
     status = natsOptions_SetReconnectedCB(opts.get(), conntectionHandler, &m_connectionHandlerContext);
     if (status != NATS_OK) {
-        AG_LOG_ERROR("Failed to connect. Could not configure connection (On configuring reconnect callback). Check your connection");
+        auto log = "Failed to connect. Could not configure connection (On configuring disconnect callback). Error code " + std::to_string(static_cast<int>(status));
+        AG_LOG_ERROR(log);
         return;
     }
     status = natsOptions_SetRetryOnFailedConnect(opts.get(), true, conntectionHandler, &m_connectionHandlerContext);
     if (status != NATS_OK) {
-        AG_LOG_ERROR("Failed to connect. Could not configure connection (On configuring reconnect callback). Check your connection");
+        auto log = "Failed to connect. Could not configure connection (On configuring disconnect callback). Error code " + std::to_string(static_cast<int>(status));
+        AG_LOG_ERROR(log);
         return;
     }
     status = natsOptions_SetClosedCB(opts.get(), conntectionHandler, &m_connectionHandlerContext);
     if (status != NATS_OK) {
-        AG_LOG_ERROR("Failed to connect. Could not configure connection (On configuring closed callback). Check your connection");
+        auto log = "Failed to connect. Could not configure connection (On configuring disconnect callback). Error code " + std::to_string(static_cast<int>(status));
+        AG_LOG_ERROR(log);
         return;
     }
     // Use thread pool for message delivery - if set to false each subscription gets own thread for receiving messages.
     status = natsOptions_UseGlobalMessageDelivery(opts.get(), true);
     if (status != NATS_OK) {
-        AG_LOG_ERROR("Failed to connect. Could not configure connection (On setting message thread options). Check your connection");
+        auto log = "Failed to connect. Could not configure connection (On setting message thread options). Error code " + std::to_string(static_cast<int>(status));
+        AG_LOG_ERROR(log);
         return;
     }
     natsConnection* connection = NULL;
@@ -262,8 +269,6 @@ int64_t CWrapper::subscribe(const std::string& topic, SimpleOnMessageCallback ca
     // nats library prepares a subscription which later will be stored, it is this class responsibility to free the resources.
     natsSubscription* tmp;
     auto status = natsConnection_Subscribe(&tmp, m_connection.get(), topic.c_str(), onMsg, storedCallback.get());//TODO it was not allcated it cannot be taken
-    std::shared_ptr< natsSubscription> subscription_ptr(tmp, NatsSubscriptionDeleter());
-    auto sub_id = natsSubscription_GetID(subscription_ptr.get());
 
     if (status != NATS_OK) {
         auto log = "Failed to subscribe " + topic + " Status " + std::to_string(static_cast<int>(status));
@@ -273,6 +278,9 @@ int64_t CWrapper::subscribe(const std::string& topic, SimpleOnMessageCallback ca
         lockCallback.unlock();
         return 0;
     };
+    
+    std::shared_ptr< natsSubscription> subscription_ptr(tmp, NatsSubscriptionDeleter());
+    auto sub_id = natsSubscription_GetID(subscription_ptr.get());
     std::unique_lock<std::mutex> lockSubscription{ m_subscriptionsMutex };
     m_subscriptions[sub_id] = subscription_ptr;
     lockSubscription.unlock();
@@ -294,23 +302,23 @@ int64_t CWrapper::subscribe(const std::string& topic, SimpleOnMessageCallback ca
 int64_t CWrapper::subscribeWithResponse(const std::string& topic, MessageCallbackWithResult callback)
 {
     AG_LOG_DEBUG("nats client: subscribe " + topic);
-    std::unique_lock<std::mutex> lockCallback(m_requestCallbacksMutex);//Diff m_requestCallbacksMutex
-    m_requestCallbacks.emplace_back(std::make_shared<MessageCallbackWithResultWrapper>(callback));//Diff m_requestCallbacks && MessageCallbackWithResultWrapper
-    auto storedCallback = m_requestCallbacks.back();//Diff m_requestCallbacks
+    std::unique_lock<std::mutex> lockCallback(m_requestCallbacksMutex);
+    m_requestCallbacks.emplace_back(std::make_shared<MessageCallbackWithResultWrapper>(callback));
+    auto storedCallback = m_requestCallbacks.back();
     lockCallback.unlock();
     // nats library prepares a subscription which later will be stored, it is this class responsibility to free the resources.
     natsSubscription* tmp;
-    auto status = natsConnection_Subscribe(&tmp, m_connection.get(), topic.c_str(), onRequest, storedCallback.get());//Diff OnMsg -> onRequest
-    std::shared_ptr< natsSubscription> subscription_ptr(tmp, NatsSubscriptionDeleter());
-    auto sub_id = natsSubscription_GetID(subscription_ptr.get());
-
+    auto status = natsConnection_Subscribe(&tmp, m_connection.get(), topic.c_str(), onRequest, storedCallback.get());
     if (status != NATS_OK) {
-        AG_LOG_WARNING("Failed to subscribe " + topic);
+        AG_LOG_WARNING("Failed to subscribe " + topic + " with error code: " + std::to_string(status));
         lockCallback.lock();
-        m_requestCallbacks.remove(storedCallback);//m_requestCallbacks
+        m_requestCallbacks.remove(storedCallback);
         lockCallback.unlock();
         return 0;
     };
+    std::shared_ptr< natsSubscription> subscription_ptr(tmp, NatsSubscriptionDeleter());
+    auto sub_id = natsSubscription_GetID(subscription_ptr.get());
+
     std::unique_lock<std::mutex> lockSubscription{ m_subscriptionsMutex };
     m_subscriptions[sub_id] = subscription_ptr;
     lockSubscription.unlock();
@@ -402,10 +410,11 @@ std::string CWrapper::request(const std::string& topic, const std::string& paylo
     natsMsg* reply = NULL;
     std::string result;
     auto status = natsConnection_RequestString(&reply, m_connection.get(), topic.c_str(), payload.c_str(), reply_timeout);
-    std::unique_ptr<natsMsg, NatsMsgDeleter>(reply, NatsMsgDeleter());
     if (status == NATS_OK)
     {
-        result = std::string(natsMsg_GetData(reply));
+        // if status != NATS_OK the memory is not allocated, and should not be freed.// if status != NATS_OK the memory is not allocated, and should not be freed.
+        std::unique_ptr<natsMsg, NatsMsgDeleter> reply_wrapped(reply, NatsMsgDeleter());
+        result = std::string(natsMsg_GetData(reply_wrapped.get()));
     }
     else
     {
