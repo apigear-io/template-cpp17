@@ -10,11 +10,22 @@ target_include_directories(nats
     PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../>
     PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../>
     $<INSTALL_INTERFACE:include>
 )
-target_link_libraries(nats PRIVATE cnats::nats_static utilities PUBLIC nlohmann_json::nlohmann_json )
+
+target_link_libraries(nats PRIVATE utilities PUBLIC nlohmann_json::nlohmann_json )
+if (CONAN_BUILD)
+target_link_libraries(nats PRIVATE ${CONAN_NATS_LIB})
+elseif(MSVC AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_link_libraries(nats PRIVATE cnats::nats_staticd)
+elseif(MSVC)
+    target_link_libraries(nats PRIVATE cnats::nats_static)
+else()
+target_link_libraries(nats PRIVATE debug cnats::nats_staticd optimized cnats::nats_static)
+endif()
 
 if(NOT MSVC)
   target_compile_options(nats PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden -Wno-unknown-pragmas)
