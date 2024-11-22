@@ -72,7 +72,7 @@ class apigearConan(ConanFile):
             self.options.rm_safe("fPIC")
 
     def export_sources(self):
-        copy(self, "*", self.recipe_folder, self.export_sources_folder)
+        copy(self, "*", self.recipe_folder, dst=os.path.join(self.export_sources_folder, "apigear"))
 
     def requirements(self):
         if self.options.enable_monitor or self.options.enable_olink or self.options.enable_mqtt or self.options.enable_nats:
@@ -94,6 +94,9 @@ class apigearConan(ConanFile):
 
     def layout(self):
         cmake_layout(self)
+        # Customize the source folder to include the full directory tree
+        self.folders.root = ".."
+        self.folders.source = "apigear"
 
     def generate(self):
         tc = CMakeToolchain(self)
@@ -128,11 +131,12 @@ class apigearConan(ConanFile):
             # manually copy objectlink-core-cpp include files, to have headers for module/generated/olink instead of linking whole library
             # needed since cmake version 3.28. - before all files were automatically copied, see CMP0154
             # until olink_core has a proper conan package
+            build_path = os.path.join(self.folders.source_folder, "..", "build")
             list_copied_files = []
             if self.settings.os == "Windows":
-                list_copied_files = copy(self, "**/*.h", os.path.join(self.source_folder, "build", "_deps","olink_core-src","src"), os.path.join(self.package_folder, "include"))
+                list_copied_files = copy(self, "**/*.h", os.path.join(build_path, "_deps","olink_core-src","src"), os.path.join(self.package_folder, "include"))
             else:
-                list_copied_files = copy(self, "**/*.h", os.path.join(self.source_folder, "build", str(self.settings.build_type) , "_deps","olink_core-src","src"), os.path.join(self.package_folder, "include"))
+                list_copied_files = copy(self, "**/*.h", os.path.join(build_path, str(self.settings.build_type) , "_deps","olink_core-src","src"), os.path.join(self.package_folder, "include"))
             if len(list_copied_files) == 0:
                 raise Exception("Failed to copy objectlink-core-cpp include files.")
 
