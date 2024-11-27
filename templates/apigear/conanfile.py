@@ -95,8 +95,8 @@ class apigearConan(ConanFile):
     def layout(self):
         cmake_layout(self)
         # Customize the source folder to include the full directory tree
-        self.folders.source = os.path.join(".","apigear")
-        self.folders.build = os.path.join("build","apigear")
+        self.folders.root = ".."
+        self.folders.source = "apigear"
 
     def generate(self):
         tc = CMakeToolchain(self)
@@ -127,7 +127,7 @@ class apigearConan(ConanFile):
             # manually copy objectlink-core-cpp include files, to have headers for module/generated/olink instead of linking whole library
             # needed since cmake version 3.28. - before all files were automatically copied, see CMP0154
             # until olink_core has a proper conan package
-            build_path = os.path.join(self.folders.source_folder, "..", "build", "apigear")
+            build_path = os.path.join(self.folders.source_folder, "..", "build")
             list_copied_files = []
             if self.settings.os == "Windows":
                 list_copied_files = copy(self, "**/*.h", os.path.join(build_path, "_deps","olink_core-src","src"), os.path.join(self.package_folder, "include"))
