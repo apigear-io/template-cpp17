@@ -375,6 +375,25 @@ features:
           target: examples/mqttclient/conanfile.txt
         - source: examples/mqttclient/main.cpp.tpl
           target: examples/mqttclient/main.cpp
+  - name: examples_nats
+    requires:
+      - stubs
+      - nats
+    scopes:
+    - match: system
+      documents:
+        - source: examples/natsserver/CMakeLists.txt.tpl
+          target: examples/natsserver/CMakeLists.txt
+        - source: examples/natsserver/conanfile.txt.tpl
+          target: examples/natsserver/conanfile.txt
+        - source: examples/natsserver/main.cpp.tpl
+          target: examples/natsserver/main.cpp
+        - source: examples/natsclient/CMakeLists.txt.tpl
+          target: examples/natsclient/CMakeLists.txt
+        - source: examples/natsclient/conanfile.txt.tpl
+          target: examples/natsclient/conanfile.txt
+        - source: examples/natsclient/main.cpp.tpl
+          target: examples/natsclient/main.cpp
   - name: conan
     requires:
       - api
