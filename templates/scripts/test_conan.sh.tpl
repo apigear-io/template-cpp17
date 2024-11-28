@@ -66,5 +66,10 @@ build_example "examples/olinkclient"
 build_example "examples/mqttserver"
 build_example "examples/mqttclient"
 {{- end}}
+
+{{- if $features.examples_nats }}
+build_example "examples/natsserver"
+build_example "examples/natsclient"
+{{- end}}
 # leave build directory
 cd ..

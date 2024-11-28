@@ -68,5 +68,7 @@ build_example "examples/olinkserver"
 build_example "examples/olinkclient"
 build_example "examples/mqttserver"
 build_example "examples/mqttclient"
+build_example "examples/natsserver"
+build_example "examples/natsclient"
 # leave build directory
 cd ..
