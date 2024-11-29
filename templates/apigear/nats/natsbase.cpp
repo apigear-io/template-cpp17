@@ -98,7 +98,7 @@ void Base::subscribe(const std::string& topic, SimpleOnMessageCallback callback,
 {
     m_subscriptions_pool->enqueue([this, topic, callback, subscribe_callback]()
         {
-            auto id = m_cwrapper->subscribe(topic, callback);
+            auto id = m_cwrapper->subscribe(topic, callback, [topic, subscribe_callback](int64_t id) {subscribe_callback(id, topic, false); });
             subscribe_callback(id, topic, id != InvalidSubscriptionId);
         });
 }
@@ -107,7 +107,7 @@ void Base::subscribeForRequest(const std::string& topic, MessageCallbackWithResu
 {
     m_subscriptions_pool->enqueue([this, topic, callback, subscribe_callback]()
         {
-            auto id = m_cwrapper->subscribeWithResponse(topic, callback);
+            auto id = m_cwrapper->subscribeWithResponse(topic, callback, [topic, subscribe_callback](int64_t id) {subscribe_callback(id, topic, false); });
             subscribe_callback(id, topic, id != InvalidSubscriptionId);
         });
 }
