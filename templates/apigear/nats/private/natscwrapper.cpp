@@ -259,7 +259,7 @@ void CWrapper::handleSubscriptionError(uint64_t connection_id, int64_t subscript
     
 }
 
-int64_t CWrapper::subscribe(const std::string& topic, SimpleOnMessageCallback callback)
+int64_t CWrapper::subscribe(const std::string& topic, SimpleOnMessageCallback callback, SubscriptionClosedCallback onSubscriptionClosedCallback)
 {
     AG_LOG_DEBUG("nats client: subscribe " + topic);
     // store callback
@@ -289,7 +289,7 @@ int64_t CWrapper::subscribe(const std::string& topic, SimpleOnMessageCallback ca
     storedCallback->id = sub_id;
     // This callback removes all resources, the nats library states that after unsubscribe call there might be still message to serve
     // Nats library guarantees that after SetOnCompleteCB there will be no more calls for message handler for this subscription and resources can be safely cleaned up.
-    cleanSubscriptionResourcesContext* cleanCtx= new cleanSubscriptionResourcesContext{ sub_id, shared_from_this(), [this](uint64_t id) {cleanSubscription(id); } };
+    cleanSubscriptionResourcesContext* cleanCtx= new cleanSubscriptionResourcesContext{ sub_id, shared_from_this(), [this, onSubscriptionClosedCallback](uint64_t id) {onSubscriptionClosedCallback(id), cleanSubscription(id); } };
 
     status = natsSubscription_SetOnCompleteCB(subscription_ptr.get(), &removeSubscriptionResources, cleanCtx);
     if (status != NATS_OK) {
@@ -300,7 +300,7 @@ int64_t CWrapper::subscribe(const std::string& topic, SimpleOnMessageCallback ca
     return sub_id;
 }
 
-int64_t CWrapper::subscribeWithResponse(const std::string& topic, MessageCallbackWithResult callback)
+int64_t CWrapper::subscribeWithResponse(const std::string& topic, MessageCallbackWithResult callback, SubscriptionClosedCallback onSubscriptionClosedCallback)
 {
     AG_LOG_DEBUG("nats client: subscribe " + topic);
     std::unique_lock<std::mutex> lockCallback(m_requestCallbacksMutex);
@@ -327,7 +327,7 @@ int64_t CWrapper::subscribeWithResponse(const std::string& topic, MessageCallbac
     storedCallback->id = sub_id;
     // This callback removes all resources, the nats library states that after unsubscribe call there might be still message to serve
     // Nats library guarantees that after SetOnCompleteCB there will be no more calls for message handler for this subscription and resources can be safely cleaned up.
-    cleanSubscriptionResourcesContext* cleanCtx = new cleanSubscriptionResourcesContext{ sub_id, shared_from_this(), [this](uint64_t id) {cleanSubscription(id); } };
+    cleanSubscriptionResourcesContext* cleanCtx = new cleanSubscriptionResourcesContext{ sub_id, shared_from_this(), [this, onSubscriptionClosedCallback](uint64_t id) {onSubscriptionClosedCallback(id), cleanSubscription(id); } };
 
     status = natsSubscription_SetOnCompleteCB(subscription_ptr.get(), &removeSubscriptionResources, cleanCtx);
     if (status != NATS_OK) {
@@ -346,13 +346,13 @@ void CWrapper::unsubscribe(int64_t id)
     auto found = m_subscriptions.find(id);
     if (found == m_subscriptions.end())
     {
-        // May happen if unsubscribe after connection gets disconnected, the disconnect request removes the subscriptions.
+        // May happen if unsubscribe during connection disconnecting, the disconnect request removes the subscriptions.
         return;
     }
     lock.unlock();
     auto status = natsSubscription_Unsubscribe(found->second.get());
-    if (status != NATS_OK) {
-        AG_LOG_WARNING("Failed to unsubscribe " + std::to_string(id));
+    if (status != NATS_OK && status != NATS_CONNECTION_CLOSED) {
+        AG_LOG_WARNING("Failed to unsubscribe " + std::to_string(id)+ " status " + std::to_string(status));
         cleanSubscription(id);
     };
 }
