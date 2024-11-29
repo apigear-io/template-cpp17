@@ -15,9 +15,14 @@
 using namespace {{ Camel .System.Name }}::{{ Camel .Module.Name }};
 using namespace {{ Camel .System.Name }}::{{ Camel .Module.Name }}::Nats;
 
+namespace{
+const uint32_t  expectedSingalsSubscriptions = {{len (.Interface.Signals)}};
+const uint32_t  expectedPropertiesSubscriptions = {{len (.Interface.Properties)}};
+constexpr uint32_t expectedSubscriptionsCount = expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
+}
 
 {{$class}}::{{$class}}(std::shared_ptr<ApiGear::Nats::Client> client)
-    :BaseAdapter(client)
+    :BaseAdapter(client, expectedSubscriptionsCount)
     , m_client(client)
     , m_publisher(std::make_unique<{{$pub_class}}>())
 {
