@@ -42,8 +42,8 @@ public:
 
     void connect(const std::string& address, std::function<void(void)> connectionStateChangedCallback);
     void disconnect();
-    int64_t subscribe(const std::string& topic, SimpleOnMessageCallback callback);
-    int64_t subscribeWithResponse(const std::string& topic, MessageCallbackWithResult callback);
+    int64_t subscribe(const std::string& topic, SimpleOnMessageCallback callback, SubscriptionClosedCallback onSubscriptionClosedCallback);
+    int64_t subscribeWithResponse(const std::string& topic, MessageCallbackWithResult callback, SubscriptionClosedCallback onSubscriptionClosedCallback);
     void unsubscribe(int64_t id);
     void publish(const std::string& topic, const std::string& payload);
     std::string request(const std::string& topic, const std::string& payload);
