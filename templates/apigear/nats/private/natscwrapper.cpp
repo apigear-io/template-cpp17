@@ -269,7 +269,7 @@ int64_t CWrapper::subscribe(const std::string& topic, SimpleOnMessageCallback ca
     lockCallback.unlock();
     // nats library prepares a subscription which later will be stored, it is this class responsibility to free the resources.
     natsSubscription* tmp;
-    auto status = natsConnection_Subscribe(&tmp, m_connection.get(), topic.c_str(), onMsg, storedCallback.get());//TODO it was not allcated it cannot be taken
+    auto status = natsConnection_Subscribe(&tmp, m_connection.get(), topic.c_str(), onMsg, storedCallback.get());
 
     if (status != NATS_OK) {
         auto log = "Failed to subscribe " + topic + " Status " + std::to_string(static_cast<int>(status));
