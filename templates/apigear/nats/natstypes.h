@@ -3,6 +3,7 @@
 #include "natscommon.h"
 #include "nlohmann/json.hpp"
 #include <functional>
+#include <string>
 
 namespace ApiGear {
 namespace Nats {
@@ -29,6 +30,7 @@ namespace Nats {
 
 	typedef std::function<void(bool connectionStatus)> OnConnectionStatusChangedCallBackFunction;
 	typedef std::function<void(const std::string& args)> SimpleOnMessageCallback;
+	typedef std::function<void(const uint64_t)> SubscriptionClosedCallback;
 	struct SimpleMessageCallbackContext
 	{
 		SimpleOnMessageCallback function;
