@@ -3,9 +3,10 @@
 
 using namespace ApiGear::Nats;
 
-BaseAdapter::BaseAdapter(std::shared_ptr<Base> client)
+BaseAdapter::BaseAdapter(std::shared_ptr<Base> client, uint32_t expectedSubscriptionsCount)
     : m_client(client)
     , m_isAlive(std::make_shared<bool>(true))
+    , m_expectedSubscriptionsCount(expectedSubscriptionsCount)
 {
 }
 
@@ -143,21 +144,25 @@ void BaseAdapter::onSubscribed(int64_t id, const std::string& topic, bool is_sub
         {
             m_subscribedTopics[topic] = SubscriptionInfo(ApiGear::Nats::SubscriptionStatus::subscribed, id);
         }
+        bool isReady = _is_ready();
+        lock.unlock();
+        if (isReady)
+        {
+            _is_readyChanges.publishChange(true);
+        }
     }
     else
     {
+        if (id == ApiGear::Nats::Base::InvalidSubscriptionId)
+        {
+            AG_LOG_ERROR("failed to unsubscribe " + topic);
+        }
         if (subscription != m_subscribedTopics.end())
         {
             subscription->second.status = ApiGear::Nats::SubscriptionStatus::unsubscribed;
+            subscription->second.id = ApiGear::Nats::Base::InvalidSubscriptionId;
         }
-        AG_LOG_ERROR("failed to subscribe " + topic);
     }
-    lock.unlock();
-    if (_is_ready())
-    {
-        _is_readyChanges.publishChange(true);
-    }
-
 }
 
 unsigned long BaseAdapter::_subscribeForIsReady(std::function<void(bool)> sub_function)
@@ -177,5 +182,6 @@ bool BaseAdapter::_is_ready() const
         [this](const auto& element) {return element.second.status != ApiGear::Nats::SubscriptionStatus::subscribed; })
         != m_subscribedTopics.end();
     return m_client->isConnected() &&
+        m_expectedSubscriptionsCount == m_subscribedTopics.size() &&
         !still_not_all_subscribed;
 }
