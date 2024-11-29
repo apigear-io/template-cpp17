@@ -13,8 +13,21 @@
 using namespace {{ Camel .System.Name }}::{{ Camel .Module.Name }};
 using namespace {{ Camel .System.Name }}::{{ Camel .Module.Name }}::Nats;
 
+{{- $expectedSubscriptionCount := len (.Interface.Properties) }}
+{{- range .Interface.Properties }}
+{{- if .IsReadOnly }}
+{{- $expectedSubscriptionCount =  len (slice (printf "%*s" $expectedSubscriptionCount "") 1)  }}
+{{- end }}
+{{- end }}
+
+namespace{
+const uint32_t  expectedMethodSubscriptions = {{len (.Interface.Operations)}};
+const uint32_t  expectedPropertiesSubscriptions = {{$expectedSubscriptionCount}};
+constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+}
+
 {{$class}}::{{$class}}(std::shared_ptr<{{$interfaceClass}}> impl, std::shared_ptr<ApiGear::Nats::Service> service)
-    :BaseAdapter(service)
+    :BaseAdapter(service, expectedSubscriptionsCount)
     , m_impl(impl)
     , m_service(service)
 {
@@ -34,7 +47,6 @@ void {{$class}}::onConnected()
     {{- if not .IsReadOnly }}
     subscribeTopic("{{$.Module.Name}}.{{$interfaceName}}.set.{{.Name}}", [this](const auto& value){ onSet{{Camel .Name}}(value); });
     {{- end }}
-    subscribeRequest("{{$.Module.Name}}.{{$interfaceName}}.get.{{.Name}}", [this](const auto& /*value*/){ return nlohmann::json{m_impl->get{{Camel .Name}}()}.dump();});
     {{- end }}
     {{- range .Interface.Operations }}
     subscribeRequest("{{$.Module.Name}}.{{$interface}}.rpc.{{.Name}}", [this](const auto& args){  return onInvoke{{ Camel .Name }}(args); });
