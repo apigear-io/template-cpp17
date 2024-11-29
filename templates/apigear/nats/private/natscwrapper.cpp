@@ -211,6 +211,7 @@ void CWrapper::connect(const std::string& address, std::function<void(void)> con
 
 void CWrapper::disconnect()
 {
+    natsConnection_Flush(m_connection.get());
     natsConnection_Close(m_connection.get());
 }
 
