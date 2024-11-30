@@ -31,9 +31,26 @@ constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + ex
     , m_impl(impl)
     , m_service(service)
 {
-    BaseAdapter::init([this](){onConnected();});
     m_impl->_getPublisher().subscribeToAllChanges(*this);
 }
+
+void {{$class}}::init()
+{
+    BaseAdapter::init([this](){onConnected();});
+}
+
+std::shared_ptr<{{$class}}> {{$class}}::create(std::shared_ptr<{{$interfaceClass}}> impl, std::shared_ptr<ApiGear::Nats::Service> service)
+{
+    std::shared_ptr<{{$class}}> obj(new {{$class}}(impl, service));
+    obj->init();
+    return obj;
+}
+
+std::shared_ptr<ApiGear::Nats::BaseAdapter> {{$class}}::getSharedFromDerrived()
+{
+    return shared_from_this();
+}
+
 
 {{$class}}::~{{$class}}()
 {
