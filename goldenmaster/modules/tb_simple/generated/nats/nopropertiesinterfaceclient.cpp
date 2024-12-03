@@ -8,8 +8,8 @@ using namespace Test::TbSimple::Nats;
 
 namespace{
 const uint32_t  expectedSingalsSubscriptions = 2;
-const uint32_t  expectedPropertiesSubscriptions = 0;
-constexpr uint32_t expectedSubscriptionsCount = expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
+constexpr uint32_t expectedSubscriptionsCount =
+ expectedSingalsSubscriptions;
 }
 
 std::shared_ptr<NoPropertiesInterfaceClient> NoPropertiesInterfaceClient::create(std::shared_ptr<ApiGear::Nats::Client> client)
@@ -120,8 +120,8 @@ void NoPropertiesInterfaceClient::onSigBool(const std::string& args) const
     m_publisher->publishSigBool(json_args[0].get<bool>());
 }
 
-
 INoPropertiesInterfacePublisher& NoPropertiesInterfaceClient::_getPublisher() const
 {
     return *m_publisher;
 }
+

@@ -6,9 +6,11 @@ using namespace Test::TbSimple;
 using namespace Test::TbSimple::Nats;
 
 namespace{
-const uint32_t  expectedMethodSubscriptions = 0;
+namespace{
 const uint32_t  expectedPropertiesSubscriptions = 2;
-constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+const uint32_t  initRespSubscription = 1;
+constexpr uint32_t expectedSubscriptionsCount = expectedPropertiesSubscriptions + initRespSubscription;
+}
 }
 
 NoOperationsInterfaceService::NoOperationsInterfaceService(std::shared_ptr<INoOperationsInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
@@ -47,6 +49,28 @@ void NoOperationsInterfaceService::onConnected()
 {
     subscribeTopic("tb.simple.NoOperationsInterface.set.propBool", [this](const auto& value){ onSetPropBool(value); });
     subscribeTopic("tb.simple.NoOperationsInterface.set.propInt", [this](const auto& value){ onSetPropInt(value); });
+    const std::string initRequestTopic = "tb.simple.NoOperationsInterface.init";
+    subscribeTopic(initRequestTopic, [this, initRequestTopic](const auto& value){
+        nlohmann::json json_id = nlohmann::json::parse(value);
+        if (json_id.empty())
+        {
+            return;
+        }
+        auto clientId = json_id.get<uint64_t>();
+        auto topic = initRequestTopic + ".resp." +  std::to_string(clientId);
+        auto properties = getState();
+        m_service->publish(topic, properties.dump());
+        }
+    );
+    m_service->publish("tb.simple.NoOperationsInterface.prop.propBool", nlohmann::json(m_impl->getPropBool()).dump());
+    m_service->publish("tb.simple.NoOperationsInterface.prop.propInt", nlohmann::json(m_impl->getPropInt()).dump());
+}
+nlohmann::json NoOperationsInterfaceService::getState()
+{
+    return nlohmann::json::object({
+        { "propBool", m_impl->getPropBool() },
+        { "propInt", m_impl->getPropInt() }
+    });
 }
 void NoOperationsInterfaceService::onSetPropBool(const std::string& args) const
 {

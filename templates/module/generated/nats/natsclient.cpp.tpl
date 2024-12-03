@@ -16,9 +16,24 @@ using namespace {{ Camel .System.Name }}::{{ Camel .Module.Name }};
 using namespace {{ Camel .System.Name }}::{{ Camel .Module.Name }}::Nats;
 
 namespace{
+{{- if len (.Interface.Signals) }}
 const uint32_t  expectedSingalsSubscriptions = {{len (.Interface.Signals)}};
+{{- end }}
+{{- if len (.Interface.Properties) }}
 const uint32_t  expectedPropertiesSubscriptions = {{len (.Interface.Properties)}};
-constexpr uint32_t expectedSubscriptionsCount = expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
+const uint32_t  initSubscription = 1;
+{{- end }}
+{{- if or (len (.Interface.Signals)) ( len (.Interface.Properties) ) }}
+constexpr uint32_t expectedSubscriptionsCount = 
+{{- if len (.Interface.Signals) }}
+ expectedSingalsSubscriptions
+{{- if len (.Interface.Properties) }} + {{- end}}
+{{- end}}
+{{- if len (.Interface.Properties) }} expectedPropertiesSubscriptions + initSubscription {{- end}};
+{{- else }}
+// no singals and properties to subscribe for
+constexpr uint32_t expectedSubscriptionsCount = 0;
+{{- end }}
 }
 
 std::shared_ptr<{{$class}}> {{$class}}::create(std::shared_ptr<ApiGear::Nats::Client> client)
@@ -48,9 +63,24 @@ void {{$class}}::init()
 
 void {{$class}}::onConnected()
 {
+    {{- if len (.Interface.Properties) }}
+    auto clientId = m_client->getId();
+    m_requestInitCallId = _subscribeForIsReady([this, clientId](bool is_subscribed)
+    { 
+        if(!is_subscribed)
+        {
+            return;
+        }
+        const std::string initRequestTopic = "{{$.Module.Name}}.{{$interfaceName}}.init";
+        m_client->publish(initRequestTopic, nlohmann::json(clientId).dump());
+        _unsubscribeFromIsReady(m_requestInitCallId);
+    });
+    const std::string initTopic =  "{{$.Module.Name}}.{{$interfaceName}}.init.resp." + std::to_string(clientId);
+    subscribeTopic(initTopic,[this](const auto& value){ handleInit(value); });
+    {{- end }}
     {{- range .Interface.Properties }}
     const std::string topic_{{.Name}} =  "{{$.Module.Name}}.{{$interfaceName}}.prop.{{.Name}}";
-    subscribeTopic(topic_{{.Name}}, [this](const auto& value){ set{{Camel .Name}}Local(value); });
+    subscribeTopic(topic_{{.Name}}, [this](const auto& value){ set{{Camel .Name}}Local(_to_{{Camel .Name}}(value)); });
 
     {{- end }}
     {{- range .Interface.Signals }}
@@ -75,15 +105,19 @@ void {{$class}}::set{{Camel $name}}({{cppParam "" $property}})
 }
 {{- end }}
 
-void {{$class}}::set{{Camel $name}}Local(const std::string& args)
+{{cppType "" $property}} {{$class}}::_to_{{Camel $name}}(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property {{cppVar $property}}");
+        return {{cppDefault "" $property}};
     }
+   return fields.get<{{cppType "" $property}}>();
+}
 
-    {{ cppParam "" $property }} = fields.get<{{cppType "" $property}}>();
+void {{$class}}::set{{Camel $name}}Local({{ cppParam "" $property }})
+{
     if (m_data.m_{{$name}} != {{$name}}) {
         m_data.m_{{$name}} = {{$name}};
         m_publisher->publish{{Camel $name}}Changed({{$name}});
@@ -95,6 +129,21 @@ void {{$class}}::set{{Camel $name}}Local(const std::string& args)
     return m_data.m_{{$name}};
 }
 
+{{- end }}
+
+{{- if len (.Interface.Properties) }}
+void {{$class}}::handleInit(const std::string& value)
+{
+    nlohmann::json fields = nlohmann::json::parse(value);
+{{- range .Interface.Properties}}
+{{- $property := . }}
+{{- if not .IsReadOnly }}
+    if(fields.contains("{{$property.Name}}")) {
+        set{{Camel $property.Name}}Local(fields["{{$property.Name}}"].get<{{cppType "" $property}}>());
+    }
+{{- end }}
+{{- end }}
+}
 {{- end }}
 
 {{- range .Interface.Operations}}
@@ -167,8 +216,8 @@ void {{$class}}::on{{Camel $signal.Name }}(const std::string& args) const
 }
 {{- end }}
 
-
 {{$pub_interface}}& {{$class}}::_getPublisher() const
 {
     return *m_publisher;
 }
+

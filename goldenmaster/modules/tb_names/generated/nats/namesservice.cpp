@@ -6,9 +6,13 @@ using namespace Test::TbNames;
 using namespace Test::TbNames::Nats;
 
 namespace{
+namespace{
 const uint32_t  expectedMethodSubscriptions = 2;
 const uint32_t  expectedPropertiesSubscriptions = 3;
-constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+const uint32_t  initRespSubscription = 1;
+constexpr uint32_t expectedSubscriptionsCount =
+ expectedMethodSubscriptions + expectedPropertiesSubscriptions + initRespSubscription;
+}
 }
 
 Nam_EsService::Nam_EsService(std::shared_ptr<INamEs> impl, std::shared_ptr<ApiGear::Nats::Service> service)
@@ -50,6 +54,30 @@ void Nam_EsService::onConnected()
     subscribeTopic("tb.names.NamEs.set.Some_Poperty2", [this](const auto& value){ onSetSomePoperty2(value); });
     subscribeRequest("tb.names.Nam_Es.rpc.SOME_FUNCTION", [this](const auto& args){  return onInvokeSomeFunction(args); });
     subscribeRequest("tb.names.Nam_Es.rpc.Some_Function2", [this](const auto& args){  return onInvokeSomeFunction2(args); });
+    const std::string initRequestTopic = "tb.names.NamEs.init";
+    subscribeTopic(initRequestTopic, [this, initRequestTopic](const auto& value){
+        nlohmann::json json_id = nlohmann::json::parse(value);
+        if (json_id.empty())
+        {
+            return;
+        }
+        auto clientId = json_id.get<uint64_t>();
+        auto topic = initRequestTopic + ".resp." +  std::to_string(clientId);
+        auto properties = getState();
+        m_service->publish(topic, properties.dump());
+        }
+    );
+    m_service->publish("tb.names.NamEs.prop.Switch", nlohmann::json(m_impl->getSwitch()).dump());
+    m_service->publish("tb.names.NamEs.prop.SOME_PROPERTY", nlohmann::json(m_impl->getSomeProperty()).dump());
+    m_service->publish("tb.names.NamEs.prop.Some_Poperty2", nlohmann::json(m_impl->getSomePoperty2()).dump());
+}
+nlohmann::json Nam_EsService::getState()
+{
+    return nlohmann::json::object({
+        { "Switch", m_impl->getSwitch() },
+        { "SOME_PROPERTY", m_impl->getSomeProperty() },
+        { "Some_Poperty2", m_impl->getSomePoperty2() }
+    });
 }
 void Nam_EsService::onSetSwitch(const std::string& args) const
 {
