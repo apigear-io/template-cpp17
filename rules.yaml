@@ -155,6 +155,24 @@ features:
           target: "{{lower (camel .Interface.Name)}}client.h"
         - source: "module/generated/mqtt/mqttclient.cpp.tpl"
           target: "{{lower (camel .Interface.Name)}}client.cpp"
+  - name: nats
+    requires:
+      - api
+      - core
+      - apigear
+    scopes:
+    - match: module
+      documents:
+        - source: "apigear/nats/CMakeLists.txt"
+          raw: true
+        - source: "apigear/nats/natstypes.h"
+          raw: true
+        - source: "apigear/nats/private/natscwrapper.cpp"
+          raw: true
+        - source: "apigear/nats/private/natscwrapper.h"
+          raw: true
+        - source: "apigear/nats/natscommon.h"
+          raw: true
   - name: apigear
     scopes:
     - match: system
