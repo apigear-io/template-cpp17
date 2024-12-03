@@ -73,6 +73,8 @@ void CWrapper::connect(std::string address, std::function<void(void)> connection
     if (status != NATS_OK) { /*handle*/ return; }
     status = natsOptions_SetClosedCB(opts, conntectionHandler, &m_connectionStateChangedCallback);
     if (status != NATS_OK) { /*handle*/ return; }
+    status = natsOptions_UseGlobalMessageDelivery(opts, true);
+    if (status != NATS_OK) { /*handle*/ return; }
     status = natsConnection_Connect(&m_connection, opts);
     if (status != NATS_OK) { /*TODO HANDLE */ return;}
     natsOptions_Destroy(opts); // use custom deleter with this function call? and similar for all other nats *
