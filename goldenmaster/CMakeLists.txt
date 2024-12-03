@@ -85,6 +85,7 @@ if(NOT apigear_FOUND)
   set(APIGEAR_BUILD_WITH_MONITOR ON CACHE INTERNAL "Enable support for monitoring")
   set(APIGEAR_BUILD_WITH_OLINK ON CACHE INTERNAL "Enable support for OLink")
   set(APIGEAR_BUILD_WITH_MQTT ON CACHE INTERNAL "Enable support for MQTT")
+  set(APIGEAR_BUILD_WITH_NATS ON CACHE INTERNAL "Enable support for Nats")
   FetchContent_Declare(apigear
     SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/apigear"
     OVERRIDE_FIND_PACKAGE
