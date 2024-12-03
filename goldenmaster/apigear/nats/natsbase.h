@@ -17,9 +17,9 @@ public:
     virtual ~Base() = default;
 
     void connect(const std::string& address);
-    void subscribe(std::string topic);
-    void unsubscribe(std::string topic);
-    void publish(std::string topic, std::string payload);
+    int64_t subscribe(const std::string& topic, SimpleOnMessageCallback callback);
+    void unsubscribe(int64_t id);
+    void publish(const std::string& topic, const std::string& payload);
 
     uint32_t addOnConnectedCallback(OnConnectionStatusChangedCallBackFunction callback);
     void removeOnConnectedCallback(uint32_t id);

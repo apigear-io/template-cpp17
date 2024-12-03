@@ -18,6 +18,20 @@ namespace Nats {
 		draining_pubs
 	};
 
+	enum class SubscriptionStatus
+	{
+		unsubscribed,
+		subscribing,
+		subscribed,
+		to_unsubscribe,
+		unsubscribing
+	};
+
 	typedef std::function<void(bool connectionStatus)> OnConnectionStatusChangedCallBackFunction;
+	typedef std::function<void(const std::string& args)> SimpleOnMessageCallback;
+	struct SimpleMessageCallbackContext
+	{
+		SimpleOnMessageCallback function;
+	};
 } // namespace Nats
 } // namespace ApiGear
