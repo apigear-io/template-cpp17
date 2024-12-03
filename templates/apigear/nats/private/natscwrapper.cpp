@@ -8,8 +8,8 @@ using namespace ApiGear::Nats;
 
 static void onMsg(natsConnection* /*connection*/, natsSubscription* /*subscription*/, natsMsg* msg, void* /*closure*/)
 {
+    std::cout<<"Received msg: "<<  natsMsg_GetSubject(msg) << " : "<<natsMsg_GetData(msg) << std::endl;
 
-    std::cout<<"Received msg: "<<  natsMsg_GetSubject(msg) << " : "<<natsMsg_GetData(msg); 
     natsMsg_Destroy(msg);
 }
 
