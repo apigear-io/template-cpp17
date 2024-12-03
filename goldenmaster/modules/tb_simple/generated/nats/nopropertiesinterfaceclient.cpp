@@ -8,8 +8,10 @@ using namespace Test::TbSimple::Nats;
 
 namespace{
 const uint32_t  expectedSingalsSubscriptions = 2;
-const uint32_t  expectedPropertiesSubscriptions = 0;
-constexpr uint32_t expectedSubscriptionsCount = expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
+const uint32_t  initSubscription = 1;
+const uint32_t  serviceAvailableSubscription = 1;
+constexpr uint32_t expectedSubscriptionsCount = serviceAvailableSubscription  + initSubscription
+ + expectedSingalsSubscriptions;
 }
 
 std::shared_ptr<NoPropertiesInterfaceClient> NoPropertiesInterfaceClient::create(std::shared_ptr<ApiGear::Nats::Client> client)
@@ -39,10 +41,35 @@ NoPropertiesInterfaceClient::~NoPropertiesInterfaceClient() = default;
 
 void NoPropertiesInterfaceClient::onConnected()
 {
+    auto clientId = m_client->getId();
+    m_requestInitCallId = _subscribeForIsReady([this, clientId](bool is_subscribed)
+    { 
+        if(!is_subscribed)
+        {
+            return;
+        }
+        const std::string initRequestTopic = "tb.simple.NoPropertiesInterface.init";
+        m_client->publish(initRequestTopic, nlohmann::json(clientId).dump());
+        _unsubscribeFromIsReady(m_requestInitCallId);
+    });
+    subscribeTopic("tb.simple.NoPropertiesInterface.service.available",[this](const auto& value){ handleAvailable(value); });
+    const std::string initTopic =  "tb.simple.NoPropertiesInterface.init.resp." + std::to_string(clientId);
+    subscribeTopic(initTopic,[this](const auto& value){ handleInit(value); });
     const std::string topic_sigVoid = "tb.simple.NoPropertiesInterface.sig.sigVoid";
     subscribeTopic(topic_sigVoid, [this](const auto& args){onSigVoid(args);});
     const std::string topic_sigBool = "tb.simple.NoPropertiesInterface.sig.sigBool";
     subscribeTopic(topic_sigBool, [this](const auto& args){onSigBool(args);});
+}
+void NoPropertiesInterfaceClient::handleAvailable(const std::string& /*empty payload*/)
+{
+    auto clientId = m_client->getId();
+    const std::string initRequestTopic = "tb.simple.NoPropertiesInterface.init";
+    m_client->publish(initRequestTopic, nlohmann::json(clientId).dump());
+}
+
+void NoPropertiesInterfaceClient::handleInit(const std::string& value)
+{
+    nlohmann::json fields = nlohmann::json::parse(value);
 }
 
 void NoPropertiesInterfaceClient::funcVoid()
@@ -120,8 +147,8 @@ void NoPropertiesInterfaceClient::onSigBool(const std::string& args) const
     m_publisher->publishSigBool(json_args[0].get<bool>());
 }
 
-
 INoPropertiesInterfacePublisher& NoPropertiesInterfaceClient::_getPublisher() const
 {
     return *m_publisher;
 }
+

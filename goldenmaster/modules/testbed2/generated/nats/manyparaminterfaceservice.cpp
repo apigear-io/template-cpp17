@@ -8,7 +8,8 @@ using namespace Test::Testbed2::Nats;
 namespace{
 const uint32_t  expectedMethodSubscriptions = 4;
 const uint32_t  expectedPropertiesSubscriptions = 4;
-constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+const uint32_t  initRespSubscription = 1;
+constexpr uint32_t expectedSubscriptionsCount = initRespSubscription + expectedMethodSubscriptions + expectedPropertiesSubscriptions;
 }
 
 ManyParamInterfaceService::ManyParamInterfaceService(std::shared_ptr<IManyParamInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
@@ -45,6 +46,16 @@ ManyParamInterfaceService::~ManyParamInterfaceService()
 
 void ManyParamInterfaceService::onConnected()
 {
+    m_onReadySubscriptionId= _subscribeForIsReady([this](bool is_subscribed)
+    { 
+        if(!is_subscribed)
+        {
+            return;
+        }
+        const std::string topic = "testbed2.ManyParamInterface.service.available";
+        m_service->publish(topic, "");
+        _unsubscribeFromIsReady(m_onReadySubscriptionId);
+    });
     subscribeTopic("testbed2.ManyParamInterface.set.prop1", [this](const auto& value){ onSetProp1(value); });
     subscribeTopic("testbed2.ManyParamInterface.set.prop2", [this](const auto& value){ onSetProp2(value); });
     subscribeTopic("testbed2.ManyParamInterface.set.prop3", [this](const auto& value){ onSetProp3(value); });
@@ -53,6 +64,31 @@ void ManyParamInterfaceService::onConnected()
     subscribeRequest("testbed2.ManyParamInterface.rpc.func2", [this](const auto& args){  return onInvokeFunc2(args); });
     subscribeRequest("testbed2.ManyParamInterface.rpc.func3", [this](const auto& args){  return onInvokeFunc3(args); });
     subscribeRequest("testbed2.ManyParamInterface.rpc.func4", [this](const auto& args){  return onInvokeFunc4(args); });
+
+    const std::string initRequestTopic = "testbed2.ManyParamInterface.init";
+    subscribeTopic(initRequestTopic, [this, initRequestTopic](const auto& value){
+        nlohmann::json json_id = nlohmann::json::parse(value);
+        if (json_id.empty())
+        {
+            return;
+        }
+        auto clientId = json_id.get<uint64_t>();
+        auto topic = initRequestTopic + ".resp." +  std::to_string(clientId);
+        auto properties = getState();
+        m_service->publish(topic, properties.dump());
+        }
+    );
+
+}
+
+nlohmann::json ManyParamInterfaceService::getState()
+{
+    return nlohmann::json::object({
+        { "prop1", m_impl->getProp1() },
+        { "prop2", m_impl->getProp2() },
+        { "prop3", m_impl->getProp3() },
+        { "prop4", m_impl->getProp4() }
+    });
 }
 void ManyParamInterfaceService::onSetProp1(const std::string& args) const
 {

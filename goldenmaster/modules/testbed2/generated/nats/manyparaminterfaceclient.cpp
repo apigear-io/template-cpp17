@@ -9,7 +9,10 @@ using namespace Test::Testbed2::Nats;
 namespace{
 const uint32_t  expectedSingalsSubscriptions = 4;
 const uint32_t  expectedPropertiesSubscriptions = 4;
-constexpr uint32_t expectedSubscriptionsCount = expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
+const uint32_t  initSubscription = 1;
+const uint32_t  serviceAvailableSubscription = 1;
+constexpr uint32_t expectedSubscriptionsCount = serviceAvailableSubscription  + initSubscription
+ + expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
 }
 
 std::shared_ptr<ManyParamInterfaceClient> ManyParamInterfaceClient::create(std::shared_ptr<ApiGear::Nats::Client> client)
@@ -39,14 +42,28 @@ ManyParamInterfaceClient::~ManyParamInterfaceClient() = default;
 
 void ManyParamInterfaceClient::onConnected()
 {
+    auto clientId = m_client->getId();
+    m_requestInitCallId = _subscribeForIsReady([this, clientId](bool is_subscribed)
+    { 
+        if(!is_subscribed)
+        {
+            return;
+        }
+        const std::string initRequestTopic = "testbed2.ManyParamInterface.init";
+        m_client->publish(initRequestTopic, nlohmann::json(clientId).dump());
+        _unsubscribeFromIsReady(m_requestInitCallId);
+    });
+    subscribeTopic("testbed2.ManyParamInterface.service.available",[this](const auto& value){ handleAvailable(value); });
+    const std::string initTopic =  "testbed2.ManyParamInterface.init.resp." + std::to_string(clientId);
+    subscribeTopic(initTopic,[this](const auto& value){ handleInit(value); });
     const std::string topic_prop1 =  "testbed2.ManyParamInterface.prop.prop1";
-    subscribeTopic(topic_prop1, [this](const auto& value){ setProp1Local(value); });
+    subscribeTopic(topic_prop1, [this](const auto& value){ setProp1Local(_to_Prop1(value)); });
     const std::string topic_prop2 =  "testbed2.ManyParamInterface.prop.prop2";
-    subscribeTopic(topic_prop2, [this](const auto& value){ setProp2Local(value); });
+    subscribeTopic(topic_prop2, [this](const auto& value){ setProp2Local(_to_Prop2(value)); });
     const std::string topic_prop3 =  "testbed2.ManyParamInterface.prop.prop3";
-    subscribeTopic(topic_prop3, [this](const auto& value){ setProp3Local(value); });
+    subscribeTopic(topic_prop3, [this](const auto& value){ setProp3Local(_to_Prop3(value)); });
     const std::string topic_prop4 =  "testbed2.ManyParamInterface.prop.prop4";
-    subscribeTopic(topic_prop4, [this](const auto& value){ setProp4Local(value); });
+    subscribeTopic(topic_prop4, [this](const auto& value){ setProp4Local(_to_Prop4(value)); });
     const std::string topic_sig1 = "testbed2.ManyParamInterface.sig.sig1";
     subscribeTopic(topic_sig1, [this](const auto& args){onSig1(args);});
     const std::string topic_sig2 = "testbed2.ManyParamInterface.sig.sig2";
@@ -55,6 +72,12 @@ void ManyParamInterfaceClient::onConnected()
     subscribeTopic(topic_sig3, [this](const auto& args){onSig3(args);});
     const std::string topic_sig4 = "testbed2.ManyParamInterface.sig.sig4";
     subscribeTopic(topic_sig4, [this](const auto& args){onSig4(args);});
+}
+void ManyParamInterfaceClient::handleAvailable(const std::string& /*empty payload*/)
+{
+    auto clientId = m_client->getId();
+    const std::string initRequestTopic = "testbed2.ManyParamInterface.init";
+    m_client->publish(initRequestTopic, nlohmann::json(clientId).dump());
 }
 
 void ManyParamInterfaceClient::setProp1(int prop1)
@@ -66,15 +89,19 @@ void ManyParamInterfaceClient::setProp1(int prop1)
     m_client->publish(topic, nlohmann::json(prop1).dump());
 }
 
-void ManyParamInterfaceClient::setProp1Local(const std::string& args)
+int ManyParamInterfaceClient::_to_Prop1(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property prop1");
+        return 0;
     }
+   return fields.get<int>();
+}
 
-    int prop1 = fields.get<int>();
+void ManyParamInterfaceClient::setProp1Local(int prop1)
+{
     if (m_data.m_prop1 != prop1) {
         m_data.m_prop1 = prop1;
         m_publisher->publishProp1Changed(prop1);
@@ -95,15 +122,19 @@ void ManyParamInterfaceClient::setProp2(int prop2)
     m_client->publish(topic, nlohmann::json(prop2).dump());
 }
 
-void ManyParamInterfaceClient::setProp2Local(const std::string& args)
+int ManyParamInterfaceClient::_to_Prop2(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property prop2");
+        return 0;
     }
+   return fields.get<int>();
+}
 
-    int prop2 = fields.get<int>();
+void ManyParamInterfaceClient::setProp2Local(int prop2)
+{
     if (m_data.m_prop2 != prop2) {
         m_data.m_prop2 = prop2;
         m_publisher->publishProp2Changed(prop2);
@@ -124,15 +155,19 @@ void ManyParamInterfaceClient::setProp3(int prop3)
     m_client->publish(topic, nlohmann::json(prop3).dump());
 }
 
-void ManyParamInterfaceClient::setProp3Local(const std::string& args)
+int ManyParamInterfaceClient::_to_Prop3(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property prop3");
+        return 0;
     }
+   return fields.get<int>();
+}
 
-    int prop3 = fields.get<int>();
+void ManyParamInterfaceClient::setProp3Local(int prop3)
+{
     if (m_data.m_prop3 != prop3) {
         m_data.m_prop3 = prop3;
         m_publisher->publishProp3Changed(prop3);
@@ -153,15 +188,19 @@ void ManyParamInterfaceClient::setProp4(int prop4)
     m_client->publish(topic, nlohmann::json(prop4).dump());
 }
 
-void ManyParamInterfaceClient::setProp4Local(const std::string& args)
+int ManyParamInterfaceClient::_to_Prop4(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property prop4");
+        return 0;
     }
+   return fields.get<int>();
+}
 
-    int prop4 = fields.get<int>();
+void ManyParamInterfaceClient::setProp4Local(int prop4)
+{
     if (m_data.m_prop4 != prop4) {
         m_data.m_prop4 = prop4;
         m_publisher->publishProp4Changed(prop4);
@@ -171,6 +210,23 @@ void ManyParamInterfaceClient::setProp4Local(const std::string& args)
 int ManyParamInterfaceClient::getProp4() const
 {
     return m_data.m_prop4;
+}
+
+void ManyParamInterfaceClient::handleInit(const std::string& value)
+{
+    nlohmann::json fields = nlohmann::json::parse(value);
+    if(fields.contains("prop1")) {
+        setProp1Local(fields["prop1"].get<int>());
+    }
+    if(fields.contains("prop2")) {
+        setProp2Local(fields["prop2"].get<int>());
+    }
+    if(fields.contains("prop3")) {
+        setProp3Local(fields["prop3"].get<int>());
+    }
+    if(fields.contains("prop4")) {
+        setProp4Local(fields["prop4"].get<int>());
+    }
 }
 
 int ManyParamInterfaceClient::func1(int param1)
@@ -337,8 +393,8 @@ void ManyParamInterfaceClient::onSig4(const std::string& args) const
     m_publisher->publishSig4(json_args[0].get<int>(),json_args[1].get<int>(),json_args[2].get<int>(),json_args[3].get<int>());
 }
 
-
 IManyParamInterfacePublisher& ManyParamInterfaceClient::_getPublisher() const
 {
     return *m_publisher;
 }
+

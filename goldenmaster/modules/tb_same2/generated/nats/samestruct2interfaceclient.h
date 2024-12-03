@@ -32,12 +32,18 @@ public:
     ISameStruct2InterfacePublisher& _getPublisher() const override;
 private:
     std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
+    void handleAvailable(const std::string& payload);
+    void handleInit(const std::string& value);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
+    /// @param args contains the param of the type Struct2
+    Struct2 _to_Prop1(const std::string& args);
     /// @brief sets the value for the property Prop1 coming from the service
+    void setProp1Local(const Struct2& prop1);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type Struct2
-    void setProp1Local(const std::string& args);
+    Struct2 _to_Prop2(const std::string& args);
     /// @brief sets the value for the property Prop2 coming from the service
-    /// @param args contains the param of the type Struct2
-    void setProp2Local(const std::string& args);
+    void setProp2Local(const Struct2& prop2);
     /// @brief publishes the value for the signal Sig1 coming from the service
     /// @param args contains the param(s) of the type(s) const Struct1& param1
     void onSig1(const std::string& args) const;
@@ -46,10 +52,10 @@ private:
     void onSig2(const std::string& args) const;
     /** Local storage for properties values. */
     SameStruct2InterfaceData m_data;
+    int32_t m_requestInitCallId = 0;
     std::shared_ptr<ApiGear::Nats::Client> m_client;
     /** The publisher for SameStruct2Interface */
     std::unique_ptr<ISameStruct2InterfacePublisher> m_publisher;
-
     void onConnected();
 
 };

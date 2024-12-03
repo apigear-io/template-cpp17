@@ -8,7 +8,8 @@ using namespace Test::TbSimple::Nats;
 namespace{
 const uint32_t  expectedMethodSubscriptions = 8;
 const uint32_t  expectedPropertiesSubscriptions = 8;
-constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+const uint32_t  initRespSubscription = 1;
+constexpr uint32_t expectedSubscriptionsCount = initRespSubscription + expectedMethodSubscriptions + expectedPropertiesSubscriptions;
 }
 
 SimpleArrayInterfaceService::SimpleArrayInterfaceService(std::shared_ptr<ISimpleArrayInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
@@ -45,6 +46,16 @@ SimpleArrayInterfaceService::~SimpleArrayInterfaceService()
 
 void SimpleArrayInterfaceService::onConnected()
 {
+    m_onReadySubscriptionId= _subscribeForIsReady([this](bool is_subscribed)
+    { 
+        if(!is_subscribed)
+        {
+            return;
+        }
+        const std::string topic = "tb.simple.SimpleArrayInterface.service.available";
+        m_service->publish(topic, "");
+        _unsubscribeFromIsReady(m_onReadySubscriptionId);
+    });
     subscribeTopic("tb.simple.SimpleArrayInterface.set.propBool", [this](const auto& value){ onSetPropBool(value); });
     subscribeTopic("tb.simple.SimpleArrayInterface.set.propInt", [this](const auto& value){ onSetPropInt(value); });
     subscribeTopic("tb.simple.SimpleArrayInterface.set.propInt32", [this](const auto& value){ onSetPropInt32(value); });
@@ -61,6 +72,36 @@ void SimpleArrayInterfaceService::onConnected()
     subscribeRequest("tb.simple.SimpleArrayInterface.rpc.funcFloat32", [this](const auto& args){  return onInvokeFuncFloat32(args); });
     subscribeRequest("tb.simple.SimpleArrayInterface.rpc.funcFloat64", [this](const auto& args){  return onInvokeFuncFloat64(args); });
     subscribeRequest("tb.simple.SimpleArrayInterface.rpc.funcString", [this](const auto& args){  return onInvokeFuncString(args); });
+
+    const std::string initRequestTopic = "tb.simple.SimpleArrayInterface.init";
+    subscribeTopic(initRequestTopic, [this, initRequestTopic](const auto& value){
+        nlohmann::json json_id = nlohmann::json::parse(value);
+        if (json_id.empty())
+        {
+            return;
+        }
+        auto clientId = json_id.get<uint64_t>();
+        auto topic = initRequestTopic + ".resp." +  std::to_string(clientId);
+        auto properties = getState();
+        m_service->publish(topic, properties.dump());
+        }
+    );
+
+}
+
+nlohmann::json SimpleArrayInterfaceService::getState()
+{
+    return nlohmann::json::object({
+        { "propBool", m_impl->getPropBool() },
+        { "propInt", m_impl->getPropInt() },
+        { "propInt32", m_impl->getPropInt32() },
+        { "propInt64", m_impl->getPropInt64() },
+        { "propFloat", m_impl->getPropFloat() },
+        { "propFloat32", m_impl->getPropFloat32() },
+        { "propFloat64", m_impl->getPropFloat64() },
+        { "propString", m_impl->getPropString() },
+        { "propReadOnlyString", m_impl->getPropReadOnlyString() }
+    });
 }
 void SimpleArrayInterfaceService::onSetPropBool(const std::string& args) const
 {

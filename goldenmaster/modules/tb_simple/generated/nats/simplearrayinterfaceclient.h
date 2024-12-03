@@ -57,33 +57,53 @@ public:
     ISimpleArrayInterfacePublisher& _getPublisher() const override;
 private:
     std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
-    /// @brief sets the value for the property PropBool coming from the service
+    void handleAvailable(const std::string& payload);
+    void handleInit(const std::string& value);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type std::list<bool>
-    void setPropBoolLocal(const std::string& args);
-    /// @brief sets the value for the property PropInt coming from the service
+    std::list<bool> _to_PropBool(const std::string& args);
+    /// @brief sets the value for the property PropBool coming from the service
+    void setPropBoolLocal(const std::list<bool>& propBool);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type std::list<int>
-    void setPropIntLocal(const std::string& args);
-    /// @brief sets the value for the property PropInt32 coming from the service
+    std::list<int> _to_PropInt(const std::string& args);
+    /// @brief sets the value for the property PropInt coming from the service
+    void setPropIntLocal(const std::list<int>& propInt);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type std::list<int32_t>
-    void setPropInt32Local(const std::string& args);
-    /// @brief sets the value for the property PropInt64 coming from the service
+    std::list<int32_t> _to_PropInt32(const std::string& args);
+    /// @brief sets the value for the property PropInt32 coming from the service
+    void setPropInt32Local(const std::list<int32_t>& propInt32);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type std::list<int64_t>
-    void setPropInt64Local(const std::string& args);
+    std::list<int64_t> _to_PropInt64(const std::string& args);
+    /// @brief sets the value for the property PropInt64 coming from the service
+    void setPropInt64Local(const std::list<int64_t>& propInt64);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
+    /// @param args contains the param of the type std::list<float>
+    std::list<float> _to_PropFloat(const std::string& args);
     /// @brief sets the value for the property PropFloat coming from the service
+    void setPropFloatLocal(const std::list<float>& propFloat);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type std::list<float>
-    void setPropFloatLocal(const std::string& args);
+    std::list<float> _to_PropFloat32(const std::string& args);
     /// @brief sets the value for the property PropFloat32 coming from the service
-    /// @param args contains the param of the type std::list<float>
-    void setPropFloat32Local(const std::string& args);
-    /// @brief sets the value for the property PropFloat64 coming from the service
+    void setPropFloat32Local(const std::list<float>& propFloat32);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type std::list<double>
-    void setPropFloat64Local(const std::string& args);
-    /// @brief sets the value for the property PropString coming from the service
+    std::list<double> _to_PropFloat64(const std::string& args);
+    /// @brief sets the value for the property PropFloat64 coming from the service
+    void setPropFloat64Local(const std::list<double>& propFloat64);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type std::list<std::string>
-    void setPropStringLocal(const std::string& args);
-    /// @brief sets the value for the property PropReadOnlyString coming from the service
+    std::list<std::string> _to_PropString(const std::string& args);
+    /// @brief sets the value for the property PropString coming from the service
+    void setPropStringLocal(const std::list<std::string>& propString);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type std::string
-    void setPropReadOnlyStringLocal(const std::string& args);
+    std::string _to_PropReadOnlyString(const std::string& args);
+    /// @brief sets the value for the property PropReadOnlyString coming from the service
+    void setPropReadOnlyStringLocal(const std::string& propReadOnlyString);
     /// @brief publishes the value for the signal SigBool coming from the service
     /// @param args contains the param(s) of the type(s) const std::list<bool>& paramBool
     void onSigBool(const std::string& args) const;
@@ -110,10 +130,10 @@ private:
     void onSigString(const std::string& args) const;
     /** Local storage for properties values. */
     SimpleArrayInterfaceData m_data;
+    int32_t m_requestInitCallId = 0;
     std::shared_ptr<ApiGear::Nats::Client> m_client;
     /** The publisher for SimpleArrayInterface */
     std::unique_ptr<ISimpleArrayInterfacePublisher> m_publisher;
-
     void onConnected();
 
 };
