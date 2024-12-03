@@ -18,8 +18,8 @@ public:
     virtual ~Base() = default;
 
     void connect(std::string address);
-    uint32_t subscribe(std::string topic);
-    void unsubscribe(std::string topic);//TODO uint32_t
+    int64_t subscribe(std::string topic, SimpleOnMessageCallback callback);
+    void unsubscribe(int64_t id);
     void publish(std::string topic, std::string payload);
 
     uint32_t addOnConnectedCallback(OnConnectionStatusChangedCallBackFunction callback);
@@ -31,6 +31,8 @@ private:
     std::map<uint32_t, OnConnectionStatusChangedCallBackFunction> m_onConnectionStatusChangedCallbacks;
 
     std::shared_ptr<class CWrapper> m_cwrapper;
+
+    std::map < uint64_t, SimpleMessageCallbackContext> callbacks;
 };
 } // namespace Nats
 } // namespace ApiGear

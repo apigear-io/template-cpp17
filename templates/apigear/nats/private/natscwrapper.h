@@ -7,6 +7,7 @@
 #include <mutex>
 #include <string>
 #include <atomic>
+#include <list>
 #include <thread>
 #include <condition_variable>
 #include "natstypes.h"
@@ -47,16 +48,15 @@ public:
 
     void connect(std::string address, std::function<void(void)> connectionStateChangedCallback);
 
-    void subscribe(std::string topic);
-    void unsubscribe(std::string topic);
+    int64_t subscribe(std::string topic, SimpleOnMessageCallback callback);
+    void unsubscribe(int64_t id);
     void publish(std::string topic, std::string payload);
     ConnectionStatus getStatus();
 
 private:
-
     natsConnection* m_connection = NULL;
-    natsSubscription* m_subscription = NULL;
-
+    std::list<std::shared_ptr<natsSubscription>> m_subscriptions;
+    std::mutex m_subscriptionsMutex;
     ConnectionCallbackContext m_connectionStateChangedCallback;
 
     explicit CWrapper();

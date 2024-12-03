@@ -1,6 +1,7 @@
 #include "natsclient.h"
 #include "private/natscwrapper.h"
 #include <random>
+#include <iostream>
 
 using namespace ApiGear::Nats;
 
@@ -27,6 +28,7 @@ Base::Base()
 
 void Base::connect(std::string address)
 {
+    // TODO this possibly should be called with std::async, 
     m_cwrapper->connect(address, [this]() {onConnectedChanged(); });
     auto status = m_cwrapper->getStatus();
     if (status == ConnectionStatus::connected)
@@ -72,14 +74,23 @@ bool Base::isConnected() const
     return m_cwrapper->getStatus() == ConnectionStatus::connected;
 }
 
-uint32_t Base::subscribe(std::string topic)
+// MAKE SURE TO UNSUBSCRIBE BEFORE THE onMsg gets invalidated
+// TODO probably should by void Base::subscribe(std::string topic,
+//                                              std::function<void>(uint64_t, std::string, bool?) onSubscribed,
+//                                              SimpleOnMessageCallback onMsg)
+// so subscribe will be called from different threads - and subscriptions stored in CWrapper have to be guarded with mutex
+int64_t Base::subscribe(std::string topic, SimpleOnMessageCallback callback)
 {
-    m_cwrapper->subscribe(topic);
-    return 0;
+    // TODO this possibly should be called with std::async, and have a callback to inform when subscription ready
+    return m_cwrapper->subscribe(topic, callback);
+
+    //This object needs to store the futures - but it needs a handle with which the future will be destroyed - does it have to be unique id?
+    //WHAT WITH THREAD POOL - will using it be thread safe , threads are chosen on subscribe?
 }
-void Base::unsubscribe(std::string topic)
+
+void Base::unsubscribe(int64_t id)
 {
-    m_cwrapper->unsubscribe(topic);
+    m_cwrapper->unsubscribe(id);
 }
 void Base::publish(std::string topic, std::string payload)
 {

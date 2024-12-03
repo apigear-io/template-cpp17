@@ -9,17 +9,16 @@ using namespace ApiGear::Nats;
 static void onMsg(natsConnection* /*connection*/, natsSubscription* /*subscription*/, natsMsg* msg, void* /*closure*/)
 {
     std::cout<<"Received msg: "<<  natsMsg_GetSubject(msg) << " : "<<natsMsg_GetData(msg) << std::endl;
-
     natsMsg_Destroy(msg);
 }
 
-static void asyncCb(natsConnection* /*connection*/, natsSubscription* subscription, natsStatus status, void* /*closure*/)
+static void onError(natsConnection* /*connection*/, natsSubscription* subscription, natsStatus status, void* /*closure*/)
 {
     if (status != NATS_OK)
     {
         //TODO LOG
     }
-    std::cout << "subscribed for subscription" << natsSubscription_GetSubject(subscription);
+    std::cout << "subscribed for subscription" << natsSubscription_GetSubject(subscription) << std::endl;
 }
 
 static void conntectionHandler(natsConnection* connection, void* context)
@@ -37,6 +36,12 @@ static void conntectionHandler(natsConnection* connection, void* context)
     }
 }
 
+static void alreadyUnsubscribed(void* /*closure*/)
+{
+    std::cout << "received message for already unsubscribed subscription - TODO pass name" << std::endl;
+}
+
+
 CWrapper::CWrapper()
 {
 
@@ -46,9 +51,19 @@ CWrapper::CWrapper()
 CWrapper::~CWrapper()
 {
     natsConnection_Close(m_connection);
-    natsSubscription_Destroy(m_subscription);
+    //natsSubscription_Destroy(m_subscription);
     natsConnection_Destroy(m_connection);
 }
+
+
+struct NatsSubscriptionDeleter
+{
+    void operator()(natsSubscription* s)
+    {
+        natsSubscription_Destroy(s);
+    }
+};
+
 
 void CWrapper::connect(std::string address, std::function<void(void)> connectionStateChangedCallback)
 {
@@ -61,7 +76,7 @@ void CWrapper::connect(std::string address, std::function<void(void)> connection
     //status = natsOptions_SetEventLoop(natsOptions * opts, void* loop, natsEvLoop_Attach 	attachCb, natsEvLoop_ReadAddRemove 	readCb, natsEvLoop_WriteAddRemove 	writeCb, natsEvLoop_Detach 	detachCb);
     if (status != NATS_OK) { /*handle*/ return; }
     //set error handler
-    status = natsOptions_SetErrorHandler(opts, asyncCb, NULL);
+    status = natsOptions_SetErrorHandler(opts, onError, NULL);
     if (status != NATS_OK) { /*handle*/ return; }
     status = natsOptions_SetURL(opts, address.c_str());
     if (status != NATS_OK) { /*handle*/ return; }
@@ -100,14 +115,29 @@ ConnectionStatus CWrapper::getStatus()
     return ConnectionStatus::disconnected;
 }
 
-void CWrapper::subscribe(std::string topic)
+//TODO pass eiher const& or string_view
+int64_t CWrapper::subscribe(std::string topic, SimpleOnMessageCallback callback)
 {
-    auto status = natsConnection_Subscribe(&m_subscription, m_connection, topic.c_str(), onMsg, NULL);
+    natsSubscription* tmp;
+    auto status = natsConnection_Subscribe(&tmp, m_connection, topic.c_str(), onMsg, NULL);
     if (status != NATS_OK) { /*TODO HANDLE */ };
+    std::shared_ptr< natsSubscription> sub(tmp, NatsSubscriptionDeleter());
+    m_subscriptions.push_back(sub);
+    auto subscription_ptr = m_subscriptions.back().get();
+    status = natsSubscription_SetOnCompleteCB(subscription_ptr, &alreadyUnsubscribed, NULL);
+    if (status != NATS_OK) { /*TODO HANDLE */ };
+    return natsSubscription_GetID(subscription_ptr);
 }
-void CWrapper::unsubscribe(std::string topic)
+
+//TODO id not string
+void CWrapper::unsubscribe(int64_t id)
 {
-    auto status = natsSubscription_Unsubscribe(m_subscription);
+    std::unique_lock<std::mutex> lock{ m_subscriptionsMutex };
+    auto found = find_if(m_subscriptions.begin(), m_subscriptions.end(), [id](auto element) { return  natsSubscription_GetID(element.get()) == id; });
+    lock.unlock();
+    auto status = natsSubscription_Unsubscribe((*found).get());
+    m_subscriptions.erase(found);
+    lock.unlock();
     if (status != NATS_OK) { /*TODO HANDLE */ };
 }
 
