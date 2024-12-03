@@ -9,7 +9,9 @@ using namespace Test::TbNames::Nats;
 namespace{
 const uint32_t  expectedSingalsSubscriptions = 2;
 const uint32_t  expectedPropertiesSubscriptions = 4;
-constexpr uint32_t expectedSubscriptionsCount = expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
+const uint32_t  initSubscription = 1;
+const uint32_t  serviceAvailableSubscription = 1;
+constexpr uint32_t expectedSubscriptionsCount = serviceAvailableSubscription + initSubscription + expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
 }
 
 std::shared_ptr<Nam_EsClient> Nam_EsClient::create(std::shared_ptr<ApiGear::Nats::Client> client)
@@ -39,18 +41,38 @@ Nam_EsClient::~Nam_EsClient() = default;
 
 void Nam_EsClient::onConnected()
 {
+    auto clientId = m_client->getId();
+    m_requestInitCallId = _subscribeForIsReady([this, clientId](bool is_subscribed)
+    { 
+        if(!is_subscribed)
+        {
+            return;
+        }
+        const std::string initRequestTopic = "tb.names.Nam_Es.init";
+        m_client->publish(initRequestTopic, nlohmann::json(clientId).dump());
+        _unsubscribeFromIsReady(m_requestInitCallId);
+    });
+    subscribeTopic("tb.names.Nam_Es.service.available",[this](const auto& value){ handleAvailable(value); });
+    const std::string initTopic =  "tb.names.Nam_Es.init.resp." + std::to_string(clientId);
+    subscribeTopic(initTopic,[this](const auto& value){ handleInit(value); });
     const std::string topic_Switch =  "tb.names.Nam_Es.prop.Switch";
-    subscribeTopic(topic_Switch, [this](const auto& value){ setSwitchLocal(value); });
+    subscribeTopic(topic_Switch, [this](const auto& value){ setSwitchLocal(_to_Switch(value)); });
     const std::string topic_SOME_PROPERTY =  "tb.names.Nam_Es.prop.SOME_PROPERTY";
-    subscribeTopic(topic_SOME_PROPERTY, [this](const auto& value){ setSomePropertyLocal(value); });
+    subscribeTopic(topic_SOME_PROPERTY, [this](const auto& value){ setSomePropertyLocal(_to_SomeProperty(value)); });
     const std::string topic_Some_Poperty2 =  "tb.names.Nam_Es.prop.Some_Poperty2";
-    subscribeTopic(topic_Some_Poperty2, [this](const auto& value){ setSomePoperty2Local(value); });
+    subscribeTopic(topic_Some_Poperty2, [this](const auto& value){ setSomePoperty2Local(_to_SomePoperty2(value)); });
     const std::string topic_enum_property =  "tb.names.Nam_Es.prop.enum_property";
-    subscribeTopic(topic_enum_property, [this](const auto& value){ setEnumPropertyLocal(value); });
+    subscribeTopic(topic_enum_property, [this](const auto& value){ setEnumPropertyLocal(_to_EnumProperty(value)); });
     const std::string topic_SOME_SIGNAL = "tb.names.Nam_Es.sig.SOME_SIGNAL";
     subscribeTopic(topic_SOME_SIGNAL, [this](const auto& args){onSomeSignal(args);});
     const std::string topic_Some_Signal2 = "tb.names.Nam_Es.sig.Some_Signal2";
     subscribeTopic(topic_Some_Signal2, [this](const auto& args){onSomeSignal2(args);});
+}
+void Nam_EsClient::handleAvailable(const std::string& /*empty payload*/)
+{
+    auto clientId = m_client->getId();
+    const std::string initRequestTopic = "tb.names.Nam_Es.init";
+    m_client->publish(initRequestTopic, nlohmann::json(clientId).dump());
 }
 
 void Nam_EsClient::setSwitch(bool Switch)
@@ -62,15 +84,19 @@ void Nam_EsClient::setSwitch(bool Switch)
     m_client->publish(topic, nlohmann::json(Switch).dump());
 }
 
-void Nam_EsClient::setSwitchLocal(const std::string& args)
+bool Nam_EsClient::_to_Switch(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property Switch");
+        return false;
     }
+   return fields.get<bool>();
+}
 
-    bool Switch = fields.get<bool>();
+void Nam_EsClient::setSwitchLocal(bool Switch)
+{
     if (m_data.m_Switch != Switch) {
         m_data.m_Switch = Switch;
         m_publisher->publishSwitchChanged(Switch);
@@ -91,15 +117,19 @@ void Nam_EsClient::setSomeProperty(int SOME_PROPERTY)
     m_client->publish(topic, nlohmann::json(SOME_PROPERTY).dump());
 }
 
-void Nam_EsClient::setSomePropertyLocal(const std::string& args)
+int Nam_EsClient::_to_SomeProperty(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property SOME_PROPERTY");
+        return 0;
     }
+   return fields.get<int>();
+}
 
-    int SOME_PROPERTY = fields.get<int>();
+void Nam_EsClient::setSomePropertyLocal(int SOME_PROPERTY)
+{
     if (m_data.m_SOME_PROPERTY != SOME_PROPERTY) {
         m_data.m_SOME_PROPERTY = SOME_PROPERTY;
         m_publisher->publishSomePropertyChanged(SOME_PROPERTY);
@@ -120,15 +150,19 @@ void Nam_EsClient::setSomePoperty2(int Some_Poperty2)
     m_client->publish(topic, nlohmann::json(Some_Poperty2).dump());
 }
 
-void Nam_EsClient::setSomePoperty2Local(const std::string& args)
+int Nam_EsClient::_to_SomePoperty2(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property Some_Poperty2");
+        return 0;
     }
+   return fields.get<int>();
+}
 
-    int Some_Poperty2 = fields.get<int>();
+void Nam_EsClient::setSomePoperty2Local(int Some_Poperty2)
+{
     if (m_data.m_Some_Poperty2 != Some_Poperty2) {
         m_data.m_Some_Poperty2 = Some_Poperty2;
         m_publisher->publishSomePoperty2Changed(Some_Poperty2);
@@ -149,15 +183,19 @@ void Nam_EsClient::setEnumProperty(Enum_With_Under_scoresEnum enum_property)
     m_client->publish(topic, nlohmann::json(enum_property).dump());
 }
 
-void Nam_EsClient::setEnumPropertyLocal(const std::string& args)
+Enum_With_Under_scoresEnum Nam_EsClient::_to_EnumProperty(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property enum_property");
+        return Enum_With_Under_scoresEnum::First_Value;
     }
+   return fields.get<Enum_With_Under_scoresEnum>();
+}
 
-    Enum_With_Under_scoresEnum enum_property = fields.get<Enum_With_Under_scoresEnum>();
+void Nam_EsClient::setEnumPropertyLocal(Enum_With_Under_scoresEnum enum_property)
+{
     if (m_data.m_enum_property != enum_property) {
         m_data.m_enum_property = enum_property;
         m_publisher->publishEnumPropertyChanged(enum_property);
@@ -167,6 +205,23 @@ void Nam_EsClient::setEnumPropertyLocal(const std::string& args)
 Enum_With_Under_scoresEnum Nam_EsClient::getEnumProperty() const
 {
     return m_data.m_enum_property;
+}
+
+void Nam_EsClient::handleInit(const std::string& value)
+{
+    nlohmann::json fields = nlohmann::json::parse(value);
+    if(fields.contains("Switch")) {
+        setSwitchLocal(fields["Switch"].get<bool>());
+    }
+    if(fields.contains("SOME_PROPERTY")) {
+        setSomePropertyLocal(fields["SOME_PROPERTY"].get<int>());
+    }
+    if(fields.contains("Some_Poperty2")) {
+        setSomePoperty2Local(fields["Some_Poperty2"].get<int>());
+    }
+    if(fields.contains("enum_property")) {
+        setEnumPropertyLocal(fields["enum_property"].get<Enum_With_Under_scoresEnum>());
+    }
 }
 
 void Nam_EsClient::sOME_FUNCTION(bool SOME_PARAM)
@@ -237,8 +292,8 @@ void Nam_EsClient::onSomeSignal2(const std::string& args) const
     m_publisher->publishSomeSignal2(json_args[0].get<bool>());
 }
 
-
 INamEsPublisher& Nam_EsClient::_getPublisher() const
 {
     return *m_publisher;
 }
+

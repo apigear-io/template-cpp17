@@ -28,12 +28,18 @@ public:
     INoOperationsInterfacePublisher& _getPublisher() const override;
 private:
     std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
-    /// @brief sets the value for the property PropBool coming from the service
+    void handleAvailable(const std::string& payload);
+    void handleInit(const std::string& value);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type bool
-    void setPropBoolLocal(const std::string& args);
-    /// @brief sets the value for the property PropInt coming from the service
+    bool _to_PropBool(const std::string& args);
+    /// @brief sets the value for the property PropBool coming from the service
+    void setPropBoolLocal(bool propBool);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type int
-    void setPropIntLocal(const std::string& args);
+    int _to_PropInt(const std::string& args);
+    /// @brief sets the value for the property PropInt coming from the service
+    void setPropIntLocal(int propInt);
     /// @brief publishes the value for the signal SigVoid coming from the service
     /// @param args contains the param(s) of the type(s) 
     void onSigVoid(const std::string& args) const;
@@ -42,10 +48,10 @@ private:
     void onSigBool(const std::string& args) const;
     /** Local storage for properties values. */
     NoOperationsInterfaceData m_data;
+    int32_t m_requestInitCallId = 0;
     std::shared_ptr<ApiGear::Nats::Client> m_client;
     /** The publisher for NoOperationsInterface */
     std::unique_ptr<INoOperationsInterfacePublisher> m_publisher;
-
     void onConnected();
 
 };

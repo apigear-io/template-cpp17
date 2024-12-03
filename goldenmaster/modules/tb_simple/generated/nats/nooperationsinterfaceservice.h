@@ -25,6 +25,7 @@ public:
 private:
     std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
     void onConnected();
+    nlohmann::json getState();
     void onPropBoolChanged(bool propBool) override;
     /// @brief requests to set the value for the property PropBool coming from the client
     /// @param fields contains the param of the type bool
@@ -36,6 +37,8 @@ private:
 
     std::shared_ptr<INoOperationsInterface> m_impl;
     std::shared_ptr<ApiGear::Nats::Service> m_service;
+
+    int32_t m_onReadySubscriptionId = 0;
 
 };
 } // namespace Nats

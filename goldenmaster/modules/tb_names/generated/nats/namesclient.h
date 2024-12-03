@@ -36,18 +36,28 @@ public:
     INamEsPublisher& _getPublisher() const override;
 private:
     std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
-    /// @brief sets the value for the property Switch coming from the service
+    void handleAvailable(const std::string& payload);
+    void handleInit(const std::string& value);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type bool
-    void setSwitchLocal(const std::string& args);
+    bool _to_Switch(const std::string& args);
+    /// @brief sets the value for the property Switch coming from the service
+    void setSwitchLocal(bool Switch);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
+    /// @param args contains the param of the type int
+    int _to_SomeProperty(const std::string& args);
     /// @brief sets the value for the property SomeProperty coming from the service
+    void setSomePropertyLocal(int SOME_PROPERTY);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type int
-    void setSomePropertyLocal(const std::string& args);
+    int _to_SomePoperty2(const std::string& args);
     /// @brief sets the value for the property SomePoperty2 coming from the service
-    /// @param args contains the param of the type int
-    void setSomePoperty2Local(const std::string& args);
-    /// @brief sets the value for the property EnumProperty coming from the service
+    void setSomePoperty2Local(int Some_Poperty2);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type Enum_With_Under_scoresEnum
-    void setEnumPropertyLocal(const std::string& args);
+    Enum_With_Under_scoresEnum _to_EnumProperty(const std::string& args);
+    /// @brief sets the value for the property EnumProperty coming from the service
+    void setEnumPropertyLocal(Enum_With_Under_scoresEnum enum_property);
     /// @brief publishes the value for the signal SomeSignal coming from the service
     /// @param args contains the param(s) of the type(s) bool SOME_PARAM
     void onSomeSignal(const std::string& args) const;
@@ -56,10 +66,10 @@ private:
     void onSomeSignal2(const std::string& args) const;
     /** Local storage for properties values. */
     NamEsData m_data;
+    int32_t m_requestInitCallId = 0;
     std::shared_ptr<ApiGear::Nats::Client> m_client;
     /** The publisher for NamEs */
     std::unique_ptr<INamEsPublisher> m_publisher;
-
     void onConnected();
 
 };

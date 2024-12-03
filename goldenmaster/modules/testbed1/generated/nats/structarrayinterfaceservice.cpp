@@ -8,7 +8,8 @@ using namespace Test::Testbed1::Nats;
 namespace{
 const uint32_t  expectedMethodSubscriptions = 4;
 const uint32_t  expectedPropertiesSubscriptions = 4;
-constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+const uint32_t  initRespSubscription = 1;
+constexpr uint32_t expectedSubscriptionsCount = initRespSubscription + expectedMethodSubscriptions + expectedPropertiesSubscriptions;
 }
 
 StructArrayInterfaceService::StructArrayInterfaceService(std::shared_ptr<IStructArrayInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
@@ -45,6 +46,16 @@ StructArrayInterfaceService::~StructArrayInterfaceService()
 
 void StructArrayInterfaceService::onConnected()
 {
+    m_onReadySubscriptionId= _subscribeForIsReady([this](bool is_subscribed)
+    { 
+        if(!is_subscribed)
+        {
+            return;
+        }
+        const std::string topic = "testbed1.StructArrayInterface.service.available";
+        m_service->publish(topic, "");
+        _unsubscribeFromIsReady(m_onReadySubscriptionId);
+    });
     subscribeTopic("testbed1.StructArrayInterface.set.propBool", [this](const auto& value){ onSetPropBool(value); });
     subscribeTopic("testbed1.StructArrayInterface.set.propInt", [this](const auto& value){ onSetPropInt(value); });
     subscribeTopic("testbed1.StructArrayInterface.set.propFloat", [this](const auto& value){ onSetPropFloat(value); });
@@ -53,6 +64,31 @@ void StructArrayInterfaceService::onConnected()
     subscribeRequest("testbed1.StructArrayInterface.rpc.funcInt", [this](const auto& args){  return onInvokeFuncInt(args); });
     subscribeRequest("testbed1.StructArrayInterface.rpc.funcFloat", [this](const auto& args){  return onInvokeFuncFloat(args); });
     subscribeRequest("testbed1.StructArrayInterface.rpc.funcString", [this](const auto& args){  return onInvokeFuncString(args); });
+
+    const std::string initRequestTopic = "testbed1.StructArrayInterface.init";
+    subscribeTopic(initRequestTopic, [this, initRequestTopic](const auto& value){
+        nlohmann::json json_id = nlohmann::json::parse(value);
+        if (json_id.empty())
+        {
+            return;
+        }
+        auto clientId = json_id.get<uint64_t>();
+        auto topic = initRequestTopic + ".resp." +  std::to_string(clientId);
+        auto properties = getState();
+        m_service->publish(topic, properties.dump());
+        }
+    );
+
+}
+
+nlohmann::json StructArrayInterfaceService::getState()
+{
+    return nlohmann::json::object({
+        { "propBool", m_impl->getPropBool() },
+        { "propInt", m_impl->getPropInt() },
+        { "propFloat", m_impl->getPropFloat() },
+        { "propString", m_impl->getPropString() }
+    });
 }
 void StructArrayInterfaceService::onSetPropBool(const std::string& args) const
 {

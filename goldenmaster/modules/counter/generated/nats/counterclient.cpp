@@ -11,7 +11,9 @@ using namespace Test::Counter::Nats;
 namespace{
 const uint32_t  expectedSingalsSubscriptions = 1;
 const uint32_t  expectedPropertiesSubscriptions = 4;
-constexpr uint32_t expectedSubscriptionsCount = expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
+const uint32_t  initSubscription = 1;
+const uint32_t  serviceAvailableSubscription = 1;
+constexpr uint32_t expectedSubscriptionsCount = serviceAvailableSubscription + initSubscription + expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
 }
 
 std::shared_ptr<CounterClient> CounterClient::create(std::shared_ptr<ApiGear::Nats::Client> client)
@@ -41,16 +43,36 @@ CounterClient::~CounterClient() = default;
 
 void CounterClient::onConnected()
 {
+    auto clientId = m_client->getId();
+    m_requestInitCallId = _subscribeForIsReady([this, clientId](bool is_subscribed)
+    { 
+        if(!is_subscribed)
+        {
+            return;
+        }
+        const std::string initRequestTopic = "counter.Counter.init";
+        m_client->publish(initRequestTopic, nlohmann::json(clientId).dump());
+        _unsubscribeFromIsReady(m_requestInitCallId);
+    });
+    subscribeTopic("counter.Counter.service.available",[this](const auto& value){ handleAvailable(value); });
+    const std::string initTopic =  "counter.Counter.init.resp." + std::to_string(clientId);
+    subscribeTopic(initTopic,[this](const auto& value){ handleInit(value); });
     const std::string topic_vector =  "counter.Counter.prop.vector";
-    subscribeTopic(topic_vector, [this](const auto& value){ setVectorLocal(value); });
+    subscribeTopic(topic_vector, [this](const auto& value){ setVectorLocal(_to_Vector(value)); });
     const std::string topic_extern_vector =  "counter.Counter.prop.extern_vector";
-    subscribeTopic(topic_extern_vector, [this](const auto& value){ setExternVectorLocal(value); });
+    subscribeTopic(topic_extern_vector, [this](const auto& value){ setExternVectorLocal(_to_ExternVector(value)); });
     const std::string topic_vectorArray =  "counter.Counter.prop.vectorArray";
-    subscribeTopic(topic_vectorArray, [this](const auto& value){ setVectorArrayLocal(value); });
+    subscribeTopic(topic_vectorArray, [this](const auto& value){ setVectorArrayLocal(_to_VectorArray(value)); });
     const std::string topic_extern_vectorArray =  "counter.Counter.prop.extern_vectorArray";
-    subscribeTopic(topic_extern_vectorArray, [this](const auto& value){ setExternVectorArrayLocal(value); });
+    subscribeTopic(topic_extern_vectorArray, [this](const auto& value){ setExternVectorArrayLocal(_to_ExternVectorArray(value)); });
     const std::string topic_valueChanged = "counter.Counter.sig.valueChanged";
     subscribeTopic(topic_valueChanged, [this](const auto& args){onValueChanged(args);});
+}
+void CounterClient::handleAvailable(const std::string& /*empty payload*/)
+{
+    auto clientId = m_client->getId();
+    const std::string initRequestTopic = "counter.Counter.init";
+    m_client->publish(initRequestTopic, nlohmann::json(clientId).dump());
 }
 
 void CounterClient::setVector(const Test::CustomTypes::Vector3D& vector)
@@ -62,15 +84,19 @@ void CounterClient::setVector(const Test::CustomTypes::Vector3D& vector)
     m_client->publish(topic, nlohmann::json(vector).dump());
 }
 
-void CounterClient::setVectorLocal(const std::string& args)
+Test::CustomTypes::Vector3D CounterClient::_to_Vector(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property vector");
+        return Test::CustomTypes::Vector3D();
     }
+   return fields.get<Test::CustomTypes::Vector3D>();
+}
 
-    const Test::CustomTypes::Vector3D& vector = fields.get<Test::CustomTypes::Vector3D>();
+void CounterClient::setVectorLocal(const Test::CustomTypes::Vector3D& vector)
+{
     if (m_data.m_vector != vector) {
         m_data.m_vector = vector;
         m_publisher->publishVectorChanged(vector);
@@ -91,15 +117,19 @@ void CounterClient::setExternVector(const Eigen::Vector3f& extern_vector)
     m_client->publish(topic, nlohmann::json(extern_vector).dump());
 }
 
-void CounterClient::setExternVectorLocal(const std::string& args)
+Eigen::Vector3f CounterClient::_to_ExternVector(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property extern_vector");
+        return Eigen::Vector3f(0,0,0);
     }
+   return fields.get<Eigen::Vector3f>();
+}
 
-    const Eigen::Vector3f& extern_vector = fields.get<Eigen::Vector3f>();
+void CounterClient::setExternVectorLocal(const Eigen::Vector3f& extern_vector)
+{
     if (m_data.m_extern_vector != extern_vector) {
         m_data.m_extern_vector = extern_vector;
         m_publisher->publishExternVectorChanged(extern_vector);
@@ -120,15 +150,19 @@ void CounterClient::setVectorArray(const std::list<Test::CustomTypes::Vector3D>&
     m_client->publish(topic, nlohmann::json(vectorArray).dump());
 }
 
-void CounterClient::setVectorArrayLocal(const std::string& args)
+std::list<Test::CustomTypes::Vector3D> CounterClient::_to_VectorArray(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property vectorArray");
+        return std::list<Test::CustomTypes::Vector3D>();
     }
+   return fields.get<std::list<Test::CustomTypes::Vector3D>>();
+}
 
-    const std::list<Test::CustomTypes::Vector3D>& vectorArray = fields.get<std::list<Test::CustomTypes::Vector3D>>();
+void CounterClient::setVectorArrayLocal(const std::list<Test::CustomTypes::Vector3D>& vectorArray)
+{
     if (m_data.m_vectorArray != vectorArray) {
         m_data.m_vectorArray = vectorArray;
         m_publisher->publishVectorArrayChanged(vectorArray);
@@ -149,15 +183,19 @@ void CounterClient::setExternVectorArray(const std::list<Eigen::Vector3f>& exter
     m_client->publish(topic, nlohmann::json(extern_vectorArray).dump());
 }
 
-void CounterClient::setExternVectorArrayLocal(const std::string& args)
+std::list<Eigen::Vector3f> CounterClient::_to_ExternVectorArray(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property extern_vectorArray");
+        return std::list<Eigen::Vector3f>();
     }
+   return fields.get<std::list<Eigen::Vector3f>>();
+}
 
-    const std::list<Eigen::Vector3f>& extern_vectorArray = fields.get<std::list<Eigen::Vector3f>>();
+void CounterClient::setExternVectorArrayLocal(const std::list<Eigen::Vector3f>& extern_vectorArray)
+{
     if (m_data.m_extern_vectorArray != extern_vectorArray) {
         m_data.m_extern_vectorArray = extern_vectorArray;
         m_publisher->publishExternVectorArrayChanged(extern_vectorArray);
@@ -167,6 +205,23 @@ void CounterClient::setExternVectorArrayLocal(const std::string& args)
 const std::list<Eigen::Vector3f>& CounterClient::getExternVectorArray() const
 {
     return m_data.m_extern_vectorArray;
+}
+
+void CounterClient::handleInit(const std::string& value)
+{
+    nlohmann::json fields = nlohmann::json::parse(value);
+    if(fields.contains("vector")) {
+        setVectorLocal(fields["vector"].get<Test::CustomTypes::Vector3D>());
+    }
+    if(fields.contains("extern_vector")) {
+        setExternVectorLocal(fields["extern_vector"].get<Eigen::Vector3f>());
+    }
+    if(fields.contains("vectorArray")) {
+        setVectorArrayLocal(fields["vectorArray"].get<std::list<Test::CustomTypes::Vector3D>>());
+    }
+    if(fields.contains("extern_vectorArray")) {
+        setExternVectorArrayLocal(fields["extern_vectorArray"].get<std::list<Eigen::Vector3f>>());
+    }
 }
 
 Eigen::Vector3f CounterClient::increment(const Eigen::Vector3f& vec)
@@ -318,8 +373,8 @@ void CounterClient::onValueChanged(const std::string& args) const
     m_publisher->publishValueChanged(json_args[0].get<Test::CustomTypes::Vector3D>(),json_args[1].get<Eigen::Vector3f>(),json_args[2].get<std::list<Test::CustomTypes::Vector3D>>(),json_args[3].get<std::list<Eigen::Vector3f>>());
 }
 
-
 ICounterPublisher& CounterClient::_getPublisher() const
 {
     return *m_publisher;
 }
+

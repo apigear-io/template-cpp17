@@ -24,10 +24,12 @@ public:
     IEmptyInterfacePublisher& _getPublisher() const override;
 private:
     std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
+    void handleAvailable(const std::string& payload);
+    void handleInit(const std::string& value);
+    int32_t m_requestInitCallId = 0;
     std::shared_ptr<ApiGear::Nats::Client> m_client;
     /** The publisher for EmptyInterface */
     std::unique_ptr<IEmptyInterfacePublisher> m_publisher;
-
     void onConnected();
 
 };

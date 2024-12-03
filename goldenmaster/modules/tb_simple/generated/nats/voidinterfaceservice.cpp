@@ -7,8 +7,8 @@ using namespace Test::TbSimple::Nats;
 
 namespace{
 const uint32_t  expectedMethodSubscriptions = 1;
-const uint32_t  expectedPropertiesSubscriptions = 0;
-constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+const uint32_t  initRespSubscription = 1;
+constexpr uint32_t expectedSubscriptionsCount = initRespSubscription + expectedMethodSubscriptions;
 }
 
 VoidInterfaceService::VoidInterfaceService(std::shared_ptr<IVoidInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
@@ -45,7 +45,38 @@ VoidInterfaceService::~VoidInterfaceService()
 
 void VoidInterfaceService::onConnected()
 {
+    m_onReadySubscriptionId= _subscribeForIsReady([this](bool is_subscribed)
+    { 
+        if(!is_subscribed)
+        {
+            return;
+        }
+        const std::string topic = "tb.simple.VoidInterface.service.available";
+        m_service->publish(topic, "");
+        _unsubscribeFromIsReady(m_onReadySubscriptionId);
+    });
     subscribeRequest("tb.simple.VoidInterface.rpc.funcVoid", [this](const auto& args){  return onInvokeFuncVoid(args); });
+
+    const std::string initRequestTopic = "tb.simple.VoidInterface.init";
+    subscribeTopic(initRequestTopic, [this, initRequestTopic](const auto& value){
+        nlohmann::json json_id = nlohmann::json::parse(value);
+        if (json_id.empty())
+        {
+            return;
+        }
+        auto clientId = json_id.get<uint64_t>();
+        auto topic = initRequestTopic + ".resp." +  std::to_string(clientId);
+        auto properties = getState();
+        m_service->publish(topic, properties.dump());
+        }
+    );
+
+}
+
+nlohmann::json VoidInterfaceService::getState()
+{
+    return nlohmann::json::object({
+    });
 }
 void VoidInterfaceService::onSigVoid()
 {
