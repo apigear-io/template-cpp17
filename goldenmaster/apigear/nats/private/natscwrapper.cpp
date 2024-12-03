@@ -207,6 +207,21 @@ void CWrapper::connect(const std::string& address, std::function<void(void)> con
     }
 }
 
+uint64_t CWrapper::getId() const
+{
+    uint64_t cid = 0;
+    if (m_connection)
+    {
+        auto status = natsConnection_GetClientID(m_connection.get(), &cid);
+        if (status == NATS_OK)
+        {
+            auto log = "Failed to get the id for client. Status " + std::to_string(static_cast<int>(status));
+        }
+    }
+    return cid;
+}
+
+
 void CWrapper::disconnect()
 {
     natsConnection_Flush(m_connection.get());
