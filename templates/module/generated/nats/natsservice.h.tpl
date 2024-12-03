@@ -34,6 +34,9 @@ public:
 private:
     std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
     void onConnected();
+{{- if len (.Interface.Properties) }}
+    nlohmann::json getState();
+{{- end }}
 {{- range .Interface.Properties}}
 {{- $property := . }}
     void on{{Camel $property.Name}}Changed({{cppParam "" $property}}) override;
