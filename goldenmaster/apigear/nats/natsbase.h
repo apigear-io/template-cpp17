@@ -7,6 +7,7 @@
 #include <mutex>
 #include <atomic>
 #include <future>
+#include "utilities/logger.h"
 
 namespace ApiGear {
 
@@ -28,6 +29,7 @@ public:
 
     // WARNING this is blocking call, but calling with std::async causes error with state NATS_NO_SERVER_SUPPORT 
     void connect(const std::string& address);
+    uint64_t getId() const;
     void disconnect();
     void subscribe(const std::string& topic, SimpleOnMessageCallback callback, std::function<void(int64_t, std::string, bool)> subscribe_callback);
     void subscribeForRequest(const std::string& topic, MessageCallbackWithResult callback, std::function<void(int64_t, std::string, bool)> subscribe_callback);
