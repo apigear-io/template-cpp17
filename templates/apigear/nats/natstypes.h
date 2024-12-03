@@ -19,5 +19,10 @@ namespace Nats {
 	};
 
 	typedef std::function<void(bool connectionStatus)> OnConnectionStatusChangedCallBackFunction;
+	typedef std::function<void(const std::string& args)> SimpleOnMessageCallback;
+	struct SimpleMessageCallbackContext
+	{
+		SimpleOnMessageCallback function;
+	};
 } // namespace Nats
 } // namespace ApiGear
