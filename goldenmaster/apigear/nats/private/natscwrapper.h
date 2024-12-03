@@ -2,11 +2,12 @@
 
 #include <queue>
 #include <set>
-#include <map>
+#include <unordered_map>
 #include <memory>
 #include <mutex>
 #include <string>
 #include <atomic>
+#include <list>
 #include <thread>
 #include <condition_variable>
 #include "natstypes.h"
@@ -39,12 +40,23 @@ public:
         return shared_from_this();
     }
 
-    void connect(std::string address, std::function<void(void)> connectionStateChangedCallback);
+    void connect(const std::string& address, std::function<void(void)> connectionStateChangedCallback);
 
-    void subscribe(std::string topic);
-    void unsubscribe(std::string topic);
-    void publish(std::string topic, std::string payload);
+    int64_t subscribe(const std::string& topic, SimpleOnMessageCallback callback);
+    void unsubscribe(int64_t id);
+    void publish(const std::string& topic, const std::string& payload);
+
     ConnectionStatus getStatus();
+
+    struct SimpleCallbackWrapper
+    {
+        SimpleCallbackWrapper(SimpleOnMessageCallback cb)
+            :callback(cb)
+        {
+        }
+        int64_t id = -1;
+        SimpleOnMessageCallback callback;
+    };
 
     struct ConnectionCallbackContext
     {
@@ -52,18 +64,33 @@ public:
         std::function<void(uint64_t)> function;
     };
 
-    void cleanSubscription(int64_t id);
+    struct SubscriptionErrorContext {
+        std::weak_ptr<CWrapper> object;
+        std::function<void(uint64_t, int64_t, int)> function;
+    };
+
 private:
     struct NatsConnectionDeleter
     {
         void operator()(natsConnection* connection);
     };
-    void handleConnectionStateChanged(uint64_t connection_id);
 
+    void handleConnectionStateChanged(uint64_t connection_id);
+    void cleanSubscription(int64_t id);
+    void handleSubscriptionError(uint64_t connection_id, int64_t subscription_id, int status);
+
+    std::mutex m_simpleCallbacksMutex;
+    // Container that does not reallocate.
+    std::list<std::shared_ptr<SimpleCallbackWrapper>> m_simpleCallbacks;
     std::unique_ptr<natsConnection, NatsConnectionDeleter> m_connection;
-    natsSubscription* m_subscription = nullptr;
+
+    // Container that does not reallocate.
+    std::unordered_map<uint64_t, std::shared_ptr<natsSubscription>> m_subscriptions;
+    std::mutex m_subscriptionsMutex;
+
     ConnectionCallbackContext m_connectionHandlerContext;
     std::function<void(void)> m_connectionStateChangedCallback;
+    SubscriptionErrorContext m_subscriptionErrorContext;
 
     explicit CWrapper();
 };
