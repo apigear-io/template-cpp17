@@ -20,9 +20,16 @@ using namespace {{ Camel .System.Name }}::{{ Camel .Module.Name }}::Nats;
 {{- end }}
 
 namespace{
+{{- if len (.Interface.Operations) }}
 const uint32_t  expectedMethodSubscriptions = {{len (.Interface.Operations)}};
+{{- end }}
+{{- if len (.Interface.Properties) }}
 const uint32_t  expectedPropertiesSubscriptions = {{$expectedPropSubscriptionCount}};
-constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+{{- end }}
+const uint32_t  initRespSubscription = 1;
+constexpr uint32_t expectedSubscriptionsCount = initRespSubscription
+{{- if len (.Interface.Operations) }} + expectedMethodSubscriptions {{- end }}
+{{- if len (.Interface.Properties) }} + expectedPropertiesSubscriptions  {{- end}};
 }
 
 {{$class}}::{{$class}}(std::shared_ptr<{{$interfaceClass}}> impl, std::shared_ptr<ApiGear::Nats::Service> service)
@@ -59,6 +66,16 @@ std::shared_ptr<ApiGear::Nats::BaseAdapter> {{$class}}::getSharedFromDerrived()
 
 void {{$class}}::onConnected()
 {
+    m_onReadySubscriptionId= _subscribeForIsReady([this](bool is_subscribed)
+    { 
+        if(!is_subscribed)
+        {
+            return;
+        }
+        const std::string topic = "{{$.Module.Name}}.{{$interface}}.service.available";
+        m_service->publish(topic, "");
+        _unsubscribeFromIsReady(m_onReadySubscriptionId);
+    });
     {{- range .Interface.Properties }}
     {{- if not .IsReadOnly }}
     subscribeTopic("{{$.Module.Name}}.{{$interface}}.set.{{.Name}}", [this](const auto& value){ onSet{{Camel .Name}}(value); });
@@ -67,6 +84,32 @@ void {{$class}}::onConnected()
     {{- range .Interface.Operations }}
     subscribeRequest("{{$.Module.Name}}.{{$interface}}.rpc.{{.Name}}", [this](const auto& args){  return onInvoke{{ Camel .Name }}(args); });
     {{- end }}
+
+    const std::string initRequestTopic = "{{$.Module.Name}}.{{$interface}}.init";
+    subscribeTopic(initRequestTopic, [this, initRequestTopic](const auto& value){
+        nlohmann::json json_id = nlohmann::json::parse(value);
+        if (json_id.empty())
+        {
+            return;
+        }
+        auto clientId = json_id.get<uint64_t>();
+        auto topic = initRequestTopic + ".resp." +  std::to_string(clientId);
+        auto properties = getState();
+        m_service->publish(topic, properties.dump());
+        }
+    );
+
+}
+
+nlohmann::json {{$class}}::getState()
+{
+    return nlohmann::json::object({
+{{- range $idx, $elem := .Interface.Properties}}
+{{- $property := . }}
+{{- if $idx }},{{- end }}
+        { "{{$property.Name}}", m_impl->get{{Camel $property.Name}}() }
+{{- end }}
+    });
 }
 
 {{- range .Interface.Properties}}

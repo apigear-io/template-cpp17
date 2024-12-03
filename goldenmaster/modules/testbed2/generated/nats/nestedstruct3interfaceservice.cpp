@@ -8,7 +8,8 @@ using namespace Test::Testbed2::Nats;
 namespace{
 const uint32_t  expectedMethodSubscriptions = 3;
 const uint32_t  expectedPropertiesSubscriptions = 3;
-constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+const uint32_t  initRespSubscription = 1;
+constexpr uint32_t expectedSubscriptionsCount = initRespSubscription + expectedMethodSubscriptions + expectedPropertiesSubscriptions;
 }
 
 NestedStruct3InterfaceService::NestedStruct3InterfaceService(std::shared_ptr<INestedStruct3Interface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
@@ -45,12 +46,46 @@ NestedStruct3InterfaceService::~NestedStruct3InterfaceService()
 
 void NestedStruct3InterfaceService::onConnected()
 {
+    m_onReadySubscriptionId= _subscribeForIsReady([this](bool is_subscribed)
+    { 
+        if(!is_subscribed)
+        {
+            return;
+        }
+        const std::string topic = "testbed2.NestedStruct3Interface.service.available";
+        m_service->publish(topic, "");
+        _unsubscribeFromIsReady(m_onReadySubscriptionId);
+    });
     subscribeTopic("testbed2.NestedStruct3Interface.set.prop1", [this](const auto& value){ onSetProp1(value); });
     subscribeTopic("testbed2.NestedStruct3Interface.set.prop2", [this](const auto& value){ onSetProp2(value); });
     subscribeTopic("testbed2.NestedStruct3Interface.set.prop3", [this](const auto& value){ onSetProp3(value); });
     subscribeRequest("testbed2.NestedStruct3Interface.rpc.func1", [this](const auto& args){  return onInvokeFunc1(args); });
     subscribeRequest("testbed2.NestedStruct3Interface.rpc.func2", [this](const auto& args){  return onInvokeFunc2(args); });
     subscribeRequest("testbed2.NestedStruct3Interface.rpc.func3", [this](const auto& args){  return onInvokeFunc3(args); });
+
+    const std::string initRequestTopic = "testbed2.NestedStruct3Interface.init";
+    subscribeTopic(initRequestTopic, [this, initRequestTopic](const auto& value){
+        nlohmann::json json_id = nlohmann::json::parse(value);
+        if (json_id.empty())
+        {
+            return;
+        }
+        auto clientId = json_id.get<uint64_t>();
+        auto topic = initRequestTopic + ".resp." +  std::to_string(clientId);
+        auto properties = getState();
+        m_service->publish(topic, properties.dump());
+        }
+    );
+
+}
+
+nlohmann::json NestedStruct3InterfaceService::getState()
+{
+    return nlohmann::json::object({
+        { "prop1", m_impl->getProp1() },
+        { "prop2", m_impl->getProp2() },
+        { "prop3", m_impl->getProp3() }
+    });
 }
 void NestedStruct3InterfaceService::onSetProp1(const std::string& args) const
 {

@@ -9,7 +9,10 @@ using namespace Test::Testbed1::Nats;
 namespace{
 const uint32_t  expectedSingalsSubscriptions = 4;
 const uint32_t  expectedPropertiesSubscriptions = 4;
-constexpr uint32_t expectedSubscriptionsCount = expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
+const uint32_t  initSubscription = 1;
+const uint32_t  serviceAvailableSubscription = 1;
+constexpr uint32_t expectedSubscriptionsCount = serviceAvailableSubscription  + initSubscription
+ + expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
 }
 
 std::shared_ptr<StructInterfaceClient> StructInterfaceClient::create(std::shared_ptr<ApiGear::Nats::Client> client)
@@ -39,14 +42,28 @@ StructInterfaceClient::~StructInterfaceClient() = default;
 
 void StructInterfaceClient::onConnected()
 {
+    auto clientId = m_client->getId();
+    m_requestInitCallId = _subscribeForIsReady([this, clientId](bool is_subscribed)
+    { 
+        if(!is_subscribed)
+        {
+            return;
+        }
+        const std::string initRequestTopic = "testbed1.StructInterface.init";
+        m_client->publish(initRequestTopic, nlohmann::json(clientId).dump());
+        _unsubscribeFromIsReady(m_requestInitCallId);
+    });
+    subscribeTopic("testbed1.StructInterface.service.available",[this](const auto& value){ handleAvailable(value); });
+    const std::string initTopic =  "testbed1.StructInterface.init.resp." + std::to_string(clientId);
+    subscribeTopic(initTopic,[this](const auto& value){ handleInit(value); });
     const std::string topic_propBool =  "testbed1.StructInterface.prop.propBool";
-    subscribeTopic(topic_propBool, [this](const auto& value){ setPropBoolLocal(value); });
+    subscribeTopic(topic_propBool, [this](const auto& value){ setPropBoolLocal(_to_PropBool(value)); });
     const std::string topic_propInt =  "testbed1.StructInterface.prop.propInt";
-    subscribeTopic(topic_propInt, [this](const auto& value){ setPropIntLocal(value); });
+    subscribeTopic(topic_propInt, [this](const auto& value){ setPropIntLocal(_to_PropInt(value)); });
     const std::string topic_propFloat =  "testbed1.StructInterface.prop.propFloat";
-    subscribeTopic(topic_propFloat, [this](const auto& value){ setPropFloatLocal(value); });
+    subscribeTopic(topic_propFloat, [this](const auto& value){ setPropFloatLocal(_to_PropFloat(value)); });
     const std::string topic_propString =  "testbed1.StructInterface.prop.propString";
-    subscribeTopic(topic_propString, [this](const auto& value){ setPropStringLocal(value); });
+    subscribeTopic(topic_propString, [this](const auto& value){ setPropStringLocal(_to_PropString(value)); });
     const std::string topic_sigBool = "testbed1.StructInterface.sig.sigBool";
     subscribeTopic(topic_sigBool, [this](const auto& args){onSigBool(args);});
     const std::string topic_sigInt = "testbed1.StructInterface.sig.sigInt";
@@ -55,6 +72,12 @@ void StructInterfaceClient::onConnected()
     subscribeTopic(topic_sigFloat, [this](const auto& args){onSigFloat(args);});
     const std::string topic_sigString = "testbed1.StructInterface.sig.sigString";
     subscribeTopic(topic_sigString, [this](const auto& args){onSigString(args);});
+}
+void StructInterfaceClient::handleAvailable(const std::string& /*empty payload*/)
+{
+    auto clientId = m_client->getId();
+    const std::string initRequestTopic = "testbed1.StructInterface.init";
+    m_client->publish(initRequestTopic, nlohmann::json(clientId).dump());
 }
 
 void StructInterfaceClient::setPropBool(const StructBool& propBool)
@@ -66,15 +89,19 @@ void StructInterfaceClient::setPropBool(const StructBool& propBool)
     m_client->publish(topic, nlohmann::json(propBool).dump());
 }
 
-void StructInterfaceClient::setPropBoolLocal(const std::string& args)
+StructBool StructInterfaceClient::_to_PropBool(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property propBool");
+        return StructBool();
     }
+   return fields.get<StructBool>();
+}
 
-    const StructBool& propBool = fields.get<StructBool>();
+void StructInterfaceClient::setPropBoolLocal(const StructBool& propBool)
+{
     if (m_data.m_propBool != propBool) {
         m_data.m_propBool = propBool;
         m_publisher->publishPropBoolChanged(propBool);
@@ -95,15 +122,19 @@ void StructInterfaceClient::setPropInt(const StructInt& propInt)
     m_client->publish(topic, nlohmann::json(propInt).dump());
 }
 
-void StructInterfaceClient::setPropIntLocal(const std::string& args)
+StructInt StructInterfaceClient::_to_PropInt(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property propInt");
+        return StructInt();
     }
+   return fields.get<StructInt>();
+}
 
-    const StructInt& propInt = fields.get<StructInt>();
+void StructInterfaceClient::setPropIntLocal(const StructInt& propInt)
+{
     if (m_data.m_propInt != propInt) {
         m_data.m_propInt = propInt;
         m_publisher->publishPropIntChanged(propInt);
@@ -124,15 +155,19 @@ void StructInterfaceClient::setPropFloat(const StructFloat& propFloat)
     m_client->publish(topic, nlohmann::json(propFloat).dump());
 }
 
-void StructInterfaceClient::setPropFloatLocal(const std::string& args)
+StructFloat StructInterfaceClient::_to_PropFloat(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property propFloat");
+        return StructFloat();
     }
+   return fields.get<StructFloat>();
+}
 
-    const StructFloat& propFloat = fields.get<StructFloat>();
+void StructInterfaceClient::setPropFloatLocal(const StructFloat& propFloat)
+{
     if (m_data.m_propFloat != propFloat) {
         m_data.m_propFloat = propFloat;
         m_publisher->publishPropFloatChanged(propFloat);
@@ -153,15 +188,19 @@ void StructInterfaceClient::setPropString(const StructString& propString)
     m_client->publish(topic, nlohmann::json(propString).dump());
 }
 
-void StructInterfaceClient::setPropStringLocal(const std::string& args)
+StructString StructInterfaceClient::_to_PropString(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property propString");
+        return StructString();
     }
+   return fields.get<StructString>();
+}
 
-    const StructString& propString = fields.get<StructString>();
+void StructInterfaceClient::setPropStringLocal(const StructString& propString)
+{
     if (m_data.m_propString != propString) {
         m_data.m_propString = propString;
         m_publisher->publishPropStringChanged(propString);
@@ -171,6 +210,23 @@ void StructInterfaceClient::setPropStringLocal(const std::string& args)
 const StructString& StructInterfaceClient::getPropString() const
 {
     return m_data.m_propString;
+}
+
+void StructInterfaceClient::handleInit(const std::string& value)
+{
+    nlohmann::json fields = nlohmann::json::parse(value);
+    if(fields.contains("propBool")) {
+        setPropBoolLocal(fields["propBool"].get<StructBool>());
+    }
+    if(fields.contains("propInt")) {
+        setPropIntLocal(fields["propInt"].get<StructInt>());
+    }
+    if(fields.contains("propFloat")) {
+        setPropFloatLocal(fields["propFloat"].get<StructFloat>());
+    }
+    if(fields.contains("propString")) {
+        setPropStringLocal(fields["propString"].get<StructString>());
+    }
 }
 
 StructBool StructInterfaceClient::funcBool(const StructBool& paramBool)
@@ -337,8 +393,8 @@ void StructInterfaceClient::onSigString(const std::string& args) const
     m_publisher->publishSigString(json_args[0].get<StructString>());
 }
 
-
 IStructInterfacePublisher& StructInterfaceClient::_getPublisher() const
 {
     return *m_publisher;
 }
+

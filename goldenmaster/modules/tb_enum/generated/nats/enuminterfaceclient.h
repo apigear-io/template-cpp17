@@ -40,18 +40,28 @@ public:
     IEnumInterfacePublisher& _getPublisher() const override;
 private:
     std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
-    /// @brief sets the value for the property Prop0 coming from the service
+    void handleAvailable(const std::string& payload);
+    void handleInit(const std::string& value);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type Enum0Enum
-    void setProp0Local(const std::string& args);
-    /// @brief sets the value for the property Prop1 coming from the service
+    Enum0Enum _to_Prop0(const std::string& args);
+    /// @brief sets the value for the property Prop0 coming from the service
+    void setProp0Local(Enum0Enum prop0);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type Enum1Enum
-    void setProp1Local(const std::string& args);
-    /// @brief sets the value for the property Prop2 coming from the service
+    Enum1Enum _to_Prop1(const std::string& args);
+    /// @brief sets the value for the property Prop1 coming from the service
+    void setProp1Local(Enum1Enum prop1);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type Enum2Enum
-    void setProp2Local(const std::string& args);
-    /// @brief sets the value for the property Prop3 coming from the service
+    Enum2Enum _to_Prop2(const std::string& args);
+    /// @brief sets the value for the property Prop2 coming from the service
+    void setProp2Local(Enum2Enum prop2);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type Enum3Enum
-    void setProp3Local(const std::string& args);
+    Enum3Enum _to_Prop3(const std::string& args);
+    /// @brief sets the value for the property Prop3 coming from the service
+    void setProp3Local(Enum3Enum prop3);
     /// @brief publishes the value for the signal Sig0 coming from the service
     /// @param args contains the param(s) of the type(s) Enum0Enum param0
     void onSig0(const std::string& args) const;
@@ -66,10 +76,10 @@ private:
     void onSig3(const std::string& args) const;
     /** Local storage for properties values. */
     EnumInterfaceData m_data;
+    int32_t m_requestInitCallId = 0;
     std::shared_ptr<ApiGear::Nats::Client> m_client;
     /** The publisher for EnumInterface */
     std::unique_ptr<IEnumInterfacePublisher> m_publisher;
-
     void onConnected();
 
 };

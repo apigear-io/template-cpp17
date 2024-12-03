@@ -21,6 +21,7 @@ public:
 private:
     std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
     void onConnected();
+    nlohmann::json getState();
     void onVectorChanged(const Test::CustomTypes::Vector3D& vector) override;
     /// @brief requests to set the value for the property Vector coming from the client
     /// @param fields contains the param of the type Test::CustomTypes::Vector3D
@@ -34,6 +35,8 @@ private:
 
     std::shared_ptr<ICounter> m_impl;
     std::shared_ptr<ApiGear::Nats::Service> m_service;
+
+    int32_t m_onReadySubscriptionId = 0;
 
 };
 } // namespace Nats

@@ -26,6 +26,7 @@ public:
 private:
     std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
     void onConnected();
+    nlohmann::json getState();
     void onProp1Changed(const NestedStruct1& prop1) override;
     /// @brief requests to set the value for the property Prop1 coming from the client
     /// @param fields contains the param of the type NestedStruct1
@@ -44,6 +45,8 @@ private:
 
     std::shared_ptr<INestedStruct3Interface> m_impl;
     std::shared_ptr<ApiGear::Nats::Service> m_service;
+
+    int32_t m_onReadySubscriptionId = 0;
 
 };
 } // namespace Nats

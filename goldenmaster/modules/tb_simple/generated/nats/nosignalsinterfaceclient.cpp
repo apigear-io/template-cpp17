@@ -7,9 +7,10 @@ using namespace Test::TbSimple;
 using namespace Test::TbSimple::Nats;
 
 namespace{
-const uint32_t  expectedSingalsSubscriptions = 0;
 const uint32_t  expectedPropertiesSubscriptions = 2;
-constexpr uint32_t expectedSubscriptionsCount = expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
+const uint32_t  initSubscription = 1;
+const uint32_t  serviceAvailableSubscription = 1;
+constexpr uint32_t expectedSubscriptionsCount = serviceAvailableSubscription  + initSubscription + expectedPropertiesSubscriptions;
 }
 
 std::shared_ptr<NoSignalsInterfaceClient> NoSignalsInterfaceClient::create(std::shared_ptr<ApiGear::Nats::Client> client)
@@ -39,10 +40,30 @@ NoSignalsInterfaceClient::~NoSignalsInterfaceClient() = default;
 
 void NoSignalsInterfaceClient::onConnected()
 {
+    auto clientId = m_client->getId();
+    m_requestInitCallId = _subscribeForIsReady([this, clientId](bool is_subscribed)
+    { 
+        if(!is_subscribed)
+        {
+            return;
+        }
+        const std::string initRequestTopic = "tb.simple.NoSignalsInterface.init";
+        m_client->publish(initRequestTopic, nlohmann::json(clientId).dump());
+        _unsubscribeFromIsReady(m_requestInitCallId);
+    });
+    subscribeTopic("tb.simple.NoSignalsInterface.service.available",[this](const auto& value){ handleAvailable(value); });
+    const std::string initTopic =  "tb.simple.NoSignalsInterface.init.resp." + std::to_string(clientId);
+    subscribeTopic(initTopic,[this](const auto& value){ handleInit(value); });
     const std::string topic_propBool =  "tb.simple.NoSignalsInterface.prop.propBool";
-    subscribeTopic(topic_propBool, [this](const auto& value){ setPropBoolLocal(value); });
+    subscribeTopic(topic_propBool, [this](const auto& value){ setPropBoolLocal(_to_PropBool(value)); });
     const std::string topic_propInt =  "tb.simple.NoSignalsInterface.prop.propInt";
-    subscribeTopic(topic_propInt, [this](const auto& value){ setPropIntLocal(value); });
+    subscribeTopic(topic_propInt, [this](const auto& value){ setPropIntLocal(_to_PropInt(value)); });
+}
+void NoSignalsInterfaceClient::handleAvailable(const std::string& /*empty payload*/)
+{
+    auto clientId = m_client->getId();
+    const std::string initRequestTopic = "tb.simple.NoSignalsInterface.init";
+    m_client->publish(initRequestTopic, nlohmann::json(clientId).dump());
 }
 
 void NoSignalsInterfaceClient::setPropBool(bool propBool)
@@ -54,15 +75,19 @@ void NoSignalsInterfaceClient::setPropBool(bool propBool)
     m_client->publish(topic, nlohmann::json(propBool).dump());
 }
 
-void NoSignalsInterfaceClient::setPropBoolLocal(const std::string& args)
+bool NoSignalsInterfaceClient::_to_PropBool(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property propBool");
+        return false;
     }
+   return fields.get<bool>();
+}
 
-    bool propBool = fields.get<bool>();
+void NoSignalsInterfaceClient::setPropBoolLocal(bool propBool)
+{
     if (m_data.m_propBool != propBool) {
         m_data.m_propBool = propBool;
         m_publisher->publishPropBoolChanged(propBool);
@@ -83,15 +108,19 @@ void NoSignalsInterfaceClient::setPropInt(int propInt)
     m_client->publish(topic, nlohmann::json(propInt).dump());
 }
 
-void NoSignalsInterfaceClient::setPropIntLocal(const std::string& args)
+int NoSignalsInterfaceClient::_to_PropInt(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property propInt");
+        return 0;
     }
+   return fields.get<int>();
+}
 
-    int propInt = fields.get<int>();
+void NoSignalsInterfaceClient::setPropIntLocal(int propInt)
+{
     if (m_data.m_propInt != propInt) {
         m_data.m_propInt = propInt;
         m_publisher->publishPropIntChanged(propInt);
@@ -101,6 +130,17 @@ void NoSignalsInterfaceClient::setPropIntLocal(const std::string& args)
 int NoSignalsInterfaceClient::getPropInt() const
 {
     return m_data.m_propInt;
+}
+
+void NoSignalsInterfaceClient::handleInit(const std::string& value)
+{
+    nlohmann::json fields = nlohmann::json::parse(value);
+    if(fields.contains("propBool")) {
+        setPropBoolLocal(fields["propBool"].get<bool>());
+    }
+    if(fields.contains("propInt")) {
+        setPropIntLocal(fields["propInt"].get<int>());
+    }
 }
 
 void NoSignalsInterfaceClient::funcVoid()
@@ -168,8 +208,8 @@ std::future<bool> NoSignalsInterfaceClient::funcBoolAsync(bool paramBool)
     });
 }
 
-
 INoSignalsInterfacePublisher& NoSignalsInterfaceClient::_getPublisher() const
 {
     return *m_publisher;
 }
+

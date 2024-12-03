@@ -8,7 +8,8 @@ using namespace Test::Testbed2::Nats;
 namespace{
 const uint32_t  expectedMethodSubscriptions = 2;
 const uint32_t  expectedPropertiesSubscriptions = 2;
-constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+const uint32_t  initRespSubscription = 1;
+constexpr uint32_t expectedSubscriptionsCount = initRespSubscription + expectedMethodSubscriptions + expectedPropertiesSubscriptions;
 }
 
 NestedStruct2InterfaceService::NestedStruct2InterfaceService(std::shared_ptr<INestedStruct2Interface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
@@ -45,10 +46,43 @@ NestedStruct2InterfaceService::~NestedStruct2InterfaceService()
 
 void NestedStruct2InterfaceService::onConnected()
 {
+    m_onReadySubscriptionId= _subscribeForIsReady([this](bool is_subscribed)
+    { 
+        if(!is_subscribed)
+        {
+            return;
+        }
+        const std::string topic = "testbed2.NestedStruct2Interface.service.available";
+        m_service->publish(topic, "");
+        _unsubscribeFromIsReady(m_onReadySubscriptionId);
+    });
     subscribeTopic("testbed2.NestedStruct2Interface.set.prop1", [this](const auto& value){ onSetProp1(value); });
     subscribeTopic("testbed2.NestedStruct2Interface.set.prop2", [this](const auto& value){ onSetProp2(value); });
     subscribeRequest("testbed2.NestedStruct2Interface.rpc.func1", [this](const auto& args){  return onInvokeFunc1(args); });
     subscribeRequest("testbed2.NestedStruct2Interface.rpc.func2", [this](const auto& args){  return onInvokeFunc2(args); });
+
+    const std::string initRequestTopic = "testbed2.NestedStruct2Interface.init";
+    subscribeTopic(initRequestTopic, [this, initRequestTopic](const auto& value){
+        nlohmann::json json_id = nlohmann::json::parse(value);
+        if (json_id.empty())
+        {
+            return;
+        }
+        auto clientId = json_id.get<uint64_t>();
+        auto topic = initRequestTopic + ".resp." +  std::to_string(clientId);
+        auto properties = getState();
+        m_service->publish(topic, properties.dump());
+        }
+    );
+
+}
+
+nlohmann::json NestedStruct2InterfaceService::getState()
+{
+    return nlohmann::json::object({
+        { "prop1", m_impl->getProp1() },
+        { "prop2", m_impl->getProp2() }
+    });
 }
 void NestedStruct2InterfaceService::onSetProp1(const std::string& args) const
 {
