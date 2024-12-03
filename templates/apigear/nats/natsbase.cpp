@@ -57,6 +57,11 @@ void Base::connect(const std::string& address)
     }
 }
 
+uint64_t Base::getId() const
+{
+    return m_cwrapper->getId();
+}
+
 void Base::disconnect()
 {
     m_cwrapper->disconnect();
