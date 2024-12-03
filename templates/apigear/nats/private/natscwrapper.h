@@ -34,22 +34,36 @@ public:
     };
     virtual ~CWrapper();
 
-
     std::shared_ptr<CWrapper> getPtr()
     {
         return shared_from_this();
     }
 
-    void connect(std::string address);
+    void connect(std::string address, std::function<void(void)> connectionStateChangedCallback);
 
     void subscribe(std::string topic);
     void unsubscribe(std::string topic);
     void publish(std::string topic, std::string payload);
     ConnectionStatus getStatus();
 
+    struct ConnectionCallbackContext
+    {
+        std::weak_ptr<CWrapper> object;
+        std::function<void(uint64_t)> function;
+    };
+
+    void cleanSubscription(int64_t id);
 private:
-    natsConnection* m_connection = NULL;
-    natsSubscription* m_subscription = NULL;
+    struct NatsConnectionDeleter
+    {
+        void operator()(natsConnection* connection);
+    };
+    void handleConnectionStateChanged(uint64_t connection_id);
+
+    std::unique_ptr<natsConnection, NatsConnectionDeleter> m_connection;
+    natsSubscription* m_subscription = nullptr;
+    ConnectionCallbackContext m_connectionHandlerContext;
+    std::function<void(void)> m_connectionStateChangedCallback;
 
     explicit CWrapper();
 };
