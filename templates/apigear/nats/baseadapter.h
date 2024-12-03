@@ -16,7 +16,6 @@ namespace Nats {
 class APIGEAR_NATS_EXPORT BaseAdapter
 {
 public:
-    explicit BaseAdapter(std::shared_ptr<Base> client, uint32_t expectedSubscriptionCount);
     virtual ~BaseAdapter();
 
     unsigned long _subscribeForIsReady(std::function<void(bool)> sub_function);
@@ -24,6 +23,8 @@ public:
     bool _is_ready() const;
 
 protected:
+    explicit BaseAdapter(std::shared_ptr<Base> client, uint32_t expectedSubscriptionCount);
+    virtual std::shared_ptr<BaseAdapter> getSharedFromDerrived() = 0;
     void subscribeTopic(const std::string& topic, SimpleOnMessageCallback callback);
     void subscribeRequest(const std::string& topic, MessageCallbackWithResult callback);
     void init(std::function<void(void)> onConnectedCallback);
@@ -53,7 +54,6 @@ private:
 
     std::mutex m_subscribedTopicsMutex;
     std::unordered_map<std::string, SubscriptionInfo> m_subscribedTopics;
-    std::shared_ptr<bool> m_isAlive;
     const uint32_t m_expectedSubscriptionsCount;
 
 };

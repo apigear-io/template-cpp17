@@ -5,7 +5,6 @@ using namespace ApiGear::Nats;
 
 BaseAdapter::BaseAdapter(std::shared_ptr<Base> client, uint32_t expectedSubscriptionsCount)
     : m_client(client)
-    , m_isAlive(std::make_shared<bool>(true))
     , m_expectedSubscriptionsCount(expectedSubscriptionsCount)
 {
 }
@@ -18,13 +17,14 @@ void BaseAdapter::init(std::function<void(void)> onConnectedCallback)
     }
     else
     {
-        std::weak_ptr<bool> isAlive(m_isAlive);
-        m_client->addOnConnectedCallback([this, onConnectedCallback, isAlive](bool is_connected)
+        std::weak_ptr<BaseAdapter> weak_adapter = getSharedFromDerrived();
+        m_client->addOnConnectedCallback([this, onConnectedCallback, weak_adapter](bool is_connected)
             {
-                if (!isAlive.lock())
+                if (weak_adapter.expired())
                 {
                     return;
                 }
+                auto locked = weak_adapter.lock();
                 if (is_connected)
                 {
                     onConnectedCallback();
@@ -55,12 +55,13 @@ BaseAdapter::~BaseAdapter()
 
 void BaseAdapter::subscribeTopic(const std::string& topic, SimpleOnMessageCallback callback)
 {
-    std::weak_ptr<bool> isAlive(m_isAlive);
+    std::weak_ptr<BaseAdapter> weak_adapter = getSharedFromDerrived();
     std::shared_ptr<Base> client = m_client;
-    auto safeOnSubscribed = [isAlive, client, this](int64_t id, const std::string& topic, bool is_subscribed)
+    auto safeOnSubscribed = [weak_adapter, client, this](int64_t id, const std::string& topic, bool is_subscribed)
         {
-            if (isAlive.lock())
+            if (!weak_adapter.expired())
             {
+                auto adapter = weak_adapter.lock();
                 onSubscribed(id, topic, is_subscribed);
             }
             else if (is_subscribed)
@@ -76,12 +77,13 @@ void BaseAdapter::subscribeTopic(const std::string& topic, SimpleOnMessageCallba
 
 void BaseAdapter::subscribeRequest(const std::string& topic, MessageCallbackWithResult callback)
 {
-    std::weak_ptr<bool> isAlive(m_isAlive);
+    std::weak_ptr<BaseAdapter> weak_adapter = getSharedFromDerrived();
     std::shared_ptr<Base> client = m_client;
-    auto safeOnSubscribed = [isAlive, client, this](int64_t id, const std::string& topic, bool is_subscribed)
+    auto safeOnSubscribed = [weak_adapter, client, this](int64_t id, const std::string& topic, bool is_subscribed)
         {
-            if (isAlive.lock())
+            if (!weak_adapter.expired())
             {
+                auto adapter = weak_adapter.lock();
                 onSubscribed(id, topic, is_subscribed);
             }
             else if (is_subscribed)
