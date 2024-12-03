@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.24)
 project(utilities)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -15,6 +15,7 @@ target_include_directories(utilities
     PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../>
     PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../>
     $<INSTALL_INTERFACE:include>
@@ -24,7 +25,7 @@ target_include_directories(utilities
 install(TARGETS utilities
         EXPORT ApiGearUtilitiesTargets)
 # install includes
-FILE(GLOB_RECURSE APIGEAR_INCLUDES *.h)
+FILE(GLOB_RECURSE APIGEAR_INCLUDES *.h *.hpp)
 install(FILES ${APIGEAR_INCLUDES}
         DESTINATION include/apigear/utilities)
 

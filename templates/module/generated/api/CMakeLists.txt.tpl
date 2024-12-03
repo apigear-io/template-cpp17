@@ -4,7 +4,7 @@
 {{- $SOURCES := printf "%s_SOURCES" $module_id -}}
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 {{- range .Module.Imports }}
 find_package({{snake .Name}} REQUIRED COMPONENTS api)

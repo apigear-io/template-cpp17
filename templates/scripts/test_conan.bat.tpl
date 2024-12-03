@@ -39,6 +39,12 @@ if %ERRORLEVEL% GEQ 1 exit /b %ERRORLEVEL%
 call :build_example_app "..\examples\mqttclient"
 if %ERRORLEVEL% GEQ 1 exit /b %ERRORLEVEL%
 {{- end}}
+{{- if $features.examples_nats }}
+call :build_example_app "..\examples\natsserver"
+if %ERRORLEVEL% GEQ 1 exit /b %ERRORLEVEL%
+call :build_example_app "..\examples\natsclient"
+if %ERRORLEVEL% GEQ 1 exit /b %ERRORLEVEL%
+{{- end}}
 
 exit /b
 
