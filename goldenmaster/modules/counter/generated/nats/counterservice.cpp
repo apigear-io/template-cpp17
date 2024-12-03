@@ -10,7 +10,8 @@ using namespace Test::Counter::Nats;
 namespace{
 const uint32_t  expectedMethodSubscriptions = 4;
 const uint32_t  expectedPropertiesSubscriptions = 4;
-constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+const uint32_t  initRespSubscription = 1;
+constexpr uint32_t expectedSubscriptionsCount = initRespSubscription + expectedMethodSubscriptions + expectedPropertiesSubscriptions;
 }
 
 CounterService::CounterService(std::shared_ptr<ICounter> impl, std::shared_ptr<ApiGear::Nats::Service> service)
@@ -47,6 +48,16 @@ CounterService::~CounterService()
 
 void CounterService::onConnected()
 {
+    m_onReadySubscriptionId= _subscribeForIsReady([this](bool is_subscribed)
+    { 
+        if(!is_subscribed)
+        {
+            return;
+        }
+        const std::string topic = "counter.Counter.service.available";
+        m_service->publish(topic, "");
+        _unsubscribeFromIsReady(m_onReadySubscriptionId);
+    });
     subscribeTopic("counter.Counter.set.vector", [this](const auto& value){ onSetVector(value); });
     subscribeTopic("counter.Counter.set.extern_vector", [this](const auto& value){ onSetExternVector(value); });
     subscribeTopic("counter.Counter.set.vectorArray", [this](const auto& value){ onSetVectorArray(value); });
@@ -55,6 +66,31 @@ void CounterService::onConnected()
     subscribeRequest("counter.Counter.rpc.incrementArray", [this](const auto& args){  return onInvokeIncrementArray(args); });
     subscribeRequest("counter.Counter.rpc.decrement", [this](const auto& args){  return onInvokeDecrement(args); });
     subscribeRequest("counter.Counter.rpc.decrementArray", [this](const auto& args){  return onInvokeDecrementArray(args); });
+
+    const std::string initRequestTopic = "counter.Counter.init";
+    subscribeTopic(initRequestTopic, [this, initRequestTopic](const auto& value){
+        nlohmann::json json_id = nlohmann::json::parse(value);
+        if (json_id.empty())
+        {
+            return;
+        }
+        auto clientId = json_id.get<uint64_t>();
+        auto topic = initRequestTopic + ".resp." +  std::to_string(clientId);
+        auto properties = getState();
+        m_service->publish(topic, properties.dump());
+        }
+    );
+
+}
+
+nlohmann::json CounterService::getState()
+{
+    return nlohmann::json::object({
+        { "vector", m_impl->getVector() },
+        { "extern_vector", m_impl->getExternVector() },
+        { "vectorArray", m_impl->getVectorArray() },
+        { "extern_vectorArray", m_impl->getExternVectorArray() }
+    });
 }
 void CounterService::onSetVector(const std::string& args) const
 {

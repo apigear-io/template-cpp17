@@ -44,11 +44,15 @@ public:
     {{$pub_class}}& _getPublisher() const override;
 private:
     std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
+    void handleAvailable(const std::string& payload);
+    void handleInit(const std::string& value);
 {{- range .Interface.Properties}}
 {{- $property := . }}
-    /// @brief sets the value for the property {{Camel $property.Name}} coming from the service
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type {{cppType "" $property }}
-    void set{{Camel $property.Name}}Local(const std::string& args);
+    {{cppType "" $property}} _to_{{Camel $property.Name}}(const std::string& args);
+    /// @brief sets the value for the property {{Camel $property.Name}} coming from the service
+    void set{{Camel $property.Name}}Local({{ cppParam "" $property }});
 {{- end }}
 
 {{- range .Interface.Signals}}
@@ -57,15 +61,14 @@ private:
     /// @param args contains the param(s) of the type(s) {{cppParams "" $signal.Params }}
     void on{{Camel $signal.Name }}(const std::string& args) const;
 {{- end }}
-
 {{- if len .Interface.Properties}}
     /** Local storage for properties values. */
     {{$interfaceName}}Data m_data;
 {{- end }}
+    int32_t m_requestInitCallId = 0;
     std::shared_ptr<ApiGear::Nats::Client> m_client;
     /** The publisher for {{$interfaceName}} */
     std::unique_ptr<{{$pub_class}}> m_publisher;
-
     void onConnected();
 
 };

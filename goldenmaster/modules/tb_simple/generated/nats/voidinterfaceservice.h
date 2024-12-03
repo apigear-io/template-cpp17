@@ -24,10 +24,13 @@ public:
 private:
     std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
     void onConnected();
+    nlohmann::json getState();
     std::string onInvokeFuncVoid(const std::string& args) const;
 
     std::shared_ptr<IVoidInterface> m_impl;
     std::shared_ptr<ApiGear::Nats::Service> m_service;
+
+    int32_t m_onReadySubscriptionId = 0;
 
 };
 } // namespace Nats

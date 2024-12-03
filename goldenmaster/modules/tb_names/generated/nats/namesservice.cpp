@@ -8,7 +8,8 @@ using namespace Test::TbNames::Nats;
 namespace{
 const uint32_t  expectedMethodSubscriptions = 2;
 const uint32_t  expectedPropertiesSubscriptions = 4;
-constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+const uint32_t  initRespSubscription = 1;
+constexpr uint32_t expectedSubscriptionsCount = initRespSubscription + expectedMethodSubscriptions + expectedPropertiesSubscriptions;
 }
 
 Nam_EsService::Nam_EsService(std::shared_ptr<INamEs> impl, std::shared_ptr<ApiGear::Nats::Service> service)
@@ -45,12 +46,47 @@ Nam_EsService::~Nam_EsService()
 
 void Nam_EsService::onConnected()
 {
+    m_onReadySubscriptionId= _subscribeForIsReady([this](bool is_subscribed)
+    { 
+        if(!is_subscribed)
+        {
+            return;
+        }
+        const std::string topic = "tb.names.Nam_Es.service.available";
+        m_service->publish(topic, "");
+        _unsubscribeFromIsReady(m_onReadySubscriptionId);
+    });
     subscribeTopic("tb.names.Nam_Es.set.Switch", [this](const auto& value){ onSetSwitch(value); });
     subscribeTopic("tb.names.Nam_Es.set.SOME_PROPERTY", [this](const auto& value){ onSetSomeProperty(value); });
     subscribeTopic("tb.names.Nam_Es.set.Some_Poperty2", [this](const auto& value){ onSetSomePoperty2(value); });
     subscribeTopic("tb.names.Nam_Es.set.enum_property", [this](const auto& value){ onSetEnumProperty(value); });
     subscribeRequest("tb.names.Nam_Es.rpc.SOME_FUNCTION", [this](const auto& args){  return onInvokeSomeFunction(args); });
     subscribeRequest("tb.names.Nam_Es.rpc.Some_Function2", [this](const auto& args){  return onInvokeSomeFunction2(args); });
+
+    const std::string initRequestTopic = "tb.names.Nam_Es.init";
+    subscribeTopic(initRequestTopic, [this, initRequestTopic](const auto& value){
+        nlohmann::json json_id = nlohmann::json::parse(value);
+        if (json_id.empty())
+        {
+            return;
+        }
+        auto clientId = json_id.get<uint64_t>();
+        auto topic = initRequestTopic + ".resp." +  std::to_string(clientId);
+        auto properties = getState();
+        m_service->publish(topic, properties.dump());
+        }
+    );
+
+}
+
+nlohmann::json Nam_EsService::getState()
+{
+    return nlohmann::json::object({
+        { "Switch", m_impl->getSwitch() },
+        { "SOME_PROPERTY", m_impl->getSomeProperty() },
+        { "Some_Poperty2", m_impl->getSomePoperty2() },
+        { "enum_property", m_impl->getEnumProperty() }
+    });
 }
 void Nam_EsService::onSetSwitch(const std::string& args) const
 {

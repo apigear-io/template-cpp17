@@ -26,13 +26,15 @@ public:
     IVoidInterfacePublisher& _getPublisher() const override;
 private:
     std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
+    void handleAvailable(const std::string& payload);
+    void handleInit(const std::string& value);
     /// @brief publishes the value for the signal SigVoid coming from the service
     /// @param args contains the param(s) of the type(s) 
     void onSigVoid(const std::string& args) const;
+    int32_t m_requestInitCallId = 0;
     std::shared_ptr<ApiGear::Nats::Client> m_client;
     /** The publisher for VoidInterface */
     std::unique_ptr<IVoidInterfacePublisher> m_publisher;
-
     void onConnected();
 
 };

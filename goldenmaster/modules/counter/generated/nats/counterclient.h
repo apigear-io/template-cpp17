@@ -40,27 +40,37 @@ public:
     ICounterPublisher& _getPublisher() const override;
 private:
     std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
-    /// @brief sets the value for the property Vector coming from the service
+    void handleAvailable(const std::string& payload);
+    void handleInit(const std::string& value);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type Test::CustomTypes::Vector3D
-    void setVectorLocal(const std::string& args);
-    /// @brief sets the value for the property ExternVector coming from the service
+    Test::CustomTypes::Vector3D _to_Vector(const std::string& args);
+    /// @brief sets the value for the property Vector coming from the service
+    void setVectorLocal(const Test::CustomTypes::Vector3D& vector);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type Eigen::Vector3f
-    void setExternVectorLocal(const std::string& args);
-    /// @brief sets the value for the property VectorArray coming from the service
+    Eigen::Vector3f _to_ExternVector(const std::string& args);
+    /// @brief sets the value for the property ExternVector coming from the service
+    void setExternVectorLocal(const Eigen::Vector3f& extern_vector);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type std::list<Test::CustomTypes::Vector3D>
-    void setVectorArrayLocal(const std::string& args);
-    /// @brief sets the value for the property ExternVectorArray coming from the service
+    std::list<Test::CustomTypes::Vector3D> _to_VectorArray(const std::string& args);
+    /// @brief sets the value for the property VectorArray coming from the service
+    void setVectorArrayLocal(const std::list<Test::CustomTypes::Vector3D>& vectorArray);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type std::list<Eigen::Vector3f>
-    void setExternVectorArrayLocal(const std::string& args);
+    std::list<Eigen::Vector3f> _to_ExternVectorArray(const std::string& args);
+    /// @brief sets the value for the property ExternVectorArray coming from the service
+    void setExternVectorArrayLocal(const std::list<Eigen::Vector3f>& extern_vectorArray);
     /// @brief publishes the value for the signal ValueChanged coming from the service
     /// @param args contains the param(s) of the type(s) const Test::CustomTypes::Vector3D& vector, const Eigen::Vector3f& extern_vector, const std::list<Test::CustomTypes::Vector3D>& vectorArray, const std::list<Eigen::Vector3f>& extern_vectorArray
     void onValueChanged(const std::string& args) const;
     /** Local storage for properties values. */
     CounterData m_data;
+    int32_t m_requestInitCallId = 0;
     std::shared_ptr<ApiGear::Nats::Client> m_client;
     /** The publisher for Counter */
     std::unique_ptr<ICounterPublisher> m_publisher;
-
     void onConnected();
 
 };

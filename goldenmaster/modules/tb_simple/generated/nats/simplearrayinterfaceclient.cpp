@@ -9,7 +9,9 @@ using namespace Test::TbSimple::Nats;
 namespace{
 const uint32_t  expectedSingalsSubscriptions = 8;
 const uint32_t  expectedPropertiesSubscriptions = 9;
-constexpr uint32_t expectedSubscriptionsCount = expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
+const uint32_t  initSubscription = 1;
+const uint32_t  serviceAvailableSubscription = 1;
+constexpr uint32_t expectedSubscriptionsCount = serviceAvailableSubscription + initSubscription + expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
 }
 
 std::shared_ptr<SimpleArrayInterfaceClient> SimpleArrayInterfaceClient::create(std::shared_ptr<ApiGear::Nats::Client> client)
@@ -39,24 +41,38 @@ SimpleArrayInterfaceClient::~SimpleArrayInterfaceClient() = default;
 
 void SimpleArrayInterfaceClient::onConnected()
 {
+    auto clientId = m_client->getId();
+    m_requestInitCallId = _subscribeForIsReady([this, clientId](bool is_subscribed)
+    { 
+        if(!is_subscribed)
+        {
+            return;
+        }
+        const std::string initRequestTopic = "tb.simple.SimpleArrayInterface.init";
+        m_client->publish(initRequestTopic, nlohmann::json(clientId).dump());
+        _unsubscribeFromIsReady(m_requestInitCallId);
+    });
+    subscribeTopic("tb.simple.SimpleArrayInterface.service.available",[this](const auto& value){ handleAvailable(value); });
+    const std::string initTopic =  "tb.simple.SimpleArrayInterface.init.resp." + std::to_string(clientId);
+    subscribeTopic(initTopic,[this](const auto& value){ handleInit(value); });
     const std::string topic_propBool =  "tb.simple.SimpleArrayInterface.prop.propBool";
-    subscribeTopic(topic_propBool, [this](const auto& value){ setPropBoolLocal(value); });
+    subscribeTopic(topic_propBool, [this](const auto& value){ setPropBoolLocal(_to_PropBool(value)); });
     const std::string topic_propInt =  "tb.simple.SimpleArrayInterface.prop.propInt";
-    subscribeTopic(topic_propInt, [this](const auto& value){ setPropIntLocal(value); });
+    subscribeTopic(topic_propInt, [this](const auto& value){ setPropIntLocal(_to_PropInt(value)); });
     const std::string topic_propInt32 =  "tb.simple.SimpleArrayInterface.prop.propInt32";
-    subscribeTopic(topic_propInt32, [this](const auto& value){ setPropInt32Local(value); });
+    subscribeTopic(topic_propInt32, [this](const auto& value){ setPropInt32Local(_to_PropInt32(value)); });
     const std::string topic_propInt64 =  "tb.simple.SimpleArrayInterface.prop.propInt64";
-    subscribeTopic(topic_propInt64, [this](const auto& value){ setPropInt64Local(value); });
+    subscribeTopic(topic_propInt64, [this](const auto& value){ setPropInt64Local(_to_PropInt64(value)); });
     const std::string topic_propFloat =  "tb.simple.SimpleArrayInterface.prop.propFloat";
-    subscribeTopic(topic_propFloat, [this](const auto& value){ setPropFloatLocal(value); });
+    subscribeTopic(topic_propFloat, [this](const auto& value){ setPropFloatLocal(_to_PropFloat(value)); });
     const std::string topic_propFloat32 =  "tb.simple.SimpleArrayInterface.prop.propFloat32";
-    subscribeTopic(topic_propFloat32, [this](const auto& value){ setPropFloat32Local(value); });
+    subscribeTopic(topic_propFloat32, [this](const auto& value){ setPropFloat32Local(_to_PropFloat32(value)); });
     const std::string topic_propFloat64 =  "tb.simple.SimpleArrayInterface.prop.propFloat64";
-    subscribeTopic(topic_propFloat64, [this](const auto& value){ setPropFloat64Local(value); });
+    subscribeTopic(topic_propFloat64, [this](const auto& value){ setPropFloat64Local(_to_PropFloat64(value)); });
     const std::string topic_propString =  "tb.simple.SimpleArrayInterface.prop.propString";
-    subscribeTopic(topic_propString, [this](const auto& value){ setPropStringLocal(value); });
+    subscribeTopic(topic_propString, [this](const auto& value){ setPropStringLocal(_to_PropString(value)); });
     const std::string topic_propReadOnlyString =  "tb.simple.SimpleArrayInterface.prop.propReadOnlyString";
-    subscribeTopic(topic_propReadOnlyString, [this](const auto& value){ setPropReadOnlyStringLocal(value); });
+    subscribeTopic(topic_propReadOnlyString, [this](const auto& value){ setPropReadOnlyStringLocal(_to_PropReadOnlyString(value)); });
     const std::string topic_sigBool = "tb.simple.SimpleArrayInterface.sig.sigBool";
     subscribeTopic(topic_sigBool, [this](const auto& args){onSigBool(args);});
     const std::string topic_sigInt = "tb.simple.SimpleArrayInterface.sig.sigInt";
@@ -74,6 +90,12 @@ void SimpleArrayInterfaceClient::onConnected()
     const std::string topic_sigString = "tb.simple.SimpleArrayInterface.sig.sigString";
     subscribeTopic(topic_sigString, [this](const auto& args){onSigString(args);});
 }
+void SimpleArrayInterfaceClient::handleAvailable(const std::string& /*empty payload*/)
+{
+    auto clientId = m_client->getId();
+    const std::string initRequestTopic = "tb.simple.SimpleArrayInterface.init";
+    m_client->publish(initRequestTopic, nlohmann::json(clientId).dump());
+}
 
 void SimpleArrayInterfaceClient::setPropBool(const std::list<bool>& propBool)
 {
@@ -84,15 +106,19 @@ void SimpleArrayInterfaceClient::setPropBool(const std::list<bool>& propBool)
     m_client->publish(topic, nlohmann::json(propBool).dump());
 }
 
-void SimpleArrayInterfaceClient::setPropBoolLocal(const std::string& args)
+std::list<bool> SimpleArrayInterfaceClient::_to_PropBool(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property propBool");
+        return std::list<bool>();
     }
+   return fields.get<std::list<bool>>();
+}
 
-    const std::list<bool>& propBool = fields.get<std::list<bool>>();
+void SimpleArrayInterfaceClient::setPropBoolLocal(const std::list<bool>& propBool)
+{
     if (m_data.m_propBool != propBool) {
         m_data.m_propBool = propBool;
         m_publisher->publishPropBoolChanged(propBool);
@@ -113,15 +139,19 @@ void SimpleArrayInterfaceClient::setPropInt(const std::list<int>& propInt)
     m_client->publish(topic, nlohmann::json(propInt).dump());
 }
 
-void SimpleArrayInterfaceClient::setPropIntLocal(const std::string& args)
+std::list<int> SimpleArrayInterfaceClient::_to_PropInt(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property propInt");
+        return std::list<int>();
     }
+   return fields.get<std::list<int>>();
+}
 
-    const std::list<int>& propInt = fields.get<std::list<int>>();
+void SimpleArrayInterfaceClient::setPropIntLocal(const std::list<int>& propInt)
+{
     if (m_data.m_propInt != propInt) {
         m_data.m_propInt = propInt;
         m_publisher->publishPropIntChanged(propInt);
@@ -142,15 +172,19 @@ void SimpleArrayInterfaceClient::setPropInt32(const std::list<int32_t>& propInt3
     m_client->publish(topic, nlohmann::json(propInt32).dump());
 }
 
-void SimpleArrayInterfaceClient::setPropInt32Local(const std::string& args)
+std::list<int32_t> SimpleArrayInterfaceClient::_to_PropInt32(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property propInt32");
+        return std::list<int32_t>();
     }
+   return fields.get<std::list<int32_t>>();
+}
 
-    const std::list<int32_t>& propInt32 = fields.get<std::list<int32_t>>();
+void SimpleArrayInterfaceClient::setPropInt32Local(const std::list<int32_t>& propInt32)
+{
     if (m_data.m_propInt32 != propInt32) {
         m_data.m_propInt32 = propInt32;
         m_publisher->publishPropInt32Changed(propInt32);
@@ -171,15 +205,19 @@ void SimpleArrayInterfaceClient::setPropInt64(const std::list<int64_t>& propInt6
     m_client->publish(topic, nlohmann::json(propInt64).dump());
 }
 
-void SimpleArrayInterfaceClient::setPropInt64Local(const std::string& args)
+std::list<int64_t> SimpleArrayInterfaceClient::_to_PropInt64(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property propInt64");
+        return std::list<int64_t>();
     }
+   return fields.get<std::list<int64_t>>();
+}
 
-    const std::list<int64_t>& propInt64 = fields.get<std::list<int64_t>>();
+void SimpleArrayInterfaceClient::setPropInt64Local(const std::list<int64_t>& propInt64)
+{
     if (m_data.m_propInt64 != propInt64) {
         m_data.m_propInt64 = propInt64;
         m_publisher->publishPropInt64Changed(propInt64);
@@ -200,15 +238,19 @@ void SimpleArrayInterfaceClient::setPropFloat(const std::list<float>& propFloat)
     m_client->publish(topic, nlohmann::json(propFloat).dump());
 }
 
-void SimpleArrayInterfaceClient::setPropFloatLocal(const std::string& args)
+std::list<float> SimpleArrayInterfaceClient::_to_PropFloat(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property propFloat");
+        return std::list<float>();
     }
+   return fields.get<std::list<float>>();
+}
 
-    const std::list<float>& propFloat = fields.get<std::list<float>>();
+void SimpleArrayInterfaceClient::setPropFloatLocal(const std::list<float>& propFloat)
+{
     if (m_data.m_propFloat != propFloat) {
         m_data.m_propFloat = propFloat;
         m_publisher->publishPropFloatChanged(propFloat);
@@ -229,15 +271,19 @@ void SimpleArrayInterfaceClient::setPropFloat32(const std::list<float>& propFloa
     m_client->publish(topic, nlohmann::json(propFloat32).dump());
 }
 
-void SimpleArrayInterfaceClient::setPropFloat32Local(const std::string& args)
+std::list<float> SimpleArrayInterfaceClient::_to_PropFloat32(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property propFloat32");
+        return std::list<float>();
     }
+   return fields.get<std::list<float>>();
+}
 
-    const std::list<float>& propFloat32 = fields.get<std::list<float>>();
+void SimpleArrayInterfaceClient::setPropFloat32Local(const std::list<float>& propFloat32)
+{
     if (m_data.m_propFloat32 != propFloat32) {
         m_data.m_propFloat32 = propFloat32;
         m_publisher->publishPropFloat32Changed(propFloat32);
@@ -258,15 +304,19 @@ void SimpleArrayInterfaceClient::setPropFloat64(const std::list<double>& propFlo
     m_client->publish(topic, nlohmann::json(propFloat64).dump());
 }
 
-void SimpleArrayInterfaceClient::setPropFloat64Local(const std::string& args)
+std::list<double> SimpleArrayInterfaceClient::_to_PropFloat64(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property propFloat64");
+        return std::list<double>();
     }
+   return fields.get<std::list<double>>();
+}
 
-    const std::list<double>& propFloat64 = fields.get<std::list<double>>();
+void SimpleArrayInterfaceClient::setPropFloat64Local(const std::list<double>& propFloat64)
+{
     if (m_data.m_propFloat64 != propFloat64) {
         m_data.m_propFloat64 = propFloat64;
         m_publisher->publishPropFloat64Changed(propFloat64);
@@ -287,15 +337,19 @@ void SimpleArrayInterfaceClient::setPropString(const std::list<std::string>& pro
     m_client->publish(topic, nlohmann::json(propString).dump());
 }
 
-void SimpleArrayInterfaceClient::setPropStringLocal(const std::string& args)
+std::list<std::string> SimpleArrayInterfaceClient::_to_PropString(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property propString");
+        return std::list<std::string>();
     }
+   return fields.get<std::list<std::string>>();
+}
 
-    const std::list<std::string>& propString = fields.get<std::list<std::string>>();
+void SimpleArrayInterfaceClient::setPropStringLocal(const std::list<std::string>& propString)
+{
     if (m_data.m_propString != propString) {
         m_data.m_propString = propString;
         m_publisher->publishPropStringChanged(propString);
@@ -307,15 +361,19 @@ const std::list<std::string>& SimpleArrayInterfaceClient::getPropString() const
     return m_data.m_propString;
 }
 
-void SimpleArrayInterfaceClient::setPropReadOnlyStringLocal(const std::string& args)
+std::string SimpleArrayInterfaceClient::_to_PropReadOnlyString(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property propReadOnlyString");
+        return std::string();
     }
+   return fields.get<std::string>();
+}
 
-    const std::string& propReadOnlyString = fields.get<std::string>();
+void SimpleArrayInterfaceClient::setPropReadOnlyStringLocal(const std::string& propReadOnlyString)
+{
     if (m_data.m_propReadOnlyString != propReadOnlyString) {
         m_data.m_propReadOnlyString = propReadOnlyString;
         m_publisher->publishPropReadOnlyStringChanged(propReadOnlyString);
@@ -325,6 +383,35 @@ void SimpleArrayInterfaceClient::setPropReadOnlyStringLocal(const std::string& a
 const std::string& SimpleArrayInterfaceClient::getPropReadOnlyString() const
 {
     return m_data.m_propReadOnlyString;
+}
+
+void SimpleArrayInterfaceClient::handleInit(const std::string& value)
+{
+    nlohmann::json fields = nlohmann::json::parse(value);
+    if(fields.contains("propBool")) {
+        setPropBoolLocal(fields["propBool"].get<std::list<bool>>());
+    }
+    if(fields.contains("propInt")) {
+        setPropIntLocal(fields["propInt"].get<std::list<int>>());
+    }
+    if(fields.contains("propInt32")) {
+        setPropInt32Local(fields["propInt32"].get<std::list<int32_t>>());
+    }
+    if(fields.contains("propInt64")) {
+        setPropInt64Local(fields["propInt64"].get<std::list<int64_t>>());
+    }
+    if(fields.contains("propFloat")) {
+        setPropFloatLocal(fields["propFloat"].get<std::list<float>>());
+    }
+    if(fields.contains("propFloat32")) {
+        setPropFloat32Local(fields["propFloat32"].get<std::list<float>>());
+    }
+    if(fields.contains("propFloat64")) {
+        setPropFloat64Local(fields["propFloat64"].get<std::list<double>>());
+    }
+    if(fields.contains("propString")) {
+        setPropStringLocal(fields["propString"].get<std::list<std::string>>());
+    }
 }
 
 std::list<bool> SimpleArrayInterfaceClient::funcBool(const std::list<bool>& paramBool)
@@ -655,8 +742,8 @@ void SimpleArrayInterfaceClient::onSigString(const std::string& args) const
     m_publisher->publishSigString(json_args[0].get<std::list<std::string>>());
 }
 
-
 ISimpleArrayInterfacePublisher& SimpleArrayInterfaceClient::_getPublisher() const
 {
     return *m_publisher;
 }
+

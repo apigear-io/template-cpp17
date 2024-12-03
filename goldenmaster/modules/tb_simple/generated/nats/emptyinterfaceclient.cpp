@@ -7,9 +7,8 @@ using namespace Test::TbSimple;
 using namespace Test::TbSimple::Nats;
 
 namespace{
-const uint32_t  expectedSingalsSubscriptions = 0;
-const uint32_t  expectedPropertiesSubscriptions = 0;
-constexpr uint32_t expectedSubscriptionsCount = expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
+// no singals and properties to subscribe for
+constexpr uint32_t expectedSubscriptionsCount = 0;
 }
 
 std::shared_ptr<EmptyInterfaceClient> EmptyInterfaceClient::create(std::shared_ptr<ApiGear::Nats::Client> client)
@@ -39,10 +38,35 @@ EmptyInterfaceClient::~EmptyInterfaceClient() = default;
 
 void EmptyInterfaceClient::onConnected()
 {
+    auto clientId = m_client->getId();
+    m_requestInitCallId = _subscribeForIsReady([this, clientId](bool is_subscribed)
+    { 
+        if(!is_subscribed)
+        {
+            return;
+        }
+        const std::string initRequestTopic = "tb.simple.EmptyInterface.init";
+        m_client->publish(initRequestTopic, nlohmann::json(clientId).dump());
+        _unsubscribeFromIsReady(m_requestInitCallId);
+    });
+    subscribeTopic("tb.simple.EmptyInterface.service.available",[this](const auto& value){ handleAvailable(value); });
+    const std::string initTopic =  "tb.simple.EmptyInterface.init.resp." + std::to_string(clientId);
+    subscribeTopic(initTopic,[this](const auto& value){ handleInit(value); });
+}
+void EmptyInterfaceClient::handleAvailable(const std::string& /*empty payload*/)
+{
+    auto clientId = m_client->getId();
+    const std::string initRequestTopic = "tb.simple.EmptyInterface.init";
+    m_client->publish(initRequestTopic, nlohmann::json(clientId).dump());
 }
 
+void EmptyInterfaceClient::handleInit(const std::string& value)
+{
+    nlohmann::json fields = nlohmann::json::parse(value);
+}
 
 IEmptyInterfacePublisher& EmptyInterfaceClient::_getPublisher() const
 {
     return *m_publisher;
 }
+

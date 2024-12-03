@@ -40,18 +40,28 @@ public:
     IManyParamInterfacePublisher& _getPublisher() const override;
 private:
     std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
+    void handleAvailable(const std::string& payload);
+    void handleInit(const std::string& value);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
+    /// @param args contains the param of the type int
+    int _to_Prop1(const std::string& args);
     /// @brief sets the value for the property Prop1 coming from the service
+    void setProp1Local(int prop1);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type int
-    void setProp1Local(const std::string& args);
+    int _to_Prop2(const std::string& args);
     /// @brief sets the value for the property Prop2 coming from the service
+    void setProp2Local(int prop2);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type int
-    void setProp2Local(const std::string& args);
+    int _to_Prop3(const std::string& args);
     /// @brief sets the value for the property Prop3 coming from the service
+    void setProp3Local(int prop3);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type int
-    void setProp3Local(const std::string& args);
+    int _to_Prop4(const std::string& args);
     /// @brief sets the value for the property Prop4 coming from the service
-    /// @param args contains the param of the type int
-    void setProp4Local(const std::string& args);
+    void setProp4Local(int prop4);
     /// @brief publishes the value for the signal Sig1 coming from the service
     /// @param args contains the param(s) of the type(s) int param1
     void onSig1(const std::string& args) const;
@@ -66,10 +76,10 @@ private:
     void onSig4(const std::string& args) const;
     /** Local storage for properties values. */
     ManyParamInterfaceData m_data;
+    int32_t m_requestInitCallId = 0;
     std::shared_ptr<ApiGear::Nats::Client> m_client;
     /** The publisher for ManyParamInterface */
     std::unique_ptr<IManyParamInterfacePublisher> m_publisher;
-
     void onConnected();
 
 };

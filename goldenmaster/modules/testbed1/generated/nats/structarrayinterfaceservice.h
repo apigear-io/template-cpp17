@@ -27,6 +27,7 @@ public:
 private:
     std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
     void onConnected();
+    nlohmann::json getState();
     void onPropBoolChanged(const std::list<StructBool>& propBool) override;
     /// @brief requests to set the value for the property PropBool coming from the client
     /// @param fields contains the param of the type std::list<StructBool>
@@ -50,6 +51,8 @@ private:
 
     std::shared_ptr<IStructArrayInterface> m_impl;
     std::shared_ptr<ApiGear::Nats::Service> m_service;
+
+    int32_t m_onReadySubscriptionId = 0;
 
 };
 } // namespace Nats

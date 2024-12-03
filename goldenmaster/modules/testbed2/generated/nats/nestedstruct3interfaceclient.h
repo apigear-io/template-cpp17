@@ -36,15 +36,23 @@ public:
     INestedStruct3InterfacePublisher& _getPublisher() const override;
 private:
     std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
-    /// @brief sets the value for the property Prop1 coming from the service
+    void handleAvailable(const std::string& payload);
+    void handleInit(const std::string& value);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type NestedStruct1
-    void setProp1Local(const std::string& args);
-    /// @brief sets the value for the property Prop2 coming from the service
+    NestedStruct1 _to_Prop1(const std::string& args);
+    /// @brief sets the value for the property Prop1 coming from the service
+    void setProp1Local(const NestedStruct1& prop1);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type NestedStruct2
-    void setProp2Local(const std::string& args);
-    /// @brief sets the value for the property Prop3 coming from the service
+    NestedStruct2 _to_Prop2(const std::string& args);
+    /// @brief sets the value for the property Prop2 coming from the service
+    void setProp2Local(const NestedStruct2& prop2);
+    /// @brief Converts incoming raw message formatted value to a value of property. 
     /// @param args contains the param of the type NestedStruct3
-    void setProp3Local(const std::string& args);
+    NestedStruct3 _to_Prop3(const std::string& args);
+    /// @brief sets the value for the property Prop3 coming from the service
+    void setProp3Local(const NestedStruct3& prop3);
     /// @brief publishes the value for the signal Sig1 coming from the service
     /// @param args contains the param(s) of the type(s) const NestedStruct1& param1
     void onSig1(const std::string& args) const;
@@ -56,10 +64,10 @@ private:
     void onSig3(const std::string& args) const;
     /** Local storage for properties values. */
     NestedStruct3InterfaceData m_data;
+    int32_t m_requestInitCallId = 0;
     std::shared_ptr<ApiGear::Nats::Client> m_client;
     /** The publisher for NestedStruct3Interface */
     std::unique_ptr<INestedStruct3InterfacePublisher> m_publisher;
-
     void onConnected();
 
 };

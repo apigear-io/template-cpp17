@@ -8,7 +8,8 @@ using namespace Test::TbEnum::Nats;
 namespace{
 const uint32_t  expectedMethodSubscriptions = 4;
 const uint32_t  expectedPropertiesSubscriptions = 4;
-constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+const uint32_t  initRespSubscription = 1;
+constexpr uint32_t expectedSubscriptionsCount = initRespSubscription + expectedMethodSubscriptions + expectedPropertiesSubscriptions;
 }
 
 EnumInterfaceService::EnumInterfaceService(std::shared_ptr<IEnumInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
@@ -45,6 +46,16 @@ EnumInterfaceService::~EnumInterfaceService()
 
 void EnumInterfaceService::onConnected()
 {
+    m_onReadySubscriptionId= _subscribeForIsReady([this](bool is_subscribed)
+    { 
+        if(!is_subscribed)
+        {
+            return;
+        }
+        const std::string topic = "tb.enum.EnumInterface.service.available";
+        m_service->publish(topic, "");
+        _unsubscribeFromIsReady(m_onReadySubscriptionId);
+    });
     subscribeTopic("tb.enum.EnumInterface.set.prop0", [this](const auto& value){ onSetProp0(value); });
     subscribeTopic("tb.enum.EnumInterface.set.prop1", [this](const auto& value){ onSetProp1(value); });
     subscribeTopic("tb.enum.EnumInterface.set.prop2", [this](const auto& value){ onSetProp2(value); });
@@ -53,6 +64,31 @@ void EnumInterfaceService::onConnected()
     subscribeRequest("tb.enum.EnumInterface.rpc.func1", [this](const auto& args){  return onInvokeFunc1(args); });
     subscribeRequest("tb.enum.EnumInterface.rpc.func2", [this](const auto& args){  return onInvokeFunc2(args); });
     subscribeRequest("tb.enum.EnumInterface.rpc.func3", [this](const auto& args){  return onInvokeFunc3(args); });
+
+    const std::string initRequestTopic = "tb.enum.EnumInterface.init";
+    subscribeTopic(initRequestTopic, [this, initRequestTopic](const auto& value){
+        nlohmann::json json_id = nlohmann::json::parse(value);
+        if (json_id.empty())
+        {
+            return;
+        }
+        auto clientId = json_id.get<uint64_t>();
+        auto topic = initRequestTopic + ".resp." +  std::to_string(clientId);
+        auto properties = getState();
+        m_service->publish(topic, properties.dump());
+        }
+    );
+
+}
+
+nlohmann::json EnumInterfaceService::getState()
+{
+    return nlohmann::json::object({
+        { "prop0", m_impl->getProp0() },
+        { "prop1", m_impl->getProp1() },
+        { "prop2", m_impl->getProp2() },
+        { "prop3", m_impl->getProp3() }
+    });
 }
 void EnumInterfaceService::onSetProp0(const std::string& args) const
 {

@@ -9,7 +9,9 @@ using namespace Test::TbEnum::Nats;
 namespace{
 const uint32_t  expectedSingalsSubscriptions = 4;
 const uint32_t  expectedPropertiesSubscriptions = 4;
-constexpr uint32_t expectedSubscriptionsCount = expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
+const uint32_t  initSubscription = 1;
+const uint32_t  serviceAvailableSubscription = 1;
+constexpr uint32_t expectedSubscriptionsCount = serviceAvailableSubscription + initSubscription + expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
 }
 
 std::shared_ptr<EnumInterfaceClient> EnumInterfaceClient::create(std::shared_ptr<ApiGear::Nats::Client> client)
@@ -39,14 +41,28 @@ EnumInterfaceClient::~EnumInterfaceClient() = default;
 
 void EnumInterfaceClient::onConnected()
 {
+    auto clientId = m_client->getId();
+    m_requestInitCallId = _subscribeForIsReady([this, clientId](bool is_subscribed)
+    { 
+        if(!is_subscribed)
+        {
+            return;
+        }
+        const std::string initRequestTopic = "tb.enum.EnumInterface.init";
+        m_client->publish(initRequestTopic, nlohmann::json(clientId).dump());
+        _unsubscribeFromIsReady(m_requestInitCallId);
+    });
+    subscribeTopic("tb.enum.EnumInterface.service.available",[this](const auto& value){ handleAvailable(value); });
+    const std::string initTopic =  "tb.enum.EnumInterface.init.resp." + std::to_string(clientId);
+    subscribeTopic(initTopic,[this](const auto& value){ handleInit(value); });
     const std::string topic_prop0 =  "tb.enum.EnumInterface.prop.prop0";
-    subscribeTopic(topic_prop0, [this](const auto& value){ setProp0Local(value); });
+    subscribeTopic(topic_prop0, [this](const auto& value){ setProp0Local(_to_Prop0(value)); });
     const std::string topic_prop1 =  "tb.enum.EnumInterface.prop.prop1";
-    subscribeTopic(topic_prop1, [this](const auto& value){ setProp1Local(value); });
+    subscribeTopic(topic_prop1, [this](const auto& value){ setProp1Local(_to_Prop1(value)); });
     const std::string topic_prop2 =  "tb.enum.EnumInterface.prop.prop2";
-    subscribeTopic(topic_prop2, [this](const auto& value){ setProp2Local(value); });
+    subscribeTopic(topic_prop2, [this](const auto& value){ setProp2Local(_to_Prop2(value)); });
     const std::string topic_prop3 =  "tb.enum.EnumInterface.prop.prop3";
-    subscribeTopic(topic_prop3, [this](const auto& value){ setProp3Local(value); });
+    subscribeTopic(topic_prop3, [this](const auto& value){ setProp3Local(_to_Prop3(value)); });
     const std::string topic_sig0 = "tb.enum.EnumInterface.sig.sig0";
     subscribeTopic(topic_sig0, [this](const auto& args){onSig0(args);});
     const std::string topic_sig1 = "tb.enum.EnumInterface.sig.sig1";
@@ -55,6 +71,12 @@ void EnumInterfaceClient::onConnected()
     subscribeTopic(topic_sig2, [this](const auto& args){onSig2(args);});
     const std::string topic_sig3 = "tb.enum.EnumInterface.sig.sig3";
     subscribeTopic(topic_sig3, [this](const auto& args){onSig3(args);});
+}
+void EnumInterfaceClient::handleAvailable(const std::string& /*empty payload*/)
+{
+    auto clientId = m_client->getId();
+    const std::string initRequestTopic = "tb.enum.EnumInterface.init";
+    m_client->publish(initRequestTopic, nlohmann::json(clientId).dump());
 }
 
 void EnumInterfaceClient::setProp0(Enum0Enum prop0)
@@ -66,15 +88,19 @@ void EnumInterfaceClient::setProp0(Enum0Enum prop0)
     m_client->publish(topic, nlohmann::json(prop0).dump());
 }
 
-void EnumInterfaceClient::setProp0Local(const std::string& args)
+Enum0Enum EnumInterfaceClient::_to_Prop0(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property prop0");
+        return Enum0Enum::value0;
     }
+   return fields.get<Enum0Enum>();
+}
 
-    Enum0Enum prop0 = fields.get<Enum0Enum>();
+void EnumInterfaceClient::setProp0Local(Enum0Enum prop0)
+{
     if (m_data.m_prop0 != prop0) {
         m_data.m_prop0 = prop0;
         m_publisher->publishProp0Changed(prop0);
@@ -95,15 +121,19 @@ void EnumInterfaceClient::setProp1(Enum1Enum prop1)
     m_client->publish(topic, nlohmann::json(prop1).dump());
 }
 
-void EnumInterfaceClient::setProp1Local(const std::string& args)
+Enum1Enum EnumInterfaceClient::_to_Prop1(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property prop1");
+        return Enum1Enum::value1;
     }
+   return fields.get<Enum1Enum>();
+}
 
-    Enum1Enum prop1 = fields.get<Enum1Enum>();
+void EnumInterfaceClient::setProp1Local(Enum1Enum prop1)
+{
     if (m_data.m_prop1 != prop1) {
         m_data.m_prop1 = prop1;
         m_publisher->publishProp1Changed(prop1);
@@ -124,15 +154,19 @@ void EnumInterfaceClient::setProp2(Enum2Enum prop2)
     m_client->publish(topic, nlohmann::json(prop2).dump());
 }
 
-void EnumInterfaceClient::setProp2Local(const std::string& args)
+Enum2Enum EnumInterfaceClient::_to_Prop2(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property prop2");
+        return Enum2Enum::value2;
     }
+   return fields.get<Enum2Enum>();
+}
 
-    Enum2Enum prop2 = fields.get<Enum2Enum>();
+void EnumInterfaceClient::setProp2Local(Enum2Enum prop2)
+{
     if (m_data.m_prop2 != prop2) {
         m_data.m_prop2 = prop2;
         m_publisher->publishProp2Changed(prop2);
@@ -153,15 +187,19 @@ void EnumInterfaceClient::setProp3(Enum3Enum prop3)
     m_client->publish(topic, nlohmann::json(prop3).dump());
 }
 
-void EnumInterfaceClient::setProp3Local(const std::string& args)
+Enum3Enum EnumInterfaceClient::_to_Prop3(const std::string& args)
 {
     nlohmann::json fields = nlohmann::json::parse(args);
     if (fields.empty())
     {
-        return;
+        //AG_LOG_WARNING("error while setting the property prop3");
+        return Enum3Enum::value3;
     }
+   return fields.get<Enum3Enum>();
+}
 
-    Enum3Enum prop3 = fields.get<Enum3Enum>();
+void EnumInterfaceClient::setProp3Local(Enum3Enum prop3)
+{
     if (m_data.m_prop3 != prop3) {
         m_data.m_prop3 = prop3;
         m_publisher->publishProp3Changed(prop3);
@@ -171,6 +209,23 @@ void EnumInterfaceClient::setProp3Local(const std::string& args)
 Enum3Enum EnumInterfaceClient::getProp3() const
 {
     return m_data.m_prop3;
+}
+
+void EnumInterfaceClient::handleInit(const std::string& value)
+{
+    nlohmann::json fields = nlohmann::json::parse(value);
+    if(fields.contains("prop0")) {
+        setProp0Local(fields["prop0"].get<Enum0Enum>());
+    }
+    if(fields.contains("prop1")) {
+        setProp1Local(fields["prop1"].get<Enum1Enum>());
+    }
+    if(fields.contains("prop2")) {
+        setProp2Local(fields["prop2"].get<Enum2Enum>());
+    }
+    if(fields.contains("prop3")) {
+        setProp3Local(fields["prop3"].get<Enum3Enum>());
+    }
 }
 
 Enum0Enum EnumInterfaceClient::func0(Enum0Enum param0)
@@ -337,8 +392,8 @@ void EnumInterfaceClient::onSig3(const std::string& args) const
     m_publisher->publishSig3(json_args[0].get<Enum3Enum>());
 }
 
-
 IEnumInterfacePublisher& EnumInterfaceClient::_getPublisher() const
 {
     return *m_publisher;
 }
+

@@ -8,7 +8,8 @@ using namespace Test::Testbed2::Nats;
 namespace{
 const uint32_t  expectedMethodSubscriptions = 1;
 const uint32_t  expectedPropertiesSubscriptions = 1;
-constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+const uint32_t  initRespSubscription = 1;
+constexpr uint32_t expectedSubscriptionsCount = initRespSubscription + expectedMethodSubscriptions + expectedPropertiesSubscriptions;
 }
 
 NestedStruct1InterfaceService::NestedStruct1InterfaceService(std::shared_ptr<INestedStruct1Interface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
@@ -45,8 +46,40 @@ NestedStruct1InterfaceService::~NestedStruct1InterfaceService()
 
 void NestedStruct1InterfaceService::onConnected()
 {
+    m_onReadySubscriptionId= _subscribeForIsReady([this](bool is_subscribed)
+    { 
+        if(!is_subscribed)
+        {
+            return;
+        }
+        const std::string topic = "testbed2.NestedStruct1Interface.service.available";
+        m_service->publish(topic, "");
+        _unsubscribeFromIsReady(m_onReadySubscriptionId);
+    });
     subscribeTopic("testbed2.NestedStruct1Interface.set.prop1", [this](const auto& value){ onSetProp1(value); });
     subscribeRequest("testbed2.NestedStruct1Interface.rpc.func1", [this](const auto& args){  return onInvokeFunc1(args); });
+
+    const std::string initRequestTopic = "testbed2.NestedStruct1Interface.init";
+    subscribeTopic(initRequestTopic, [this, initRequestTopic](const auto& value){
+        nlohmann::json json_id = nlohmann::json::parse(value);
+        if (json_id.empty())
+        {
+            return;
+        }
+        auto clientId = json_id.get<uint64_t>();
+        auto topic = initRequestTopic + ".resp." +  std::to_string(clientId);
+        auto properties = getState();
+        m_service->publish(topic, properties.dump());
+        }
+    );
+
+}
+
+nlohmann::json NestedStruct1InterfaceService::getState()
+{
+    return nlohmann::json::object({
+        { "prop1", m_impl->getProp1() }
+    });
 }
 void NestedStruct1InterfaceService::onSetProp1(const std::string& args) const
 {
