@@ -19,6 +19,7 @@ class apigearConan(ConanFile):
         "enable_olink": [True, False],
         "enable_mqtt": [True, False],
         "enable_fetch_olinkcore": [True, False],
+        "enable_nats": [True, False],
     }
     default_options = {
                        "shared": True,
@@ -26,6 +27,7 @@ class apigearConan(ConanFile):
                        "enable_monitor": False,
                        "enable_olink": False,
                        "enable_mqtt": False,
+                       "enable_nats": False,
                        "enable_fetch_olinkcore": True,
                        "poco/*:shared": False,
                        "poco/*:enable_data_mysql": False,
@@ -53,7 +55,12 @@ class apigearConan(ConanFile):
                        "poco/*:enable_xml": False,
                        "poco/*:enable_zip": False,
                        "paho-mqtt-c/*:shared": False,
-                       "paho-mqtt-c/*:asynchronous": True
+                       "paho-mqtt-c/*:asynchronous": True,
+                       "nats/*:shared": False,
+                       "nats/*:fPIC": True,
+                       "nats/*:with_tls": False,
+                       "nats/*:with_sodium": False,
+                       "nats/*:enable_streaming": False
                        }
 
     def config_options(self):
@@ -68,12 +75,14 @@ class apigearConan(ConanFile):
         copy(self, "*", self.recipe_folder, self.export_sources_folder)
 
     def requirements(self):
-        if self.options.enable_monitor or self.options.enable_olink or self.options.enable_mqtt:
+        if self.options.enable_monitor or self.options.enable_olink or self.options.enable_mqtt or self.options.enable_nats:
               self.requires("nlohmann_json/3.11.3", transitive_headers=True)
         if self.options.enable_monitor or self.options.enable_olink:
               self.requires("poco/1.12.4", transitive_headers=True, transitive_libs=True)
         if self.options.enable_mqtt:
               self.requires("paho-mqtt-c/1.3.13", transitive_headers=True, transitive_libs=True)
+        if self.options.enable_nats:
+              self.requires("cnats/3.9.1", visible=False)
 
     def build_requirements(self):
         self.test_requires("catch2/2.13.7")
@@ -91,6 +100,7 @@ class apigearConan(ConanFile):
         tc.cache_variables['APIGEAR_BUILD_WITH_MONITOR'] = self.options.enable_monitor
         tc.cache_variables['APIGEAR_BUILD_WITH_OLINK'] = self.options.enable_olink
         tc.cache_variables['APIGEAR_BUILD_WITH_MQTT'] = self.options.enable_mqtt
+        tc.cache_variables['APIGEAR_BUILD_WITH_NATS'] = self.options.enable_nats
         tc.cache_variables['APIGEAR_FETCH_OLINKCORE'] = self.options.enable_olink and self.options.enable_fetch_olinkcore
         tc.generate()
         deps = CMakeDeps(self)
@@ -138,3 +148,7 @@ class apigearConan(ConanFile):
         if self.options.enable_mqtt:
             self.cpp_info.components["paho-mqtt"].libs = ["paho-mqtt"]
             self.cpp_info.components["paho-mqtt"].requires = ["paho-mqtt-c::paho-mqtt-c", "nlohmann_json::nlohmann_json", "utilities"]
+        if self.options.enable_nats:
+            self.cpp_info.components["nats"].libs = ["nats"]
+            #TODO add cnats::nats if nats is shared
+            self.cpp_info.components["nats"].requires = ["nlohmann_json::nlohmann_json", "utilities"]
