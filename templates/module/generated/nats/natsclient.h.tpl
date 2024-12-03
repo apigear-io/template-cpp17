@@ -20,12 +20,14 @@
 namespace {{ Camel .System.Name }} {
 namespace {{ Camel .Module.Name }} {
 namespace Nats {
-class {{ SNAKE .System.Name  }}_{{ SNAKE .Module.Name  }}_EXPORT {{$class}} : public {{$interfaceClass}}, public ApiGear::Nats::BaseAdapter
+class {{ SNAKE .System.Name  }}_{{ SNAKE .Module.Name  }}_EXPORT {{$class}} : public {{$interfaceClass}}, public ApiGear::Nats::BaseAdapter,  public std::enable_shared_from_this<{{$class}}>
 {
-public:
+protected:
     explicit {{$class}}(std::shared_ptr<ApiGear::Nats::Client> client);
+public:
+    static std::shared_ptr<{{$class}}>create(std::shared_ptr<ApiGear::Nats::Client> client);
     virtual ~{{$class}}() override;
-
+    void init();
 {{- range .Interface.Properties}}
 {{- $property := . }}
     {{cppTypeRef "" $property}} get{{Camel $property.Name}}() const override;
@@ -41,6 +43,7 @@ public:
 {{- end }}
     {{$pub_class}}& _getPublisher() const override;
 private:
+    std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
 {{- range .Interface.Properties}}
 {{- $property := . }}
     /// @brief sets the value for the property {{Camel $property.Name}} coming from the service

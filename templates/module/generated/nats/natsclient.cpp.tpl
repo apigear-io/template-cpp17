@@ -21,10 +21,25 @@ const uint32_t  expectedPropertiesSubscriptions = {{len (.Interface.Properties)}
 constexpr uint32_t expectedSubscriptionsCount = expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
 }
 
+std::shared_ptr<{{$class}}> {{$class}}::create(std::shared_ptr<ApiGear::Nats::Client> client)
+{
+    std::shared_ptr<{{$class}}> obj(new {{$class}}(client));
+    obj->init();
+    return obj;
+}
+
+std::shared_ptr<ApiGear::Nats::BaseAdapter> {{$class}}::getSharedFromDerrived()
+{
+    return shared_from_this();
+}
+
 {{$class}}::{{$class}}(std::shared_ptr<ApiGear::Nats::Client> client)
     :BaseAdapter(client, expectedSubscriptionsCount)
     , m_client(client)
     , m_publisher(std::make_unique<{{$pub_class}}>())
+{}
+
+void {{$class}}::init()
 {
     BaseAdapter::init([this](){onConnected();});
 }
