@@ -6,9 +6,13 @@ using namespace Test::Testbed1;
 using namespace Test::Testbed1::Nats;
 
 namespace{
+namespace{
 const uint32_t  expectedMethodSubscriptions = 4;
 const uint32_t  expectedPropertiesSubscriptions = 4;
-constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+const uint32_t  initRespSubscription = 1;
+constexpr uint32_t expectedSubscriptionsCount =
+ expectedMethodSubscriptions + expectedPropertiesSubscriptions + initRespSubscription;
+}
 }
 
 StructArrayInterfaceService::StructArrayInterfaceService(std::shared_ptr<IStructArrayInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
@@ -53,6 +57,32 @@ void StructArrayInterfaceService::onConnected()
     subscribeRequest("testbed1.StructArrayInterface.rpc.funcInt", [this](const auto& args){  return onInvokeFuncInt(args); });
     subscribeRequest("testbed1.StructArrayInterface.rpc.funcFloat", [this](const auto& args){  return onInvokeFuncFloat(args); });
     subscribeRequest("testbed1.StructArrayInterface.rpc.funcString", [this](const auto& args){  return onInvokeFuncString(args); });
+    const std::string initRequestTopic = "testbed1.StructArrayInterface.init";
+    subscribeTopic(initRequestTopic, [this, initRequestTopic](const auto& value){
+        nlohmann::json json_id = nlohmann::json::parse(value);
+        if (json_id.empty())
+        {
+            return;
+        }
+        auto clientId = json_id.get<uint64_t>();
+        auto topic = initRequestTopic + ".resp." +  std::to_string(clientId);
+        auto properties = getState();
+        m_service->publish(topic, properties.dump());
+        }
+    );
+    m_service->publish("testbed1.StructArrayInterface.prop.propBool", nlohmann::json(m_impl->getPropBool()).dump());
+    m_service->publish("testbed1.StructArrayInterface.prop.propInt", nlohmann::json(m_impl->getPropInt()).dump());
+    m_service->publish("testbed1.StructArrayInterface.prop.propFloat", nlohmann::json(m_impl->getPropFloat()).dump());
+    m_service->publish("testbed1.StructArrayInterface.prop.propString", nlohmann::json(m_impl->getPropString()).dump());
+}
+nlohmann::json StructArrayInterfaceService::getState()
+{
+    return nlohmann::json::object({
+        { "propBool", m_impl->getPropBool() },
+        { "propInt", m_impl->getPropInt() },
+        { "propFloat", m_impl->getPropFloat() },
+        { "propString", m_impl->getPropString() }
+    });
 }
 void StructArrayInterfaceService::onSetPropBool(const std::string& args) const
 {

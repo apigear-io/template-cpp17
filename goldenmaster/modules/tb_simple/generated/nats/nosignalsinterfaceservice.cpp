@@ -6,9 +6,13 @@ using namespace Test::TbSimple;
 using namespace Test::TbSimple::Nats;
 
 namespace{
+namespace{
 const uint32_t  expectedMethodSubscriptions = 2;
 const uint32_t  expectedPropertiesSubscriptions = 2;
-constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+const uint32_t  initRespSubscription = 1;
+constexpr uint32_t expectedSubscriptionsCount =
+ expectedMethodSubscriptions + expectedPropertiesSubscriptions + initRespSubscription;
+}
 }
 
 NoSignalsInterfaceService::NoSignalsInterfaceService(std::shared_ptr<INoSignalsInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
@@ -49,6 +53,28 @@ void NoSignalsInterfaceService::onConnected()
     subscribeTopic("tb.simple.NoSignalsInterface.set.propInt", [this](const auto& value){ onSetPropInt(value); });
     subscribeRequest("tb.simple.NoSignalsInterface.rpc.funcVoid", [this](const auto& args){  return onInvokeFuncVoid(args); });
     subscribeRequest("tb.simple.NoSignalsInterface.rpc.funcBool", [this](const auto& args){  return onInvokeFuncBool(args); });
+    const std::string initRequestTopic = "tb.simple.NoSignalsInterface.init";
+    subscribeTopic(initRequestTopic, [this, initRequestTopic](const auto& value){
+        nlohmann::json json_id = nlohmann::json::parse(value);
+        if (json_id.empty())
+        {
+            return;
+        }
+        auto clientId = json_id.get<uint64_t>();
+        auto topic = initRequestTopic + ".resp." +  std::to_string(clientId);
+        auto properties = getState();
+        m_service->publish(topic, properties.dump());
+        }
+    );
+    m_service->publish("tb.simple.NoSignalsInterface.prop.propBool", nlohmann::json(m_impl->getPropBool()).dump());
+    m_service->publish("tb.simple.NoSignalsInterface.prop.propInt", nlohmann::json(m_impl->getPropInt()).dump());
+}
+nlohmann::json NoSignalsInterfaceService::getState()
+{
+    return nlohmann::json::object({
+        { "propBool", m_impl->getPropBool() },
+        { "propInt", m_impl->getPropInt() }
+    });
 }
 void NoSignalsInterfaceService::onSetPropBool(const std::string& args) const
 {

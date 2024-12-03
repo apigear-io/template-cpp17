@@ -6,9 +6,11 @@ using namespace Test::TbSimple;
 using namespace Test::TbSimple::Nats;
 
 namespace{
+namespace{
 const uint32_t  expectedMethodSubscriptions = 1;
-const uint32_t  expectedPropertiesSubscriptions = 0;
-constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+constexpr uint32_t expectedSubscriptionsCount =
+ expectedMethodSubscriptions;
+}
 }
 
 VoidInterfaceService::VoidInterfaceService(std::shared_ptr<IVoidInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service)

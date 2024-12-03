@@ -6,9 +6,13 @@ using namespace Test::TbEnum;
 using namespace Test::TbEnum::Nats;
 
 namespace{
+namespace{
 const uint32_t  expectedMethodSubscriptions = 4;
 const uint32_t  expectedPropertiesSubscriptions = 4;
-constexpr uint32_t expectedSubscriptionsCount = expectedMethodSubscriptions + expectedPropertiesSubscriptions;
+const uint32_t  initRespSubscription = 1;
+constexpr uint32_t expectedSubscriptionsCount =
+ expectedMethodSubscriptions + expectedPropertiesSubscriptions + initRespSubscription;
+}
 }
 
 EnumInterfaceService::EnumInterfaceService(std::shared_ptr<IEnumInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
@@ -53,6 +57,32 @@ void EnumInterfaceService::onConnected()
     subscribeRequest("tb.enum.EnumInterface.rpc.func1", [this](const auto& args){  return onInvokeFunc1(args); });
     subscribeRequest("tb.enum.EnumInterface.rpc.func2", [this](const auto& args){  return onInvokeFunc2(args); });
     subscribeRequest("tb.enum.EnumInterface.rpc.func3", [this](const auto& args){  return onInvokeFunc3(args); });
+    const std::string initRequestTopic = "tb.enum.EnumInterface.init";
+    subscribeTopic(initRequestTopic, [this, initRequestTopic](const auto& value){
+        nlohmann::json json_id = nlohmann::json::parse(value);
+        if (json_id.empty())
+        {
+            return;
+        }
+        auto clientId = json_id.get<uint64_t>();
+        auto topic = initRequestTopic + ".resp." +  std::to_string(clientId);
+        auto properties = getState();
+        m_service->publish(topic, properties.dump());
+        }
+    );
+    m_service->publish("tb.enum.EnumInterface.prop.prop0", nlohmann::json(m_impl->getProp0()).dump());
+    m_service->publish("tb.enum.EnumInterface.prop.prop1", nlohmann::json(m_impl->getProp1()).dump());
+    m_service->publish("tb.enum.EnumInterface.prop.prop2", nlohmann::json(m_impl->getProp2()).dump());
+    m_service->publish("tb.enum.EnumInterface.prop.prop3", nlohmann::json(m_impl->getProp3()).dump());
+}
+nlohmann::json EnumInterfaceService::getState()
+{
+    return nlohmann::json::object({
+        { "prop0", m_impl->getProp0() },
+        { "prop1", m_impl->getProp1() },
+        { "prop2", m_impl->getProp2() },
+        { "prop3", m_impl->getProp3() }
+    });
 }
 void EnumInterfaceService::onSetProp0(const std::string& args) const
 {

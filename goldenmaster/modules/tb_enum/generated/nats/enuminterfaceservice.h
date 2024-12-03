@@ -27,6 +27,7 @@ public:
 private:
     std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;
     void onConnected();
+    nlohmann::json getState();
     void onProp0Changed(Enum0Enum prop0) override;
     /// @brief requests to set the value for the property Prop0 coming from the client
     /// @param fields contains the param of the type Enum0Enum

@@ -8,8 +8,8 @@ using namespace Test::TbSimple::Nats;
 
 namespace{
 const uint32_t  expectedSingalsSubscriptions = 1;
-const uint32_t  expectedPropertiesSubscriptions = 0;
-constexpr uint32_t expectedSubscriptionsCount = expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
+constexpr uint32_t expectedSubscriptionsCount =
+ expectedSingalsSubscriptions;
 }
 
 std::shared_ptr<VoidInterfaceClient> VoidInterfaceClient::create(std::shared_ptr<ApiGear::Nats::Client> client)
@@ -78,8 +78,8 @@ void VoidInterfaceClient::onSigVoid(const std::string& args) const
     m_publisher->publishSigVoid();
 }
 
-
 IVoidInterfacePublisher& VoidInterfaceClient::_getPublisher() const
 {
     return *m_publisher;
 }
+
