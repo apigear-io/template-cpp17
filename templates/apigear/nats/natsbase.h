@@ -28,6 +28,7 @@ public:
     static const int64_t InvalidSubscriptionId = 0;
 
     void connect(const std::string& address);
+    uint64_t getId() const;
     void disconnect();
     void subscribe(const std::string& topic, SimpleOnMessageCallback callback, std::function<void(int64_t, std::string, bool)> subscribe_callback);
     void subscribeForRequest(const std::string& topic, MessageCallbackWithResult callback, std::function<void(int64_t, std::string, bool)> subscribe_callback);
