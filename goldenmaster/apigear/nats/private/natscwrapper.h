@@ -41,6 +41,7 @@ public:
     }
 
     void connect(const std::string& address, std::function<void(void)> connectionStateChangedCallback);
+    uint64_t getId() const;
     void disconnect();
     int64_t subscribe(const std::string& topic, SimpleOnMessageCallback callback, SubscriptionClosedCallback onSubscriptionClosedCallback);
     int64_t subscribeWithResponse(const std::string& topic, MessageCallbackWithResult callback, SubscriptionClosedCallback onSubscriptionClosedCallback);
