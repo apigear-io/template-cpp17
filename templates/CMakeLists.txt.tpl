@@ -92,6 +92,9 @@ if(NOT apigear_FOUND)
 {{- if $.Features.mqtt }}
   set(APIGEAR_BUILD_WITH_MQTT ON CACHE INTERNAL "Enable support for MQTT")
 {{- end }}
+{{- if $.Features.nats }}
+  set(APIGEAR_BUILD_WITH_NATS ON CACHE INTERNAL "Enable support for Nats")
+{{- end }}
   FetchContent_Declare(apigear
     SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/apigear"
     OVERRIDE_FIND_PACKAGE

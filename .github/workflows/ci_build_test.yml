@@ -112,7 +112,6 @@ jobs:
       - name: Create default profile
         run: conan profile detect
       - name: create dependencies folder
-        if: ${{ matrix.config.os != 'ubuntu-latest'}}
         run: mkdir -p deps
       - name: Install poco using conan
         if: ${{ matrix.config.os != 'ubuntu-latest'}}
@@ -126,6 +125,10 @@ jobs:
         if: ${{ matrix.config.os != 'ubuntu-latest'}}
         run: |
           cd deps && conan install --requires=eigen/3.4.0 --build missing --generator CMakeDeps --generator VirtualBuildEnv
+      - name: Install nats using conan for all systems
+        run: |
+          cd deps && conan install --requires=cnats/3.9.1@ --build missing -o nats/*:shared=False -o nats/*:fPIC=True -o nats/*:with_tls=False -o nats/*:with_sodium=False -o nats/*:enable_streaming=False --generator CMakeDeps --generator VirtualBuildEnv 
+
       - name: Save cache conan on Windows
         uses: actions/cache/save@v4
         if: ${{ matrix.config.os == 'windows-latest'}}
@@ -221,6 +224,9 @@ jobs:
       - name: Install eigen using conan for extern type testing
         run: |
           cd deps && conan install --profile=release --profile:build=release --requires=eigen/3.4.0 --build missing --generator CMakeDeps --generator VirtualBuildEnv
+      - name: Install nats using conan
+        run: |
+          cd deps && conan install --profile=release --profile:build=release --requires=cnats/3.9.1@ --build missing -o nats/*:shared=False -o nats/*:fPIC=True -o nats/*:with_tls=False -o nats/*:with_sodium=False -o nats/*:enable_streaming=False --generator CMakeDeps --generator VirtualBuildEnv   
       - name: Save cache conan on Windows
         uses: actions/cache/save@v4
         if: ${{ matrix.config.os == 'windows-latest'}}
