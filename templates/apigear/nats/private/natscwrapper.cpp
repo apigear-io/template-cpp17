@@ -30,12 +30,26 @@ CWrapper::CWrapper()
 
 CWrapper::~CWrapper()
 {
-
+    natsConnection_Close(m_connection);
+    natsSubscription_Destroy(m_subscription);
+    natsConnection_Destroy(m_connection);
 }
 
 void CWrapper::connect(std::string address)//"nats://localhost:4222"
 {
-
+    natsOptions* opts;
+    auto status = natsOptions_Create(&opts);
+    if (status != NATS_OK) { /*handle*/ return; }
+    //status = natsOptions_SetEventLoop(natsOptions * opts, void* loop, natsEvLoop_Attach 	attachCb, natsEvLoop_ReadAddRemove 	readCb, natsEvLoop_WriteAddRemove 	writeCb, natsEvLoop_Detach 	detachCb);
+    if (status != NATS_OK) { /*handle*/ return; }
+    //set error handler
+    status = natsOptions_SetErrorHandler(opts, asyncCb, NULL);
+    if (status != NATS_OK) { /*handle*/ return; }
+    status = natsOptions_SetURL(opts, address.c_str());
+    if (status != NATS_OK) { /*handle*/ return; }
+    status = natsConnection_Connect(&m_connection, opts);
+    if (status != NATS_OK) { /*TODO HANDLE */ return;}
+    natsOptions_Destroy(opts); // use custom deleter with this function call? and similar for all other nats *
 }
 
 ConnectionStatus CWrapper::getStatus()
@@ -60,12 +74,18 @@ ConnectionStatus CWrapper::getStatus()
 
 void CWrapper::subscribe(std::string topic)
 {
+    auto status = natsConnection_Subscribe(&m_subscription, m_connection, topic.c_str(), onMsg, NULL);
+    if (status != NATS_OK) { /*TODO HANDLE */ };
 }
 void CWrapper::unsubscribe(std::string topic)
 {
+    auto status = natsSubscription_Unsubscribe(m_subscription);
+    if (status != NATS_OK) { /*TODO HANDLE */ };
 }
 
 void CWrapper::publish(std::string topic, std::string payload)
 {
+    auto status = natsConnection_PublishString(m_connection, topic.c_str(), payload.c_str());
+    if (status != NATS_OK) { /*handle*/ return; }
 }
 
