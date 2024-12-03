@@ -75,15 +75,16 @@ bool Base::isConnected() const
     return m_cwrapper->getStatus() == ConnectionStatus::connected;
 }
 
-void Base::subscribe(std::string topic)
+int64_t Base::subscribe(const std::string& topic, SimpleOnMessageCallback callback)
 {
-    m_cwrapper->subscribe(topic);
+    return m_cwrapper->subscribe(topic, callback);
 }
-void Base::unsubscribe(std::string topic)
+
+void Base::unsubscribe(int64_t id)
 {
-    m_cwrapper->unsubscribe(topic);
+    m_cwrapper->unsubscribe(id);
 }
-void Base::publish(std::string topic, std::string payload)
+void Base::publish(const std::string& topic, const std::string& payload)
 {
     m_cwrapper->publish(topic, payload);
 }
