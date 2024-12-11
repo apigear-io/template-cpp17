@@ -38,6 +38,9 @@ add_subdirectory(generated/olink)
 {{- if and $features.mqtt ( len .Module.Interfaces ) }}
 add_subdirectory(generated/mqtt)
 {{- end}}
+{{- if and $features.nats ( len .Module.Interfaces ) }}
+add_subdirectory(generated/nats)
+{{- end}}
 
 include(CMakePackageConfigHelpers)
 configure_package_config_file({{$module_idFirstUpper}}Config.cmake.in

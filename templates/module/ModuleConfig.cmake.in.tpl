@@ -21,6 +21,9 @@ find_dependency(apigear COMPONENTS poco-olink REQUIRED)
 {{- if and $features.mqtt ( len .Module.Interfaces ) }}
 find_dependency(apigear COMPONENTS paho-mqtt REQUIRED)
 {{- end}}
+{{- if and $features.nats ( len .Module.Interfaces ) }}
+find_dependency(apigear COMPONENTS nats REQUIRED)
+{{- end}}
 {{- range .Module.Imports }}
 find_dependency({{snake .Name}} COMPONENTS api core REQUIRED)
 {{- end }}
@@ -46,6 +49,9 @@ INCLUDE("${CMAKE_CURRENT_LIST_DIR}/{{$module_idFirstUpper}}OLinkTargets.cmake")
 {{- if and $features.mqtt ( len .Module.Interfaces ) }}
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/{{$module_idFirstUpper}}MqttTargets.cmake")
 {{- end}}
+{{- if and $features.nats ( len .Module.Interfaces ) }}
+INCLUDE("${CMAKE_CURRENT_LIST_DIR}/{{$module_idFirstUpper}}NatsTargets.cmake")
+{{- end}}
 {{- if and $features.stubs ( len .Module.Interfaces ) }}
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/{{$module_idFirstUpper}}ImplementationTargets.cmake")
 {{- end}}
@@ -57,6 +63,7 @@ check_required_components(
 {{if $features.monitor }}{{$module_idCamel}}-monitor {{- end}}
 {{if $features.olink }}{{$module_idCamel}}-olink {{- end}}
 {{if $features.mqtt }}{{$module_idCamel}}-mqtt {{- end}}
+{{if $features.nats }}{{$module_idCamel}}-nats {{- end}}
 {{if $features.stubs }}{{$module_idCamel}}-implementation {{- end}}
 {{- end }}
 )
