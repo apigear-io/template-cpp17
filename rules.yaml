@@ -152,6 +152,53 @@ features:
           target: "{{lower (camel .Interface.Name)}}client.h"
         - source: "module/generated/mqtt/mqttclient.cpp.tpl"
           target: "{{lower (camel .Interface.Name)}}client.cpp"
+  - name: nats
+    requires:
+      - api
+      - core
+      - apigear
+    scopes:
+    - match: module
+      documents:
+        - source: "apigear/nats/CMakeLists.txt"
+          raw: true
+        - source: "apigear/nats/natstypes.h"
+          raw: true
+        - source: "apigear/nats/private/natscwrapper.cpp"
+          raw: true
+        - source: "apigear/nats/private/natscwrapper.h"
+          raw: true
+        - source: "apigear/nats/natsbase.cpp"
+          raw: true
+        - source: "apigear/nats/natsbase.h"
+          raw: true
+        - source: "apigear/nats/natsclient.cpp"
+          raw: true
+        - source: "apigear/nats/natsclient.h"
+          raw: true
+        - source: "apigear/nats/natsservice.cpp"
+          raw: true
+        - source: "apigear/nats/natsservice.h"
+          raw: true
+        - source: "apigear/nats/baseadapter.cpp"
+          raw: true
+        - source: "apigear/nats/baseadapter.h"
+          raw: true
+        - source: "apigear/nats/natscommon.h"
+          raw: true
+        - source: "module/generated/nats/CMakeLists.txt.tpl"
+          target: "modules/{{snake .Module.Name}}/generated/nats/CMakeLists.txt"
+    - match: interface
+      prefix: "modules/{{snake .Module.Name}}/generated/nats/"
+      documents:
+        - source: "module/generated/nats/natsservice.h.tpl"
+          target: "{{lower (camel .Interface.Name)}}service.h"
+        - source: "module/generated/nats/natsservice.cpp.tpl"
+          target: "{{lower (camel .Interface.Name)}}service.cpp"
+        - source: "module/generated/nats/natsclient.h.tpl"
+          target: "{{lower (camel .Interface.Name)}}client.h"
+        - source: "module/generated/nats/natsclient.cpp.tpl"
+          target: "{{lower (camel .Interface.Name)}}client.cpp"
   - name: apigear
     scopes:
     - match: system
@@ -163,6 +210,8 @@ features:
         - source: "apigear/utilities/threadpool.cpp"
           raw: true
         - source: "apigear/utilities/threadpool.h"
+          raw: true
+        - source: "apigear/utilities/single_pub.hpp"
           raw: true
         - source: "apigear/utilities/CMakeLists.txt"
           raw: true
@@ -326,6 +375,25 @@ features:
           target: examples/mqttclient/conanfile.txt
         - source: examples/mqttclient/main.cpp.tpl
           target: examples/mqttclient/main.cpp
+  - name: examples_nats
+    requires:
+      - stubs
+      - nats
+    scopes:
+    - match: system
+      documents:
+        - source: examples/natsserver/CMakeLists.txt.tpl
+          target: examples/natsserver/CMakeLists.txt
+        - source: examples/natsserver/conanfile.txt.tpl
+          target: examples/natsserver/conanfile.txt
+        - source: examples/natsserver/main.cpp.tpl
+          target: examples/natsserver/main.cpp
+        - source: examples/natsclient/CMakeLists.txt.tpl
+          target: examples/natsclient/CMakeLists.txt
+        - source: examples/natsclient/conanfile.txt.tpl
+          target: examples/natsclient/conanfile.txt
+        - source: examples/natsclient/main.cpp.tpl
+          target: examples/natsclient/main.cpp
   - name: conan
     requires:
       - api

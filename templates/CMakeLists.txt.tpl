@@ -92,6 +92,9 @@ if(NOT apigear_FOUND)
 {{- if $.Features.mqtt }}
   set(APIGEAR_BUILD_WITH_MQTT ON CACHE INTERNAL "Enable support for MQTT")
 {{- end }}
+{{- if $.Features.nats }}
+  set(APIGEAR_BUILD_WITH_NATS ON CACHE INTERNAL "Enable support for Nats")
+{{- end }}
   FetchContent_Declare(apigear
     SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/apigear"
     OVERRIDE_FIND_PACKAGE
@@ -126,4 +129,8 @@ add_subdirectory(examples/olinkclient)
 {{- if .Features.examples_mqtt }}
 add_subdirectory(examples/mqttserver)
 add_subdirectory(examples/mqttclient)
+{{- end }}
+{{- if .Features.examples_nats }}
+add_subdirectory(examples/natsserver)
+add_subdirectory(examples/natsclient)
 {{- end }}

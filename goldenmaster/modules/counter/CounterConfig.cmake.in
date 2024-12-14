@@ -8,6 +8,7 @@ find_dependency(nlohmann_json REQUIRED)
 find_dependency(apigear COMPONENTS poco-tracer REQUIRED)
 find_dependency(apigear COMPONENTS poco-olink REQUIRED)
 find_dependency(apigear COMPONENTS paho-mqtt REQUIRED)
+find_dependency(apigear COMPONENTS nats REQUIRED)
 find_dependency(custom_types COMPONENTS api core REQUIRED)
 find_dependency(extern_types COMPONENTS api core REQUIRED)
 
@@ -16,6 +17,7 @@ INCLUDE("${CMAKE_CURRENT_LIST_DIR}/CounterCoreTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/CounterMonitorTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/CounterOLinkTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/CounterMqttTargets.cmake")
+INCLUDE("${CMAKE_CURRENT_LIST_DIR}/CounterNatsTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/CounterImplementationTargets.cmake")
 
 check_required_components(
@@ -24,5 +26,6 @@ Counter-core
 Counter-monitor
 Counter-olink
 Counter-mqtt
+Counter-nats
 Counter-implementation
 )

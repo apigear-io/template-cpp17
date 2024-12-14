@@ -16,6 +16,7 @@ option(BUILD_TESTING "Enable this option to build the test targets" OFF)
 option(APIGEAR_BUILD_WITH_OLINK "Enables the build of the OLINK backend" OFF)
 option(APIGEAR_BUILD_WITH_MONITOR "Enables the build of the monitoring support library" OFF)
 option(APIGEAR_BUILD_WITH_MQTT "Enables the build of the MQTT backend" OFF)
+option(APIGEAR_BUILD_WITH_NATS "Enables the build of the nats backend" OFF)
 # this options is only here for the conan build until there is a conan based solution for objectlink-core
 option(APIGEAR_FETCH_OLINKCORE "Fetch and build objectlink-core, if not pre-installed" OFF)
 
@@ -60,11 +61,16 @@ add_subdirectory(mqtt)
 list(APPEND apigear_COMPONENTS "mqtt")
 endif()
 
+if(APIGEAR_BUILD_WITH_NATS)
+add_subdirectory(nats)
+list(APPEND apigear_COMPONENTS "nats")
+endif()
+
 include(CMakePackageConfigHelpers)
 configure_package_config_file(ApigearConfig.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/apigearConfig.cmake
   INSTALL_DESTINATION ${InstallDir}
-  PATH_VARS APIGEAR_BUILD_WITH_MONITOR APIGEAR_BUILD_WITH_OLINK APIGEAR_BUILD_WITH_MQTT)
+  PATH_VARS APIGEAR_BUILD_WITH_MONITOR APIGEAR_BUILD_WITH_OLINK APIGEAR_BUILD_WITH_MQTT APIGEAR_BUILD_WITH_NATS)
 write_basic_package_version_file(
   ${CMAKE_CURRENT_BINARY_DIR}/apigearConfigVersion.cmake
   VERSION 3.7.0
