@@ -1,8 +1,7 @@
 {{- /* Copyright (c) ApiGear UG 2020 */ -}}
 {{- $class := printf "%sService" .Interface.Name }}
 {{- $interface := .Interface.Name -}}
-{{- $interfaceName := Camel .Interface.Name  -}}
-{{- $interfaceClass := printf "I%s" $interfaceName -}}
+{{- $interfaceClass := printf "I%s" (Camel .Interface.Name) -}}
 #include "{{snake .Module.Name}}/generated/nats/{{lower (camel .Interface.Name)}}service.h"
 #include "{{snake .Module.Name}}/generated/core/{{snake .Module.Name}}.json.adapter.h"
 {{- range .Module.Imports }}
@@ -13,10 +12,10 @@
 using namespace {{ Camel .System.Name }}::{{ Camel .Module.Name }};
 using namespace {{ Camel .System.Name }}::{{ Camel .Module.Name }}::Nats;
 
-{{- $expectedSubscriptionCount := len (.Interface.Properties) }}
+{{- $expectedPropSubscriptionCount := len (.Interface.Properties) }}
 {{- range .Interface.Properties }}
 {{- if .IsReadOnly }}
-{{- $expectedSubscriptionCount =  len (slice (printf "%*s" $expectedSubscriptionCount "") 1)  }}
+{{- $expectedPropSubscriptionCount =  len (slice (printf "%*s" $expectedPropSubscriptionCount "") 1)  }}
 {{- end }}
 {{- end }}
 
@@ -26,7 +25,7 @@ namespace{
 const uint32_t  expectedMethodSubscriptions = {{len (.Interface.Operations)}};
 {{- end }}
 {{- if len (.Interface.Properties) }}
-const uint32_t  expectedPropertiesSubscriptions = {{len (.Interface.Properties)}};
+const uint32_t  expectedPropertiesSubscriptions = {{$expectedPropSubscriptionCount}};
 const uint32_t  initRespSubscription = 1;
 {{- end }}
 {{- if or (len (.Interface.Operations)) ( len (.Interface.Properties) ) }}
@@ -79,14 +78,14 @@ void {{$class}}::onConnected()
 {
     {{- range .Interface.Properties }}
     {{- if not .IsReadOnly }}
-    subscribeTopic("{{$.Module.Name}}.{{$interfaceName}}.set.{{.Name}}", [this](const auto& value){ onSet{{Camel .Name}}(value); });
+    subscribeTopic("{{$.Module.Name}}.{{$interface}}.set.{{.Name}}", [this](const auto& value){ onSet{{Camel .Name}}(value); });
     {{- end }}
     {{- end }}
     {{- range .Interface.Operations }}
     subscribeRequest("{{$.Module.Name}}.{{$interface}}.rpc.{{.Name}}", [this](const auto& args){  return onInvoke{{ Camel .Name }}(args); });
     {{- end }}
     {{- if len (.Interface.Properties) }}
-    const std::string initRequestTopic = "{{$.Module.Name}}.{{$interfaceName}}.init";
+    const std::string initRequestTopic = "{{$.Module.Name}}.{{$interface}}.init";
     subscribeTopic(initRequestTopic, [this, initRequestTopic](const auto& value){
         nlohmann::json json_id = nlohmann::json::parse(value);
         if (json_id.empty())
@@ -101,7 +100,7 @@ void {{$class}}::onConnected()
     );
     {{- end }}
     {{- range .Interface.Properties }}
-    m_service->publish("{{$.Module.Name}}.{{$interfaceName}}.prop.{{.Name}}", nlohmann::json(m_impl->get{{Camel .Name}}()).dump());
+    m_service->publish("{{$.Module.Name}}.{{$interface}}.prop.{{.Name}}", nlohmann::json(m_impl->get{{Camel .Name}}()).dump());
     {{- end }}
 }
 {{- if len (.Interface.Properties) }}
@@ -141,7 +140,7 @@ void {{$class}}::on{{Camel $signal.Name}}({{cppParams "" $signal.Params}})
     {{- range $signal.Params}}
     (void) {{cppVar .}};
     {{- end}}
-    static const std::string topic = "{{$.Module.Name}}.{{$interfaceName}}.sig.{{.Name}}";
+    static const std::string topic = "{{$.Module.Name}}.{{$interface}}.sig.{{.Name}}";
     nlohmann::json args = { {{ cppVars $signal.Params}} };
     m_service->publish(topic, nlohmann::json(args).dump());
 }
@@ -151,7 +150,7 @@ void {{$class}}::on{{Camel $signal.Name}}({{cppParams "" $signal.Params}})
 {{- $property := . }}
 void {{$class}}::on{{Camel $property.Name}}Changed({{cppParam "" $property}})
 {
-    static const std::string topic = "{{$.Module.Name}}.{{$interfaceName}}.prop.{{.Name}}";
+    static const std::string topic = "{{$.Module.Name}}.{{$interface}}.prop.{{.Name}}";
     m_service->publish(topic, nlohmann::json({{$property}}).dump());
 }
 {{- end }}
