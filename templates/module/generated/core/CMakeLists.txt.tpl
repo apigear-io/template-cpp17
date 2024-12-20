@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(nlohmann_json REQUIRED)
 set (SOURCES_CORE_SUPPORT
     {{$module_id}}.json.adapter.cpp
+    test_struct_helper.cpp
 {{- range .Module.Interfaces }}
 {{- $interface:= . }}
     {{lower (camel $interface.Name)}}.publisher.cpp

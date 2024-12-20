@@ -35,3 +35,8 @@ install(EXPORT Custom_typesNatsTargets
   DESTINATION ${InstallDir}
   NAMESPACE custom_types::
 )
+
+if(BUILD_TESTING)
+enable_testing()
+add_subdirectory(tests)
+endif()
