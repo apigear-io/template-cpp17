@@ -35,3 +35,8 @@ install(EXPORT Extern_typesNatsTargets
   DESTINATION ${InstallDir}
   NAMESPACE extern_types::
 )
+
+if(BUILD_TESTING)
+enable_testing()
+add_subdirectory(tests)
+endif()
