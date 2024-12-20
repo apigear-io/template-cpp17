@@ -39,3 +39,8 @@ install(EXPORT Testbed1NatsTargets
   DESTINATION ${InstallDir}
   NAMESPACE testbed1::
 )
+
+if(BUILD_TESTING)
+enable_testing()
+add_subdirectory(tests)
+endif()

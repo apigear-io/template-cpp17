@@ -37,3 +37,8 @@ install(EXPORT Tb_enumNatsTargets
   DESTINATION ${InstallDir}
   NAMESPACE tb_enum::
 )
+
+if(BUILD_TESTING)
+enable_testing()
+add_subdirectory(tests)
+endif()

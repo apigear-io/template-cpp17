@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(nlohmann_json REQUIRED)
 set (SOURCES_CORE_SUPPORT
     tb_same1.json.adapter.cpp
+    test_struct_helper.cpp
     samestruct1interface.publisher.cpp
     samestruct1interface.threadsafedecorator.cpp
     samestruct2interface.publisher.cpp
