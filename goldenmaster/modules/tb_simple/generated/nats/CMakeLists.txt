@@ -49,3 +49,8 @@ install(EXPORT Tb_simpleNatsTargets
   DESTINATION ${InstallDir}
   NAMESPACE tb_simple::
 )
+
+if(BUILD_TESTING)
+enable_testing()
+add_subdirectory(tests)
+endif()

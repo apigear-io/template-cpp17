@@ -50,3 +50,8 @@ install(EXPORT {{$module_idFirstUpper}}NatsTargets
   DESTINATION ${InstallDir}
   NAMESPACE {{$module_id }}::
 )
+
+if(BUILD_TESTING)
+enable_testing()
+add_subdirectory(tests)
+endif()
