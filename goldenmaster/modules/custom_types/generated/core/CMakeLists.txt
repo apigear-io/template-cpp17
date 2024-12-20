@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(nlohmann_json REQUIRED)
 set (SOURCES_CORE_SUPPORT
     custom_types.json.adapter.cpp
+    test_struct_helper.cpp
 )
 add_library(custom_types-core SHARED ${SOURCES_CORE_SUPPORT})
 add_library(custom_types::custom_types-core ALIAS custom_types-core)

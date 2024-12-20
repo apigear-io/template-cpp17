@@ -51,6 +51,10 @@ features:
             target: "{{snake .Module.Name}}.json.adapter.h"
           - source: "module/generated/core/json.adapter.cpp.tpl"
             target: "{{snake .Module.Name}}.json.adapter.cpp"
+          - source: "module/generated/core/test_struct_helper.cpp.tpl"
+            target: "test_struct_helper.cpp"
+          - source: "module/generated/core/test_struct_helper.h.tpl"
+            target: "test_struct_helper.h"
             preserve: true
       - match: interface
         prefix: "modules/{{snake .Module.Name}}/generated/core/"
@@ -191,6 +195,11 @@ features:
           raw: true
         - source: "module/generated/nats/CMakeLists.txt.tpl"
           target: "modules/{{snake .Module.Name}}/generated/nats/CMakeLists.txt"
+        - source: "module/generated/nats/tests/CMakeLists.txt.tpl"
+          target: "modules/{{snake .Module.Name}}/generated/nats/tests/CMakeLists.txt"
+        - source: "module/generated/nats/tests/test_main.cpp"
+          target: "modules/{{snake .Module.Name}}/generated/nats/tests/test_main.cpp"
+          raw: true
     - match: interface
       prefix: "modules/{{snake .Module.Name}}/generated/nats/"
       documents:
@@ -202,6 +211,8 @@ features:
           target: "{{lower (camel .Interface.Name)}}client.h"
         - source: "module/generated/nats/natsclient.cpp.tpl"
           target: "{{lower (camel .Interface.Name)}}client.cpp"
+        - source: "module/generated/nats/tests/interface_test.cpp.tpl"
+          target: "tests/test_{{lower (camel .Interface.Name)}}.cpp"
   - name: apigear
     scopes:
     - match: system

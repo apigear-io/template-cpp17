@@ -37,3 +37,8 @@ install(EXPORT Tb_namesNatsTargets
   DESTINATION ${InstallDir}
   NAMESPACE tb_names::
 )
+
+if(BUILD_TESTING)
+enable_testing()
+add_subdirectory(tests)
+endif()
