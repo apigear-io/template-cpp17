@@ -67,6 +67,11 @@ void Base::disconnect()
     m_cwrapper->disconnect();
 };
 
+void Base::flush()
+{
+    m_cwrapper->flush();
+}
+
 void Base::handleConnectionState(bool state)
 {
     m_onConnectionStatusChangedCallbacksMutex.lock();
