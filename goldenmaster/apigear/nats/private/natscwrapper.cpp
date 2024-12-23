@@ -224,7 +224,12 @@ uint64_t CWrapper::getId() const
 
 void CWrapper::disconnect()
 {
+    if (!m_connection)
+    {
+        return;
+    }
     natsConnection_Flush(m_connection.get());
+    natsConnection_Drain(m_connection.get());
     natsConnection_Close(m_connection.get());
 }
 
@@ -247,6 +252,16 @@ ConnectionStatus CWrapper::getStatus()
         case NATS_CONN_STATUS_DRAINING_PUBS: return ConnectionStatus::draining_pubs;
     }
     return ConnectionStatus::disconnected;
+}
+
+
+void  CWrapper::flush()
+{
+    if (!m_connection)
+    {
+        return;
+    }
+    natsConnection_Flush(m_connection.get());
 }
 
 void CWrapper::handleConnectionStateChanged(uint64_t connection_id)

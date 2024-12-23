@@ -48,7 +48,7 @@ public:
     void unsubscribe(int64_t id);
     void publish(const std::string& topic, const std::string& payload);
     std::string request(const std::string& topic, const std::string& payload);
-
+    void flush();
     ConnectionStatus getStatus();
 
     struct SimpleCallbackWrapper
