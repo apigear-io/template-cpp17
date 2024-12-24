@@ -35,6 +35,9 @@ class {{$module_id}}Conan(ConanFile):
         {{- if and $features.mqtt ( len .Module.Interfaces ) }}
         "apigear/*:enable_mqtt": True,
         {{- end}}
+        {{- if and $features.nats ( len .Module.Interfaces ) }}
+        "apigear/*:enable_nats": True,
+        {{- end}}
     }
 
     def config_options(self):
@@ -158,4 +161,9 @@ class {{$module_id}}Conan(ConanFile):
         self.cpp_info.components["{{$module_id}}-mqtt"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["{{$module_id}}-mqtt"].libs = ["{{$module_id}}-mqtt"]
         self.cpp_info.components["{{$module_id}}-mqtt"].requires = ["{{$module_id}}-core", "nlohmann_json::nlohmann_json", "apigear::paho-mqtt"]
+        {{- end}}
+        {{- if and $features.nats ( len .Module.Interfaces ) }}
+        self.cpp_info.components["{{$module_id}}-nats"].includedirs.append(os.path.join(self.package_folder, "include"))
+        self.cpp_info.components["{{$module_id}}-nats"].libs = ["{{$module_id}}-nats"]
+        self.cpp_info.components["{{$module_id}}-nats"].requires = ["{{$module_id}}-core", "nlohmann_json::nlohmann_json", "apigear::nats"]
         {{- end}}

@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(nlohmann_json REQUIRED)
 set (SOURCES_CORE_SUPPORT
     tb_enum.json.adapter.cpp
+    test_struct_helper.cpp
     enuminterface.publisher.cpp
     enuminterface.threadsafedecorator.cpp
 )
