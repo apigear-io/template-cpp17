@@ -8,12 +8,14 @@ find_dependency(nlohmann_json REQUIRED)
 find_dependency(apigear COMPONENTS poco-tracer REQUIRED)
 find_dependency(apigear COMPONENTS poco-olink REQUIRED)
 find_dependency(apigear COMPONENTS paho-mqtt REQUIRED)
+find_dependency(apigear COMPONENTS nats REQUIRED)
 
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_namesApiTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_namesCoreTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_namesMonitorTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_namesOLinkTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_namesMqttTargets.cmake")
+INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_namesNatsTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_namesImplementationTargets.cmake")
 
 check_required_components(
@@ -22,5 +24,6 @@ TbNames-core
 TbNames-monitor
 TbNames-olink
 TbNames-mqtt
+TbNames-nats
 TbNames-implementation
 )

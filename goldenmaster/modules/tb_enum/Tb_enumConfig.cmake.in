@@ -8,12 +8,14 @@ find_dependency(nlohmann_json REQUIRED)
 find_dependency(apigear COMPONENTS poco-tracer REQUIRED)
 find_dependency(apigear COMPONENTS poco-olink REQUIRED)
 find_dependency(apigear COMPONENTS paho-mqtt REQUIRED)
+find_dependency(apigear COMPONENTS nats REQUIRED)
 
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_enumApiTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_enumCoreTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_enumMonitorTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_enumOLinkTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_enumMqttTargets.cmake")
+INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_enumNatsTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_enumImplementationTargets.cmake")
 
 check_required_components(
@@ -22,5 +24,6 @@ TbEnum-core
 TbEnum-monitor
 TbEnum-olink
 TbEnum-mqtt
+TbEnum-nats
 TbEnum-implementation
 )
