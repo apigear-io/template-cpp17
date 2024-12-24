@@ -7,7 +7,6 @@ set(SPDLOG_TRACE_ON true)
 include(CTest)
 
 enable_testing()
-find_package(Qt6 REQUIRED COMPONENTS Test Core)
 find_package(apigear OPTIONAL_COMPONENTS nats)
 find_package(tb_same2 QUIET COMPONENTS tb_same2-implementation  tb_same2-core tb_same2-nats)
 
