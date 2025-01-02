@@ -100,7 +100,7 @@ class tb_namesConan(ConanFile):
         self.cpp_info.components["tb_names-core"].requires = ["tb_names-api", "nlohmann_json::nlohmann_json"]
         self.cpp_info.components["tb_names-implementation"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["tb_names-implementation"].libs = ["tb_names-implementation"]
-        self.cpp_info.components["tb_names-implementation"].requires = ["tb_names-core", "nlohmann_json::nlohmann_json"]
+        self.cpp_info.components["tb_names-implementation"].requires = ["apigear::utilities", "tb_names-core", "nlohmann_json::nlohmann_json"]
         self.cpp_info.components["tb_names-monitor"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["tb_names-monitor"].libs = ["tb_names-monitor"]
         self.cpp_info.components["tb_names-monitor"].requires = ["tb_names-core", "nlohmann_json::nlohmann_json", "apigear::poco-tracer"]

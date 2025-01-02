@@ -1,6 +1,7 @@
 #include <memory>
 #include "catch2/catch.hpp"
 #include "testbed1/implementation/structinterface.h"
+#include "apigear/utilities/fuzzy_compare.h"
 
 using namespace Test::Testbed1;
 TEST_CASE("Testing StructInterface", "[StructInterface]"){
@@ -25,21 +26,29 @@ TEST_CASE("Testing StructInterface", "[StructInterface]"){
     SECTION("Test property propBool") {
         // Do implement test here
         testStructInterface->setPropBool(StructBool());
-        REQUIRE( testStructInterface->getPropBool() == StructBool() );
+        auto actual = testStructInterface->getPropBool();
+        auto expected =  StructBool();
+        REQUIRE(actual == expected);
     }
     SECTION("Test property propInt") {
         // Do implement test here
         testStructInterface->setPropInt(StructInt());
-        REQUIRE( testStructInterface->getPropInt() == StructInt() );
+        auto actual = testStructInterface->getPropInt();
+        auto expected =  StructInt();
+        REQUIRE(actual == expected);
     }
     SECTION("Test property propFloat") {
         // Do implement test here
         testStructInterface->setPropFloat(StructFloat());
-        REQUIRE( testStructInterface->getPropFloat() == StructFloat() );
+        auto actual = testStructInterface->getPropFloat();
+        auto expected =  StructFloat();
+        REQUIRE(actual == expected);
     }
     SECTION("Test property propString") {
         // Do implement test here
         testStructInterface->setPropString(StructString());
-        REQUIRE( testStructInterface->getPropString() == StructString() );
+        auto actual = testStructInterface->getPropString();
+        auto expected =  StructString();
+        REQUIRE(actual == expected);
     }
 }

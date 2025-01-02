@@ -27,6 +27,7 @@ endif()
 if(BUILD_TESTING)
 
 find_package(Catch2 REQUIRED)
+find_package(apigear REQUIRED utilities)
 
 set (SOURCES_TEST
     ${CMAKE_CURRENT_SOURCE_DIR}/../generated/core/extern_types.test.cpp
@@ -34,7 +35,7 @@ set (SOURCES_TEST
 add_executable(test_extern_types
     ${SOURCES_TEST}
 )
-target_link_libraries(test_extern_types extern_types::extern_types-implementation Catch2::Catch2)
+target_link_libraries(test_extern_types apigear::utilities extern_types::extern_types-implementation Catch2::Catch2)
 target_include_directories(test_extern_types PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 # ensure maximum compiler support

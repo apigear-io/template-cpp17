@@ -1,6 +1,7 @@
 #include <memory>
 #include "catch2/catch.hpp"
 #include "tb_simple/implementation/nosignalsinterface.h"
+#include "apigear/utilities/fuzzy_compare.h"
 
 using namespace Test::TbSimple;
 TEST_CASE("Testing NoSignalsInterface", "[NoSignalsInterface]"){
@@ -17,11 +18,15 @@ TEST_CASE("Testing NoSignalsInterface", "[NoSignalsInterface]"){
     SECTION("Test property propBool") {
         // Do implement test here
         testNoSignalsInterface->setPropBool(false);
-        REQUIRE( testNoSignalsInterface->getPropBool() == false );
+        auto actual = testNoSignalsInterface->getPropBool();
+        auto expected =  false;
+        REQUIRE(actual == expected);
     }
     SECTION("Test property propInt") {
         // Do implement test here
         testNoSignalsInterface->setPropInt(0);
-        REQUIRE( testNoSignalsInterface->getPropInt() == 0 );
+        auto actual = testNoSignalsInterface->getPropInt();
+        auto expected =  0;
+        REQUIRE(actual == expected);
     }
 }

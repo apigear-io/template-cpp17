@@ -204,7 +204,7 @@ void SimpleInterfaceClient::setPropFloat(float propFloat)
 void SimpleInterfaceClient::setPropFloatLocal(float propFloat)
 {
     {
-        std::unique_lock<std::shared_timed_mutex> lock(m_propFloatMutex);
+        std::unique_lock<std::shared_timed_mutex> lock(m_propFloatMutex);// consider using fuzzy compare, check library ApiGear::Utilities::fuzzyCompare
         if (m_data.m_propFloat == propFloat) {
             return;
         }
@@ -233,7 +233,7 @@ void SimpleInterfaceClient::setPropFloat32(float propFloat32)
 void SimpleInterfaceClient::setPropFloat32Local(float propFloat32)
 {
     {
-        std::unique_lock<std::shared_timed_mutex> lock(m_propFloat32Mutex);
+        std::unique_lock<std::shared_timed_mutex> lock(m_propFloat32Mutex);// consider using fuzzy compare, check library ApiGear::Utilities::fuzzyCompare
         if (m_data.m_propFloat32 == propFloat32) {
             return;
         }
@@ -262,7 +262,7 @@ void SimpleInterfaceClient::setPropFloat64(double propFloat64)
 void SimpleInterfaceClient::setPropFloat64Local(double propFloat64)
 {
     {
-        std::unique_lock<std::shared_timed_mutex> lock(m_propFloat64Mutex);
+        std::unique_lock<std::shared_timed_mutex> lock(m_propFloat64Mutex);// consider using fuzzy compare, check library ApiGear::Utilities::fuzzyCompare
         if (m_data.m_propFloat64 == propFloat64) {
             return;
         }

@@ -17,7 +17,7 @@ find_package({{$extern.Package}} REQUIRED
 )
 {{- end }}
 {{- end }}
-{{ if (eq $isApiHeaderOnly false) }}
+{{- if (eq $isApiHeaderOnly false) }}
 set (SOURCES
     datastructs.api.cpp
 )
@@ -37,7 +37,7 @@ endif()
 {{- if or ( len .Module.Imports ) ( len .Module.Externs ) }}
 target_link_libraries({{$module_id}}-api PUBLIC {{- range .Module.Imports }} {{snake .Name}}::{{snake .Name}}-api {{- end -}} {{- range .Module.Externs }} {{ (cppExtern .).Package }}{{ if (not ( eq (cppExtern .).Component "" ) ) }}::{{ (cppExtern .).Component }} {{- end }}{{- end -}} )
 {{- end }}
-{{- else -}}
+{{- else }}
 add_library({{$module_id}}-api INTERFACE)
 add_library({{$module_id}}::{{$module_id}}-api ALIAS {{$module_id}}-api)
 target_include_directories({{$module_id}}-api

@@ -16,8 +16,11 @@ Vector3D::Vector3D(float x, float y, float z):
 bool operator==(const Vector3D& lhs, const Vector3D& rhs) noexcept
 {
     return (
+        // consider using fuzzy compare, check library ApiGear::Utilities::fuzzyCompare
         lhs.x == rhs.x &&
+        // consider using fuzzy compare, check library ApiGear::Utilities::fuzzyCompare
         lhs.y == rhs.y &&
+        // consider using fuzzy compare, check library ApiGear::Utilities::fuzzyCompare
         lhs.z == rhs.z
 
     );

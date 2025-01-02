@@ -1,6 +1,7 @@
 #include <memory>
 #include "catch2/catch.hpp"
 #include "testbed2/implementation/nestedstruct3interface.h"
+#include "apigear/utilities/fuzzy_compare.h"
 
 using namespace Test::Testbed2;
 TEST_CASE("Testing NestedStruct3Interface", "[NestedStruct3Interface]"){
@@ -21,16 +22,22 @@ TEST_CASE("Testing NestedStruct3Interface", "[NestedStruct3Interface]"){
     SECTION("Test property prop1") {
         // Do implement test here
         testNestedStruct3Interface->setProp1(NestedStruct1());
-        REQUIRE( testNestedStruct3Interface->getProp1() == NestedStruct1() );
+        auto actual = testNestedStruct3Interface->getProp1();
+        auto expected =  NestedStruct1();
+        REQUIRE(actual == expected);
     }
     SECTION("Test property prop2") {
         // Do implement test here
         testNestedStruct3Interface->setProp2(NestedStruct2());
-        REQUIRE( testNestedStruct3Interface->getProp2() == NestedStruct2() );
+        auto actual = testNestedStruct3Interface->getProp2();
+        auto expected =  NestedStruct2();
+        REQUIRE(actual == expected);
     }
     SECTION("Test property prop3") {
         // Do implement test here
         testNestedStruct3Interface->setProp3(NestedStruct3());
-        REQUIRE( testNestedStruct3Interface->getProp3() == NestedStruct3() );
+        auto actual = testNestedStruct3Interface->getProp3();
+        auto expected =  NestedStruct3();
+        REQUIRE(actual == expected);
     }
 }

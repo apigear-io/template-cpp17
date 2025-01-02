@@ -100,7 +100,7 @@ class testbed2Conan(ConanFile):
         self.cpp_info.components["testbed2-core"].requires = ["testbed2-api", "nlohmann_json::nlohmann_json"]
         self.cpp_info.components["testbed2-implementation"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["testbed2-implementation"].libs = ["testbed2-implementation"]
-        self.cpp_info.components["testbed2-implementation"].requires = ["testbed2-core", "nlohmann_json::nlohmann_json"]
+        self.cpp_info.components["testbed2-implementation"].requires = ["apigear::utilities", "testbed2-core", "nlohmann_json::nlohmann_json"]
         self.cpp_info.components["testbed2-monitor"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["testbed2-monitor"].libs = ["testbed2-monitor"]
         self.cpp_info.components["testbed2-monitor"].requires = ["testbed2-core", "nlohmann_json::nlohmann_json", "apigear::poco-tracer"]

@@ -52,6 +52,9 @@ bool operator==(const {{$class}}& lhs, const {{$class}}& rhs) noexcept
 {{- range $idx, $elem := .Fields }}
         {{- $field := . }}
         {{- if $idx }} &&{{ end }}
+        {{- if ( or ( eq (cppType "" $field) "float") ( eq (cppType "" $field) "double") ) }}
+        // consider using fuzzy compare, check library ApiGear::Utilities::fuzzyCompare
+        {{- end }}
         lhs.{{$field.Name}} == rhs.{{$field.Name}}
 {{- end }}
 
