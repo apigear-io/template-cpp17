@@ -3,6 +3,7 @@
 #include "counter/generated/core/counter.json.adapter.h"
 #include "custom_types/generated/core/custom_types.json.adapter.h"
 #include "extern_types/generated/core/extern_types.json.adapter.h"
+#include "apigear/utilities/fuzzy_compare.h"
 #include <random>
 
 using namespace Test::Counter;

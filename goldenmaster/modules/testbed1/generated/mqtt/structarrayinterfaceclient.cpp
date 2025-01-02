@@ -1,6 +1,7 @@
 #include "testbed1/generated/mqtt/structarrayinterfaceclient.h"
 #include "testbed1/generated/core/structarrayinterface.publisher.h"
 #include "testbed1/generated/core/testbed1.json.adapter.h"
+#include "apigear/utilities/fuzzy_compare.h"
 #include <random>
 
 using namespace Test::Testbed1;

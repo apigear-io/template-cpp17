@@ -1,6 +1,7 @@
 #include "testbed2/generated/mqtt/nestedstruct3interfaceclient.h"
 #include "testbed2/generated/core/nestedstruct3interface.publisher.h"
 #include "testbed2/generated/core/testbed2.json.adapter.h"
+#include "apigear/utilities/fuzzy_compare.h"
 #include <random>
 
 using namespace Test::Testbed2;

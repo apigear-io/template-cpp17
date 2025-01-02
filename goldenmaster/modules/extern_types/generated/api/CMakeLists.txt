@@ -8,6 +8,7 @@ add_library(extern_types::extern_types-api ALIAS extern_types-api)
 target_include_directories(extern_types-api
     INTERFACE
     $<BUILD_INTERFACE:${MODULES_DIR}>
+    $<BUILD_INTERFACE:${MODULES_DIR}/../>
     $<INSTALL_INTERFACE:include>
 )
 target_link_libraries(extern_types-api INTERFACE Eigen3::Eigen)

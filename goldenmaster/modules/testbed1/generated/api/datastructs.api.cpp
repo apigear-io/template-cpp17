@@ -1,4 +1,5 @@
 #include "testbed1/generated/api/datastructs.api.h"
+#include "apigear/utilities/fuzzy_compare.h"
 
 namespace Test {
 namespace Testbed1 {
@@ -56,7 +57,7 @@ StructFloat::StructFloat(float fieldFloat):
 bool operator==(const StructFloat& lhs, const StructFloat& rhs) noexcept
 {
     return (
-        lhs.fieldFloat == rhs.fieldFloat
+        ApiGear::Utilities::fuzzyCompare(lhs.fieldFloat, rhs.fieldFloat)
 
     );
 }

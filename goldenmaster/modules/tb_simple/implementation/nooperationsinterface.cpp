@@ -3,6 +3,7 @@
 #include "tb_simple/implementation/nooperationsinterface.h"
 #include "tb_simple/generated/core/nooperationsinterface.publisher.h"
 #include "tb_simple/generated/core/nooperationsinterface.data.h"
+#include "apigear/utilities/fuzzy_compare.h"
 
 using namespace Test::TbSimple;
 

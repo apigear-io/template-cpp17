@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 {{- range .Module.Imports }}
 find_package({{snake .Name}} REQUIRED COMPONENTS api)
+find_package(apigear REQUIRED COMPONENTS utlitities)
 {{- end }}
 {{- range .Module.Externs }}
 {{- $extern := cppExtern . }}
@@ -17,7 +18,10 @@ find_package({{$extern.Package}} REQUIRED
 )
 {{- end }}
 {{- end }}
-{{ if (eq $isApiHeaderOnly false) }}
+
+{{- if (eq $isApiHeaderOnly false) }}
+find_package(apigear REQUIRED COMPONENTS utilities)
+
 set (SOURCES
     datastructs.api.cpp
 )
@@ -26,6 +30,7 @@ add_library({{$module_id}}::{{$module_id}}-api ALIAS {{$module_id}}-api)
 target_include_directories({{$module_id}}-api
     PUBLIC
     $<BUILD_INTERFACE:${MODULES_DIR}>
+    $<BUILD_INTERFACE:${MODULES_DIR}/../>
     $<INSTALL_INTERFACE:include>
 )
 # ensure maximum compiler support
@@ -34,15 +39,17 @@ if(NOT MSVC)
 else()
   target_compile_options({{$module_id}}-api PRIVATE /W4 /WX /wd4251)
 endif()
+target_link_libraries({{$module_id}}-api PUBLIC apigear::utilities)
 {{- if or ( len .Module.Imports ) ( len .Module.Externs ) }}
 target_link_libraries({{$module_id}}-api PUBLIC {{- range .Module.Imports }} {{snake .Name}}::{{snake .Name}}-api {{- end -}} {{- range .Module.Externs }} {{ (cppExtern .).Package }}{{ if (not ( eq (cppExtern .).Component "" ) ) }}::{{ (cppExtern .).Component }} {{- end }}{{- end -}} )
 {{- end }}
-{{- else -}}
+{{- else }}
 add_library({{$module_id}}-api INTERFACE)
 add_library({{$module_id}}::{{$module_id}}-api ALIAS {{$module_id}}-api)
 target_include_directories({{$module_id}}-api
     INTERFACE
     $<BUILD_INTERFACE:${MODULES_DIR}>
+    $<BUILD_INTERFACE:${MODULES_DIR}/../>
     $<INSTALL_INTERFACE:include>
 )
 {{- if or ( len .Module.Imports ) ( len .Module.Externs ) }}

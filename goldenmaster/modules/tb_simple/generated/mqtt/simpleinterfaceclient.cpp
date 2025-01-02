@@ -1,6 +1,7 @@
 #include "tb_simple/generated/mqtt/simpleinterfaceclient.h"
 #include "tb_simple/generated/core/simpleinterface.publisher.h"
 #include "tb_simple/generated/core/tb_simple.json.adapter.h"
+#include "apigear/utilities/fuzzy_compare.h"
 #include <random>
 
 using namespace Test::TbSimple;
@@ -207,7 +208,7 @@ void SimpleInterfaceClient::setPropFloatLocal(const std::string& args)
     }
 
     float propFloat = fields.get<float>();
-    if (m_data.m_propFloat != propFloat) {
+    if (!ApiGear::Utilities::fuzzyCompare(m_data.m_propFloat, propFloat)) {
         m_data.m_propFloat = propFloat;
         m_publisher->publishPropFloatChanged(propFloat);
     }
@@ -236,7 +237,7 @@ void SimpleInterfaceClient::setPropFloat32Local(const std::string& args)
     }
 
     float propFloat32 = fields.get<float>();
-    if (m_data.m_propFloat32 != propFloat32) {
+    if (!ApiGear::Utilities::fuzzyCompare(m_data.m_propFloat32, propFloat32)) {
         m_data.m_propFloat32 = propFloat32;
         m_publisher->publishPropFloat32Changed(propFloat32);
     }
@@ -265,7 +266,7 @@ void SimpleInterfaceClient::setPropFloat64Local(const std::string& args)
     }
 
     double propFloat64 = fields.get<double>();
-    if (m_data.m_propFloat64 != propFloat64) {
+    if (!ApiGear::Utilities::fuzzyCompare(m_data.m_propFloat64, propFloat64)) {
         m_data.m_propFloat64 = propFloat64;
         m_publisher->publishPropFloat64Changed(propFloat64);
     }

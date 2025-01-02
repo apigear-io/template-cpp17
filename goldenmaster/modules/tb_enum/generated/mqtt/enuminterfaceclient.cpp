@@ -1,6 +1,7 @@
 #include "tb_enum/generated/mqtt/enuminterfaceclient.h"
 #include "tb_enum/generated/core/enuminterface.publisher.h"
 #include "tb_enum/generated/core/tb_enum.json.adapter.h"
+#include "apigear/utilities/fuzzy_compare.h"
 #include <random>
 
 using namespace Test::TbEnum;

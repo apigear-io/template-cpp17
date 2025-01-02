@@ -3,6 +3,7 @@
 #include "tb_names/implementation/names.h"
 #include "tb_names/generated/core/names.publisher.h"
 #include "tb_names/generated/core/names.data.h"
+#include "apigear/utilities/fuzzy_compare.h"
 
 using namespace Test::TbNames;
 

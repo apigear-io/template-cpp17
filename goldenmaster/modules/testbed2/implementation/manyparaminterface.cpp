@@ -3,6 +3,7 @@
 #include "testbed2/implementation/manyparaminterface.h"
 #include "testbed2/generated/core/manyparaminterface.publisher.h"
 #include "testbed2/generated/core/manyparaminterface.data.h"
+#include "apigear/utilities/fuzzy_compare.h"
 
 using namespace Test::Testbed2;
 

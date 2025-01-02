@@ -3,6 +3,7 @@
 #include "tb_same1/implementation/samestruct2interface.h"
 #include "tb_same1/generated/core/samestruct2interface.publisher.h"
 #include "tb_same1/generated/core/samestruct2interface.data.h"
+#include "apigear/utilities/fuzzy_compare.h"
 
 using namespace Test::TbSame1;
 

@@ -17,6 +17,7 @@
 
 #include "olink/iclientnode.h"
 #include "apigear/utilities/logger.h"
+#include "apigear/utilities/fuzzy_compare.h"
 
 using namespace {{ Camel .System.Name }}::{{ Camel .Module.Name }};
 using namespace {{ Camel .System.Name }}::{{ Camel .Module.Name }}::olink;
@@ -79,7 +80,13 @@ void {{$class}}::set{{Camel $name}}Local({{cppParam "" $property }})
 {
     {
         std::unique_lock<std::shared_timed_mutex> lock(m_{{lower1 ((Camel $property.Name))}}Mutex);
-        if (m_data.m_{{$name}} == {{$name}}) {
+        if (
+        {{- if ( or ( eq (cppType "" $property) "float") ( eq (cppType "" $property) "double") ) -}}
+        ApiGear::Utilities::fuzzyCompare(m_data.m_{{$name}}, {{$name}})
+        {{- else -}}
+        m_data.m_{{$name}} == {{$name}}
+        {{- end -}}
+        ) {
             return;
         }
         m_data.m_{{$name}} = {{$name}};

@@ -8,6 +8,7 @@
 #include "{{snake .Module.Name}}/implementation/{{lower (camel .Interface.Name)}}.h"
 #include "{{snake .Module.Name}}/generated/core/{{lower (camel .Interface.Name)}}.publisher.h"
 #include "{{snake .Module.Name}}/generated/core/{{lower (camel .Interface.Name)}}.data.h"
+#include "apigear/utilities/fuzzy_compare.h"
 
 using namespace {{ Camel .System.Name }}::{{Camel .Module.Name }};
 
@@ -22,7 +23,13 @@ using namespace {{ Camel .System.Name }}::{{Camel .Module.Name }};
 {{ $property := . }}
 void {{$class}}::set{{Camel $property.Name}}({{cppParam "" $property }})
 {
-    if (m_data.m_{{$property.Name}} != {{$property.Name}}) {
+    if (
+    {{- if ( or ( eq (cppType "" $property) "float") ( eq (cppType "" $property) "double") ) -}}
+    !ApiGear::Utilities::fuzzyCompare(m_data.m_{{$property.Name}}, {{$property.Name}})
+    {{- else -}}
+        m_data.m_{{$property.Name}} != {{$property.Name}}
+    {{- end -}}
+    ) {
         m_data.m_{{$property.Name}} = {{$property.Name}};
         m_publisher->publish{{Camel $property.Name}}Changed({{$property.Name}});
     }

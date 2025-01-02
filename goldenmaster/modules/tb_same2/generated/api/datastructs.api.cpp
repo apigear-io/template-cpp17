@@ -1,4 +1,5 @@
 #include "tb_same2/generated/api/datastructs.api.h"
+#include "apigear/utilities/fuzzy_compare.h"
 
 namespace Test {
 namespace TbSame2 {

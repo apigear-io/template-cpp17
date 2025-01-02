@@ -1,6 +1,7 @@
 #include "tb_same1/generated/mqtt/samestruct1interfaceclient.h"
 #include "tb_same1/generated/core/samestruct1interface.publisher.h"
 #include "tb_same1/generated/core/tb_same1.json.adapter.h"
+#include "apigear/utilities/fuzzy_compare.h"
 #include <random>
 
 using namespace Test::TbSame1;

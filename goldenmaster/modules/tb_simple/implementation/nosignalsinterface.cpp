@@ -3,6 +3,7 @@
 #include "tb_simple/implementation/nosignalsinterface.h"
 #include "tb_simple/generated/core/nosignalsinterface.publisher.h"
 #include "tb_simple/generated/core/nosignalsinterface.data.h"
+#include "apigear/utilities/fuzzy_compare.h"
 
 using namespace Test::TbSimple;
 

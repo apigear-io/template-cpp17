@@ -1,6 +1,7 @@
 #include "tb_simple/generated/mqtt/simplearrayinterfaceclient.h"
 #include "tb_simple/generated/core/simplearrayinterface.publisher.h"
 #include "tb_simple/generated/core/tb_simple.json.adapter.h"
+#include "apigear/utilities/fuzzy_compare.h"
 #include <random>
 
 using namespace Test::TbSimple;

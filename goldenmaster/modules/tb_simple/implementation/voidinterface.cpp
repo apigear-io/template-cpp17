@@ -3,6 +3,7 @@
 #include "tb_simple/implementation/voidinterface.h"
 #include "tb_simple/generated/core/voidinterface.publisher.h"
 #include "tb_simple/generated/core/voidinterface.data.h"
+#include "apigear/utilities/fuzzy_compare.h"
 
 using namespace Test::TbSimple;
 
