@@ -142,7 +142,7 @@ class {{$module_id}}Conan(ConanFile):
         {{- if and $features.stubs ( len .Module.Interfaces ) }}
         self.cpp_info.components["{{$module_id}}-implementation"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["{{$module_id}}-implementation"].libs = ["{{$module_id}}-implementation"]
-        self.cpp_info.components["{{$module_id}}-implementation"].requires = ["{{$module_id}}-core", "nlohmann_json::nlohmann_json"]
+        self.cpp_info.components["{{$module_id}}-implementation"].requires = ["apigear::utilities", "{{$module_id}}-core", "nlohmann_json::nlohmann_json"]
         {{- end}}
         {{- if and .Features.monitor ( len .Module.Interfaces ) }}
         self.cpp_info.components["{{$module_id}}-monitor"].includedirs.append(os.path.join(self.package_folder, "include"))

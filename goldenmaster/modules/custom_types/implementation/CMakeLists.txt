@@ -27,6 +27,7 @@ endif()
 if(BUILD_TESTING)
 
 find_package(Catch2 REQUIRED)
+find_package(apigear REQUIRED utilities)
 
 set (SOURCES_TEST
     ${CMAKE_CURRENT_SOURCE_DIR}/../generated/core/custom_types.test.cpp
@@ -34,7 +35,7 @@ set (SOURCES_TEST
 add_executable(test_custom_types
     ${SOURCES_TEST}
 )
-target_link_libraries(test_custom_types custom_types::custom_types-implementation Catch2::Catch2)
+target_link_libraries(test_custom_types apigear::utilities custom_types::custom_types-implementation Catch2::Catch2)
 target_include_directories(test_custom_types PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 # ensure maximum compiler support

@@ -102,7 +102,7 @@ class counterConan(ConanFile):
         self.cpp_info.components["counter-core"].requires = ["counter-api", "nlohmann_json::nlohmann_json"]
         self.cpp_info.components["counter-implementation"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["counter-implementation"].libs = ["counter-implementation"]
-        self.cpp_info.components["counter-implementation"].requires = ["counter-core", "nlohmann_json::nlohmann_json"]
+        self.cpp_info.components["counter-implementation"].requires = ["apigear::utilities", "counter-core", "nlohmann_json::nlohmann_json"]
         self.cpp_info.components["counter-monitor"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["counter-monitor"].libs = ["counter-monitor"]
         self.cpp_info.components["counter-monitor"].requires = ["counter-core", "nlohmann_json::nlohmann_json", "apigear::poco-tracer"]

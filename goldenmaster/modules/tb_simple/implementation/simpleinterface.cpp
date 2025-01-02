@@ -68,6 +68,7 @@ int64_t SimpleInterface::getPropInt64() const
 
 void SimpleInterface::setPropFloat(float propFloat)
 {
+    // consider using fuzzy compare, check library ApiGear::Utilities::fuzzyCompare
     if (m_data.m_propFloat != propFloat) {
         m_data.m_propFloat = propFloat;
         m_publisher->publishPropFloatChanged(propFloat);
@@ -81,6 +82,7 @@ float SimpleInterface::getPropFloat() const
 
 void SimpleInterface::setPropFloat32(float propFloat32)
 {
+    // consider using fuzzy compare, check library ApiGear::Utilities::fuzzyCompare
     if (m_data.m_propFloat32 != propFloat32) {
         m_data.m_propFloat32 = propFloat32;
         m_publisher->publishPropFloat32Changed(propFloat32);
@@ -94,6 +96,7 @@ float SimpleInterface::getPropFloat32() const
 
 void SimpleInterface::setPropFloat64(double propFloat64)
 {
+    // consider using fuzzy compare, check library ApiGear::Utilities::fuzzyCompare
     if (m_data.m_propFloat64 != propFloat64) {
         m_data.m_propFloat64 = propFloat64;
         m_publisher->publishPropFloat64Changed(propFloat64);

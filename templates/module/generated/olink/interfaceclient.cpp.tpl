@@ -79,6 +79,9 @@ void {{$class}}::set{{Camel $name}}Local({{cppParam "" $property }})
 {
     {
         std::unique_lock<std::shared_timed_mutex> lock(m_{{lower1 ((Camel $property.Name))}}Mutex);
+        {{- if ( or ( eq (cppType "" $property) "float") ( eq (cppType "" $property) "double") ) -}}
+        // consider using fuzzy compare, check library ApiGear::Utilities::fuzzyCompare
+        {{- end }}
         if (m_data.m_{{$name}} == {{$name}}) {
             return;
         }

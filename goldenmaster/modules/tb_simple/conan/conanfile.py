@@ -99,7 +99,7 @@ class tb_simpleConan(ConanFile):
         self.cpp_info.components["tb_simple-core"].requires = ["nlohmann_json::nlohmann_json"]
         self.cpp_info.components["tb_simple-implementation"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["tb_simple-implementation"].libs = ["tb_simple-implementation"]
-        self.cpp_info.components["tb_simple-implementation"].requires = ["tb_simple-core", "nlohmann_json::nlohmann_json"]
+        self.cpp_info.components["tb_simple-implementation"].requires = ["apigear::utilities", "tb_simple-core", "nlohmann_json::nlohmann_json"]
         self.cpp_info.components["tb_simple-monitor"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["tb_simple-monitor"].libs = ["tb_simple-monitor"]
         self.cpp_info.components["tb_simple-monitor"].requires = ["tb_simple-core", "nlohmann_json::nlohmann_json", "apigear::poco-tracer"]

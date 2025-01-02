@@ -207,6 +207,7 @@ void SimpleInterfaceClient::setPropFloatLocal(const std::string& args)
     }
 
     float propFloat = fields.get<float>();
+    // consider using fuzzy compare, check library ApiGear::Utilities::fuzzyCompare
     if (m_data.m_propFloat != propFloat) {
         m_data.m_propFloat = propFloat;
         m_publisher->publishPropFloatChanged(propFloat);
@@ -236,6 +237,7 @@ void SimpleInterfaceClient::setPropFloat32Local(const std::string& args)
     }
 
     float propFloat32 = fields.get<float>();
+    // consider using fuzzy compare, check library ApiGear::Utilities::fuzzyCompare
     if (m_data.m_propFloat32 != propFloat32) {
         m_data.m_propFloat32 = propFloat32;
         m_publisher->publishPropFloat32Changed(propFloat32);
@@ -265,6 +267,7 @@ void SimpleInterfaceClient::setPropFloat64Local(const std::string& args)
     }
 
     double propFloat64 = fields.get<double>();
+    // consider using fuzzy compare, check library ApiGear::Utilities::fuzzyCompare
     if (m_data.m_propFloat64 != propFloat64) {
         m_data.m_propFloat64 = propFloat64;
         m_publisher->publishPropFloat64Changed(propFloat64);

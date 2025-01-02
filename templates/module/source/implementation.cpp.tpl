@@ -22,6 +22,9 @@ using namespace {{ Camel .System.Name }}::{{Camel .Module.Name }};
 {{ $property := . }}
 void {{$class}}::set{{Camel $property.Name}}({{cppParam "" $property }})
 {
+    {{- if ( or ( eq (cppType "" $property) "float") ( eq (cppType "" $property) "double") ) }}
+    // consider using fuzzy compare, check library ApiGear::Utilities::fuzzyCompare
+    {{- end }}
     if (m_data.m_{{$property.Name}} != {{$property.Name}}) {
         m_data.m_{{$property.Name}} = {{$property.Name}};
         m_publisher->publish{{Camel $property.Name}}Changed({{$property.Name}});

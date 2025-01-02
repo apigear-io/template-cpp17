@@ -56,6 +56,7 @@ StructFloat::StructFloat(float fieldFloat):
 bool operator==(const StructFloat& lhs, const StructFloat& rhs) noexcept
 {
     return (
+        // consider using fuzzy compare, check library ApiGear::Utilities::fuzzyCompare
         lhs.fieldFloat == rhs.fieldFloat
 
     );

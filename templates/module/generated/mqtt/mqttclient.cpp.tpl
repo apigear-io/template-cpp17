@@ -94,6 +94,9 @@ void {{$class}}::set{{Camel $name}}Local(const std::string& args)
     }
 
     {{ cppParam "" $property }} = fields.get<{{cppType "" $property}}>();
+    {{- if ( or ( eq (cppType "" $property) "float") ( eq (cppType "" $property) "double") ) }}
+    // consider using fuzzy compare, check library ApiGear::Utilities::fuzzyCompare
+    {{- end }}
     if (m_data.m_{{$name}} != {{$name}}) {
         m_data.m_{{$name}} = {{$name}};
         m_publisher->publish{{Camel $name}}Changed({{$name}});

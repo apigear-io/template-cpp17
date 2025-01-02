@@ -28,6 +28,7 @@ endif()
 if(BUILD_TESTING)
 
 find_package(Catch2 REQUIRED)
+find_package(apigear REQUIRED utilities)
 
 set (SOURCES_TEST
     ${CMAKE_CURRENT_SOURCE_DIR}/../generated/core/counter.test.cpp
@@ -36,7 +37,7 @@ set (SOURCES_TEST
 add_executable(test_counter
     ${SOURCES_TEST}
 )
-target_link_libraries(test_counter counter::counter-implementation Catch2::Catch2)
+target_link_libraries(test_counter apigear::utilities counter::counter-implementation Catch2::Catch2)
 target_include_directories(test_counter PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 # ensure maximum compiler support

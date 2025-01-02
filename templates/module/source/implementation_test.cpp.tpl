@@ -2,6 +2,7 @@
 #include <memory>
 #include "catch2/catch.hpp"
 #include "{{snake .Module.Name}}/implementation/{{lower (camel .Interface.Name)}}.h"
+#include "apigear/utilities/fuzzy_compare.h"
 
 {{- $class := Camel .Interface.Name  }}
 
@@ -31,7 +32,14 @@ TEST_CASE("Testing {{$class}}", "[{{$class}}]"){
         {{- if not .IsReadOnly }}
         test{{$class}}->set{{Camel $property.Name}}({{cppDefault "" $property}});
         {{- end }}
-        REQUIRE( test{{$class}}->get{{Camel $property.Name}}() =={{ if ( eq (cppType "" $property) "float") }} Approx({{- end }} {{cppDefault "" $property}}{{ if ( eq (cppType "" $property) "float")}} ){{- end }} );
+        auto actual = test{{$class}}->get{{Camel $property.Name}}();
+        auto expected =  {{cppDefault "" $property}};
+        REQUIRE({{- if ( or ( eq (cppType "" $property) "float") ( eq (cppType "" $property) "double") ) -}}
+            ApiGear::Utilities::fuzzyCompare(actual, expected)
+        {{- else -}}
+            actual == expected
+        {{- end -}} 
+        );
     }
 {{- end }}
 }

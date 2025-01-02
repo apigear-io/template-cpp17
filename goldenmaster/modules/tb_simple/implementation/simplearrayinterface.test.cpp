@@ -1,6 +1,7 @@
 #include <memory>
 #include "catch2/catch.hpp"
 #include "tb_simple/implementation/simplearrayinterface.h"
+#include "apigear/utilities/fuzzy_compare.h"
 
 using namespace Test::TbSimple;
 TEST_CASE("Testing SimpleArrayInterface", "[SimpleArrayInterface]"){
@@ -41,45 +42,63 @@ TEST_CASE("Testing SimpleArrayInterface", "[SimpleArrayInterface]"){
     SECTION("Test property propBool") {
         // Do implement test here
         testSimpleArrayInterface->setPropBool(std::list<bool>());
-        REQUIRE( testSimpleArrayInterface->getPropBool() == std::list<bool>() );
+        auto actual = testSimpleArrayInterface->getPropBool();
+        auto expected =  std::list<bool>();
+        REQUIRE(actual == expected);
     }
     SECTION("Test property propInt") {
         // Do implement test here
         testSimpleArrayInterface->setPropInt(std::list<int>());
-        REQUIRE( testSimpleArrayInterface->getPropInt() == std::list<int>() );
+        auto actual = testSimpleArrayInterface->getPropInt();
+        auto expected =  std::list<int>();
+        REQUIRE(actual == expected);
     }
     SECTION("Test property propInt32") {
         // Do implement test here
         testSimpleArrayInterface->setPropInt32(std::list<int32_t>());
-        REQUIRE( testSimpleArrayInterface->getPropInt32() == std::list<int32_t>() );
+        auto actual = testSimpleArrayInterface->getPropInt32();
+        auto expected =  std::list<int32_t>();
+        REQUIRE(actual == expected);
     }
     SECTION("Test property propInt64") {
         // Do implement test here
         testSimpleArrayInterface->setPropInt64(std::list<int64_t>());
-        REQUIRE( testSimpleArrayInterface->getPropInt64() == std::list<int64_t>() );
+        auto actual = testSimpleArrayInterface->getPropInt64();
+        auto expected =  std::list<int64_t>();
+        REQUIRE(actual == expected);
     }
     SECTION("Test property propFloat") {
         // Do implement test here
         testSimpleArrayInterface->setPropFloat(std::list<float>());
-        REQUIRE( testSimpleArrayInterface->getPropFloat() == std::list<float>() );
+        auto actual = testSimpleArrayInterface->getPropFloat();
+        auto expected =  std::list<float>();
+        REQUIRE(actual == expected);
     }
     SECTION("Test property propFloat32") {
         // Do implement test here
         testSimpleArrayInterface->setPropFloat32(std::list<float>());
-        REQUIRE( testSimpleArrayInterface->getPropFloat32() == std::list<float>() );
+        auto actual = testSimpleArrayInterface->getPropFloat32();
+        auto expected =  std::list<float>();
+        REQUIRE(actual == expected);
     }
     SECTION("Test property propFloat64") {
         // Do implement test here
         testSimpleArrayInterface->setPropFloat64(std::list<double>());
-        REQUIRE( testSimpleArrayInterface->getPropFloat64() == std::list<double>() );
+        auto actual = testSimpleArrayInterface->getPropFloat64();
+        auto expected =  std::list<double>();
+        REQUIRE(actual == expected);
     }
     SECTION("Test property propString") {
         // Do implement test here
         testSimpleArrayInterface->setPropString(std::list<std::string>());
-        REQUIRE( testSimpleArrayInterface->getPropString() == std::list<std::string>() );
+        auto actual = testSimpleArrayInterface->getPropString();
+        auto expected =  std::list<std::string>();
+        REQUIRE(actual == expected);
     }
     SECTION("Test property propReadOnlyString") {
         // Do implement test here
-        REQUIRE( testSimpleArrayInterface->getPropReadOnlyString() == std::string() );
+        auto actual = testSimpleArrayInterface->getPropReadOnlyString();
+        auto expected =  std::string();
+        REQUIRE(actual == expected);
     }
 }

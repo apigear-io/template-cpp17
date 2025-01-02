@@ -1,6 +1,7 @@
 #include <memory>
 #include "catch2/catch.hpp"
 #include "tb_same2/implementation/samestruct2interface.h"
+#include "apigear/utilities/fuzzy_compare.h"
 
 using namespace Test::TbSame2;
 TEST_CASE("Testing SameStruct2Interface", "[SameStruct2Interface]"){
@@ -17,11 +18,15 @@ TEST_CASE("Testing SameStruct2Interface", "[SameStruct2Interface]"){
     SECTION("Test property prop1") {
         // Do implement test here
         testSameStruct2Interface->setProp1(Struct2());
-        REQUIRE( testSameStruct2Interface->getProp1() == Struct2() );
+        auto actual = testSameStruct2Interface->getProp1();
+        auto expected =  Struct2();
+        REQUIRE(actual == expected);
     }
     SECTION("Test property prop2") {
         // Do implement test here
         testSameStruct2Interface->setProp2(Struct2());
-        REQUIRE( testSameStruct2Interface->getProp2() == Struct2() );
+        auto actual = testSameStruct2Interface->getProp2();
+        auto expected =  Struct2();
+        REQUIRE(actual == expected);
     }
 }

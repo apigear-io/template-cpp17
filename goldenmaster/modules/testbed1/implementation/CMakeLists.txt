@@ -29,6 +29,7 @@ endif()
 if(BUILD_TESTING)
 
 find_package(Catch2 REQUIRED)
+find_package(apigear REQUIRED utilities)
 
 set (SOURCES_TEST
     ${CMAKE_CURRENT_SOURCE_DIR}/../generated/core/testbed1.test.cpp
@@ -38,7 +39,7 @@ set (SOURCES_TEST
 add_executable(test_testbed1
     ${SOURCES_TEST}
 )
-target_link_libraries(test_testbed1 testbed1::testbed1-implementation Catch2::Catch2)
+target_link_libraries(test_testbed1 apigear::utilities testbed1::testbed1-implementation Catch2::Catch2)
 target_include_directories(test_testbed1 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 # ensure maximum compiler support
