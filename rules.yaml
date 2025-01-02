@@ -2,6 +2,8 @@ engines:
   cli: ">= v0.38.0"
 features:
   - name: api
+    requires:
+      - apigear
     scopes:
       - match: system
         documents:
@@ -163,6 +165,10 @@ features:
         - source: "apigear/utilities/threadpool.cpp"
           raw: true
         - source: "apigear/utilities/threadpool.h"
+          raw: true
+        - source: "apigear/utilities/fuzzy_compare.h"
+          raw: true
+        - source: "apigear/utilities/tests/test_fuzzy_compare.cpp"
           raw: true
         - source: "apigear/utilities/CMakeLists.txt"
           raw: true
