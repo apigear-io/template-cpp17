@@ -32,7 +32,7 @@ buildCMakeModule "build_cmake/objectlink-core-cpp" $source_root
 if [ $? -ne 0 ]; then exit 1; fi;
 {{- end }}
 {{- if $features.apigear }}
-buildCMakeModule "apigear" $source_root "{{ if $features.olink }}-DAPIGEAR_BUILD_WITH_OLINK=ON {{ end }}{{ if $features.monitor }}-DAPIGEAR_BUILD_WITH_MONITOR=ON {{ end }}{{ if $features.mqtt }}-DAPIGEAR_BUILD_WITH_MQTT=ON{{ end }}"
+buildCMakeModule "apigear" $source_root "{{ if $features.olink }}-DAPIGEAR_BUILD_WITH_OLINK=ON {{ end }}{{ if $features.monitor }}-DAPIGEAR_BUILD_WITH_MONITOR=ON {{ end }}{{ if $features.mqtt }}-DAPIGEAR_BUILD_WITH_MQTT=ON{{ end }}{{ if $features.nats }}-DAPIGEAR_BUILD_WITH_NATS=ON{{ end }}"
 if [ $buildresult -ne 0 ]; then exit 1; fi;
 {{- end}}
 {{- range .System.Modules }}
@@ -57,5 +57,11 @@ if [ $buildresult -ne 0 ]; then exit 1; fi;
 buildCMakeBinary "examples/mqttserver" $source_root
 if [ $buildresult -ne 0 ]; then exit 1; fi;
 buildCMakeBinary "examples/mqttclient" $source_root
+if [ $buildresult -ne 0 ]; then exit 1; fi;
+{{- end}}
+{{- if $features.examples_nats }}
+buildCMakeBinary "examples/natsserver" $source_root
+if [ $buildresult -ne 0 ]; then exit 1; fi;
+buildCMakeBinary "examples/natsclient" $source_root
 if [ $buildresult -ne 0 ]; then exit 1; fi;
 {{- end}}
