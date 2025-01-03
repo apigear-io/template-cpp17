@@ -11,14 +11,14 @@ echo source root is in $source_root
 # build cmake module
 buildCMakeModule()
 {
-    cmake -B"$2/build_cmake/$1" -DCMAKE_INSTALL_PREFIX="$2/tmp" -DBUILD_TESTING=ON $3 -S"$2/$1" && cmake --build "$2/build_cmake/$1" && cmake --build "$2/build_cmake/$1" --target test && cmake --build "$2/build_cmake/$1" --target install
+    cmake -B"$2/build_cmake/$1" -DCMAKE_INSTALL_PREFIX="$2/tmp" "-DCMAKE_INSTALL_RPATH=$2/tmp/lib" -DBUILD_TESTING=ON $3 -S"$2/$1" && cmake --build "$2/build_cmake/$1" && cmake --build "$2/build_cmake/$1" --target test && cmake --build "$2/build_cmake/$1" --target install
     buildresult=$?
 }
 
 # build cmake binary
 buildCMakeBinary()
 {
-    cmake -B"$2/build_cmake/$1" -DCMAKE_INSTALL_PREFIX="$2/tmp" $3 -S"$2/$1" && cmake --build "$2/build_cmake/$1" && cmake --build "$2/build_cmake/$1" --target install
+    cmake -B"$2/build_cmake/$1" -DCMAKE_INSTALL_PREFIX="$2/tmp"  "-DCMAKE_INSTALL_RPATH=$2/tmp/lib" $3 -S"$2/$1" && cmake --build "$2/build_cmake/$1" && cmake --build "$2/build_cmake/$1" --target install
     buildresult=$?
 }
 
@@ -32,7 +32,7 @@ buildCMakeModule "build_cmake/objectlink-core-cpp" $source_root
 if [ $? -ne 0 ]; then exit 1; fi;
 {{- end }}
 {{- if $features.apigear }}
-buildCMakeModule "apigear" $source_root "{{ if $features.olink }}-DAPIGEAR_BUILD_WITH_OLINK=ON {{ end }}{{ if $features.monitor }}-DAPIGEAR_BUILD_WITH_MONITOR=ON {{ end }}{{ if $features.mqtt }}-DAPIGEAR_BUILD_WITH_MQTT=ON{{ end }}"
+buildCMakeModule "apigear" $source_root "{{ if $features.olink }}-DAPIGEAR_BUILD_WITH_OLINK=ON {{ end }}{{ if $features.monitor }}-DAPIGEAR_BUILD_WITH_MONITOR=ON {{ end }}{{ if $features.mqtt }}-DAPIGEAR_BUILD_WITH_MQTT=ON {{ end }}{{ if $features.nats }}-DAPIGEAR_BUILD_WITH_NATS=ON {{ end }}"
 if [ $buildresult -ne 0 ]; then exit 1; fi;
 {{- end}}
 {{- range .System.Modules }}
@@ -57,5 +57,11 @@ if [ $buildresult -ne 0 ]; then exit 1; fi;
 buildCMakeBinary "examples/mqttserver" $source_root
 if [ $buildresult -ne 0 ]; then exit 1; fi;
 buildCMakeBinary "examples/mqttclient" $source_root
+if [ $buildresult -ne 0 ]; then exit 1; fi;
+{{- end}}
+{{- if $features.examples_nats }}
+buildCMakeBinary "examples/natsserver" $source_root
+if [ $buildresult -ne 0 ]; then exit 1; fi;
+buildCMakeBinary "examples/natsclient" $source_root
 if [ $buildresult -ne 0 ]; then exit 1; fi;
 {{- end}}
