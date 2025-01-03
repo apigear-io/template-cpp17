@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
+find_package(apigear REQUIRED utilities)
 
 set (SOURCES_CORE_IMPL
     counter.cpp
@@ -14,9 +15,10 @@ add_library(counter::counter-implementation ALIAS counter-implementation)
 target_include_directories(counter-implementation
     PUBLIC
     $<BUILD_INTERFACE:${MODULES_DIR}>
+    $<BUILD_INTERFACE:${MODULES_DIR}/../>
     $<INSTALL_INTERFACE:include>
 )
-target_link_libraries(counter-implementation PUBLIC counter::counter-api PRIVATE counter::counter-core Threads::Threads)
+target_link_libraries(counter-implementation PUBLIC apigear::utilities counter::counter-api PRIVATE counter::counter-core Threads::Threads)
 # ensure maximum compiler support
 if(NOT MSVC)
   target_compile_options(counter-implementation PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)

@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
+find_package(apigear REQUIRED utilities)
 
 set (SOURCES_CORE_IMPL
 {{- range .Module.Interfaces }}
@@ -20,9 +21,10 @@ add_library({{$module_id}}::{{$module_id}}-implementation ALIAS {{$module_id}}-i
 target_include_directories({{$module_id}}-implementation
     PUBLIC
     $<BUILD_INTERFACE:${MODULES_DIR}>
+    $<BUILD_INTERFACE:${MODULES_DIR}/../>
     $<INSTALL_INTERFACE:include>
 )
-target_link_libraries({{$module_id}}-implementation PUBLIC {{$module_id}}::{{$module_id}}-api PRIVATE {{$module_id}}::{{$module_id}}-core Threads::Threads)
+target_link_libraries({{$module_id}}-implementation PUBLIC apigear::utilities {{$module_id}}::{{$module_id}}-api PRIVATE {{$module_id}}::{{$module_id}}-core Threads::Threads)
 # ensure maximum compiler support
 if(NOT MSVC)
   target_compile_options({{$module_id}}-implementation PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
