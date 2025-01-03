@@ -56,6 +56,11 @@ jobs:
         if: ${{ matrix.config.os == 'windows-latest'}}
         run: sed -i 's/compiler.cppstd=14/compiler.cppstd=17/' ~/.conan2/profiles/default
       - run: cmake --version
+      - name: Create Nats Server for ubuntu (only ubuntu runs tests)
+        if: ${{ matrix.config.os == 'ubuntu-latest'}}
+        uses: onichandame/nats-action@master
+        with:
+          port: "4222" 
       - name: Run conan build Linux/macOS
         if: ${{ matrix.config.os != 'windows-latest'}}
         working-directory: goldenmaster
@@ -153,6 +158,11 @@ jobs:
       - name: Install catch2
         if: ${{ matrix.config.os == 'ubuntu-latest'}}
         run: git clone --branch v2.13.8 --depth 1 https://github.com/catchorg/Catch2.git && cd Catch2 && cmake -Bbuild -H. -DBUILD_TESTING=OFF && sudo cmake --build build/ --target install
+      - name: Create Nats Server for ubuntu (only ubuntu runs tests)
+        if: ${{ matrix.config.os == 'ubuntu-latest'}}
+        uses: onichandame/nats-action@master
+        with:
+          port: "4222" 
       - name: Run cmake on Linux/Mac
         if: ${{ matrix.config.os != 'windows-latest'}}
         working-directory: goldenmaster
