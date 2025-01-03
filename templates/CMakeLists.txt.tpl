@@ -18,6 +18,7 @@ option({{upper .System.Name}}_FETCH_DEPS "Fetch and build dependencies, if not p
 if(BUILD_TESTING)
 include(CTest)
 enable_testing()
+option(ENABLE_NATS_TEST_FOR_NON_LINUX_OS "By default enable only for linux, due to easy server setup on CI" OFF)
 endif(BUILD_TESTING)
 
 if({{upper .System.Name}}_FETCH_DEPS)
