@@ -95,6 +95,7 @@ class testbed2Conan(ConanFile):
         self.cpp_info.set_property("cmake_find_mode", "both")
         self.cpp_info.components["testbed2-api"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["testbed2-api"].libs = ["testbed2-api"]
+        self.cpp_info.components["testbed2-api"].requires = ["apigear::utilities",]
         self.cpp_info.components["testbed2-core"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["testbed2-core"].libs = ["testbed2-core"]
         self.cpp_info.components["testbed2-core"].requires = ["testbed2-api", "nlohmann_json::nlohmann_json"]

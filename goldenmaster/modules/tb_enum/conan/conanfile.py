@@ -95,6 +95,7 @@ class tb_enumConan(ConanFile):
         self.cpp_info.set_property("cmake_find_mode", "both")
         self.cpp_info.components["tb_enum-api"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["tb_enum-api"].libs = ["tb_enum-api"]
+        self.cpp_info.components["tb_enum-api"].requires = ["apigear::utilities",]
         self.cpp_info.components["tb_enum-core"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["tb_enum-core"].libs = ["tb_enum-core"]
         self.cpp_info.components["tb_enum-core"].requires = ["tb_enum-api", "nlohmann_json::nlohmann_json"]

@@ -91,6 +91,7 @@ class custom_typesConan(ConanFile):
         self.cpp_info.set_property("cmake_find_mode", "both")
         self.cpp_info.components["custom_types-api"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["custom_types-api"].libs = ["custom_types-api"]
+        self.cpp_info.components["custom_types-api"].requires = ["apigear::utilities",]
         self.cpp_info.components["custom_types-core"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["custom_types-core"].libs = ["custom_types-core"]
         self.cpp_info.components["custom_types-core"].requires = ["custom_types-api", "nlohmann_json::nlohmann_json"]

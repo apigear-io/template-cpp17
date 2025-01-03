@@ -95,6 +95,7 @@ class tb_same2Conan(ConanFile):
         self.cpp_info.set_property("cmake_find_mode", "both")
         self.cpp_info.components["tb_same2-api"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["tb_same2-api"].libs = ["tb_same2-api"]
+        self.cpp_info.components["tb_same2-api"].requires = ["apigear::utilities",]
         self.cpp_info.components["tb_same2-core"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["tb_same2-core"].libs = ["tb_same2-core"]
         self.cpp_info.components["tb_same2-core"].requires = ["tb_same2-api", "nlohmann_json::nlohmann_json"]

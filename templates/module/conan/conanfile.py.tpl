@@ -118,8 +118,11 @@ class {{$module_id}}Conan(ConanFile):
         {{- if (eq $isApiHeaderOnly false) }}
         self.cpp_info.components["{{$module_id}}-api"].libs = ["{{$module_id}}-api"]
         {{- end}}
-        {{- if or (len .Module.Imports ) (len .Module.Externs ) }}
+        {{- if or (eq $isApiHeaderOnly false) (or (len .Module.Imports ) (len .Module.Externs )) }}
         self.cpp_info.components["{{$module_id}}-api"].requires = [
+        {{- if (eq $isApiHeaderOnly false) -}}
+         "apigear::utilities",
+        {{- end -}}
         {{- range .Module.Imports -}}
             "{{snake .Name}}::{{snake .Name}}-api", 
         {{- end }}
