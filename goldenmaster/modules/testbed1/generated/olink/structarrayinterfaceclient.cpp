@@ -6,6 +6,7 @@
 
 #include "olink/iclientnode.h"
 #include "apigear/utilities/logger.h"
+#include "apigear/utilities/fuzzy_compare.h"
 
 using namespace Test::Testbed1;
 using namespace Test::Testbed1::olink;

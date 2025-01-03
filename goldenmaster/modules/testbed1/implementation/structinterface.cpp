@@ -3,6 +3,7 @@
 #include "testbed1/implementation/structinterface.h"
 #include "testbed1/generated/core/structinterface.publisher.h"
 #include "testbed1/generated/core/structinterface.data.h"
+#include "apigear/utilities/fuzzy_compare.h"
 
 using namespace Test::Testbed1;
 

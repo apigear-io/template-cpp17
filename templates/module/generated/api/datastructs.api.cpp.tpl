@@ -1,5 +1,6 @@
 {{- /* Copyright (c) ApiGear UG 2020 */ -}}
 #include "{{snake .Module.Name}}/generated/api/datastructs.api.h"
+#include "apigear/utilities/fuzzy_compare.h"
 
 {{- if or ( len .Module.Structs ) ( len .Module.Enums ) }}
 
@@ -52,7 +53,11 @@ bool operator==(const {{$class}}& lhs, const {{$class}}& rhs) noexcept
 {{- range $idx, $elem := .Fields }}
         {{- $field := . }}
         {{- if $idx }} &&{{ end }}
+        {{- if ( or ( eq (cppType "" $field) "float") ( eq (cppType "" $field) "double") ) }}
+        ApiGear::Utilities::fuzzyCompare(lhs.{{$field.Name}}, rhs.{{$field.Name}})
+        {{- else }}
         lhs.{{$field.Name}} == rhs.{{$field.Name}}
+        {{- end }}
 {{- end }}
 
     );

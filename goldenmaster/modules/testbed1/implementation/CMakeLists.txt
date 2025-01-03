@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
+find_package(apigear REQUIRED utilities)
 
 set (SOURCES_CORE_IMPL
     structinterface.cpp
@@ -15,9 +16,10 @@ add_library(testbed1::testbed1-implementation ALIAS testbed1-implementation)
 target_include_directories(testbed1-implementation
     PUBLIC
     $<BUILD_INTERFACE:${MODULES_DIR}>
+    $<BUILD_INTERFACE:${MODULES_DIR}/../>
     $<INSTALL_INTERFACE:include>
 )
-target_link_libraries(testbed1-implementation PUBLIC testbed1::testbed1-api PRIVATE testbed1::testbed1-core Threads::Threads)
+target_link_libraries(testbed1-implementation PUBLIC apigear::utilities testbed1::testbed1-api PRIVATE testbed1::testbed1-core Threads::Threads)
 # ensure maximum compiler support
 if(NOT MSVC)
   target_compile_options(testbed1-implementation PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)

@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
+find_package(apigear REQUIRED utilities)
 
 set (SOURCES_CORE_IMPL
 )
@@ -13,9 +14,10 @@ add_library(custom_types::custom_types-implementation ALIAS custom_types-impleme
 target_include_directories(custom_types-implementation
     PUBLIC
     $<BUILD_INTERFACE:${MODULES_DIR}>
+    $<BUILD_INTERFACE:${MODULES_DIR}/../>
     $<INSTALL_INTERFACE:include>
 )
-target_link_libraries(custom_types-implementation PUBLIC custom_types::custom_types-api PRIVATE custom_types::custom_types-core Threads::Threads)
+target_link_libraries(custom_types-implementation PUBLIC apigear::utilities custom_types::custom_types-api PRIVATE custom_types::custom_types-core Threads::Threads)
 # ensure maximum compiler support
 if(NOT MSVC)
   target_compile_options(custom_types-implementation PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)

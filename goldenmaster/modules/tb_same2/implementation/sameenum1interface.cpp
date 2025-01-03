@@ -3,6 +3,7 @@
 #include "tb_same2/implementation/sameenum1interface.h"
 #include "tb_same2/generated/core/sameenum1interface.publisher.h"
 #include "tb_same2/generated/core/sameenum1interface.data.h"
+#include "apigear/utilities/fuzzy_compare.h"
 
 using namespace Test::TbSame2;
 

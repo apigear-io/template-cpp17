@@ -3,12 +3,15 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(custom_types REQUIRED COMPONENTS api)
+find_package(apigear REQUIRED COMPONENTS utlitities)
 find_package(extern_types REQUIRED COMPONENTS api)
+find_package(apigear REQUIRED COMPONENTS utlitities)
 add_library(counter-api INTERFACE)
 add_library(counter::counter-api ALIAS counter-api)
 target_include_directories(counter-api
     INTERFACE
     $<BUILD_INTERFACE:${MODULES_DIR}>
+    $<BUILD_INTERFACE:${MODULES_DIR}/../>
     $<INSTALL_INTERFACE:include>
 )
 target_link_libraries(counter-api INTERFACE custom_types::custom_types-api extern_types::extern_types-api)

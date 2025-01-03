@@ -3,6 +3,7 @@
 #include "tb_simple/implementation/nopropertiesinterface.h"
 #include "tb_simple/generated/core/nopropertiesinterface.publisher.h"
 #include "tb_simple/generated/core/nopropertiesinterface.data.h"
+#include "apigear/utilities/fuzzy_compare.h"
 
 using namespace Test::TbSimple;
 

@@ -3,6 +3,7 @@
 #include "testbed2/implementation/nestedstruct2interface.h"
 #include "testbed2/generated/core/nestedstruct2interface.publisher.h"
 #include "testbed2/generated/core/nestedstruct2interface.data.h"
+#include "apigear/utilities/fuzzy_compare.h"
 
 using namespace Test::Testbed2;
 

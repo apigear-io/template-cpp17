@@ -3,6 +3,7 @@
 #include "tb_simple/implementation/simplearrayinterface.h"
 #include "tb_simple/generated/core/simplearrayinterface.publisher.h"
 #include "tb_simple/generated/core/simplearrayinterface.data.h"
+#include "apigear/utilities/fuzzy_compare.h"
 
 using namespace Test::TbSimple;
 

@@ -9,6 +9,7 @@
 {{- range .Module.Imports }}
 #include "{{snake .Name}}/generated/core/{{snake .Name}}.json.adapter.h"
 {{- end }}
+#include "apigear/utilities/fuzzy_compare.h"
 #include <random>
 
 using namespace {{ Camel .System.Name }}::{{ Camel .Module.Name }};
@@ -94,7 +95,13 @@ void {{$class}}::set{{Camel $name}}Local(const std::string& args)
     }
 
     {{ cppParam "" $property }} = fields.get<{{cppType "" $property}}>();
-    if (m_data.m_{{$name}} != {{$name}}) {
+    if (
+    {{- if ( or ( eq (cppType "" $property) "float") ( eq (cppType "" $property) "double") ) -}}
+    !ApiGear::Utilities::fuzzyCompare(m_data.m_{{$name}}, {{$name}})
+    {{- else -}}
+        m_data.m_{{$name}} != {{$name}}
+    {{- end -}}
+    ) {
         m_data.m_{{$name}} = {{$name}};
         m_publisher->publish{{Camel $name}}Changed({{$name}});
     }

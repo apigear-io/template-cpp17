@@ -3,6 +3,7 @@
 #include "counter/implementation/counter.h"
 #include "counter/generated/core/counter.publisher.h"
 #include "counter/generated/core/counter.data.h"
+#include "apigear/utilities/fuzzy_compare.h"
 
 using namespace Test::Counter;
 

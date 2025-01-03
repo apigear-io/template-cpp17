@@ -1,6 +1,7 @@
 #include "tb_names/generated/mqtt/namesclient.h"
 #include "tb_names/generated/core/names.publisher.h"
 #include "tb_names/generated/core/tb_names.json.adapter.h"
+#include "apigear/utilities/fuzzy_compare.h"
 #include <random>
 
 using namespace Test::TbNames;

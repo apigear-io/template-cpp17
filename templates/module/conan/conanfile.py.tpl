@@ -118,8 +118,11 @@ class {{$module_id}}Conan(ConanFile):
         {{- if (eq $isApiHeaderOnly false) }}
         self.cpp_info.components["{{$module_id}}-api"].libs = ["{{$module_id}}-api"]
         {{- end}}
-        {{- if or (len .Module.Imports ) (len .Module.Externs ) }}
+        {{- if or (eq $isApiHeaderOnly false) (or (len .Module.Imports ) (len .Module.Externs )) }}
         self.cpp_info.components["{{$module_id}}-api"].requires = [
+        {{- if (eq $isApiHeaderOnly false) -}}
+         "apigear::utilities",
+        {{- end -}}
         {{- range .Module.Imports -}}
             "{{snake .Name}}::{{snake .Name}}-api", 
         {{- end }}
@@ -142,7 +145,7 @@ class {{$module_id}}Conan(ConanFile):
         {{- if and $features.stubs ( len .Module.Interfaces ) }}
         self.cpp_info.components["{{$module_id}}-implementation"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["{{$module_id}}-implementation"].libs = ["{{$module_id}}-implementation"]
-        self.cpp_info.components["{{$module_id}}-implementation"].requires = ["{{$module_id}}-core", "nlohmann_json::nlohmann_json"]
+        self.cpp_info.components["{{$module_id}}-implementation"].requires = ["{{$module_id}}-core", "nlohmann_json::nlohmann_json", "apigear::utilities"]
         {{- end}}
         {{- if and .Features.monitor ( len .Module.Interfaces ) }}
         self.cpp_info.components["{{$module_id}}-monitor"].includedirs.append(os.path.join(self.package_folder, "include"))

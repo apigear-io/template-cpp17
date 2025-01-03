@@ -6,6 +6,7 @@
 
 #include "olink/iclientnode.h"
 #include "apigear/utilities/logger.h"
+#include "apigear/utilities/fuzzy_compare.h"
 
 using namespace Test::TbSimple;
 using namespace Test::TbSimple::olink;
@@ -205,7 +206,7 @@ void SimpleInterfaceClient::setPropFloatLocal(float propFloat)
 {
     {
         std::unique_lock<std::shared_timed_mutex> lock(m_propFloatMutex);
-        if (m_data.m_propFloat == propFloat) {
+        if (ApiGear::Utilities::fuzzyCompare(m_data.m_propFloat, propFloat)) {
             return;
         }
         m_data.m_propFloat = propFloat;
@@ -234,7 +235,7 @@ void SimpleInterfaceClient::setPropFloat32Local(float propFloat32)
 {
     {
         std::unique_lock<std::shared_timed_mutex> lock(m_propFloat32Mutex);
-        if (m_data.m_propFloat32 == propFloat32) {
+        if (ApiGear::Utilities::fuzzyCompare(m_data.m_propFloat32, propFloat32)) {
             return;
         }
         m_data.m_propFloat32 = propFloat32;
@@ -263,7 +264,7 @@ void SimpleInterfaceClient::setPropFloat64Local(double propFloat64)
 {
     {
         std::unique_lock<std::shared_timed_mutex> lock(m_propFloat64Mutex);
-        if (m_data.m_propFloat64 == propFloat64) {
+        if (ApiGear::Utilities::fuzzyCompare(m_data.m_propFloat64, propFloat64)) {
             return;
         }
         m_data.m_propFloat64 = propFloat64;

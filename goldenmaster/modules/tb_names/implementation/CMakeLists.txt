@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
+find_package(apigear REQUIRED utilities)
 
 set (SOURCES_CORE_IMPL
     names.cpp
@@ -14,9 +15,10 @@ add_library(tb_names::tb_names-implementation ALIAS tb_names-implementation)
 target_include_directories(tb_names-implementation
     PUBLIC
     $<BUILD_INTERFACE:${MODULES_DIR}>
+    $<BUILD_INTERFACE:${MODULES_DIR}/../>
     $<INSTALL_INTERFACE:include>
 )
-target_link_libraries(tb_names-implementation PUBLIC tb_names::tb_names-api PRIVATE tb_names::tb_names-core Threads::Threads)
+target_link_libraries(tb_names-implementation PUBLIC apigear::utilities tb_names::tb_names-api PRIVATE tb_names::tb_names-core Threads::Threads)
 # ensure maximum compiler support
 if(NOT MSVC)
   target_compile_options(tb_names-implementation PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)

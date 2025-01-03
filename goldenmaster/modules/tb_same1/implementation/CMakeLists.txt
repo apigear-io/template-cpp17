@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
+find_package(apigear REQUIRED utilities)
 
 set (SOURCES_CORE_IMPL
     samestruct1interface.cpp
@@ -17,9 +18,10 @@ add_library(tb_same1::tb_same1-implementation ALIAS tb_same1-implementation)
 target_include_directories(tb_same1-implementation
     PUBLIC
     $<BUILD_INTERFACE:${MODULES_DIR}>
+    $<BUILD_INTERFACE:${MODULES_DIR}/../>
     $<INSTALL_INTERFACE:include>
 )
-target_link_libraries(tb_same1-implementation PUBLIC tb_same1::tb_same1-api PRIVATE tb_same1::tb_same1-core Threads::Threads)
+target_link_libraries(tb_same1-implementation PUBLIC apigear::utilities tb_same1::tb_same1-api PRIVATE tb_same1::tb_same1-core Threads::Threads)
 # ensure maximum compiler support
 if(NOT MSVC)
   target_compile_options(tb_same1-implementation PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)

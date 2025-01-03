@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
+find_package(apigear REQUIRED utilities)
 
 set (SOURCES_CORE_IMPL
     manyparaminterface.cpp
@@ -17,9 +18,10 @@ add_library(testbed2::testbed2-implementation ALIAS testbed2-implementation)
 target_include_directories(testbed2-implementation
     PUBLIC
     $<BUILD_INTERFACE:${MODULES_DIR}>
+    $<BUILD_INTERFACE:${MODULES_DIR}/../>
     $<INSTALL_INTERFACE:include>
 )
-target_link_libraries(testbed2-implementation PUBLIC testbed2::testbed2-api PRIVATE testbed2::testbed2-core Threads::Threads)
+target_link_libraries(testbed2-implementation PUBLIC apigear::utilities testbed2::testbed2-api PRIVATE testbed2::testbed2-core Threads::Threads)
 # ensure maximum compiler support
 if(NOT MSVC)
   target_compile_options(testbed2-implementation PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)

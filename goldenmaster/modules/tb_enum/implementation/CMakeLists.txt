@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
+find_package(apigear REQUIRED utilities)
 
 set (SOURCES_CORE_IMPL
     enuminterface.cpp
@@ -14,9 +15,10 @@ add_library(tb_enum::tb_enum-implementation ALIAS tb_enum-implementation)
 target_include_directories(tb_enum-implementation
     PUBLIC
     $<BUILD_INTERFACE:${MODULES_DIR}>
+    $<BUILD_INTERFACE:${MODULES_DIR}/../>
     $<INSTALL_INTERFACE:include>
 )
-target_link_libraries(tb_enum-implementation PUBLIC tb_enum::tb_enum-api PRIVATE tb_enum::tb_enum-core Threads::Threads)
+target_link_libraries(tb_enum-implementation PUBLIC apigear::utilities tb_enum::tb_enum-api PRIVATE tb_enum::tb_enum-core Threads::Threads)
 # ensure maximum compiler support
 if(NOT MSVC)
   target_compile_options(tb_enum-implementation PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)

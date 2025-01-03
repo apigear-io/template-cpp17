@@ -95,12 +95,13 @@ class testbed1Conan(ConanFile):
         self.cpp_info.set_property("cmake_find_mode", "both")
         self.cpp_info.components["testbed1-api"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["testbed1-api"].libs = ["testbed1-api"]
+        self.cpp_info.components["testbed1-api"].requires = ["apigear::utilities",]
         self.cpp_info.components["testbed1-core"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["testbed1-core"].libs = ["testbed1-core"]
         self.cpp_info.components["testbed1-core"].requires = ["testbed1-api", "nlohmann_json::nlohmann_json"]
         self.cpp_info.components["testbed1-implementation"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["testbed1-implementation"].libs = ["testbed1-implementation"]
-        self.cpp_info.components["testbed1-implementation"].requires = ["testbed1-core", "nlohmann_json::nlohmann_json"]
+        self.cpp_info.components["testbed1-implementation"].requires = ["testbed1-core", "nlohmann_json::nlohmann_json", "apigear::utilities"]
         self.cpp_info.components["testbed1-monitor"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["testbed1-monitor"].libs = ["testbed1-monitor"]
         self.cpp_info.components["testbed1-monitor"].requires = ["testbed1-core", "nlohmann_json::nlohmann_json", "apigear::poco-tracer"]

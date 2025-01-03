@@ -1,6 +1,7 @@
 #include "tb_simple/generated/mqtt/nopropertiesinterfaceclient.h"
 #include "tb_simple/generated/core/nopropertiesinterface.publisher.h"
 #include "tb_simple/generated/core/tb_simple.json.adapter.h"
+#include "apigear/utilities/fuzzy_compare.h"
 #include <random>
 
 using namespace Test::TbSimple;

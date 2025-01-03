@@ -3,6 +3,7 @@
 #include "tb_enum/implementation/enuminterface.h"
 #include "tb_enum/generated/core/enuminterface.publisher.h"
 #include "tb_enum/generated/core/enuminterface.data.h"
+#include "apigear/utilities/fuzzy_compare.h"
 
 using namespace Test::TbEnum;
 

@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
+find_package(apigear REQUIRED utilities)
 
 set (SOURCES_CORE_IMPL
     voidinterface.cpp
@@ -19,9 +20,10 @@ add_library(tb_simple::tb_simple-implementation ALIAS tb_simple-implementation)
 target_include_directories(tb_simple-implementation
     PUBLIC
     $<BUILD_INTERFACE:${MODULES_DIR}>
+    $<BUILD_INTERFACE:${MODULES_DIR}/../>
     $<INSTALL_INTERFACE:include>
 )
-target_link_libraries(tb_simple-implementation PUBLIC tb_simple::tb_simple-api PRIVATE tb_simple::tb_simple-core Threads::Threads)
+target_link_libraries(tb_simple-implementation PUBLIC apigear::utilities tb_simple::tb_simple-api PRIVATE tb_simple::tb_simple-core Threads::Threads)
 # ensure maximum compiler support
 if(NOT MSVC)
   target_compile_options(tb_simple-implementation PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)

@@ -3,6 +3,7 @@
 #include "tb_simple/implementation/simpleinterface.h"
 #include "tb_simple/generated/core/simpleinterface.publisher.h"
 #include "tb_simple/generated/core/simpleinterface.data.h"
+#include "apigear/utilities/fuzzy_compare.h"
 
 using namespace Test::TbSimple;
 
@@ -68,7 +69,7 @@ int64_t SimpleInterface::getPropInt64() const
 
 void SimpleInterface::setPropFloat(float propFloat)
 {
-    if (m_data.m_propFloat != propFloat) {
+    if (!ApiGear::Utilities::fuzzyCompare(m_data.m_propFloat, propFloat)) {
         m_data.m_propFloat = propFloat;
         m_publisher->publishPropFloatChanged(propFloat);
     }
@@ -81,7 +82,7 @@ float SimpleInterface::getPropFloat() const
 
 void SimpleInterface::setPropFloat32(float propFloat32)
 {
-    if (m_data.m_propFloat32 != propFloat32) {
+    if (!ApiGear::Utilities::fuzzyCompare(m_data.m_propFloat32, propFloat32)) {
         m_data.m_propFloat32 = propFloat32;
         m_publisher->publishPropFloat32Changed(propFloat32);
     }
@@ -94,7 +95,7 @@ float SimpleInterface::getPropFloat32() const
 
 void SimpleInterface::setPropFloat64(double propFloat64)
 {
-    if (m_data.m_propFloat64 != propFloat64) {
+    if (!ApiGear::Utilities::fuzzyCompare(m_data.m_propFloat64, propFloat64)) {
         m_data.m_propFloat64 = propFloat64;
         m_publisher->publishPropFloat64Changed(propFloat64);
     }

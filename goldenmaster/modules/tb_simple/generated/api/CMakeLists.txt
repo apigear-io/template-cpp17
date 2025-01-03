@@ -7,6 +7,7 @@ add_library(tb_simple::tb_simple-api ALIAS tb_simple-api)
 target_include_directories(tb_simple-api
     INTERFACE
     $<BUILD_INTERFACE:${MODULES_DIR}>
+    $<BUILD_INTERFACE:${MODULES_DIR}/../>
     $<INSTALL_INTERFACE:include>
 )
 

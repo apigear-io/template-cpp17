@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
+find_package(apigear REQUIRED utilities)
 
 set (SOURCES_CORE_IMPL
 )
@@ -13,9 +14,10 @@ add_library(extern_types::extern_types-implementation ALIAS extern_types-impleme
 target_include_directories(extern_types-implementation
     PUBLIC
     $<BUILD_INTERFACE:${MODULES_DIR}>
+    $<BUILD_INTERFACE:${MODULES_DIR}/../>
     $<INSTALL_INTERFACE:include>
 )
-target_link_libraries(extern_types-implementation PUBLIC extern_types::extern_types-api PRIVATE extern_types::extern_types-core Threads::Threads)
+target_link_libraries(extern_types-implementation PUBLIC apigear::utilities extern_types::extern_types-api PRIVATE extern_types::extern_types-core Threads::Threads)
 # ensure maximum compiler support
 if(NOT MSVC)
   target_compile_options(extern_types-implementation PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)

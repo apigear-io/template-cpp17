@@ -12,6 +12,7 @@ find_package(Catch2 REQUIRED)
 set(TEST_APIGEAR_UTILITIES_SOURCES
     test_main.cpp
     logger.test.cpp
+    test_fuzzy_compare.cpp
     )
 
 add_executable(test_apigear_utilities ${TEST_APIGEAR_UTILITIES_SOURCES})

@@ -2,6 +2,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+find_package(apigear REQUIRED COMPONENTS utilities)
 
 set (SOURCES
     datastructs.api.cpp
@@ -11,6 +12,7 @@ add_library(tb_same2::tb_same2-api ALIAS tb_same2-api)
 target_include_directories(tb_same2-api
     PUBLIC
     $<BUILD_INTERFACE:${MODULES_DIR}>
+    $<BUILD_INTERFACE:${MODULES_DIR}/../>
     $<INSTALL_INTERFACE:include>
 )
 # ensure maximum compiler support
@@ -19,6 +21,7 @@ if(NOT MSVC)
 else()
   target_compile_options(tb_same2-api PRIVATE /W4 /WX /wd4251)
 endif()
+target_link_libraries(tb_same2-api PUBLIC apigear::utilities)
 
 # install binary files
 install(TARGETS tb_same2-api
