@@ -45,3 +45,8 @@ install(EXPORT CounterOLinkTargets
   DESTINATION ${InstallDir}
   NAMESPACE counter::
 )
+
+if(BUILD_TESTING)
+enable_testing()
+add_subdirectory(tests)
+endif()

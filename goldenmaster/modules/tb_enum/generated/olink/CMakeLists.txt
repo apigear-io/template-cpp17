@@ -41,3 +41,8 @@ install(EXPORT Tb_enumOLinkTargets
   DESTINATION ${InstallDir}
   NAMESPACE tb_enum::
 )
+
+if(BUILD_TESTING)
+enable_testing()
+add_subdirectory(tests)
+endif()
