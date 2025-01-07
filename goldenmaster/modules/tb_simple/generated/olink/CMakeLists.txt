@@ -51,3 +51,8 @@ install(EXPORT Tb_simpleOLinkTargets
   DESTINATION ${InstallDir}
   NAMESPACE tb_simple::
 )
+
+if(BUILD_TESTING)
+enable_testing()
+add_subdirectory(tests)
+endif()

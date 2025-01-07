@@ -39,3 +39,8 @@ install(EXPORT Custom_typesOLinkTargets
   DESTINATION ${InstallDir}
   NAMESPACE custom_types::
 )
+
+if(BUILD_TESTING)
+enable_testing()
+add_subdirectory(tests)
+endif()

@@ -47,3 +47,8 @@ install(EXPORT Tb_same2OLinkTargets
   DESTINATION ${InstallDir}
   NAMESPACE tb_same2::
 )
+
+if(BUILD_TESTING)
+enable_testing()
+add_subdirectory(tests)
+endif()

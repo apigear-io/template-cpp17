@@ -47,3 +47,8 @@ install(EXPORT Testbed2OLinkTargets
   DESTINATION ${InstallDir}
   NAMESPACE testbed2::
 )
+
+if(BUILD_TESTING)
+enable_testing()
+add_subdirectory(tests)
+endif()

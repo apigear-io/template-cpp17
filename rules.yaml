@@ -124,6 +124,11 @@ features:
       documents:
           - source: "module/generated/olink/CMakeLists.txt.tpl"
             target: "modules/{{snake .Module.Name}}/generated/olink/CMakeLists.txt"
+          - source: "module/generated/olink/tests/CMakeLists.txt.tpl"
+            target: "modules/{{snake .Module.Name}}/generated/olink/tests/CMakeLists.txt"
+          - source: "module/generated/olink/tests/test_main.cpp"
+            target: "modules/{{snake .Module.Name}}/generated/olink/tests/test_main.cpp"
+            raw: true
     - match: interface
       prefix: "modules/{{snake .Module.Name}}/generated/olink/"
       documents:
@@ -135,6 +140,8 @@ features:
           target: "{{lower (camel .Interface.Name)}}client.h"
         - source: "module/generated/olink/interfaceclient.cpp.tpl"
           target: "{{lower (camel .Interface.Name)}}client.cpp"
+        - source: "module/generated/olink/tests/interface_test.cpp.tpl"
+          target: "tests/test_{{lower (camel .Interface.Name)}}.cpp"
   - name: mqtt
     requires:
       - api

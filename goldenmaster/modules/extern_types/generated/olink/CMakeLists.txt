@@ -39,3 +39,8 @@ install(EXPORT Extern_typesOLinkTargets
   DESTINATION ${InstallDir}
   NAMESPACE extern_types::
 )
+
+if(BUILD_TESTING)
+enable_testing()
+add_subdirectory(tests)
+endif()
