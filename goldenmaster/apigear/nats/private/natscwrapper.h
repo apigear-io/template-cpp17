@@ -40,7 +40,7 @@ public:
         return shared_from_this();
     }
 
-    void connect(const std::string& address, std::function<void(void)> connectionStateChangedCallback);
+    void connect(const std::string& address, std::function<void(void)> connectionStateChangedCallback, bool sendAsap);
     uint64_t getId() const;
     void disconnect();
     int64_t subscribe(const std::string& topic, SimpleOnMessageCallback callback, SubscriptionClosedCallback onSubscriptionClosedCallback);

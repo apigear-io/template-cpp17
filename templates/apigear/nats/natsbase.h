@@ -27,7 +27,7 @@ public:
     static const int64_t InvalidSubscriptionId = 0;
 
     // WARNING this is blocking call, but calling with std::async causes error with state NATS_NO_SERVER_SUPPORT 
-    void connect(const std::string& address);
+    void connect(const std::string& address, bool sendAsap = true);
     uint64_t getId() const;
     void disconnect();
     void flush();
