@@ -50,3 +50,10 @@ install(EXPORT {{$module_idFirstUpper}}MqttTargets
   DESTINATION ${InstallDir}
   NAMESPACE {{$module_id }}::
 )
+
+if(BUILD_TESTING)
+enable_testing()
+if (ENABLE_MQTT_TEST_FOR_NON_LINUX_OS OR ((NOT ${CMAKE_SYSTEM_NAME} MATCHES "Darwin") AND (NOT ${CMAKE_SYSTEM_NAME} MATCHES "Windows")))
+add_subdirectory(tests)
+endif()
+endif()
