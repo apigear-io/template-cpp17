@@ -40,7 +40,7 @@ Base::~Base()
     m_cwrapper->disconnect();
 }
 
-void Base::connect(const std::string& address)
+void Base::connect(const std::string& address, bool sendAsap)
 {
     auto status = m_cwrapper->getStatus();
     if (status == ConnectionStatus::reconnecting ||
@@ -49,7 +49,7 @@ void Base::connect(const std::string& address)
     {
         return;
     }
-    m_cwrapper->connect(address, [this]() { onConnectedChanged(); });
+    m_cwrapper->connect(address, [this]() { onConnectedChanged(); }, sendAsap);
     if (m_cwrapper->getStatus() == ConnectionStatus::connected)
     {
         AG_LOG_DEBUG("nats client connected");

@@ -131,7 +131,7 @@ void CWrapper::NatsConnectionDeleter::operator()(natsConnection* conn)
     natsConnection_Destroy(conn);
 };
 
-void CWrapper::connect(const std::string& address, std::function<void(void)> connectionStateChangedCallback)
+void CWrapper::connect(const std::string& address, std::function<void(void)> connectionStateChangedCallback, bool sendAsap)
 {
     m_connectionStateChangedCallback = connectionStateChangedCallback;
     if (!m_connectionHandlerContext.object.lock())
@@ -196,6 +196,15 @@ void CWrapper::connect(const std::string& address, std::function<void(void)> con
         auto log = "Failed to connect. Could not configure connection (On setting message thread options). Error code " + std::to_string(static_cast<int>(status));
         AG_LOG_ERROR(log);
         return;
+    }
+    if (sendAsap)
+    {
+        status = natsOptions_SetSendAsap(opts.get(), true);
+        if (status != NATS_OK) {
+            auto log = "Failed to connect. Could not configure connection (On setting send asap). Error code " + std::to_string(static_cast<int>(status));
+            AG_LOG_ERROR(log);
+            return;
+        }
     }
     natsConnection* connection = NULL;
     status = natsConnection_Connect(&connection, opts.get());
