@@ -191,16 +191,13 @@ std::future<void> Nam_EsClient::sOME_FUNCTIONAsync(bool SOME_PARAM, std::functio
             std::promise<void> resultPromise;
             static const auto topic = std::string("tb.names/Nam_Es/rpc/SOME_FUNCTION");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                (void) arg;
-                resultPromise.set_value();
-                if (callback)
-                {
-                    callback();
-                }
-            };
-            auto responseId = registerResponseHandler(responseHandler);
+            auto responseId = 0; //Not used, the service won't respond, no handler is added for response.
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({SOME_PARAM}).dump(), responseId);
+            resultPromise.set_value();
+            if (callback)
+            {
+                callback();
+            }
             return resultPromise.get_future().get();
         }
     );
@@ -225,16 +222,13 @@ std::future<void> Nam_EsClient::some_Function2Async(bool Some_Param, std::functi
             std::promise<void> resultPromise;
             static const auto topic = std::string("tb.names/Nam_Es/rpc/Some_Function2");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                (void) arg;
-                resultPromise.set_value();
-                if (callback)
-                {
-                    callback();
-                }
-            };
-            auto responseId = registerResponseHandler(responseHandler);
+            auto responseId = 0; //Not used, the service won't respond, no handler is added for response.
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({Some_Param}).dump(), responseId);
+            resultPromise.set_value();
+            if (callback)
+            {
+                callback();
+            }
             return resultPromise.get_future().get();
         }
     );
