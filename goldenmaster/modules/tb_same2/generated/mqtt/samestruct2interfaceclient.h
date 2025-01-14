@@ -5,11 +5,12 @@
 #include "tb_same2/generated/api/tb_same2.h"
 #include "tb_same2/generated/core/samestruct2interface.data.h"
 #include "apigear/mqtt/mqttclient.h"
+#include "apigear/mqtt/mqttbaseadapter.h"
 
 namespace Test {
 namespace TbSame2 {
 namespace MQTT {
-class TEST_TB_SAME2_EXPORT SameStruct2InterfaceClient : public ISameStruct2Interface
+class TEST_TB_SAME2_EXPORT SameStruct2InterfaceClient : public ISameStruct2Interface, public ApiGear::MQTT::MqttBaseAdapter
 {
 public:
     explicit SameStruct2InterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> client);
@@ -63,11 +64,6 @@ private:
     int registerResponseHandler(ApiGear::MQTT::InvokeReplyFunc handler);
     std::mutex m_responseHandlerMutex;
     std::map<int, ApiGear::MQTT::InvokeReplyFunc> m_responseHandlerMap;
-
-    /// @brief has all the topics of this client and the corresponding function callbacks
-    const std::map<std::string, ApiGear::MQTT::CallbackFunction> m_topics;
-    // id for connection status registration
-    int m_connectionStatusRegistrationID;
 };
 } // namespace MQTT
 } // namespace TbSame2

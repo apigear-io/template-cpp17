@@ -11,21 +11,14 @@ namespace {
 }
 
 NoOperationsInterfaceClient::NoOperationsInterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> client)
-    : m_isReady(false)
+    : MqttBaseAdapter(client, createTopicMap(client->getClientId()))
     , m_client(client)
     , m_publisher(std::make_unique<NoOperationsInterfacePublisher>())
-    , m_topics(createTopicMap(m_client->getClientId()))
 {
-    m_connectionStatusRegistrationID = m_client->subscribeToConnectionStatus([this](bool connectionStatus){ onConnectionStatusChanged(connectionStatus); });
 }
 
 NoOperationsInterfaceClient::~NoOperationsInterfaceClient()
 {
-    for (const auto& topic: m_topics)
-    {
-        m_client->unsubscribeTopic(topic. first);
-    }
-    m_client->unsubscribeToConnectionStatus(m_connectionStatusRegistrationID);
 }
 
 std::map<std::string, ApiGear::MQTT::CallbackFunction> NoOperationsInterfaceClient::createTopicMap(const std::string&)
@@ -37,20 +30,6 @@ std::map<std::string, ApiGear::MQTT::CallbackFunction> NoOperationsInterfaceClie
         { std::string("tb.simple/NoOperationsInterface/sig/sigBool"), [this](const std::string& args, const std::string&, const std::string&){ this->onSigBool(args); } },
     };
 };
-
-void NoOperationsInterfaceClient::onConnectionStatusChanged(bool connectionStatus)
-{
-    m_isReady = connectionStatus;
-    if(!connectionStatus)
-    {
-        return;
-    }
-
-    for (const auto& topic: m_topics)
-    {
-        m_client->subscribeTopic(topic. first, topic.second);
-    }
-}
 
 void NoOperationsInterfaceClient::setPropBool(bool propBool)
 {

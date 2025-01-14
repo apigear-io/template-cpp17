@@ -5,11 +5,12 @@
 #include "tb_same1/generated/api/tb_same1.h"
 #include "tb_same1/generated/core/sameenum1interface.data.h"
 #include "apigear/mqtt/mqttclient.h"
+#include "apigear/mqtt/mqttbaseadapter.h"
 
 namespace Test {
 namespace TbSame1 {
 namespace MQTT {
-class TEST_TB_SAME1_EXPORT SameEnum1InterfaceClient : public ISameEnum1Interface
+class TEST_TB_SAME1_EXPORT SameEnum1InterfaceClient : public ISameEnum1Interface, public ApiGear::MQTT::MqttBaseAdapter
 {
 public:
     explicit SameEnum1InterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> client);
@@ -53,11 +54,6 @@ private:
     int registerResponseHandler(ApiGear::MQTT::InvokeReplyFunc handler);
     std::mutex m_responseHandlerMutex;
     std::map<int, ApiGear::MQTT::InvokeReplyFunc> m_responseHandlerMap;
-
-    /// @brief has all the topics of this client and the corresponding function callbacks
-    const std::map<std::string, ApiGear::MQTT::CallbackFunction> m_topics;
-    // id for connection status registration
-    int m_connectionStatusRegistrationID;
 };
 } // namespace MQTT
 } // namespace TbSame1

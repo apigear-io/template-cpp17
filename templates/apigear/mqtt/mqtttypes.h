@@ -9,10 +9,20 @@ namespace MQTT {
 
 typedef std::function<void(const std::string& args, const std::string& responseTopic, const std::string& correlationData)> CallbackFunction;
 typedef std::function<void(bool connectionStatus)> OnConnectionStatusChangedCallBackFunction;
+typedef std::function<void(const std::string& topic, bool isSubscribed)> OnSubscriptionStatusChanged;
 
 class APIGEAR_MQTT_EXPORT InvokeReplyArg {
 public:
     nlohmann::json value;
+};
+
+enum class SubscriptionStatus
+{
+	unsubscribed,
+	subscribing,
+	subscribed,
+	to_unsubscribe,
+	unsubscribing
 };
 
 typedef std::function<void(InvokeReplyArg)> InvokeReplyFunc;

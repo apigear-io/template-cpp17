@@ -6,25 +6,20 @@ using namespace Test::Testbed2;
 using namespace Test::Testbed2::MQTT;
 
 NestedStruct3InterfaceService::NestedStruct3InterfaceService(std::shared_ptr<INestedStruct3Interface> impl, std::shared_ptr<ApiGear::MQTT::Service> service)
-    : m_impl(impl)
+    : MqttBaseAdapter(service, createTopicMap())
+    , m_impl(impl)
     , m_service(service)
-    , m_topics(createTopicMap())
 {
     m_impl->_getPublisher().subscribeToAllChanges(*this);
 
-    m_connectionStatusRegistrationID = m_service->subscribeToConnectionStatus([this](bool connectionStatus){ onConnectionStatusChanged(connectionStatus); });
+    m_connectionStatusId = m_service->subscribeToConnectionStatus([this](bool connectionStatus){ onConnectionStatusChanged(connectionStatus); });
 }
 
 NestedStruct3InterfaceService::~NestedStruct3InterfaceService()
 {
     m_impl->_getPublisher().unsubscribeFromAllChanges(*this);
 
-    m_service->unsubscribeToConnectionStatus(m_connectionStatusRegistrationID);
-
-    for (const auto& topic: m_topics)
-    {
-        m_service->unsubscribeTopic(topic. first);
-    }
+    m_service->unsubscribeToConnectionStatus(m_connectionStatusId);
 }
 
 std::map<std::string, ApiGear::MQTT::CallbackFunction> NestedStruct3InterfaceService::createTopicMap()
@@ -45,12 +40,6 @@ void NestedStruct3InterfaceService::onConnectionStatusChanged(bool connectionSta
     {
         return;
     }
-
-    for (const auto& topic: m_topics)
-    {
-        m_service->subscribeTopic(topic. first, topic.second);
-    }
-
     // send current values
     onProp1Changed(m_impl->getProp1());
     onProp2Changed(m_impl->getProp2());

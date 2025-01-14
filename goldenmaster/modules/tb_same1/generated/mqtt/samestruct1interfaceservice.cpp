@@ -6,25 +6,20 @@ using namespace Test::TbSame1;
 using namespace Test::TbSame1::MQTT;
 
 SameStruct1InterfaceService::SameStruct1InterfaceService(std::shared_ptr<ISameStruct1Interface> impl, std::shared_ptr<ApiGear::MQTT::Service> service)
-    : m_impl(impl)
+    : MqttBaseAdapter(service, createTopicMap())
+    , m_impl(impl)
     , m_service(service)
-    , m_topics(createTopicMap())
 {
     m_impl->_getPublisher().subscribeToAllChanges(*this);
 
-    m_connectionStatusRegistrationID = m_service->subscribeToConnectionStatus([this](bool connectionStatus){ onConnectionStatusChanged(connectionStatus); });
+    m_connectionStatusId = m_service->subscribeToConnectionStatus([this](bool connectionStatus){ onConnectionStatusChanged(connectionStatus); });
 }
 
 SameStruct1InterfaceService::~SameStruct1InterfaceService()
 {
     m_impl->_getPublisher().unsubscribeFromAllChanges(*this);
 
-    m_service->unsubscribeToConnectionStatus(m_connectionStatusRegistrationID);
-
-    for (const auto& topic: m_topics)
-    {
-        m_service->unsubscribeTopic(topic. first);
-    }
+    m_service->unsubscribeToConnectionStatus(m_connectionStatusId);
 }
 
 std::map<std::string, ApiGear::MQTT::CallbackFunction> SameStruct1InterfaceService::createTopicMap()
@@ -41,12 +36,6 @@ void SameStruct1InterfaceService::onConnectionStatusChanged(bool connectionStatu
     {
         return;
     }
-
-    for (const auto& topic: m_topics)
-    {
-        m_service->subscribeTopic(topic. first, topic.second);
-    }
-
     // send current values
     onProp1Changed(m_impl->getProp1());
 }

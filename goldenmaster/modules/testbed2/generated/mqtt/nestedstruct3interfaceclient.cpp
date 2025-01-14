@@ -11,21 +11,14 @@ namespace {
 }
 
 NestedStruct3InterfaceClient::NestedStruct3InterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> client)
-    : m_isReady(false)
+    : MqttBaseAdapter(client, createTopicMap(client->getClientId()))
     , m_client(client)
     , m_publisher(std::make_unique<NestedStruct3InterfacePublisher>())
-    , m_topics(createTopicMap(m_client->getClientId()))
 {
-    m_connectionStatusRegistrationID = m_client->subscribeToConnectionStatus([this](bool connectionStatus){ onConnectionStatusChanged(connectionStatus); });
 }
 
 NestedStruct3InterfaceClient::~NestedStruct3InterfaceClient()
 {
-    for (const auto& topic: m_topics)
-    {
-        m_client->unsubscribeTopic(topic. first);
-    }
-    m_client->unsubscribeToConnectionStatus(m_connectionStatusRegistrationID);
 }
 
 std::map<std::string, ApiGear::MQTT::CallbackFunction> NestedStruct3InterfaceClient::createTopicMap(const std::string& clientId)
@@ -42,20 +35,6 @@ std::map<std::string, ApiGear::MQTT::CallbackFunction> NestedStruct3InterfaceCli
         { std::string("testbed2/NestedStruct3Interface/rpc/func3/"+clientId+"/result"), [this](const std::string& args, const std::string&, const std::string& correlationData){ this->onInvokeReply(args, correlationData); } },
     };
 };
-
-void NestedStruct3InterfaceClient::onConnectionStatusChanged(bool connectionStatus)
-{
-    m_isReady = connectionStatus;
-    if(!connectionStatus)
-    {
-        return;
-    }
-
-    for (const auto& topic: m_topics)
-    {
-        m_client->subscribeTopic(topic. first, topic.second);
-    }
-}
 
 void NestedStruct3InterfaceClient::setProp1(const NestedStruct1& prop1)
 {

@@ -11,21 +11,14 @@ namespace {
 }
 
 Nam_EsClient::Nam_EsClient(std::shared_ptr<ApiGear::MQTT::Client> client)
-    : m_isReady(false)
+    : MqttBaseAdapter(client, createTopicMap(client->getClientId()))
     , m_client(client)
     , m_publisher(std::make_unique<NamEsPublisher>())
-    , m_topics(createTopicMap(m_client->getClientId()))
 {
-    m_connectionStatusRegistrationID = m_client->subscribeToConnectionStatus([this](bool connectionStatus){ onConnectionStatusChanged(connectionStatus); });
 }
 
 Nam_EsClient::~Nam_EsClient()
 {
-    for (const auto& topic: m_topics)
-    {
-        m_client->unsubscribeTopic(topic. first);
-    }
-    m_client->unsubscribeToConnectionStatus(m_connectionStatusRegistrationID);
 }
 
 std::map<std::string, ApiGear::MQTT::CallbackFunction> Nam_EsClient::createTopicMap(const std::string& clientId)
@@ -41,20 +34,6 @@ std::map<std::string, ApiGear::MQTT::CallbackFunction> Nam_EsClient::createTopic
         { std::string("tb.names/Nam_Es/rpc/Some_Function2/"+clientId+"/result"), [this](const std::string& args, const std::string&, const std::string& correlationData){ this->onInvokeReply(args, correlationData); } },
     };
 };
-
-void Nam_EsClient::onConnectionStatusChanged(bool connectionStatus)
-{
-    m_isReady = connectionStatus;
-    if(!connectionStatus)
-    {
-        return;
-    }
-
-    for (const auto& topic: m_topics)
-    {
-        m_client->subscribeTopic(topic. first, topic.second);
-    }
-}
 
 void Nam_EsClient::setSwitch(bool Switch)
 {

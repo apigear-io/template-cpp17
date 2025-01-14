@@ -55,6 +55,7 @@ public:
 
     void onConnected();
     void onDisconnected();
+    bool isConnected() const;
     void handleTextMessage(const Message& message);
 
     // subscribe to be notified about connection changes
@@ -71,10 +72,10 @@ public:
     void invokeRemote(const std::string& name, const std::string& responseTopic, const std::string& value, int responseId);
     void setRemoteProperty(const std::string& name, const std::string& value);
 
-    void subscribeTopic(const std::string& name, CallbackFunction func);
+    void subscribeTopic(const std::string& name, CallbackFunction func, OnSubscriptionStatusChanged subscriptionCallback);
     void unsubscribeTopic(const std::string& name);
 
-    void onSubscribed(const std::string& name, CallbackFunction func);
+    void onSubscribed(const std::string& name, CallbackFunction func, OnSubscriptionStatusChanged subscriptionCallback);
     void onUnsubscribed(const std::string& name);
 
     void run();
@@ -112,9 +113,14 @@ private:
     std::mutex m_onConnectionStatusChangedCallbacksMutex;
     std::map<int, OnConnectionStatusChangedCallBackFunction> m_onConnectionStatusChangedCallbacks;
     std::mutex m_subscribedTopicsMutex;
-    std::multimap<std::string, CallbackFunction> m_subscribedTopics;
+    struct TopicInfo
+    {
+        CallbackFunction topicCallback;
+        OnSubscriptionStatusChanged subscribedCallback;
+    };
+    std::multimap<std::string, TopicInfo> m_subscribedTopics;
     std::mutex m_toBeSubscribedTopicsMutex;
-    std::multimap<std::string, CallbackFunction> m_toBeSubscribedTopics;
+    std::multimap<std::string, TopicInfo> m_toBeSubscribedTopics;
     std::mutex m_toBeUnsubscribedTopicsMutex;
     std::set<std::string> m_toBeUnsubscribedTopics;
 };

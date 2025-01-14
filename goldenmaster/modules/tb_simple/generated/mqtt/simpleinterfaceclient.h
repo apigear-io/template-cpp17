@@ -5,11 +5,12 @@
 #include "tb_simple/generated/api/tb_simple.h"
 #include "tb_simple/generated/core/simpleinterface.data.h"
 #include "apigear/mqtt/mqttclient.h"
+#include "apigear/mqtt/mqttbaseadapter.h"
 
 namespace Test {
 namespace TbSimple {
 namespace MQTT {
-class TEST_TB_SIMPLE_EXPORT SimpleInterfaceClient : public ISimpleInterface
+class TEST_TB_SIMPLE_EXPORT SimpleInterfaceClient : public ISimpleInterface, public ApiGear::MQTT::MqttBaseAdapter
 {
 public:
     explicit SimpleInterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> client);
@@ -125,11 +126,6 @@ private:
     int registerResponseHandler(ApiGear::MQTT::InvokeReplyFunc handler);
     std::mutex m_responseHandlerMutex;
     std::map<int, ApiGear::MQTT::InvokeReplyFunc> m_responseHandlerMap;
-
-    /// @brief has all the topics of this client and the corresponding function callbacks
-    const std::map<std::string, ApiGear::MQTT::CallbackFunction> m_topics;
-    // id for connection status registration
-    int m_connectionStatusRegistrationID;
 };
 } // namespace MQTT
 } // namespace TbSimple
