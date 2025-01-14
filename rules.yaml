@@ -337,6 +337,14 @@ features:
           raw: true
         - source: "apigear/mqtt/mqttcommon.h"
           raw: true
+        - source: "apigear/mqtt/mqttbaseclient.cpp"
+          raw: true
+        - source: "apigear/mqtt/mqttbaseclient.h"
+          raw: true
+        - source: "apigear/mqtt/mqttbaseadapter.cpp"
+          raw: true
+        - source: "apigear/mqtt/mqttbaseadapter.h"
+          raw: true
   - name: examples
     requires:
       - stubs

@@ -3,22 +3,23 @@
 #include "counter/generated/api/counter.h"
 #include "counter/generated/api/common.h"
 #include "apigear/mqtt/mqttservice.h"
+#include "apigear/mqtt/mqttbaseadapter.h"
 
 namespace Test {
 namespace Counter {
 namespace MQTT {
-class TEST_COUNTER_EXPORT CounterService : public ICounterSubscriber
+class TEST_COUNTER_EXPORT CounterService : public ICounterSubscriber, public ApiGear::MQTT::MqttBaseAdapter
 {
 public:
     explicit CounterService(std::shared_ptr<ICounter> impl, std::shared_ptr<ApiGear::MQTT::Service> service);
     virtual ~CounterService() override;
 
-    void onConnectionStatusChanged(bool connectionStatus);
-
 private:
     /// @brief factory to create the topic map which is used for bindings
     /// @return map with all topics and corresponding function callbacks
     std::map<std::string, ApiGear::MQTT::CallbackFunction> createTopicMap();
+
+    void onConnectionStatusChanged(bool connectionStatus);
     void onInvokeIncrement(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const;
     void onInvokeDecrement(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const;
     void onVectorChanged(const Test::CustomTypes::Vector3D& vector) override;
@@ -33,10 +34,7 @@ private:
     std::shared_ptr<ICounter> m_impl;
     std::shared_ptr<ApiGear::MQTT::Service> m_service;
     // id for connection status registration
-    int m_connectionStatusRegistrationID;
-
-    /// @brief has all the topics of this service and the corresponding function callbacks
-    const std::map<std::string, ApiGear::MQTT::CallbackFunction> m_topics;
+    int m_connectionStatusId;
 };
 } // namespace MQTT
 } // namespace Counter

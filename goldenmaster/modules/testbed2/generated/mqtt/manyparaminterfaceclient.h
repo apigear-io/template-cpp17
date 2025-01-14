@@ -5,11 +5,12 @@
 #include "testbed2/generated/api/testbed2.h"
 #include "testbed2/generated/core/manyparaminterface.data.h"
 #include "apigear/mqtt/mqttclient.h"
+#include "apigear/mqtt/mqttbaseadapter.h"
 
 namespace Test {
 namespace Testbed2 {
 namespace MQTT {
-class TEST_TESTBED2_EXPORT ManyParamInterfaceClient : public IManyParamInterface
+class TEST_TESTBED2_EXPORT ManyParamInterfaceClient : public IManyParamInterface, public ApiGear::MQTT::MqttBaseAdapter
 {
 public:
     explicit ManyParamInterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> client);
@@ -83,11 +84,6 @@ private:
     int registerResponseHandler(ApiGear::MQTT::InvokeReplyFunc handler);
     std::mutex m_responseHandlerMutex;
     std::map<int, ApiGear::MQTT::InvokeReplyFunc> m_responseHandlerMap;
-
-    /// @brief has all the topics of this client and the corresponding function callbacks
-    const std::map<std::string, ApiGear::MQTT::CallbackFunction> m_topics;
-    // id for connection status registration
-    int m_connectionStatusRegistrationID;
 };
 } // namespace MQTT
 } // namespace Testbed2
