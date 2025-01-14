@@ -8,17 +8,17 @@
 #include "{{snake .Module.Name}}/generated/api/{{snake .Module.Name}}.h"
 #include "{{snake .Module.Name}}/generated/api/common.h"
 #include "apigear/mqtt/mqttservice.h"
+#include "apigear/mqtt/mqttbaseadapter.h"
 
 namespace {{ Camel .System.Name }} {
 namespace {{ Camel .Module.Name }} {
 namespace MQTT {
-class {{ SNAKE .System.Name  }}_{{ SNAKE .Module.Name  }}_EXPORT {{$class}} : public {{$interfaceClass}}Subscriber
+class {{ SNAKE .System.Name  }}_{{ SNAKE .Module.Name  }}_EXPORT {{$class}} : public {{$interfaceClass}}Subscriber, public ApiGear::MQTT::MqttBaseAdapter
 {
 public:
     explicit {{$class}}(std::shared_ptr<{{$interfaceClass}}> impl, std::shared_ptr<ApiGear::MQTT::Service> service);
     virtual ~{{$class}}() override;
 
-    void onConnectionStatusChanged(bool connectionStatus);
 
 {{- if len .Interface.Signals}}{{nl}}
     // {{$interfaceClass}}Subscriber interface
@@ -33,6 +33,7 @@ private:
     /// @return map with all topics and corresponding function callbacks
     std::map<std::string, ApiGear::MQTT::CallbackFunction> createTopicMap();
 
+    void onConnectionStatusChanged(bool connectionStatus);
 {{- range .Interface.Operations}}
 {{- $operation := . }}
     void onInvoke{{ Camel $operation.Name }}(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const;
@@ -51,10 +52,7 @@ private:
     std::shared_ptr<{{$interfaceClass}}> m_impl;
     std::shared_ptr<ApiGear::MQTT::Service> m_service;
     // id for connection status registration
-    int m_connectionStatusRegistrationID;
-
-    /// @brief has all the topics of this service and the corresponding function callbacks
-    const std::map<std::string, ApiGear::MQTT::CallbackFunction> m_topics;
+    int m_connectionStatusId;
 };
 } // namespace MQTT
 } // namespace {{ Camel .Module.Name }}

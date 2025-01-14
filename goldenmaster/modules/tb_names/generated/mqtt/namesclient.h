@@ -5,11 +5,12 @@
 #include "tb_names/generated/api/tb_names.h"
 #include "tb_names/generated/core/names.data.h"
 #include "apigear/mqtt/mqttclient.h"
+#include "apigear/mqtt/mqttbaseadapter.h"
 
 namespace Test {
 namespace TbNames {
 namespace MQTT {
-class TEST_TB_NAMES_EXPORT Nam_EsClient : public INamEs
+class TEST_TB_NAMES_EXPORT Nam_EsClient : public INamEs, public ApiGear::MQTT::MqttBaseAdapter
 {
 public:
     explicit Nam_EsClient(std::shared_ptr<ApiGear::MQTT::Client> client);
@@ -73,11 +74,6 @@ private:
     int registerResponseHandler(ApiGear::MQTT::InvokeReplyFunc handler);
     std::mutex m_responseHandlerMutex;
     std::map<int, ApiGear::MQTT::InvokeReplyFunc> m_responseHandlerMap;
-
-    /// @brief has all the topics of this client and the corresponding function callbacks
-    const std::map<std::string, ApiGear::MQTT::CallbackFunction> m_topics;
-    // id for connection status registration
-    int m_connectionStatusRegistrationID;
 };
 } // namespace MQTT
 } // namespace TbNames

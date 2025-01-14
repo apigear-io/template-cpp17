@@ -19,6 +19,7 @@ std::mt19937 randomNumberGenerator (std::random_device{}());
 struct subscribeTopicContext {
     std::string topic;
     CallbackFunction func;
+    OnSubscriptionStatusChanged onSubscribedCallback;
     std::weak_ptr<CWrapper> client;
 };
 
@@ -36,7 +37,7 @@ void onSubscribeSuccess(void* context, MQTTAsync_successData5* /*response*/)
     subscribeTopicContext* ctx = static_cast<subscribeTopicContext*>(context);
     if (auto client = ctx->client.lock())
     {
-        client->onSubscribed(ctx->topic, ctx->func);
+        client->onSubscribed(ctx->topic, ctx->func, ctx->onSubscribedCallback);
     }
     delete ctx;
 }
@@ -44,6 +45,10 @@ void onSubscribeSuccess(void* context, MQTTAsync_successData5* /*response*/)
 void onSubscribeFailure(void* context, MQTTAsync_failureData5* response)
 {
     subscribeTopicContext* ctx = static_cast<subscribeTopicContext*>(context);
+    if (auto client = ctx->client.lock())
+    {
+        ctx->onSubscribedCallback(ctx->topic, false);
+    }
     AG_LOG_ERROR("Subscribe failed, ResponseCode " +  std::to_string(response->code));
     delete ctx;
 }
@@ -213,7 +218,7 @@ void CWrapper::addNewSubscriptions()
         MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
         opts.onSuccess5 = onSubscribeSuccess;
         opts.onFailure5 = onSubscribeFailure;
-        opts.context = new subscribeTopicContext{topic.first, topic.second, getPtr()};
+        opts.context = new subscribeTopicContext{topic.first, topic.second.topicCallback, topic.second.subscribedCallback, getPtr()};
         int responseCode = MQTTAsync_subscribe(*m_client.get(), topic.first.c_str(), QOS, &opts);
         if (responseCode != MQTTASYNC_SUCCESS)
         {
@@ -232,7 +237,7 @@ void CWrapper::removeOldSubscriptions()
         MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
         opts.onSuccess5 = onUnsubscribeSuccess;
         opts.onFailure5 = onUnsubscribeFailure;
-        opts.context = new subscribeTopicContext{topic, nullptr, getPtr()};
+        opts.context = new subscribeTopicContext{topic, nullptr, nullptr, getPtr()};
         int responseCode = MQTTAsync_unsubscribe(*m_client.get(), topic.c_str(), &opts);
         if (responseCode != MQTTASYNC_SUCCESS)
         {
@@ -409,14 +414,19 @@ void CWrapper::onDisconnected()
     }).detach();
 }
 
+bool CWrapper::isConnected() const
+{
+    return m_connected;
+}
+
 void CWrapper::handleTextMessage(const Message& message)
 {
     auto subscribedTopicsRange = m_subscribedTopics.equal_range(message.topic);
     for (auto iter = subscribedTopicsRange.first; iter != subscribedTopicsRange.second; ++iter)
     {
-        if(iter->second != nullptr)
+        if(iter->second.topicCallback != nullptr)
         {
-            iter->second(message.content, message.responseTopic, message.correlationData);
+            iter->second.topicCallback(message.content, message.responseTopic, message.correlationData);
         }
     }
 }
@@ -537,11 +547,11 @@ void CWrapper::setRemoteProperty(const std::string& topic, const std::string& va
     sendMessage(topic, &pubmsg, &opts);
 }
 
-void CWrapper::subscribeTopic(const std::string& topic, CallbackFunction func)
+void CWrapper::subscribeTopic(const std::string& topic, CallbackFunction func, OnSubscriptionStatusChanged subscriptionCallback)
 {
     {
         std::lock_guard<std::mutex> guard(m_toBeSubscribedTopicsMutex);
-        m_toBeSubscribedTopics.insert({topic, func});
+        m_toBeSubscribedTopics.insert({ topic, {func, subscriptionCallback} });
     }
 
     {
@@ -551,17 +561,26 @@ void CWrapper::subscribeTopic(const std::string& topic, CallbackFunction func)
     m_synchronizeSubscriptionChanges.notify_one();
 }
 
-void CWrapper::onSubscribed(const std::string& topic, CallbackFunction func)
+void CWrapper::onSubscribed(const std::string& topic, CallbackFunction func, OnSubscriptionStatusChanged subscriptionCallback)
 {
+    subscriptionCallback(topic, true);
     AG_LOG_INFO("Subscribed to " + topic);
     std::lock_guard<std::mutex> guard(m_subscribedTopicsMutex);
-    m_subscribedTopics.insert({topic, func});
+    m_subscribedTopics.insert({ topic, {func, subscriptionCallback} });
 }
 
 void CWrapper::onUnsubscribed(const std::string& topic)
 {
     AG_LOG_INFO("Unsubscribed from " + topic);
     std::lock_guard<std::mutex> guard(m_subscribedTopicsMutex);
+    auto unsubscribedTopicsRange = m_subscribedTopics.equal_range(topic);
+    for (auto iter = unsubscribedTopicsRange.first; iter != unsubscribedTopicsRange.second; ++iter)
+    {
+        if (iter->second.subscribedCallback != nullptr)
+        {
+            iter->second.subscribedCallback(topic, false);
+        }
+    }
     m_subscribedTopics.erase(topic);
 }
 

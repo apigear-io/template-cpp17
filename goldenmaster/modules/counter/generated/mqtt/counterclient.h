@@ -5,11 +5,12 @@
 #include "counter/generated/api/counter.h"
 #include "counter/generated/core/counter.data.h"
 #include "apigear/mqtt/mqttclient.h"
+#include "apigear/mqtt/mqttbaseadapter.h"
 
 namespace Test {
 namespace Counter {
 namespace MQTT {
-class TEST_COUNTER_EXPORT CounterClient : public ICounter
+class TEST_COUNTER_EXPORT CounterClient : public ICounter, public ApiGear::MQTT::MqttBaseAdapter
 {
 public:
     explicit CounterClient(std::shared_ptr<ApiGear::MQTT::Client> client);
@@ -74,11 +75,6 @@ private:
     int registerResponseHandler(ApiGear::MQTT::InvokeReplyFunc handler);
     std::mutex m_responseHandlerMutex;
     std::map<int, ApiGear::MQTT::InvokeReplyFunc> m_responseHandlerMap;
-
-    /// @brief has all the topics of this client and the corresponding function callbacks
-    const std::map<std::string, ApiGear::MQTT::CallbackFunction> m_topics;
-    // id for connection status registration
-    int m_connectionStatusRegistrationID;
 };
 } // namespace MQTT
 } // namespace Counter
