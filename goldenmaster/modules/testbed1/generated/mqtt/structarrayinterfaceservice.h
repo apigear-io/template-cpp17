@@ -3,17 +3,16 @@
 #include "testbed1/generated/api/testbed1.h"
 #include "testbed1/generated/api/common.h"
 #include "apigear/mqtt/mqttservice.h"
+#include "apigear/mqtt/mqttbaseadapter.h"
 
 namespace Test {
 namespace Testbed1 {
 namespace MQTT {
-class TEST_TESTBED1_EXPORT StructArrayInterfaceService : public IStructArrayInterfaceSubscriber
+class TEST_TESTBED1_EXPORT StructArrayInterfaceService : public IStructArrayInterfaceSubscriber, public ApiGear::MQTT::MqttBaseAdapter
 {
 public:
     explicit StructArrayInterfaceService(std::shared_ptr<IStructArrayInterface> impl, std::shared_ptr<ApiGear::MQTT::Service> service);
     virtual ~StructArrayInterfaceService() override;
-
-    void onConnectionStatusChanged(bool connectionStatus);
 
     // IStructArrayInterfaceSubscriber interface
     void onSigBool(const std::list<StructBool>& paramBool) override;
@@ -25,6 +24,8 @@ private:
     /// @brief factory to create the topic map which is used for bindings
     /// @return map with all topics and corresponding function callbacks
     std::map<std::string, ApiGear::MQTT::CallbackFunction> createTopicMap();
+
+    void onConnectionStatusChanged(bool connectionStatus);
     void onInvokeFuncBool(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const;
     void onInvokeFuncInt(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const;
     void onInvokeFuncFloat(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const;
@@ -49,10 +50,7 @@ private:
     std::shared_ptr<IStructArrayInterface> m_impl;
     std::shared_ptr<ApiGear::MQTT::Service> m_service;
     // id for connection status registration
-    int m_connectionStatusRegistrationID;
-
-    /// @brief has all the topics of this service and the corresponding function callbacks
-    const std::map<std::string, ApiGear::MQTT::CallbackFunction> m_topics;
+    int m_connectionStatusId;
 };
 } // namespace MQTT
 } // namespace Testbed1

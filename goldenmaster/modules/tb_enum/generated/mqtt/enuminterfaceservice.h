@@ -3,17 +3,16 @@
 #include "tb_enum/generated/api/tb_enum.h"
 #include "tb_enum/generated/api/common.h"
 #include "apigear/mqtt/mqttservice.h"
+#include "apigear/mqtt/mqttbaseadapter.h"
 
 namespace Test {
 namespace TbEnum {
 namespace MQTT {
-class TEST_TB_ENUM_EXPORT EnumInterfaceService : public IEnumInterfaceSubscriber
+class TEST_TB_ENUM_EXPORT EnumInterfaceService : public IEnumInterfaceSubscriber, public ApiGear::MQTT::MqttBaseAdapter
 {
 public:
     explicit EnumInterfaceService(std::shared_ptr<IEnumInterface> impl, std::shared_ptr<ApiGear::MQTT::Service> service);
     virtual ~EnumInterfaceService() override;
-
-    void onConnectionStatusChanged(bool connectionStatus);
 
     // IEnumInterfaceSubscriber interface
     void onSig0(Enum0Enum param0) override;
@@ -25,6 +24,8 @@ private:
     /// @brief factory to create the topic map which is used for bindings
     /// @return map with all topics and corresponding function callbacks
     std::map<std::string, ApiGear::MQTT::CallbackFunction> createTopicMap();
+
+    void onConnectionStatusChanged(bool connectionStatus);
     void onInvokeFunc0(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const;
     void onInvokeFunc1(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const;
     void onInvokeFunc2(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const;
@@ -49,10 +50,7 @@ private:
     std::shared_ptr<IEnumInterface> m_impl;
     std::shared_ptr<ApiGear::MQTT::Service> m_service;
     // id for connection status registration
-    int m_connectionStatusRegistrationID;
-
-    /// @brief has all the topics of this service and the corresponding function callbacks
-    const std::map<std::string, ApiGear::MQTT::CallbackFunction> m_topics;
+    int m_connectionStatusId;
 };
 } // namespace MQTT
 } // namespace TbEnum

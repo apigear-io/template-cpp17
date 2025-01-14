@@ -6,25 +6,20 @@ using namespace Test::TbSimple;
 using namespace Test::TbSimple::MQTT;
 
 VoidInterfaceService::VoidInterfaceService(std::shared_ptr<IVoidInterface> impl, std::shared_ptr<ApiGear::MQTT::Service> service)
-    : m_impl(impl)
+    : MqttBaseAdapter(service, createTopicMap())
+    , m_impl(impl)
     , m_service(service)
-    , m_topics(createTopicMap())
 {
     m_impl->_getPublisher().subscribeToAllChanges(*this);
 
-    m_connectionStatusRegistrationID = m_service->subscribeToConnectionStatus([this](bool connectionStatus){ onConnectionStatusChanged(connectionStatus); });
+    m_connectionStatusId = m_service->subscribeToConnectionStatus([this](bool connectionStatus){ onConnectionStatusChanged(connectionStatus); });
 }
 
 VoidInterfaceService::~VoidInterfaceService()
 {
     m_impl->_getPublisher().unsubscribeFromAllChanges(*this);
 
-    m_service->unsubscribeToConnectionStatus(m_connectionStatusRegistrationID);
-
-    for (const auto& topic: m_topics)
-    {
-        m_service->unsubscribeTopic(topic. first);
-    }
+    m_service->unsubscribeToConnectionStatus(m_connectionStatusId);
 }
 
 std::map<std::string, ApiGear::MQTT::CallbackFunction> VoidInterfaceService::createTopicMap()
@@ -40,12 +35,6 @@ void VoidInterfaceService::onConnectionStatusChanged(bool connectionStatus)
     {
         return;
     }
-
-    for (const auto& topic: m_topics)
-    {
-        m_service->subscribeTopic(topic. first, topic.second);
-    }
-
     // send current values
 }
 void VoidInterfaceService::onInvokeFuncVoid(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
