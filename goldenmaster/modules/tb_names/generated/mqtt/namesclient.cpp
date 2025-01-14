@@ -31,14 +31,14 @@ Nam_EsClient::~Nam_EsClient()
 std::map<std::string, ApiGear::MQTT::CallbackFunction> Nam_EsClient::createTopicMap(const std::string& clientId)
 {
     return {
-        { std::string("tb.names/NamEs/prop/Switch"), [this](const std::string& args, const std::string&, const std::string&){ this->setSwitchLocal(args); } },
-        { std::string("tb.names/NamEs/prop/SOME_PROPERTY"), [this](const std::string& args, const std::string&, const std::string&){ this->setSomePropertyLocal(args); } },
-        { std::string("tb.names/NamEs/prop/Some_Poperty2"), [this](const std::string& args, const std::string&, const std::string&){ this->setSomePoperty2Local(args); } },
-        { std::string("tb.names/NamEs/prop/enum_property"), [this](const std::string& args, const std::string&, const std::string&){ this->setEnumPropertyLocal(args); } },
-        { std::string("tb.names/NamEs/sig/SOME_SIGNAL"), [this](const std::string& args, const std::string&, const std::string&){ this->onSomeSignal(args); } },
-        { std::string("tb.names/NamEs/sig/Some_Signal2"), [this](const std::string& args, const std::string&, const std::string&){ this->onSomeSignal2(args); } },
-        { std::string("tb.names/NamEs/rpc/SOME_FUNCTION/"+clientId+"/result"), [this](const std::string& args, const std::string&, const std::string& correlationData){ this->onInvokeReply(args, correlationData); } },
-        { std::string("tb.names/NamEs/rpc/Some_Function2/"+clientId+"/result"), [this](const std::string& args, const std::string&, const std::string& correlationData){ this->onInvokeReply(args, correlationData); } },
+        { std::string("tb.names/Nam_Es/prop/Switch"), [this](const std::string& args, const std::string&, const std::string&){ this->setSwitchLocal(args); } },
+        { std::string("tb.names/Nam_Es/prop/SOME_PROPERTY"), [this](const std::string& args, const std::string&, const std::string&){ this->setSomePropertyLocal(args); } },
+        { std::string("tb.names/Nam_Es/prop/Some_Poperty2"), [this](const std::string& args, const std::string&, const std::string&){ this->setSomePoperty2Local(args); } },
+        { std::string("tb.names/Nam_Es/prop/enum_property"), [this](const std::string& args, const std::string&, const std::string&){ this->setEnumPropertyLocal(args); } },
+        { std::string("tb.names/Nam_Es/sig/SOME_SIGNAL"), [this](const std::string& args, const std::string&, const std::string&){ this->onSomeSignal(args); } },
+        { std::string("tb.names/Nam_Es/sig/Some_Signal2"), [this](const std::string& args, const std::string&, const std::string&){ this->onSomeSignal2(args); } },
+        { std::string("tb.names/Nam_Es/rpc/SOME_FUNCTION/"+clientId+"/result"), [this](const std::string& args, const std::string&, const std::string& correlationData){ this->onInvokeReply(args, correlationData); } },
+        { std::string("tb.names/Nam_Es/rpc/Some_Function2/"+clientId+"/result"), [this](const std::string& args, const std::string&, const std::string& correlationData){ this->onInvokeReply(args, correlationData); } },
     };
 };
 
@@ -61,7 +61,7 @@ void Nam_EsClient::setSwitch(bool Switch)
     if(m_client == nullptr) {
         return;
     }
-    static const auto topic = std::string("tb.names/NamEs/set/Switch");
+    static const auto topic = std::string("tb.names/Nam_Es/set/Switch");
     m_client->setRemoteProperty(topic, nlohmann::json(Switch).dump());
 }
 
@@ -90,7 +90,7 @@ void Nam_EsClient::setSomeProperty(int SOME_PROPERTY)
     if(m_client == nullptr) {
         return;
     }
-    static const auto topic = std::string("tb.names/NamEs/set/SOME_PROPERTY");
+    static const auto topic = std::string("tb.names/Nam_Es/set/SOME_PROPERTY");
     m_client->setRemoteProperty(topic, nlohmann::json(SOME_PROPERTY).dump());
 }
 
@@ -119,7 +119,7 @@ void Nam_EsClient::setSomePoperty2(int Some_Poperty2)
     if(m_client == nullptr) {
         return;
     }
-    static const auto topic = std::string("tb.names/NamEs/set/Some_Poperty2");
+    static const auto topic = std::string("tb.names/Nam_Es/set/Some_Poperty2");
     m_client->setRemoteProperty(topic, nlohmann::json(Some_Poperty2).dump());
 }
 
@@ -148,7 +148,7 @@ void Nam_EsClient::setEnumProperty(Enum_With_Under_scoresEnum enum_property)
     if(m_client == nullptr) {
         return;
     }
-    static const auto topic = std::string("tb.names/NamEs/set/enum_property");
+    static const auto topic = std::string("tb.names/Nam_Es/set/enum_property");
     m_client->setRemoteProperty(topic, nlohmann::json(enum_property).dump());
 }
 
@@ -189,7 +189,7 @@ std::future<void> Nam_EsClient::sOME_FUNCTIONAsync(bool SOME_PARAM, std::functio
                     SOME_PARAM]()
         {
             std::promise<void> resultPromise;
-            static const auto topic = std::string("tb.names/NamEs/rpc/SOME_FUNCTION");
+            static const auto topic = std::string("tb.names/Nam_Es/rpc/SOME_FUNCTION");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
             ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
                 (void) arg;
@@ -223,7 +223,7 @@ std::future<void> Nam_EsClient::some_Function2Async(bool Some_Param, std::functi
                     Some_Param]()
         {
             std::promise<void> resultPromise;
-            static const auto topic = std::string("tb.names/NamEs/rpc/Some_Function2");
+            static const auto topic = std::string("tb.names/Nam_Es/rpc/Some_Function2");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
             ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
                 (void) arg;

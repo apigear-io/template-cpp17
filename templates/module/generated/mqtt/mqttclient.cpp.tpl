@@ -1,8 +1,8 @@
 {{- /* Copyright (c) ApiGear UG 2020 */ -}}
-{{- $interfaceName := Camel .Interface.Name  }}
+{{- $interfaceName := .Interface.Name  }}
 {{- $class := printf "%sClient" .Interface.Name }}
-{{- $pub_interface := printf "I%sPublisher" $interfaceName }}
-{{- $pub_class := printf "%sPublisher" $interfaceName -}}
+{{- $pub_interface := printf "I%sPublisher" ( Camel  $interfaceName ) }}
+{{- $pub_class := printf "%sPublisher" ( Camel  $interfaceName ) -}}
 #include "{{snake .Module.Name}}/generated/mqtt/{{lower (camel .Interface.Name)}}client.h"
 #include "{{snake .Module.Name}}/generated/core/{{lower (camel .Interface.Name)}}.publisher.h"
 #include "{{snake .Module.Name}}/generated/core/{{snake .Module.Name}}.json.adapter.h"
