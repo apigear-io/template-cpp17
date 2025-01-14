@@ -141,18 +141,20 @@ std::future<{{$returnType}}> {{$class}}::{{lower1 $operation.Name}}Async({{cppPa
             std::promise<{{$returnType}}> resultPromise;
             static const auto topic = std::string("{{$.Module.Name}}/{{$interfaceName}}/rpc/{{$operation}}");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
+            {{- if not ( .Return.IsVoid) }}
             ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise](ApiGear::MQTT::InvokeReplyArg arg) {
-                {{- if .Return.IsVoid }}
-                (void) arg;
-                resultPromise.set_value();
-                {{- else }}
                 const {{$returnType}}& value = arg.value.get<{{$returnType}}>();
                 resultPromise.set_value(value);
-                {{- end }}
             };
             auto responseId = registerResponseHandler(responseHandler);
+            {{- else }}
+             auto responseId = 0; //Not used, the service won't respond, no handler is added for response.
+            {{- end }}
             m_client->invokeRemote(topic, responseTopic,
                 nlohmann::json::array({ {{- cppVars $operation.Params -}} }).dump(), responseId);
+            {{- if .Return.IsVoid }}
+            resultPromise.set_value();
+            {{- end }}
             return resultPromise.get_future().get();
         }
     );

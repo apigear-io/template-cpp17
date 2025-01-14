@@ -70,13 +70,10 @@ std::future<void> NoPropertiesInterfaceClient::funcVoidAsync()
             std::promise<void> resultPromise;
             static const auto topic = std::string("tb.simple/NoPropertiesInterface/rpc/funcVoid");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise](ApiGear::MQTT::InvokeReplyArg arg) {
-                (void) arg;
-                resultPromise.set_value();
-            };
-            auto responseId = registerResponseHandler(responseHandler);
+             auto responseId = 0; //Not used, the service won't respond, no handler is added for response.
             m_client->invokeRemote(topic, responseTopic,
                 nlohmann::json::array({}).dump(), responseId);
+            resultPromise.set_value();
             return resultPromise.get_future().get();
         }
     );
