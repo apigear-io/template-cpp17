@@ -146,6 +146,13 @@ CWrapper::CWrapper(const std::string& clientID)
 
 CWrapper::~CWrapper() = default;
 
+
+void CWrapper::MqttClientDeleter::operator()(MQTTAsync* cli)
+{
+    MQTTAsync_destroy(cli);
+};
+
+
 int CWrapper::createUniqueConnectionStatusId()
 {
     auto subscriptionId = 0;
@@ -281,7 +288,7 @@ void CWrapper::connectToHost(const std::string& brokerURL)
         try {
             connecting = true;
 
-            m_client = std::make_unique<MQTTAsync>();
+            m_client = std::unique_ptr<MQTTAsync, MqttClientDeleter>(new MQTTAsync());
             MQTTAsync_createOptions create_opts = MQTTAsync_createOptions_initializer5;
             create_opts.maxBufferedMessages = maxBufferedMessages;
             MQTTAsync_createWithOptions(m_client.get(), m_serverUrl.c_str(), m_clientID.c_str(), MQTTCLIENT_PERSISTENCE_NONE, NULL, &create_opts);
@@ -298,8 +305,6 @@ void CWrapper::connectToHost(const std::string& brokerURL)
             {
                 AG_LOG_ERROR("Failed to connect, return code " + std::to_string(responseCode));
                 connecting = false;
-                // use MQTT function to properly delete the client before resetting the unique ptr
-                MQTTAsync_destroy(m_client.get());
                 m_client.reset();
                 return;
             }
@@ -381,13 +386,16 @@ void CWrapper::onDisconnected()
         m_synchronizeSubscriptionChanges.notify_one();
         m_mainMQTTThread.join();
     }
-
+    std::weak_ptr<CWrapper> weakClient = getPtr();
     std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     // this function is called from within the MQTTAsync client
     // therefore the client must be reset in a separate thread afterwards
-    std::thread([this, disconnectRequested](){
-        // use MQTT function to properly delete the client before resetting the unique ptr
-        MQTTAsync_destroy(m_client.get());
+    std::thread([this, weakClient, disconnectRequested](){
+        auto client = weakClient.lock();
+        if (!client)
+        {
+            return;
+        }
         m_client.reset();
 
         // reconnect if the connection was not dropped intentionally by us
