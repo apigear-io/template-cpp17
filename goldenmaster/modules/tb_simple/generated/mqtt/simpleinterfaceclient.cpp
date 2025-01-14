@@ -327,16 +327,13 @@ std::future<void> SimpleInterfaceClient::funcNoReturnValueAsync(bool paramBool, 
             std::promise<void> resultPromise;
             static const auto topic = std::string("tb.simple/SimpleInterface/rpc/funcNoReturnValue");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                (void) arg;
-                resultPromise.set_value();
-                if (callback)
-                {
-                    callback();
-                }
-            };
-            auto responseId = registerResponseHandler(responseHandler);
+            auto responseId = 0; //Not used, the service won't respond, no handler is added for response.
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({paramBool}).dump(), responseId);
+            resultPromise.set_value();
+            if (callback)
+            {
+                callback();
+            }
             return resultPromise.get_future().get();
         }
     );
