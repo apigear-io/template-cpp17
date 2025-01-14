@@ -34,6 +34,10 @@ public:
     };
     virtual ~CWrapper();
 
+    struct MqttClientDeleter
+    {
+        void operator()(MQTTAsync* cli);
+    };
     std::shared_ptr<CWrapper> getPtr()
     {
         return shared_from_this();
@@ -97,7 +101,7 @@ private:
     std::mutex m_waitForSubscriptionChangesMutex;
     bool m_waitForSubscriptionChanges { true };
 
-    std::unique_ptr<MQTTAsync> m_client;
+    std::unique_ptr<MQTTAsync, MqttClientDeleter> m_client;
     std::mutex m_queueMutex;
     std::string m_serverUrl;
     std::string m_clientID;
