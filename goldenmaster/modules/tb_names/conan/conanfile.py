@@ -98,7 +98,7 @@ class tb_namesConan(ConanFile):
         self.cpp_info.components["tb_names-api"].libs = ["tb_names-api"]
         self.cpp_info.components["tb_names-core"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["tb_names-core"].libs = ["tb_names-core"]
-        self.cpp_info.components["tb_names-core"].requires = ["tb_names-api", "nlohmann_json::nlohmann_json"]
+        self.cpp_info.components["tb_names-core"].requires = ["apigear::utilities", "tb_names-api", "nlohmann_json::nlohmann_json"]
         self.cpp_info.components["tb_names-implementation"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["tb_names-implementation"].libs = ["tb_names-implementation"]
         self.cpp_info.components["tb_names-implementation"].requires = ["apigear::utilities", "tb_names-core", "nlohmann_json::nlohmann_json"]
