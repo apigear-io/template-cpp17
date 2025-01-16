@@ -30,16 +30,12 @@ void NamEsPublisher::unsubscribeFromAllChanges(INamEsSubscriber& subscriber)
 
 long NamEsPublisher::subscribeToSwitchChanged(NamEsSwitchPropertyCb callback)
 {
-    auto handleId = m_switchChangedCallbackNextId++;
-    std::unique_lock<std::shared_timed_mutex> lock(m_switchCallbacksMutex);
-    m_switchCallbacks[handleId] = callback;
-    return handleId;
+    return SwitchPublisher.subscribeForChange(callback);
 }
 
 void NamEsPublisher::unsubscribeFromSwitchChanged(long handleId)
 {
-    std::unique_lock<std::shared_timed_mutex> lock(m_switchCallbacksMutex);
-    m_switchCallbacks.erase(handleId);
+    SwitchPublisher.unsubscribeFromChange(handleId);
 }
 
 void NamEsPublisher::publishSwitchChanged(bool Switch) const
@@ -51,30 +47,17 @@ void NamEsPublisher::publishSwitchChanged(bool Switch) const
     {
         subscriber.get().onSwitchChanged(Switch);
     }
-    std::shared_lock<std::shared_timed_mutex> switchCallbacksLock(m_switchCallbacksMutex);
-    const auto switchCallbacks = m_switchCallbacks;
-    switchCallbacksLock.unlock();
-    for(const auto& callbackEntry: switchCallbacks)
-    {
-        if(callbackEntry.second)
-        {
-            callbackEntry.second(Switch);
-        }
-    }
+    SwitchPublisher.publishChange(Switch);
 }
 
 long NamEsPublisher::subscribeToSomePropertyChanged(NamEsSomePropertyPropertyCb callback)
 {
-    auto handleId = m_somePropertyChangedCallbackNextId++;
-    std::unique_lock<std::shared_timed_mutex> lock(m_somePropertyCallbacksMutex);
-    m_somePropertyCallbacks[handleId] = callback;
-    return handleId;
+    return SomePropertyPublisher.subscribeForChange(callback);
 }
 
 void NamEsPublisher::unsubscribeFromSomePropertyChanged(long handleId)
 {
-    std::unique_lock<std::shared_timed_mutex> lock(m_somePropertyCallbacksMutex);
-    m_somePropertyCallbacks.erase(handleId);
+    SomePropertyPublisher.unsubscribeFromChange(handleId);
 }
 
 void NamEsPublisher::publishSomePropertyChanged(int SOME_PROPERTY) const
@@ -86,30 +69,17 @@ void NamEsPublisher::publishSomePropertyChanged(int SOME_PROPERTY) const
     {
         subscriber.get().onSomePropertyChanged(SOME_PROPERTY);
     }
-    std::shared_lock<std::shared_timed_mutex> somePropertyCallbacksLock(m_somePropertyCallbacksMutex);
-    const auto somePropertyCallbacks = m_somePropertyCallbacks;
-    somePropertyCallbacksLock.unlock();
-    for(const auto& callbackEntry: somePropertyCallbacks)
-    {
-        if(callbackEntry.second)
-        {
-            callbackEntry.second(SOME_PROPERTY);
-        }
-    }
+    SomePropertyPublisher.publishChange(SOME_PROPERTY);
 }
 
 long NamEsPublisher::subscribeToSomePoperty2Changed(NamEsSomePoperty2PropertyCb callback)
 {
-    auto handleId = m_somePoperty2ChangedCallbackNextId++;
-    std::unique_lock<std::shared_timed_mutex> lock(m_somePoperty2CallbacksMutex);
-    m_somePoperty2Callbacks[handleId] = callback;
-    return handleId;
+    return SomePoperty2Publisher.subscribeForChange(callback);
 }
 
 void NamEsPublisher::unsubscribeFromSomePoperty2Changed(long handleId)
 {
-    std::unique_lock<std::shared_timed_mutex> lock(m_somePoperty2CallbacksMutex);
-    m_somePoperty2Callbacks.erase(handleId);
+    SomePoperty2Publisher.unsubscribeFromChange(handleId);
 }
 
 void NamEsPublisher::publishSomePoperty2Changed(int Some_Poperty2) const
@@ -121,30 +91,17 @@ void NamEsPublisher::publishSomePoperty2Changed(int Some_Poperty2) const
     {
         subscriber.get().onSomePoperty2Changed(Some_Poperty2);
     }
-    std::shared_lock<std::shared_timed_mutex> somePoperty2CallbacksLock(m_somePoperty2CallbacksMutex);
-    const auto somePoperty2Callbacks = m_somePoperty2Callbacks;
-    somePoperty2CallbacksLock.unlock();
-    for(const auto& callbackEntry: somePoperty2Callbacks)
-    {
-        if(callbackEntry.second)
-        {
-            callbackEntry.second(Some_Poperty2);
-        }
-    }
+    SomePoperty2Publisher.publishChange(Some_Poperty2);
 }
 
 long NamEsPublisher::subscribeToEnumPropertyChanged(NamEsEnumPropertyPropertyCb callback)
 {
-    auto handleId = m_enumPropertyChangedCallbackNextId++;
-    std::unique_lock<std::shared_timed_mutex> lock(m_enumPropertyCallbacksMutex);
-    m_enumPropertyCallbacks[handleId] = callback;
-    return handleId;
+    return EnumPropertyPublisher.subscribeForChange(callback);
 }
 
 void NamEsPublisher::unsubscribeFromEnumPropertyChanged(long handleId)
 {
-    std::unique_lock<std::shared_timed_mutex> lock(m_enumPropertyCallbacksMutex);
-    m_enumPropertyCallbacks.erase(handleId);
+    EnumPropertyPublisher.unsubscribeFromChange(handleId);
 }
 
 void NamEsPublisher::publishEnumPropertyChanged(Enum_With_Under_scoresEnum enum_property) const
@@ -156,31 +113,17 @@ void NamEsPublisher::publishEnumPropertyChanged(Enum_With_Under_scoresEnum enum_
     {
         subscriber.get().onEnumPropertyChanged(enum_property);
     }
-    std::shared_lock<std::shared_timed_mutex> enumPropertyCallbacksLock(m_enumPropertyCallbacksMutex);
-    const auto enumPropertyCallbacks = m_enumPropertyCallbacks;
-    enumPropertyCallbacksLock.unlock();
-    for(const auto& callbackEntry: enumPropertyCallbacks)
-    {
-        if(callbackEntry.second)
-        {
-            callbackEntry.second(enum_property);
-        }
-    }
+    EnumPropertyPublisher.publishChange(enum_property);
 }
 
 long NamEsPublisher::subscribeToSomeSignal(NamEsSomeSignalSignalCb callback)
 {
-    // this is a short term workaround - we need a better solution for unique handle identifiers
-    auto handleId = m_someSignalSignalCallbackNextId++;
-    std::unique_lock<std::shared_timed_mutex> lock(m_someSignalCallbacksMutex);
-    m_someSignalCallbacks[handleId] = callback;
-    return handleId;
+    return SomeSignalPublisher.subscribeForChange(callback);
 }
 
 void NamEsPublisher::unsubscribeFromSomeSignal(long handleId)
 {
-    std::unique_lock<std::shared_timed_mutex> lock(m_someSignalCallbacksMutex);
-    m_someSignalCallbacks.erase(handleId);
+    SomeSignalPublisher.unsubscribeFromChange(handleId);
 }
 
 void NamEsPublisher::publishSomeSignal(bool SOME_PARAM) const
@@ -192,31 +135,17 @@ void NamEsPublisher::publishSomeSignal(bool SOME_PARAM) const
     {
         subscriber.get().onSomeSignal(SOME_PARAM);
     }
-    std::shared_lock<std::shared_timed_mutex> someSignalCallbacksLock(m_someSignalCallbacksMutex);
-    const auto someSignalCallbacks = m_someSignalCallbacks;
-    someSignalCallbacksLock.unlock();
-    for(const auto& callbackEntry: someSignalCallbacks)
-    {
-        if(callbackEntry.second)
-        {
-            callbackEntry.second(SOME_PARAM);
-        }
-    }
+    SomeSignalPublisher.publishChange(SOME_PARAM);
 }
 
 long NamEsPublisher::subscribeToSomeSignal2(NamEsSomeSignal2SignalCb callback)
 {
-    // this is a short term workaround - we need a better solution for unique handle identifiers
-    auto handleId = m_someSignal2SignalCallbackNextId++;
-    std::unique_lock<std::shared_timed_mutex> lock(m_someSignal2CallbacksMutex);
-    m_someSignal2Callbacks[handleId] = callback;
-    return handleId;
+    return SomeSignal2Publisher.subscribeForChange(callback);
 }
 
 void NamEsPublisher::unsubscribeFromSomeSignal2(long handleId)
 {
-    std::unique_lock<std::shared_timed_mutex> lock(m_someSignal2CallbacksMutex);
-    m_someSignal2Callbacks.erase(handleId);
+    SomeSignal2Publisher.unsubscribeFromChange(handleId);
 }
 
 void NamEsPublisher::publishSomeSignal2(bool Some_Param) const
@@ -228,15 +157,6 @@ void NamEsPublisher::publishSomeSignal2(bool Some_Param) const
     {
         subscriber.get().onSomeSignal2(Some_Param);
     }
-    std::shared_lock<std::shared_timed_mutex> someSignal2CallbacksLock(m_someSignal2CallbacksMutex);
-    const auto someSignal2Callbacks = m_someSignal2Callbacks;
-    someSignal2CallbacksLock.unlock();
-    for(const auto& callbackEntry: someSignal2Callbacks)
-    {
-        if(callbackEntry.second)
-        {
-            callbackEntry.second(Some_Param);
-        }
-    }
+    SomeSignal2Publisher.publishChange(Some_Param);
 }
 

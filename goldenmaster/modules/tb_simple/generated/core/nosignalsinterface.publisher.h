@@ -9,6 +9,7 @@
 #include <map>
 #include <functional>
 #include <shared_mutex>
+#include <apigear/utilities/single_pub.hpp>
 
 namespace Test {
 namespace TbSimple {
@@ -63,18 +64,8 @@ private:
     std::vector<std::reference_wrapper<INoSignalsInterfaceSubscriber>> m_allChangesSubscribers;
     // Mutex for m_allChangesSubscribers
     mutable std::shared_timed_mutex m_allChangesSubscribersMutex;
-    // Next free unique identifier to subscribe for the PropBool change.
-    std::atomic<long> m_propBoolChangedCallbackNextId {0};
-    // Subscribed callbacks for the PropBool change.
-    std::map<long, NoSignalsInterfacePropBoolPropertyCb> m_propBoolCallbacks;
-    // Mutex for m_propBoolCallbacks
-    mutable std::shared_timed_mutex m_propBoolCallbacksMutex;
-    // Next free unique identifier to subscribe for the PropInt change.
-    std::atomic<long> m_propIntChangedCallbackNextId {0};
-    // Subscribed callbacks for the PropInt change.
-    std::map<long, NoSignalsInterfacePropIntPropertyCb> m_propIntCallbacks;
-    // Mutex for m_propIntCallbacks
-    mutable std::shared_timed_mutex m_propIntCallbacksMutex;
+    ApiGear::Utilities::SinglePub<bool> PropBoolPublisher;
+    ApiGear::Utilities::SinglePub<int> PropIntPublisher;
 };
 
 } // namespace TbSimple

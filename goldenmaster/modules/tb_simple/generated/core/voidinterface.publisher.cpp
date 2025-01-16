@@ -30,17 +30,12 @@ void VoidInterfacePublisher::unsubscribeFromAllChanges(IVoidInterfaceSubscriber&
 
 long VoidInterfacePublisher::subscribeToSigVoid(VoidInterfaceSigVoidSignalCb callback)
 {
-    // this is a short term workaround - we need a better solution for unique handle identifiers
-    auto handleId = m_sigVoidSignalCallbackNextId++;
-    std::unique_lock<std::shared_timed_mutex> lock(m_sigVoidCallbacksMutex);
-    m_sigVoidCallbacks[handleId] = callback;
-    return handleId;
+    return SigVoidPublisher.subscribeForChange(callback);
 }
 
 void VoidInterfacePublisher::unsubscribeFromSigVoid(long handleId)
 {
-    std::unique_lock<std::shared_timed_mutex> lock(m_sigVoidCallbacksMutex);
-    m_sigVoidCallbacks.erase(handleId);
+    SigVoidPublisher.unsubscribeFromChange(handleId);
 }
 
 void VoidInterfacePublisher::publishSigVoid() const
@@ -52,15 +47,6 @@ void VoidInterfacePublisher::publishSigVoid() const
     {
         subscriber.get().onSigVoid();
     }
-    std::shared_lock<std::shared_timed_mutex> sigVoidCallbacksLock(m_sigVoidCallbacksMutex);
-    const auto sigVoidCallbacks = m_sigVoidCallbacks;
-    sigVoidCallbacksLock.unlock();
-    for(const auto& callbackEntry: sigVoidCallbacks)
-    {
-        if(callbackEntry.second)
-        {
-            callbackEntry.second();
-        }
-    }
+    SigVoidPublisher.publishChange();
 }
 

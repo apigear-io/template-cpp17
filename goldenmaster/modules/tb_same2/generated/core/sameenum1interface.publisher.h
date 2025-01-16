@@ -9,6 +9,7 @@
 #include <map>
 #include <functional>
 #include <shared_mutex>
+#include <apigear/utilities/single_pub.hpp>
 
 namespace Test {
 namespace TbSame2 {
@@ -63,18 +64,8 @@ private:
     std::vector<std::reference_wrapper<ISameEnum1InterfaceSubscriber>> m_allChangesSubscribers;
     // Mutex for m_allChangesSubscribers
     mutable std::shared_timed_mutex m_allChangesSubscribersMutex;
-    // Next free unique identifier to subscribe for the Prop1 change.
-    std::atomic<long> m_prop1ChangedCallbackNextId {0};
-    // Subscribed callbacks for the Prop1 change.
-    std::map<long, SameEnum1InterfaceProp1PropertyCb> m_prop1Callbacks;
-    // Mutex for m_prop1Callbacks
-    mutable std::shared_timed_mutex m_prop1CallbacksMutex;
-    // Next free unique identifier to subscribe for the Sig1 emission.
-    std::atomic<long> m_sig1SignalCallbackNextId {0};
-    // Subscribed callbacks for the Sig1 emission.
-    std::map<long, SameEnum1InterfaceSig1SignalCb > m_sig1Callbacks;
-    // Mutex for m_sig1SignalCallbackNextId and m_sig1Callbacks
-    mutable std::shared_timed_mutex m_sig1CallbacksMutex;
+    ApiGear::Utilities::SinglePub<Enum1Enum> Prop1Publisher;
+    ApiGear::Utilities::SinglePub<Enum1Enum> Sig1Publisher;
 };
 
 } // namespace TbSame2

@@ -30,16 +30,12 @@ void CounterPublisher::unsubscribeFromAllChanges(ICounterSubscriber& subscriber)
 
 long CounterPublisher::subscribeToVectorChanged(CounterVectorPropertyCb callback)
 {
-    auto handleId = m_vectorChangedCallbackNextId++;
-    std::unique_lock<std::shared_timed_mutex> lock(m_vectorCallbacksMutex);
-    m_vectorCallbacks[handleId] = callback;
-    return handleId;
+    return VectorPublisher.subscribeForChange(callback);
 }
 
 void CounterPublisher::unsubscribeFromVectorChanged(long handleId)
 {
-    std::unique_lock<std::shared_timed_mutex> lock(m_vectorCallbacksMutex);
-    m_vectorCallbacks.erase(handleId);
+    VectorPublisher.unsubscribeFromChange(handleId);
 }
 
 void CounterPublisher::publishVectorChanged(const Test::CustomTypes::Vector3D& vector) const
@@ -51,30 +47,17 @@ void CounterPublisher::publishVectorChanged(const Test::CustomTypes::Vector3D& v
     {
         subscriber.get().onVectorChanged(vector);
     }
-    std::shared_lock<std::shared_timed_mutex> vectorCallbacksLock(m_vectorCallbacksMutex);
-    const auto vectorCallbacks = m_vectorCallbacks;
-    vectorCallbacksLock.unlock();
-    for(const auto& callbackEntry: vectorCallbacks)
-    {
-        if(callbackEntry.second)
-        {
-            callbackEntry.second(vector);
-        }
-    }
+    VectorPublisher.publishChange(vector);
 }
 
 long CounterPublisher::subscribeToExternVectorChanged(CounterExternVectorPropertyCb callback)
 {
-    auto handleId = m_externVectorChangedCallbackNextId++;
-    std::unique_lock<std::shared_timed_mutex> lock(m_externVectorCallbacksMutex);
-    m_externVectorCallbacks[handleId] = callback;
-    return handleId;
+    return ExternVectorPublisher.subscribeForChange(callback);
 }
 
 void CounterPublisher::unsubscribeFromExternVectorChanged(long handleId)
 {
-    std::unique_lock<std::shared_timed_mutex> lock(m_externVectorCallbacksMutex);
-    m_externVectorCallbacks.erase(handleId);
+    ExternVectorPublisher.unsubscribeFromChange(handleId);
 }
 
 void CounterPublisher::publishExternVectorChanged(const Eigen::Vector3f& extern_vector) const
@@ -86,30 +69,17 @@ void CounterPublisher::publishExternVectorChanged(const Eigen::Vector3f& extern_
     {
         subscriber.get().onExternVectorChanged(extern_vector);
     }
-    std::shared_lock<std::shared_timed_mutex> externVectorCallbacksLock(m_externVectorCallbacksMutex);
-    const auto externVectorCallbacks = m_externVectorCallbacks;
-    externVectorCallbacksLock.unlock();
-    for(const auto& callbackEntry: externVectorCallbacks)
-    {
-        if(callbackEntry.second)
-        {
-            callbackEntry.second(extern_vector);
-        }
-    }
+    ExternVectorPublisher.publishChange(extern_vector);
 }
 
 long CounterPublisher::subscribeToVectorArrayChanged(CounterVectorArrayPropertyCb callback)
 {
-    auto handleId = m_vectorArrayChangedCallbackNextId++;
-    std::unique_lock<std::shared_timed_mutex> lock(m_vectorArrayCallbacksMutex);
-    m_vectorArrayCallbacks[handleId] = callback;
-    return handleId;
+    return VectorArrayPublisher.subscribeForChange(callback);
 }
 
 void CounterPublisher::unsubscribeFromVectorArrayChanged(long handleId)
 {
-    std::unique_lock<std::shared_timed_mutex> lock(m_vectorArrayCallbacksMutex);
-    m_vectorArrayCallbacks.erase(handleId);
+    VectorArrayPublisher.unsubscribeFromChange(handleId);
 }
 
 void CounterPublisher::publishVectorArrayChanged(const std::list<Test::CustomTypes::Vector3D>& vectorArray) const
@@ -121,30 +91,17 @@ void CounterPublisher::publishVectorArrayChanged(const std::list<Test::CustomTyp
     {
         subscriber.get().onVectorArrayChanged(vectorArray);
     }
-    std::shared_lock<std::shared_timed_mutex> vectorArrayCallbacksLock(m_vectorArrayCallbacksMutex);
-    const auto vectorArrayCallbacks = m_vectorArrayCallbacks;
-    vectorArrayCallbacksLock.unlock();
-    for(const auto& callbackEntry: vectorArrayCallbacks)
-    {
-        if(callbackEntry.second)
-        {
-            callbackEntry.second(vectorArray);
-        }
-    }
+    VectorArrayPublisher.publishChange(vectorArray);
 }
 
 long CounterPublisher::subscribeToExternVectorArrayChanged(CounterExternVectorArrayPropertyCb callback)
 {
-    auto handleId = m_externVectorArrayChangedCallbackNextId++;
-    std::unique_lock<std::shared_timed_mutex> lock(m_externVectorArrayCallbacksMutex);
-    m_externVectorArrayCallbacks[handleId] = callback;
-    return handleId;
+    return ExternVectorArrayPublisher.subscribeForChange(callback);
 }
 
 void CounterPublisher::unsubscribeFromExternVectorArrayChanged(long handleId)
 {
-    std::unique_lock<std::shared_timed_mutex> lock(m_externVectorArrayCallbacksMutex);
-    m_externVectorArrayCallbacks.erase(handleId);
+    ExternVectorArrayPublisher.unsubscribeFromChange(handleId);
 }
 
 void CounterPublisher::publishExternVectorArrayChanged(const std::list<Eigen::Vector3f>& extern_vectorArray) const
@@ -156,31 +113,17 @@ void CounterPublisher::publishExternVectorArrayChanged(const std::list<Eigen::Ve
     {
         subscriber.get().onExternVectorArrayChanged(extern_vectorArray);
     }
-    std::shared_lock<std::shared_timed_mutex> externVectorArrayCallbacksLock(m_externVectorArrayCallbacksMutex);
-    const auto externVectorArrayCallbacks = m_externVectorArrayCallbacks;
-    externVectorArrayCallbacksLock.unlock();
-    for(const auto& callbackEntry: externVectorArrayCallbacks)
-    {
-        if(callbackEntry.second)
-        {
-            callbackEntry.second(extern_vectorArray);
-        }
-    }
+    ExternVectorArrayPublisher.publishChange(extern_vectorArray);
 }
 
 long CounterPublisher::subscribeToValueChanged(CounterValueChangedSignalCb callback)
 {
-    // this is a short term workaround - we need a better solution for unique handle identifiers
-    auto handleId = m_valueChangedSignalCallbackNextId++;
-    std::unique_lock<std::shared_timed_mutex> lock(m_valueChangedCallbacksMutex);
-    m_valueChangedCallbacks[handleId] = callback;
-    return handleId;
+    return ValueChangedPublisher.subscribeForChange(callback);
 }
 
 void CounterPublisher::unsubscribeFromValueChanged(long handleId)
 {
-    std::unique_lock<std::shared_timed_mutex> lock(m_valueChangedCallbacksMutex);
-    m_valueChangedCallbacks.erase(handleId);
+    ValueChangedPublisher.unsubscribeFromChange(handleId);
 }
 
 void CounterPublisher::publishValueChanged(const Test::CustomTypes::Vector3D& vector, const Eigen::Vector3f& extern_vector, const std::list<Test::CustomTypes::Vector3D>& vectorArray, const std::list<Eigen::Vector3f>& extern_vectorArray) const
@@ -192,15 +135,6 @@ void CounterPublisher::publishValueChanged(const Test::CustomTypes::Vector3D& ve
     {
         subscriber.get().onValueChanged(vector, extern_vector, vectorArray, extern_vectorArray);
     }
-    std::shared_lock<std::shared_timed_mutex> valueChangedCallbacksLock(m_valueChangedCallbacksMutex);
-    const auto valueChangedCallbacks = m_valueChangedCallbacks;
-    valueChangedCallbacksLock.unlock();
-    for(const auto& callbackEntry: valueChangedCallbacks)
-    {
-        if(callbackEntry.second)
-        {
-            callbackEntry.second(vector, extern_vector, vectorArray, extern_vectorArray);
-        }
-    }
+    ValueChangedPublisher.publishChange(vector, extern_vector, vectorArray, extern_vectorArray);
 }
 

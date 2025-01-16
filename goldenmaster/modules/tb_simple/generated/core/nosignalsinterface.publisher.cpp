@@ -30,16 +30,12 @@ void NoSignalsInterfacePublisher::unsubscribeFromAllChanges(INoSignalsInterfaceS
 
 long NoSignalsInterfacePublisher::subscribeToPropBoolChanged(NoSignalsInterfacePropBoolPropertyCb callback)
 {
-    auto handleId = m_propBoolChangedCallbackNextId++;
-    std::unique_lock<std::shared_timed_mutex> lock(m_propBoolCallbacksMutex);
-    m_propBoolCallbacks[handleId] = callback;
-    return handleId;
+    return PropBoolPublisher.subscribeForChange(callback);
 }
 
 void NoSignalsInterfacePublisher::unsubscribeFromPropBoolChanged(long handleId)
 {
-    std::unique_lock<std::shared_timed_mutex> lock(m_propBoolCallbacksMutex);
-    m_propBoolCallbacks.erase(handleId);
+    PropBoolPublisher.unsubscribeFromChange(handleId);
 }
 
 void NoSignalsInterfacePublisher::publishPropBoolChanged(bool propBool) const
@@ -51,30 +47,17 @@ void NoSignalsInterfacePublisher::publishPropBoolChanged(bool propBool) const
     {
         subscriber.get().onPropBoolChanged(propBool);
     }
-    std::shared_lock<std::shared_timed_mutex> propBoolCallbacksLock(m_propBoolCallbacksMutex);
-    const auto propBoolCallbacks = m_propBoolCallbacks;
-    propBoolCallbacksLock.unlock();
-    for(const auto& callbackEntry: propBoolCallbacks)
-    {
-        if(callbackEntry.second)
-        {
-            callbackEntry.second(propBool);
-        }
-    }
+    PropBoolPublisher.publishChange(propBool);
 }
 
 long NoSignalsInterfacePublisher::subscribeToPropIntChanged(NoSignalsInterfacePropIntPropertyCb callback)
 {
-    auto handleId = m_propIntChangedCallbackNextId++;
-    std::unique_lock<std::shared_timed_mutex> lock(m_propIntCallbacksMutex);
-    m_propIntCallbacks[handleId] = callback;
-    return handleId;
+    return PropIntPublisher.subscribeForChange(callback);
 }
 
 void NoSignalsInterfacePublisher::unsubscribeFromPropIntChanged(long handleId)
 {
-    std::unique_lock<std::shared_timed_mutex> lock(m_propIntCallbacksMutex);
-    m_propIntCallbacks.erase(handleId);
+    PropIntPublisher.unsubscribeFromChange(handleId);
 }
 
 void NoSignalsInterfacePublisher::publishPropIntChanged(int propInt) const
@@ -86,15 +69,6 @@ void NoSignalsInterfacePublisher::publishPropIntChanged(int propInt) const
     {
         subscriber.get().onPropIntChanged(propInt);
     }
-    std::shared_lock<std::shared_timed_mutex> propIntCallbacksLock(m_propIntCallbacksMutex);
-    const auto propIntCallbacks = m_propIntCallbacks;
-    propIntCallbacksLock.unlock();
-    for(const auto& callbackEntry: propIntCallbacks)
-    {
-        if(callbackEntry.second)
-        {
-            callbackEntry.second(propInt);
-        }
-    }
+    PropIntPublisher.publishChange(propInt);
 }
 
