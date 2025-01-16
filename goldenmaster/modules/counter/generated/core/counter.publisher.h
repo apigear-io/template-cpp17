@@ -9,6 +9,7 @@
 #include <map>
 #include <functional>
 #include <shared_mutex>
+#include <apigear/utilities/single_pub.hpp>
 
 namespace Test {
 namespace Counter {
@@ -102,36 +103,11 @@ private:
     std::vector<std::reference_wrapper<ICounterSubscriber>> m_allChangesSubscribers;
     // Mutex for m_allChangesSubscribers
     mutable std::shared_timed_mutex m_allChangesSubscribersMutex;
-    // Next free unique identifier to subscribe for the Vector change.
-    std::atomic<long> m_vectorChangedCallbackNextId {0};
-    // Subscribed callbacks for the Vector change.
-    std::map<long, CounterVectorPropertyCb> m_vectorCallbacks;
-    // Mutex for m_vectorCallbacks
-    mutable std::shared_timed_mutex m_vectorCallbacksMutex;
-    // Next free unique identifier to subscribe for the ExternVector change.
-    std::atomic<long> m_externVectorChangedCallbackNextId {0};
-    // Subscribed callbacks for the ExternVector change.
-    std::map<long, CounterExternVectorPropertyCb> m_externVectorCallbacks;
-    // Mutex for m_externVectorCallbacks
-    mutable std::shared_timed_mutex m_externVectorCallbacksMutex;
-    // Next free unique identifier to subscribe for the VectorArray change.
-    std::atomic<long> m_vectorArrayChangedCallbackNextId {0};
-    // Subscribed callbacks for the VectorArray change.
-    std::map<long, CounterVectorArrayPropertyCb> m_vectorArrayCallbacks;
-    // Mutex for m_vectorArrayCallbacks
-    mutable std::shared_timed_mutex m_vectorArrayCallbacksMutex;
-    // Next free unique identifier to subscribe for the ExternVectorArray change.
-    std::atomic<long> m_externVectorArrayChangedCallbackNextId {0};
-    // Subscribed callbacks for the ExternVectorArray change.
-    std::map<long, CounterExternVectorArrayPropertyCb> m_externVectorArrayCallbacks;
-    // Mutex for m_externVectorArrayCallbacks
-    mutable std::shared_timed_mutex m_externVectorArrayCallbacksMutex;
-    // Next free unique identifier to subscribe for the ValueChanged emission.
-    std::atomic<long> m_valueChangedSignalCallbackNextId {0};
-    // Subscribed callbacks for the ValueChanged emission.
-    std::map<long, CounterValueChangedSignalCb > m_valueChangedCallbacks;
-    // Mutex for m_valueChangedSignalCallbackNextId and m_valueChangedCallbacks
-    mutable std::shared_timed_mutex m_valueChangedCallbacksMutex;
+    ApiGear::Utilities::SinglePub<Test::CustomTypes::Vector3D> VectorPublisher;
+    ApiGear::Utilities::SinglePub<Eigen::Vector3f> ExternVectorPublisher;
+    ApiGear::Utilities::SinglePub<std::list<Test::CustomTypes::Vector3D>> VectorArrayPublisher;
+    ApiGear::Utilities::SinglePub<std::list<Eigen::Vector3f>> ExternVectorArrayPublisher;
+    ApiGear::Utilities::SinglePub<Test::CustomTypes::Vector3D,Eigen::Vector3f,std::list<Test::CustomTypes::Vector3D>,std::list<Eigen::Vector3f>> ValueChangedPublisher;
 };
 
 } // namespace Counter

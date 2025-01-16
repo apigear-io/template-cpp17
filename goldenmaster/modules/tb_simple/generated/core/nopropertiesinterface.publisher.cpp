@@ -30,17 +30,12 @@ void NoPropertiesInterfacePublisher::unsubscribeFromAllChanges(INoPropertiesInte
 
 long NoPropertiesInterfacePublisher::subscribeToSigVoid(NoPropertiesInterfaceSigVoidSignalCb callback)
 {
-    // this is a short term workaround - we need a better solution for unique handle identifiers
-    auto handleId = m_sigVoidSignalCallbackNextId++;
-    std::unique_lock<std::shared_timed_mutex> lock(m_sigVoidCallbacksMutex);
-    m_sigVoidCallbacks[handleId] = callback;
-    return handleId;
+    return SigVoidPublisher.subscribeForChange(callback);
 }
 
 void NoPropertiesInterfacePublisher::unsubscribeFromSigVoid(long handleId)
 {
-    std::unique_lock<std::shared_timed_mutex> lock(m_sigVoidCallbacksMutex);
-    m_sigVoidCallbacks.erase(handleId);
+    SigVoidPublisher.unsubscribeFromChange(handleId);
 }
 
 void NoPropertiesInterfacePublisher::publishSigVoid() const
@@ -52,31 +47,17 @@ void NoPropertiesInterfacePublisher::publishSigVoid() const
     {
         subscriber.get().onSigVoid();
     }
-    std::shared_lock<std::shared_timed_mutex> sigVoidCallbacksLock(m_sigVoidCallbacksMutex);
-    const auto sigVoidCallbacks = m_sigVoidCallbacks;
-    sigVoidCallbacksLock.unlock();
-    for(const auto& callbackEntry: sigVoidCallbacks)
-    {
-        if(callbackEntry.second)
-        {
-            callbackEntry.second();
-        }
-    }
+    SigVoidPublisher.publishChange();
 }
 
 long NoPropertiesInterfacePublisher::subscribeToSigBool(NoPropertiesInterfaceSigBoolSignalCb callback)
 {
-    // this is a short term workaround - we need a better solution for unique handle identifiers
-    auto handleId = m_sigBoolSignalCallbackNextId++;
-    std::unique_lock<std::shared_timed_mutex> lock(m_sigBoolCallbacksMutex);
-    m_sigBoolCallbacks[handleId] = callback;
-    return handleId;
+    return SigBoolPublisher.subscribeForChange(callback);
 }
 
 void NoPropertiesInterfacePublisher::unsubscribeFromSigBool(long handleId)
 {
-    std::unique_lock<std::shared_timed_mutex> lock(m_sigBoolCallbacksMutex);
-    m_sigBoolCallbacks.erase(handleId);
+    SigBoolPublisher.unsubscribeFromChange(handleId);
 }
 
 void NoPropertiesInterfacePublisher::publishSigBool(bool paramBool) const
@@ -88,15 +69,6 @@ void NoPropertiesInterfacePublisher::publishSigBool(bool paramBool) const
     {
         subscriber.get().onSigBool(paramBool);
     }
-    std::shared_lock<std::shared_timed_mutex> sigBoolCallbacksLock(m_sigBoolCallbacksMutex);
-    const auto sigBoolCallbacks = m_sigBoolCallbacks;
-    sigBoolCallbacksLock.unlock();
-    for(const auto& callbackEntry: sigBoolCallbacks)
-    {
-        if(callbackEntry.second)
-        {
-            callbackEntry.second(paramBool);
-        }
-    }
+    SigBoolPublisher.publishChange(paramBool);
 }
 
