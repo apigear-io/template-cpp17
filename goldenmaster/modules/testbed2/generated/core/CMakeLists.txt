@@ -4,6 +4,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(nlohmann_json REQUIRED)
+find_package(apigear REQUIRED utilities)
 set (SOURCES_CORE_SUPPORT
     testbed2.json.adapter.cpp
     test_struct_helper.cpp
@@ -23,7 +24,7 @@ target_include_directories(testbed2-core
     $<BUILD_INTERFACE:${MODULES_DIR}>
     $<INSTALL_INTERFACE:include>
 )
-target_link_libraries(testbed2-core PUBLIC testbed2::testbed2-api nlohmann_json::nlohmann_json)
+target_link_libraries(testbed2-core PUBLIC apigear::utilities testbed2::testbed2-api nlohmann_json::nlohmann_json)
 # ensure maximum compiler support
 if(NOT MSVC)
   target_compile_options(testbed2-core PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
