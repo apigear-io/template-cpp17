@@ -37,6 +37,7 @@ features:
   - name: core
     requires:
       - api
+      - apigear
     scopes:
       - match: module
         prefix: "modules/{{snake .Module.Name}}/generated/core/"
@@ -95,6 +96,18 @@ features:
       - core
       - apigear
     scopes:
+    - match: system
+      documents:
+        - source: "apigear/tracer/tracer.h"
+          raw: true
+        - source: "apigear/tracer/tracer.cpp"
+          raw: true
+        - source: "apigear/tracer/tracer.test.cpp"
+          raw: true
+        - source: "apigear/tracer/CMakeLists.txt"
+          raw: true
+        - source: "apigear/CMakeLists.txt"
+          raw: true
     - match: module
       documents:
           - source: "module/generated/monitor/CMakeLists.txt.tpl"
@@ -119,6 +132,70 @@ features:
     - match: system
       documents:
         - source: "Lifecycle for olink client-server implementation.md"
+          raw: true
+        - source: "apigear/olink/CMakeLists.txt"
+          raw: true
+        - source: "apigear/olink/olinklogadapter.h"
+          raw: true
+        - source: "apigear/olink/olinkhost.cpp"
+          raw: true
+        - source: "apigear/olink/olinkhost.h"
+          raw: true
+        - source: "apigear/olink/olinkconnection.cpp"
+          raw: true
+        - source: "apigear/olink/olinkconnection.h"
+          raw: true
+        - source: "apigear/olink/iolinkconnector.h"
+          raw: true
+        - source: "apigear/olink/private/apigear_olink.h"
+          raw: true
+        - source: "apigear/olink/private/olinkremote.cpp"
+          raw: true
+        - source: "apigear/olink/private/olinkremote.h"
+          raw: true
+        - source: "apigear/olink/private/olinkwebsockethandler.cpp"
+          raw: true
+        - source: "apigear/olink/private/olinkwebsockethandler.h"
+          raw: true
+        - source: "apigear/olink/private/requesthandlerfactory.cpp"
+          raw: true
+        - source: "apigear/olink/private/requesthandlerfactory.h"
+          raw: true
+        - source: "apigear/olink/private/iconnectionstorage.h"
+          raw: true
+        - source: "apigear/olink/private/connectionstorage.cpp"
+          raw: true
+        - source: "apigear/olink/private/connectionstorage.h"
+          raw: true
+        - source: "apigear/olink/private/isocketuser.h"
+          raw: true
+        - source: "apigear/olink/private/socketwrapper.cpp"
+          raw: true
+        - source: "apigear/olink/private/socketwrapper.h"
+          raw: true
+        - source: "apigear/olink/tests/CMakeLists.txt"
+          raw: true
+        - source: "apigear/olink/tests/olink_connection.test.cpp"
+          raw: true
+        - source: "apigear/olink/tests/olinkhost.test.cpp"
+          raw: true
+        - source: "apigear/olink/tests/olinklogadapter.test.cpp"
+          raw: true
+        - source: "apigear/olink/tests/test_main.cpp"
+          raw: true
+        - source: "apigear/olink/tests/private/frame.hpp"
+          raw: true
+        - source: "apigear/olink/tests/private/sinkobjectmock.hpp"
+          raw: true
+        - source: "apigear/olink/tests/private/sourceobjectmock.hpp"
+          raw: true
+        - source: "apigear/olink/tests/private/test_server/test_server.hpp"
+          raw: true
+        - source: "apigear/olink/tests/private/test_server/test_server_request_factory.hpp"
+          raw: true
+        - source: "apigear/olink/tests/private/test_server/iframestorage.hpp"
+          raw: true
+        - source: "apigear/olink/tests/private/test_server/test_server_request_handler.hpp"
           raw: true
     - match: module
       documents:
@@ -148,6 +225,34 @@ features:
       - core
       - apigear
     scopes:
+    - match: system
+      documents:
+        - source: "apigear/mqtt/CMakeLists.txt"
+          raw: true
+        - source: "apigear/mqtt/mqtttypes.h"
+          raw: true
+        - source: "apigear/mqtt/private/mqttcwrapper.cpp"
+          raw: true
+        - source: "apigear/mqtt/private/mqttcwrapper.h"
+          raw: true
+        - source: "apigear/mqtt/mqttclient.cpp"
+          raw: true
+        - source: "apigear/mqtt/mqttclient.h"
+          raw: true
+        - source: "apigear/mqtt/mqttservice.cpp"
+          raw: true
+        - source: "apigear/mqtt/mqttservice.h"
+          raw: true
+        - source: "apigear/mqtt/mqttcommon.h"
+          raw: true
+        - source: "apigear/mqtt/mqttbaseclient.cpp"
+          raw: true
+        - source: "apigear/mqtt/mqttbaseclient.h"
+          raw: true
+        - source: "apigear/mqtt/mqttbaseadapter.cpp"
+          raw: true
+        - source: "apigear/mqtt/mqttbaseadapter.h"
+          raw: true
     - match: module
       documents:
         - source: "module/generated/mqtt/CMakeLists.txt.tpl"
@@ -248,109 +353,9 @@ features:
           raw: true
         - source: "apigear/apigear.test.cpp"
           raw: true
-        - source: "apigear/tracer/tracer.h"
-          raw: true
-        - source: "apigear/tracer/tracer.cpp"
-          raw: true
-        - source: "apigear/tracer/tracer.test.cpp"
-          raw: true
-        - source: "apigear/tracer/CMakeLists.txt"
-          raw: true
-        - source: "apigear/CMakeLists.txt"
-          raw: true
         - source: "apigear/ApigearConfig.cmake.in"
           raw: true
         - source: "apigear/conanfile.py"
-          raw: true
-        - source: "apigear/olink/CMakeLists.txt"
-          raw: true
-        - source: "apigear/olink/olinklogadapter.h"
-          raw: true
-        - source: "apigear/olink/olinkhost.cpp"
-          raw: true
-        - source: "apigear/olink/olinkhost.h"
-          raw: true
-        - source: "apigear/olink/olinkconnection.cpp"
-          raw: true
-        - source: "apigear/olink/olinkconnection.h"
-          raw: true
-        - source: "apigear/olink/iolinkconnector.h"
-          raw: true
-        - source: "apigear/olink/private/apigear_olink.h"
-          raw: true
-        - source: "apigear/olink/private/olinkremote.cpp"
-          raw: true
-        - source: "apigear/olink/private/olinkremote.h"
-          raw: true
-        - source: "apigear/olink/private/olinkwebsockethandler.cpp"
-          raw: true
-        - source: "apigear/olink/private/olinkwebsockethandler.h"
-          raw: true
-        - source: "apigear/olink/private/requesthandlerfactory.cpp"
-          raw: true
-        - source: "apigear/olink/private/requesthandlerfactory.h"
-          raw: true
-        - source: "apigear/olink/private/iconnectionstorage.h"
-          raw: true
-        - source: "apigear/olink/private/connectionstorage.cpp"
-          raw: true
-        - source: "apigear/olink/private/connectionstorage.h"
-          raw: true
-        - source: "apigear/olink/private/isocketuser.h"
-          raw: true
-        - source: "apigear/olink/private/socketwrapper.cpp"
-          raw: true
-        - source: "apigear/olink/private/socketwrapper.h"
-          raw: true
-        - source: "apigear/olink/tests/CMakeLists.txt"
-          raw: true
-        - source: "apigear/olink/tests/olink_connection.test.cpp"
-          raw: true
-        - source: "apigear/olink/tests/olinkhost.test.cpp"
-          raw: true
-        - source: "apigear/olink/tests/olinklogadapter.test.cpp"
-          raw: true
-        - source: "apigear/olink/tests/test_main.cpp"
-          raw: true
-        - source: "apigear/olink/tests/private/frame.hpp"
-          raw: true
-        - source: "apigear/olink/tests/private/sinkobjectmock.hpp"
-          raw: true
-        - source: "apigear/olink/tests/private/sourceobjectmock.hpp"
-          raw: true
-        - source: "apigear/olink/tests/private/test_server/test_server.hpp"
-          raw: true
-        - source: "apigear/olink/tests/private/test_server/test_server_request_factory.hpp"
-          raw: true
-        - source: "apigear/olink/tests/private/test_server/iframestorage.hpp"
-          raw: true
-        - source: "apigear/olink/tests/private/test_server/test_server_request_handler.hpp"
-          raw: true
-        - source: "apigear/mqtt/CMakeLists.txt"
-          raw: true
-        - source: "apigear/mqtt/mqtttypes.h"
-          raw: true
-        - source: "apigear/mqtt/private/mqttcwrapper.cpp"
-          raw: true
-        - source: "apigear/mqtt/private/mqttcwrapper.h"
-          raw: true
-        - source: "apigear/mqtt/mqttclient.cpp"
-          raw: true
-        - source: "apigear/mqtt/mqttclient.h"
-          raw: true
-        - source: "apigear/mqtt/mqttservice.cpp"
-          raw: true
-        - source: "apigear/mqtt/mqttservice.h"
-          raw: true
-        - source: "apigear/mqtt/mqttcommon.h"
-          raw: true
-        - source: "apigear/mqtt/mqttbaseclient.cpp"
-          raw: true
-        - source: "apigear/mqtt/mqttbaseclient.h"
-          raw: true
-        - source: "apigear/mqtt/mqttbaseadapter.cpp"
-          raw: true
-        - source: "apigear/mqtt/mqttbaseadapter.h"
           raw: true
   - name: examples
     requires:
