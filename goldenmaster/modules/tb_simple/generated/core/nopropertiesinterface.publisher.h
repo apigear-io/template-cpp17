@@ -9,6 +9,7 @@
 #include <map>
 #include <functional>
 #include <shared_mutex>
+#include <apigear/utilities/single_pub.hpp>
 
 namespace Test {
 namespace TbSimple {
@@ -63,18 +64,8 @@ private:
     std::vector<std::reference_wrapper<INoPropertiesInterfaceSubscriber>> m_allChangesSubscribers;
     // Mutex for m_allChangesSubscribers
     mutable std::shared_timed_mutex m_allChangesSubscribersMutex;
-    // Next free unique identifier to subscribe for the SigVoid emission.
-    std::atomic<long> m_sigVoidSignalCallbackNextId {0};
-    // Subscribed callbacks for the SigVoid emission.
-    std::map<long, NoPropertiesInterfaceSigVoidSignalCb > m_sigVoidCallbacks;
-    // Mutex for m_sigVoidSignalCallbackNextId and m_sigVoidCallbacks
-    mutable std::shared_timed_mutex m_sigVoidCallbacksMutex;
-    // Next free unique identifier to subscribe for the SigBool emission.
-    std::atomic<long> m_sigBoolSignalCallbackNextId {0};
-    // Subscribed callbacks for the SigBool emission.
-    std::map<long, NoPropertiesInterfaceSigBoolSignalCb > m_sigBoolCallbacks;
-    // Mutex for m_sigBoolSignalCallbackNextId and m_sigBoolCallbacks
-    mutable std::shared_timed_mutex m_sigBoolCallbacksMutex;
+    ApiGear::Utilities::SinglePub<> SigVoidPublisher;
+    ApiGear::Utilities::SinglePub<bool> SigBoolPublisher;
 };
 
 } // namespace TbSimple

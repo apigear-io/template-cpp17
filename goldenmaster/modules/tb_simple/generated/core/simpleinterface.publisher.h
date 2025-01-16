@@ -9,6 +9,7 @@
 #include <map>
 #include <functional>
 #include <shared_mutex>
+#include <apigear/utilities/single_pub.hpp>
 
 namespace Test {
 namespace TbSimple {
@@ -245,102 +246,22 @@ private:
     std::vector<std::reference_wrapper<ISimpleInterfaceSubscriber>> m_allChangesSubscribers;
     // Mutex for m_allChangesSubscribers
     mutable std::shared_timed_mutex m_allChangesSubscribersMutex;
-    // Next free unique identifier to subscribe for the PropBool change.
-    std::atomic<long> m_propBoolChangedCallbackNextId {0};
-    // Subscribed callbacks for the PropBool change.
-    std::map<long, SimpleInterfacePropBoolPropertyCb> m_propBoolCallbacks;
-    // Mutex for m_propBoolCallbacks
-    mutable std::shared_timed_mutex m_propBoolCallbacksMutex;
-    // Next free unique identifier to subscribe for the PropInt change.
-    std::atomic<long> m_propIntChangedCallbackNextId {0};
-    // Subscribed callbacks for the PropInt change.
-    std::map<long, SimpleInterfacePropIntPropertyCb> m_propIntCallbacks;
-    // Mutex for m_propIntCallbacks
-    mutable std::shared_timed_mutex m_propIntCallbacksMutex;
-    // Next free unique identifier to subscribe for the PropInt32 change.
-    std::atomic<long> m_propInt32ChangedCallbackNextId {0};
-    // Subscribed callbacks for the PropInt32 change.
-    std::map<long, SimpleInterfacePropInt32PropertyCb> m_propInt32Callbacks;
-    // Mutex for m_propInt32Callbacks
-    mutable std::shared_timed_mutex m_propInt32CallbacksMutex;
-    // Next free unique identifier to subscribe for the PropInt64 change.
-    std::atomic<long> m_propInt64ChangedCallbackNextId {0};
-    // Subscribed callbacks for the PropInt64 change.
-    std::map<long, SimpleInterfacePropInt64PropertyCb> m_propInt64Callbacks;
-    // Mutex for m_propInt64Callbacks
-    mutable std::shared_timed_mutex m_propInt64CallbacksMutex;
-    // Next free unique identifier to subscribe for the PropFloat change.
-    std::atomic<long> m_propFloatChangedCallbackNextId {0};
-    // Subscribed callbacks for the PropFloat change.
-    std::map<long, SimpleInterfacePropFloatPropertyCb> m_propFloatCallbacks;
-    // Mutex for m_propFloatCallbacks
-    mutable std::shared_timed_mutex m_propFloatCallbacksMutex;
-    // Next free unique identifier to subscribe for the PropFloat32 change.
-    std::atomic<long> m_propFloat32ChangedCallbackNextId {0};
-    // Subscribed callbacks for the PropFloat32 change.
-    std::map<long, SimpleInterfacePropFloat32PropertyCb> m_propFloat32Callbacks;
-    // Mutex for m_propFloat32Callbacks
-    mutable std::shared_timed_mutex m_propFloat32CallbacksMutex;
-    // Next free unique identifier to subscribe for the PropFloat64 change.
-    std::atomic<long> m_propFloat64ChangedCallbackNextId {0};
-    // Subscribed callbacks for the PropFloat64 change.
-    std::map<long, SimpleInterfacePropFloat64PropertyCb> m_propFloat64Callbacks;
-    // Mutex for m_propFloat64Callbacks
-    mutable std::shared_timed_mutex m_propFloat64CallbacksMutex;
-    // Next free unique identifier to subscribe for the PropString change.
-    std::atomic<long> m_propStringChangedCallbackNextId {0};
-    // Subscribed callbacks for the PropString change.
-    std::map<long, SimpleInterfacePropStringPropertyCb> m_propStringCallbacks;
-    // Mutex for m_propStringCallbacks
-    mutable std::shared_timed_mutex m_propStringCallbacksMutex;
-    // Next free unique identifier to subscribe for the SigBool emission.
-    std::atomic<long> m_sigBoolSignalCallbackNextId {0};
-    // Subscribed callbacks for the SigBool emission.
-    std::map<long, SimpleInterfaceSigBoolSignalCb > m_sigBoolCallbacks;
-    // Mutex for m_sigBoolSignalCallbackNextId and m_sigBoolCallbacks
-    mutable std::shared_timed_mutex m_sigBoolCallbacksMutex;
-    // Next free unique identifier to subscribe for the SigInt emission.
-    std::atomic<long> m_sigIntSignalCallbackNextId {0};
-    // Subscribed callbacks for the SigInt emission.
-    std::map<long, SimpleInterfaceSigIntSignalCb > m_sigIntCallbacks;
-    // Mutex for m_sigIntSignalCallbackNextId and m_sigIntCallbacks
-    mutable std::shared_timed_mutex m_sigIntCallbacksMutex;
-    // Next free unique identifier to subscribe for the SigInt32 emission.
-    std::atomic<long> m_sigInt32SignalCallbackNextId {0};
-    // Subscribed callbacks for the SigInt32 emission.
-    std::map<long, SimpleInterfaceSigInt32SignalCb > m_sigInt32Callbacks;
-    // Mutex for m_sigInt32SignalCallbackNextId and m_sigInt32Callbacks
-    mutable std::shared_timed_mutex m_sigInt32CallbacksMutex;
-    // Next free unique identifier to subscribe for the SigInt64 emission.
-    std::atomic<long> m_sigInt64SignalCallbackNextId {0};
-    // Subscribed callbacks for the SigInt64 emission.
-    std::map<long, SimpleInterfaceSigInt64SignalCb > m_sigInt64Callbacks;
-    // Mutex for m_sigInt64SignalCallbackNextId and m_sigInt64Callbacks
-    mutable std::shared_timed_mutex m_sigInt64CallbacksMutex;
-    // Next free unique identifier to subscribe for the SigFloat emission.
-    std::atomic<long> m_sigFloatSignalCallbackNextId {0};
-    // Subscribed callbacks for the SigFloat emission.
-    std::map<long, SimpleInterfaceSigFloatSignalCb > m_sigFloatCallbacks;
-    // Mutex for m_sigFloatSignalCallbackNextId and m_sigFloatCallbacks
-    mutable std::shared_timed_mutex m_sigFloatCallbacksMutex;
-    // Next free unique identifier to subscribe for the SigFloat32 emission.
-    std::atomic<long> m_sigFloat32SignalCallbackNextId {0};
-    // Subscribed callbacks for the SigFloat32 emission.
-    std::map<long, SimpleInterfaceSigFloat32SignalCb > m_sigFloat32Callbacks;
-    // Mutex for m_sigFloat32SignalCallbackNextId and m_sigFloat32Callbacks
-    mutable std::shared_timed_mutex m_sigFloat32CallbacksMutex;
-    // Next free unique identifier to subscribe for the SigFloat64 emission.
-    std::atomic<long> m_sigFloat64SignalCallbackNextId {0};
-    // Subscribed callbacks for the SigFloat64 emission.
-    std::map<long, SimpleInterfaceSigFloat64SignalCb > m_sigFloat64Callbacks;
-    // Mutex for m_sigFloat64SignalCallbackNextId and m_sigFloat64Callbacks
-    mutable std::shared_timed_mutex m_sigFloat64CallbacksMutex;
-    // Next free unique identifier to subscribe for the SigString emission.
-    std::atomic<long> m_sigStringSignalCallbackNextId {0};
-    // Subscribed callbacks for the SigString emission.
-    std::map<long, SimpleInterfaceSigStringSignalCb > m_sigStringCallbacks;
-    // Mutex for m_sigStringSignalCallbackNextId and m_sigStringCallbacks
-    mutable std::shared_timed_mutex m_sigStringCallbacksMutex;
+    ApiGear::Utilities::SinglePub<bool> PropBoolPublisher;
+    ApiGear::Utilities::SinglePub<int> PropIntPublisher;
+    ApiGear::Utilities::SinglePub<int32_t> PropInt32Publisher;
+    ApiGear::Utilities::SinglePub<int64_t> PropInt64Publisher;
+    ApiGear::Utilities::SinglePub<float> PropFloatPublisher;
+    ApiGear::Utilities::SinglePub<float> PropFloat32Publisher;
+    ApiGear::Utilities::SinglePub<double> PropFloat64Publisher;
+    ApiGear::Utilities::SinglePub<std::string> PropStringPublisher;
+    ApiGear::Utilities::SinglePub<bool> SigBoolPublisher;
+    ApiGear::Utilities::SinglePub<int> SigIntPublisher;
+    ApiGear::Utilities::SinglePub<int32_t> SigInt32Publisher;
+    ApiGear::Utilities::SinglePub<int64_t> SigInt64Publisher;
+    ApiGear::Utilities::SinglePub<float> SigFloatPublisher;
+    ApiGear::Utilities::SinglePub<float> SigFloat32Publisher;
+    ApiGear::Utilities::SinglePub<double> SigFloat64Publisher;
+    ApiGear::Utilities::SinglePub<std::string> SigStringPublisher;
 };
 
 } // namespace TbSimple

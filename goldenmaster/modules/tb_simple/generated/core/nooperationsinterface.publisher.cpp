@@ -30,16 +30,12 @@ void NoOperationsInterfacePublisher::unsubscribeFromAllChanges(INoOperationsInte
 
 long NoOperationsInterfacePublisher::subscribeToPropBoolChanged(NoOperationsInterfacePropBoolPropertyCb callback)
 {
-    auto handleId = m_propBoolChangedCallbackNextId++;
-    std::unique_lock<std::shared_timed_mutex> lock(m_propBoolCallbacksMutex);
-    m_propBoolCallbacks[handleId] = callback;
-    return handleId;
+    return PropBoolPublisher.subscribeForChange(callback);
 }
 
 void NoOperationsInterfacePublisher::unsubscribeFromPropBoolChanged(long handleId)
 {
-    std::unique_lock<std::shared_timed_mutex> lock(m_propBoolCallbacksMutex);
-    m_propBoolCallbacks.erase(handleId);
+    PropBoolPublisher.unsubscribeFromChange(handleId);
 }
 
 void NoOperationsInterfacePublisher::publishPropBoolChanged(bool propBool) const
@@ -51,30 +47,17 @@ void NoOperationsInterfacePublisher::publishPropBoolChanged(bool propBool) const
     {
         subscriber.get().onPropBoolChanged(propBool);
     }
-    std::shared_lock<std::shared_timed_mutex> propBoolCallbacksLock(m_propBoolCallbacksMutex);
-    const auto propBoolCallbacks = m_propBoolCallbacks;
-    propBoolCallbacksLock.unlock();
-    for(const auto& callbackEntry: propBoolCallbacks)
-    {
-        if(callbackEntry.second)
-        {
-            callbackEntry.second(propBool);
-        }
-    }
+    PropBoolPublisher.publishChange(propBool);
 }
 
 long NoOperationsInterfacePublisher::subscribeToPropIntChanged(NoOperationsInterfacePropIntPropertyCb callback)
 {
-    auto handleId = m_propIntChangedCallbackNextId++;
-    std::unique_lock<std::shared_timed_mutex> lock(m_propIntCallbacksMutex);
-    m_propIntCallbacks[handleId] = callback;
-    return handleId;
+    return PropIntPublisher.subscribeForChange(callback);
 }
 
 void NoOperationsInterfacePublisher::unsubscribeFromPropIntChanged(long handleId)
 {
-    std::unique_lock<std::shared_timed_mutex> lock(m_propIntCallbacksMutex);
-    m_propIntCallbacks.erase(handleId);
+    PropIntPublisher.unsubscribeFromChange(handleId);
 }
 
 void NoOperationsInterfacePublisher::publishPropIntChanged(int propInt) const
@@ -86,31 +69,17 @@ void NoOperationsInterfacePublisher::publishPropIntChanged(int propInt) const
     {
         subscriber.get().onPropIntChanged(propInt);
     }
-    std::shared_lock<std::shared_timed_mutex> propIntCallbacksLock(m_propIntCallbacksMutex);
-    const auto propIntCallbacks = m_propIntCallbacks;
-    propIntCallbacksLock.unlock();
-    for(const auto& callbackEntry: propIntCallbacks)
-    {
-        if(callbackEntry.second)
-        {
-            callbackEntry.second(propInt);
-        }
-    }
+    PropIntPublisher.publishChange(propInt);
 }
 
 long NoOperationsInterfacePublisher::subscribeToSigVoid(NoOperationsInterfaceSigVoidSignalCb callback)
 {
-    // this is a short term workaround - we need a better solution for unique handle identifiers
-    auto handleId = m_sigVoidSignalCallbackNextId++;
-    std::unique_lock<std::shared_timed_mutex> lock(m_sigVoidCallbacksMutex);
-    m_sigVoidCallbacks[handleId] = callback;
-    return handleId;
+    return SigVoidPublisher.subscribeForChange(callback);
 }
 
 void NoOperationsInterfacePublisher::unsubscribeFromSigVoid(long handleId)
 {
-    std::unique_lock<std::shared_timed_mutex> lock(m_sigVoidCallbacksMutex);
-    m_sigVoidCallbacks.erase(handleId);
+    SigVoidPublisher.unsubscribeFromChange(handleId);
 }
 
 void NoOperationsInterfacePublisher::publishSigVoid() const
@@ -122,31 +91,17 @@ void NoOperationsInterfacePublisher::publishSigVoid() const
     {
         subscriber.get().onSigVoid();
     }
-    std::shared_lock<std::shared_timed_mutex> sigVoidCallbacksLock(m_sigVoidCallbacksMutex);
-    const auto sigVoidCallbacks = m_sigVoidCallbacks;
-    sigVoidCallbacksLock.unlock();
-    for(const auto& callbackEntry: sigVoidCallbacks)
-    {
-        if(callbackEntry.second)
-        {
-            callbackEntry.second();
-        }
-    }
+    SigVoidPublisher.publishChange();
 }
 
 long NoOperationsInterfacePublisher::subscribeToSigBool(NoOperationsInterfaceSigBoolSignalCb callback)
 {
-    // this is a short term workaround - we need a better solution for unique handle identifiers
-    auto handleId = m_sigBoolSignalCallbackNextId++;
-    std::unique_lock<std::shared_timed_mutex> lock(m_sigBoolCallbacksMutex);
-    m_sigBoolCallbacks[handleId] = callback;
-    return handleId;
+    return SigBoolPublisher.subscribeForChange(callback);
 }
 
 void NoOperationsInterfacePublisher::unsubscribeFromSigBool(long handleId)
 {
-    std::unique_lock<std::shared_timed_mutex> lock(m_sigBoolCallbacksMutex);
-    m_sigBoolCallbacks.erase(handleId);
+    SigBoolPublisher.unsubscribeFromChange(handleId);
 }
 
 void NoOperationsInterfacePublisher::publishSigBool(bool paramBool) const
@@ -158,15 +113,6 @@ void NoOperationsInterfacePublisher::publishSigBool(bool paramBool) const
     {
         subscriber.get().onSigBool(paramBool);
     }
-    std::shared_lock<std::shared_timed_mutex> sigBoolCallbacksLock(m_sigBoolCallbacksMutex);
-    const auto sigBoolCallbacks = m_sigBoolCallbacks;
-    sigBoolCallbacksLock.unlock();
-    for(const auto& callbackEntry: sigBoolCallbacks)
-    {
-        if(callbackEntry.second)
-        {
-            callbackEntry.second(paramBool);
-        }
-    }
+    SigBoolPublisher.publishChange(paramBool);
 }
 
