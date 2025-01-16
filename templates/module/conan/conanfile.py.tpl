@@ -137,7 +137,7 @@ class {{$module_id}}Conan(ConanFile):
         self.cpp_info.components["{{$module_id}}-core"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["{{$module_id}}-core"].libs = ["{{$module_id}}-core"]
         {{- if or (eq $isApiHeaderOnly false) (len .Module.Imports )}}
-        self.cpp_info.components["{{$module_id}}-core"].requires = ["{{$module_id}}-api", "nlohmann_json::nlohmann_json"]
+        self.cpp_info.components["{{$module_id}}-core"].requires = [{{if (len .Module.Interfaces )}}"apigear::utilities", {{end}}"{{$module_id}}-api", "nlohmann_json::nlohmann_json"]
         {{- else }}
         self.cpp_info.components["{{$module_id}}-core"].requires = ["nlohmann_json::nlohmann_json"]
         {{- end }}

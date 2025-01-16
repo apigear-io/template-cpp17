@@ -6,6 +6,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(nlohmann_json REQUIRED)
+{{- if  len .Module.Interfaces  }}
+find_package(apigear REQUIRED utilities)
+{{- end }}
 set (SOURCES_CORE_SUPPORT
     {{$module_id}}.json.adapter.cpp
     test_struct_helper.cpp
@@ -22,7 +25,7 @@ target_include_directories({{$module_id}}-core
     $<BUILD_INTERFACE:${MODULES_DIR}>
     $<INSTALL_INTERFACE:include>
 )
-target_link_libraries({{$module_id}}-core PUBLIC {{$module_id}}::{{$module_id}}-api nlohmann_json::nlohmann_json)
+target_link_libraries({{$module_id}}-core PUBLIC{{ if len .Module.Interfaces  }} apigear::utilities{{ end }} {{$module_id}}::{{$module_id}}-api nlohmann_json::nlohmann_json)
 # ensure maximum compiler support
 if(NOT MSVC)
   target_compile_options({{$module_id}}-core PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)

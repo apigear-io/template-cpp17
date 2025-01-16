@@ -98,7 +98,7 @@ class testbed2Conan(ConanFile):
         self.cpp_info.components["testbed2-api"].libs = ["testbed2-api"]
         self.cpp_info.components["testbed2-core"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["testbed2-core"].libs = ["testbed2-core"]
-        self.cpp_info.components["testbed2-core"].requires = ["testbed2-api", "nlohmann_json::nlohmann_json"]
+        self.cpp_info.components["testbed2-core"].requires = ["apigear::utilities", "testbed2-api", "nlohmann_json::nlohmann_json"]
         self.cpp_info.components["testbed2-implementation"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["testbed2-implementation"].libs = ["testbed2-implementation"]
         self.cpp_info.components["testbed2-implementation"].requires = ["apigear::utilities", "testbed2-core", "nlohmann_json::nlohmann_json"]

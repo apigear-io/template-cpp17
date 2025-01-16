@@ -98,7 +98,7 @@ class tb_same1Conan(ConanFile):
         self.cpp_info.components["tb_same1-api"].libs = ["tb_same1-api"]
         self.cpp_info.components["tb_same1-core"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["tb_same1-core"].libs = ["tb_same1-core"]
-        self.cpp_info.components["tb_same1-core"].requires = ["tb_same1-api", "nlohmann_json::nlohmann_json"]
+        self.cpp_info.components["tb_same1-core"].requires = ["apigear::utilities", "tb_same1-api", "nlohmann_json::nlohmann_json"]
         self.cpp_info.components["tb_same1-implementation"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["tb_same1-implementation"].libs = ["tb_same1-implementation"]
         self.cpp_info.components["tb_same1-implementation"].requires = ["apigear::utilities", "tb_same1-core", "nlohmann_json::nlohmann_json"]
