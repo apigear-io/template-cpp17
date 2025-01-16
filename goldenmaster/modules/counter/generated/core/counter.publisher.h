@@ -9,6 +9,7 @@
 #include <map>
 #include <functional>
 #include <shared_mutex>
+#include <apigear/utilities/single_pub.hpp>
 
 namespace Test {
 namespace Counter {
@@ -63,18 +64,8 @@ private:
     std::vector<std::reference_wrapper<ICounterSubscriber>> m_allChangesSubscribers;
     // Mutex for m_allChangesSubscribers
     mutable std::shared_timed_mutex m_allChangesSubscribersMutex;
-    // Next free unique identifier to subscribe for the Vector change.
-    std::atomic<long> m_vectorChangedCallbackNextId {0};
-    // Subscribed callbacks for the Vector change.
-    std::map<long, CounterVectorPropertyCb> m_vectorCallbacks;
-    // Mutex for m_vectorCallbacks
-    mutable std::shared_timed_mutex m_vectorCallbacksMutex;
-    // Next free unique identifier to subscribe for the ExternVector change.
-    std::atomic<long> m_externVectorChangedCallbackNextId {0};
-    // Subscribed callbacks for the ExternVector change.
-    std::map<long, CounterExternVectorPropertyCb> m_externVectorCallbacks;
-    // Mutex for m_externVectorCallbacks
-    mutable std::shared_timed_mutex m_externVectorCallbacksMutex;
+    ApiGear::Utilities::SinglePub<Test::CustomTypes::Vector3D> VectorPublisher;
+    ApiGear::Utilities::SinglePub<Eigen::Vector3f> ExternVectorPublisher;
 };
 
 } // namespace Counter

@@ -9,6 +9,7 @@
 #include <map>
 #include <functional>
 #include <shared_mutex>
+#include <apigear/utilities/single_pub.hpp>
 
 namespace Test {
 namespace TbSimple {
@@ -89,30 +90,10 @@ private:
     std::vector<std::reference_wrapper<INoOperationsInterfaceSubscriber>> m_allChangesSubscribers;
     // Mutex for m_allChangesSubscribers
     mutable std::shared_timed_mutex m_allChangesSubscribersMutex;
-    // Next free unique identifier to subscribe for the PropBool change.
-    std::atomic<long> m_propBoolChangedCallbackNextId {0};
-    // Subscribed callbacks for the PropBool change.
-    std::map<long, NoOperationsInterfacePropBoolPropertyCb> m_propBoolCallbacks;
-    // Mutex for m_propBoolCallbacks
-    mutable std::shared_timed_mutex m_propBoolCallbacksMutex;
-    // Next free unique identifier to subscribe for the PropInt change.
-    std::atomic<long> m_propIntChangedCallbackNextId {0};
-    // Subscribed callbacks for the PropInt change.
-    std::map<long, NoOperationsInterfacePropIntPropertyCb> m_propIntCallbacks;
-    // Mutex for m_propIntCallbacks
-    mutable std::shared_timed_mutex m_propIntCallbacksMutex;
-    // Next free unique identifier to subscribe for the SigVoid emission.
-    std::atomic<long> m_sigVoidSignalCallbackNextId {0};
-    // Subscribed callbacks for the SigVoid emission.
-    std::map<long, NoOperationsInterfaceSigVoidSignalCb > m_sigVoidCallbacks;
-    // Mutex for m_sigVoidSignalCallbackNextId and m_sigVoidCallbacks
-    mutable std::shared_timed_mutex m_sigVoidCallbacksMutex;
-    // Next free unique identifier to subscribe for the SigBool emission.
-    std::atomic<long> m_sigBoolSignalCallbackNextId {0};
-    // Subscribed callbacks for the SigBool emission.
-    std::map<long, NoOperationsInterfaceSigBoolSignalCb > m_sigBoolCallbacks;
-    // Mutex for m_sigBoolSignalCallbackNextId and m_sigBoolCallbacks
-    mutable std::shared_timed_mutex m_sigBoolCallbacksMutex;
+    ApiGear::Utilities::SinglePub<bool> PropBoolPublisher;
+    ApiGear::Utilities::SinglePub<int> PropIntPublisher;
+    ApiGear::Utilities::SinglePub<> SigVoidPublisher;
+    ApiGear::Utilities::SinglePub<bool> SigBoolPublisher;
 };
 
 } // namespace TbSimple

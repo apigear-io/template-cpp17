@@ -30,16 +30,12 @@ void CounterPublisher::unsubscribeFromAllChanges(ICounterSubscriber& subscriber)
 
 long CounterPublisher::subscribeToVectorChanged(CounterVectorPropertyCb callback)
 {
-    auto handleId = m_vectorChangedCallbackNextId++;
-    std::unique_lock<std::shared_timed_mutex> lock(m_vectorCallbacksMutex);
-    m_vectorCallbacks[handleId] = callback;
-    return handleId;
+    return VectorPublisher.subscribeForChange(callback);
 }
 
 void CounterPublisher::unsubscribeFromVectorChanged(long handleId)
 {
-    std::unique_lock<std::shared_timed_mutex> lock(m_vectorCallbacksMutex);
-    m_vectorCallbacks.erase(handleId);
+    VectorPublisher.unsubscribeFromChange(handleId);
 }
 
 void CounterPublisher::publishVectorChanged(const Test::CustomTypes::Vector3D& vector) const
@@ -51,30 +47,17 @@ void CounterPublisher::publishVectorChanged(const Test::CustomTypes::Vector3D& v
     {
         subscriber.get().onVectorChanged(vector);
     }
-    std::shared_lock<std::shared_timed_mutex> vectorCallbacksLock(m_vectorCallbacksMutex);
-    const auto vectorCallbacks = m_vectorCallbacks;
-    vectorCallbacksLock.unlock();
-    for(const auto& callbackEntry: vectorCallbacks)
-    {
-        if(callbackEntry.second)
-        {
-            callbackEntry.second(vector);
-        }
-    }
+    VectorPublisher.publishChange(vector);
 }
 
 long CounterPublisher::subscribeToExternVectorChanged(CounterExternVectorPropertyCb callback)
 {
-    auto handleId = m_externVectorChangedCallbackNextId++;
-    std::unique_lock<std::shared_timed_mutex> lock(m_externVectorCallbacksMutex);
-    m_externVectorCallbacks[handleId] = callback;
-    return handleId;
+    return ExternVectorPublisher.subscribeForChange(callback);
 }
 
 void CounterPublisher::unsubscribeFromExternVectorChanged(long handleId)
 {
-    std::unique_lock<std::shared_timed_mutex> lock(m_externVectorCallbacksMutex);
-    m_externVectorCallbacks.erase(handleId);
+    ExternVectorPublisher.unsubscribeFromChange(handleId);
 }
 
 void CounterPublisher::publishExternVectorChanged(const Eigen::Vector3f& extern_vector) const
@@ -86,15 +69,6 @@ void CounterPublisher::publishExternVectorChanged(const Eigen::Vector3f& extern_
     {
         subscriber.get().onExternVectorChanged(extern_vector);
     }
-    std::shared_lock<std::shared_timed_mutex> externVectorCallbacksLock(m_externVectorCallbacksMutex);
-    const auto externVectorCallbacks = m_externVectorCallbacks;
-    externVectorCallbacksLock.unlock();
-    for(const auto& callbackEntry: externVectorCallbacks)
-    {
-        if(callbackEntry.second)
-        {
-            callbackEntry.second(extern_vector);
-        }
-    }
+    ExternVectorPublisher.publishChange(extern_vector);
 }
 

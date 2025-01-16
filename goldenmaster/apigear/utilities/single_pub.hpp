@@ -24,7 +24,7 @@ public:
         std::unique_lock<std::shared_timed_mutex> lock(m_callbacksMutex);
         m_callbacks.erase(handleId);
     }
-    void publishChange(Arguments... params)
+    void publishChange(Arguments... params) const
     {
         std::shared_lock<std::shared_timed_mutex> lock(m_callbacksMutex);
         const auto callbacks = m_callbacks;
@@ -40,7 +40,7 @@ public:
 private:
     std::atomic<unsigned long> m_nextId{ 0 };
     std::map<unsigned long, std::function<void(Arguments...)> > m_callbacks;
-    std::shared_timed_mutex m_callbacksMutex;
+    mutable std::shared_timed_mutex m_callbacksMutex;
 
 };
 }} //namespace ApiGear::Utilities

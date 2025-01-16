@@ -9,6 +9,7 @@
 #include <map>
 #include <functional>
 #include <shared_mutex>
+#include <apigear/utilities/single_pub.hpp>
 
 namespace Test {
 namespace TbNames {
@@ -102,36 +103,11 @@ private:
     std::vector<std::reference_wrapper<INamEsSubscriber>> m_allChangesSubscribers;
     // Mutex for m_allChangesSubscribers
     mutable std::shared_timed_mutex m_allChangesSubscribersMutex;
-    // Next free unique identifier to subscribe for the Switch change.
-    std::atomic<long> m_switchChangedCallbackNextId {0};
-    // Subscribed callbacks for the Switch change.
-    std::map<long, NamEsSwitchPropertyCb> m_switchCallbacks;
-    // Mutex for m_switchCallbacks
-    mutable std::shared_timed_mutex m_switchCallbacksMutex;
-    // Next free unique identifier to subscribe for the SomeProperty change.
-    std::atomic<long> m_somePropertyChangedCallbackNextId {0};
-    // Subscribed callbacks for the SomeProperty change.
-    std::map<long, NamEsSomePropertyPropertyCb> m_somePropertyCallbacks;
-    // Mutex for m_somePropertyCallbacks
-    mutable std::shared_timed_mutex m_somePropertyCallbacksMutex;
-    // Next free unique identifier to subscribe for the SomePoperty2 change.
-    std::atomic<long> m_somePoperty2ChangedCallbackNextId {0};
-    // Subscribed callbacks for the SomePoperty2 change.
-    std::map<long, NamEsSomePoperty2PropertyCb> m_somePoperty2Callbacks;
-    // Mutex for m_somePoperty2Callbacks
-    mutable std::shared_timed_mutex m_somePoperty2CallbacksMutex;
-    // Next free unique identifier to subscribe for the SomeSignal emission.
-    std::atomic<long> m_someSignalSignalCallbackNextId {0};
-    // Subscribed callbacks for the SomeSignal emission.
-    std::map<long, NamEsSomeSignalSignalCb > m_someSignalCallbacks;
-    // Mutex for m_someSignalSignalCallbackNextId and m_someSignalCallbacks
-    mutable std::shared_timed_mutex m_someSignalCallbacksMutex;
-    // Next free unique identifier to subscribe for the SomeSignal2 emission.
-    std::atomic<long> m_someSignal2SignalCallbackNextId {0};
-    // Subscribed callbacks for the SomeSignal2 emission.
-    std::map<long, NamEsSomeSignal2SignalCb > m_someSignal2Callbacks;
-    // Mutex for m_someSignal2SignalCallbackNextId and m_someSignal2Callbacks
-    mutable std::shared_timed_mutex m_someSignal2CallbacksMutex;
+    ApiGear::Utilities::SinglePub<bool> SwitchPublisher;
+    ApiGear::Utilities::SinglePub<int> SomePropertyPublisher;
+    ApiGear::Utilities::SinglePub<int> SomePoperty2Publisher;
+    ApiGear::Utilities::SinglePub<bool> SomeSignalPublisher;
+    ApiGear::Utilities::SinglePub<bool> SomeSignal2Publisher;
 };
 
 } // namespace TbNames
