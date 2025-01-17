@@ -59,6 +59,10 @@ Features can be used in combination with _API_ and add more functionality on top
 - examples_mqtt - examples of generated code for the olink feature. Contains:
 	- `mqttserver` shows use of your interfaces with mqtt adapted for your services.
 	- `mqttclient` shows use of your interfaces as a mqtt adapted for your services users.
+- [NATS](nats.md) _experimental_ - provides minimal working adapters for NATS client and service side for each interfaces. Check also NATS in other technology templates that supports it.
+- - examples_nats - examples of generated code for the olink feature. Contains:
+	- `natsserver` shows use of your interfaces with nats adapted for your services.
+	- `natsclient` shows use of your interfaces as a nats adapted for your services users.
 - examples of generated code for basic features:
   - `app` simple example with stubs.
   - `appthreadsafe` simple example with stubs wrapped with thread safe decorator. See [thread safe decorator from core features](stubs.md#core)
