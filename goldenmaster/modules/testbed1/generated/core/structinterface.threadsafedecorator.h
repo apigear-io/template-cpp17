@@ -53,7 +53,7 @@ public:
     * Forwards call to StructInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<StructBool> funcBoolAsync(const StructBool& paramBool) override;
+    std::future<StructBool> funcBoolAsync(const StructBool& paramBool, std::function<void(StructBool)> callback = nullptr) override;
 
     /** 
     * Forwards call to StructInterface implementation.
@@ -64,7 +64,7 @@ public:
     * Forwards call to StructInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<StructInt> funcIntAsync(const StructInt& paramInt) override;
+    std::future<StructInt> funcIntAsync(const StructInt& paramInt, std::function<void(StructInt)> callback = nullptr) override;
 
     /** 
     * Forwards call to StructInterface implementation.
@@ -75,7 +75,7 @@ public:
     * Forwards call to StructInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<StructFloat> funcFloatAsync(const StructFloat& paramFloat) override;
+    std::future<StructFloat> funcFloatAsync(const StructFloat& paramFloat, std::function<void(StructFloat)> callback = nullptr) override;
 
     /** 
     * Forwards call to StructInterface implementation.
@@ -86,7 +86,7 @@ public:
     * Forwards call to StructInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<StructString> funcStringAsync(const StructString& paramString) override;
+    std::future<StructString> funcStringAsync(const StructString& paramString, std::function<void(StructString)> callback = nullptr) override;
 
     /** Guards and forwards call to StructInterface implementation. */
     void setPropBool(const StructBool& propBool) override;

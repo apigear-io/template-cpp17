@@ -135,6 +135,19 @@ TEST_CASE("olink  counter Counter tests")
         //REQUIRE(return_value == Eigen::Vector3f(0,0,0)); // Make sure the comparison is valid for extern type. 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+
+    SECTION("Test method increment async with a callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientCounter->incrementAsync(Eigen::Vector3f(0,0,0),[&finished, &m_wait](Eigen::Vector3f value){ (void) value;finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+         
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        //REQUIRE(return_value == Eigen::Vector3f(0,0,0)); // Make sure the comparison is valid for extern type. 
+        
+    }
     SECTION("Test method incrementArray")
     {
         [[maybe_unused]] auto result = clientCounter->incrementArray(std::list<Eigen::Vector3f>());
@@ -152,6 +165,19 @@ TEST_CASE("olink  counter Counter tests")
         //REQUIRE(return_value == std::list<Eigen::Vector3f>()); // Make sure the comparison is valid for extern type. 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+
+    SECTION("Test method incrementArray async with a callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientCounter->incrementArrayAsync(std::list<Eigen::Vector3f>(),[&finished, &m_wait](std::list<Eigen::Vector3f> value){ (void) value;finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+         
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        //REQUIRE(return_value == std::list<Eigen::Vector3f>()); // Make sure the comparison is valid for extern type. 
+        
+    }
     SECTION("Test method decrement")
     {
         [[maybe_unused]] auto result = clientCounter->decrement(Test::CustomTypes::Vector3D());
@@ -168,6 +194,19 @@ TEST_CASE("olink  counter Counter tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == Test::CustomTypes::Vector3D()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+
+    SECTION("Test method decrement async with a callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientCounter->decrementAsync(Test::CustomTypes::Vector3D(),[&finished, &m_wait](Test::CustomTypes::Vector3D value){ (void) value;finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+         
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == Test::CustomTypes::Vector3D()); 
+        
     }
     SECTION("Test method decrementArray")
     {
@@ -187,6 +226,18 @@ TEST_CASE("olink  counter Counter tests")
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
 
+    SECTION("Test method decrementArray async with a callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientCounter->decrementArrayAsync(std::list<Test::CustomTypes::Vector3D>(),[&finished, &m_wait](std::list<Test::CustomTypes::Vector3D> value){ (void) value;finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+         
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == std::list<Test::CustomTypes::Vector3D>()); 
+        
+    }
     clientNode->unlinkRemote(clientCounter->olinkObjectName());
     remote_registry.removeSource(serviceCounter->olinkObjectName());
     client_registry.removeSink(clientCounter->olinkObjectName());

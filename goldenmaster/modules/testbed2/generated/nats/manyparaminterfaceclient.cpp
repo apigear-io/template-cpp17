@@ -237,26 +237,34 @@ int ManyParamInterfaceClient::func1(int param1)
     return value;
 }
 
-std::future<int> ManyParamInterfaceClient::func1Async(int param1)
+std::future<int> ManyParamInterfaceClient::func1Async(int param1, std::function<void(int)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("testbed2.ManyParamInterface.rpc.func1");
 
-    return std::async(std::launch::async, [this,param1]()
+    return std::async(std::launch::async, [this, user_callback,param1]()
     {
         std::promise<int> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(0);
+                if (user_callback)
+                {
+                    user_callback(0);
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const int value = field.get<int>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({param1}).dump(), callback);
@@ -273,26 +281,34 @@ int ManyParamInterfaceClient::func2(int param1, int param2)
     return value;
 }
 
-std::future<int> ManyParamInterfaceClient::func2Async(int param1, int param2)
+std::future<int> ManyParamInterfaceClient::func2Async(int param1, int param2, std::function<void(int)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("testbed2.ManyParamInterface.rpc.func2");
 
-    return std::async(std::launch::async, [this,param1,param2]()
+    return std::async(std::launch::async, [this, user_callback,param1,param2]()
     {
         std::promise<int> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(0);
+                if (user_callback)
+                {
+                    user_callback(0);
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const int value = field.get<int>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({param1, param2}).dump(), callback);
@@ -309,26 +325,34 @@ int ManyParamInterfaceClient::func3(int param1, int param2, int param3)
     return value;
 }
 
-std::future<int> ManyParamInterfaceClient::func3Async(int param1, int param2, int param3)
+std::future<int> ManyParamInterfaceClient::func3Async(int param1, int param2, int param3, std::function<void(int)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("testbed2.ManyParamInterface.rpc.func3");
 
-    return std::async(std::launch::async, [this,param1,param2,param3]()
+    return std::async(std::launch::async, [this, user_callback,param1,param2,param3]()
     {
         std::promise<int> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(0);
+                if (user_callback)
+                {
+                    user_callback(0);
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const int value = field.get<int>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({param1, param2, param3}).dump(), callback);
@@ -345,26 +369,34 @@ int ManyParamInterfaceClient::func4(int param1, int param2, int param3, int para
     return value;
 }
 
-std::future<int> ManyParamInterfaceClient::func4Async(int param1, int param2, int param3, int param4)
+std::future<int> ManyParamInterfaceClient::func4Async(int param1, int param2, int param3, int param4, std::function<void(int)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("testbed2.ManyParamInterface.rpc.func4");
 
-    return std::async(std::launch::async, [this,param1,param2,param3,param4]()
+    return std::async(std::launch::async, [this, user_callback,param1,param2,param3,param4]()
     {
         std::promise<int> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(0);
+                if (user_callback)
+                {
+                    user_callback(0);
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const int value = field.get<int>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({param1, param2, param3, param4}).dump(), callback);

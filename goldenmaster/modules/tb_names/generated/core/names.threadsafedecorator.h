@@ -53,7 +53,7 @@ public:
     * Forwards call to Nam_Es implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<void> sOME_FUNCTIONAsync(bool SOME_PARAM) override;
+    std::future<void> sOME_FUNCTIONAsync(bool SOME_PARAM, std::function<void(void)> callback = nullptr) override;
 
     /** 
     * Forwards call to Nam_Es implementation.
@@ -64,7 +64,7 @@ public:
     * Forwards call to Nam_Es implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<void> some_Function2Async(bool Some_Param) override;
+    std::future<void> some_Function2Async(bool Some_Param, std::function<void(void)> callback = nullptr) override;
 
     /** Guards and forwards call to Nam_Es implementation. */
     void setSwitch(bool Switch) override;

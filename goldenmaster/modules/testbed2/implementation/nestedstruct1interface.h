@@ -21,7 +21,7 @@ public:
     const NestedStruct1& getProp1() const override;
     
     NestedStruct1 func1(const NestedStruct1& param1) override;
-    std::future<NestedStruct1> func1Async(const NestedStruct1& param1) override;
+    std::future<NestedStruct1> func1Async(const NestedStruct1& param1, std::function<void(NestedStruct1)> callback = nullptr) override;
         
     /**
     * Access to a publisher, use it to subscribe for NestedStruct1Interface changes and signal emission.

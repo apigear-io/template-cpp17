@@ -37,12 +37,12 @@ public:
     /** Traces func1 and forwards call to SameStruct2Interface implementation. */
     Struct1 func1(const Struct1& param1) override;
     /** Traces func1 and forwards call to SameStruct2Interface implementation. */
-    std::future<Struct1> func1Async(const Struct1& param1) override;
+    std::future<Struct1> func1Async(const Struct1& param1, std::function<void(Struct1)> callback = nullptr) override;
     
     /** Traces func2 and forwards call to SameStruct2Interface implementation. */
     Struct1 func2(const Struct1& param1, const Struct2& param2) override;
     /** Traces func2 and forwards call to SameStruct2Interface implementation. */
-    std::future<Struct1> func2Async(const Struct1& param1, const Struct2& param2) override;
+    std::future<Struct1> func2Async(const Struct1& param1, const Struct2& param2, std::function<void(Struct1)> callback = nullptr) override;
     
     /** Forwards call to SameStruct2Interface implementation. */
     void setProp1(const Struct2& prop1) override;

@@ -132,19 +132,19 @@ void {{$class}}::set{{Camel $name}}Local(const std::string& args)
     {{- end }}
 }
 
-std::future<{{$returnType}}> {{$class}}::{{lower1 $operation.Name}}Async({{cppParams "" $operation.Params}})
+std::future<{{$returnType}}> {{$class}}::{{lower1 $operation.Name}}Async({{cppParams "" $operation.Params}}{{- if len ($operation.Params) }},{{end}} std::function<void({{cppReturn "" $operation.Return}})> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this{{- range $operation.Params -}},
+    return std::async(std::launch::async, [this, callback{{- range $operation.Params -}},
                     {{.Name}}
                 {{- end -}}]()
         {
             std::promise<{{$returnType}}> resultPromise;
             static const auto topic = std::string("{{$.Module.Name}}/{{$interfaceName}}/rpc/{{$operation}}");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise](ApiGear::MQTT::InvokeReplyArg arg) {
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
                 {{- if .Return.IsVoid }}
                 (void) arg;
                 resultPromise.set_value();
@@ -152,10 +152,13 @@ std::future<{{$returnType}}> {{$class}}::{{lower1 $operation.Name}}Async({{cppPa
                 const {{$returnType}}& value = arg.value.get<{{$returnType}}>();
                 resultPromise.set_value(value);
                 {{- end }}
+                if (callback)
+                {
+                    callback({{- if not .Return.IsVoid }}value{{end}});
+                }
             };
             auto responseId = registerResponseHandler(responseHandler);
-            m_client->invokeRemote(topic, responseTopic,
-                nlohmann::json::array({ {{- cppVars $operation.Params -}} }).dump(), responseId);
+            m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({ {{- cppVars $operation.Params -}} }).dump(), responseId);
             return resultPromise.get_future().get();
         }
     );

@@ -33,7 +33,7 @@ public:
 {{- range .Interface.Operations}}
 {{- $operation := . }}
     {{cppReturn "" $operation.Return}} {{lower1 $operation.Name}}({{cppParams "" $operation.Params}}) override;
-    std::future<{{cppReturn "" $operation.Return}}> {{lower1 $operation.Name}}Async({{cppParams "" $operation.Params}}) override;
+    std::future<{{cppReturn "" $operation.Return}}> {{lower1 $operation.Name}}Async({{cppParams "" $operation.Params}}{{- if len ($operation.Params) }},{{end}} std::function<void({{cppReturn "" $operation.Return}})> callback = nullptr) override;
 {{- end }}
     {{$pub_class}}& _getPublisher() const override;
 

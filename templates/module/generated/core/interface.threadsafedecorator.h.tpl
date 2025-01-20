@@ -59,7 +59,7 @@ public:
     * Forwards call to {{$interfaceNameOriginal}} implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<{{cppReturn "" $operation.Return}}> {{lower1 $operation.Name}}Async({{cppParams "" $operation.Params}}) override;
+    std::future<{{cppReturn "" $operation.Return}}> {{lower1 $operation.Name}}Async({{cppParams "" $operation.Params}}{{- if len ($operation.Params) }},{{end}} std::function<void({{cppReturn "" $operation.Return}})> callback = nullptr) override;
 {{- nl }}
 {{- end }}
 {{- range .Interface.Properties}}

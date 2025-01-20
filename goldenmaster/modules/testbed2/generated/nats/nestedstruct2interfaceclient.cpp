@@ -157,26 +157,34 @@ NestedStruct1 NestedStruct2InterfaceClient::func1(const NestedStruct1& param1)
     return value;
 }
 
-std::future<NestedStruct1> NestedStruct2InterfaceClient::func1Async(const NestedStruct1& param1)
+std::future<NestedStruct1> NestedStruct2InterfaceClient::func1Async(const NestedStruct1& param1, std::function<void(NestedStruct1)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("testbed2.NestedStruct2Interface.rpc.func1");
 
-    return std::async(std::launch::async, [this,param1]()
+    return std::async(std::launch::async, [this, user_callback,param1]()
     {
         std::promise<NestedStruct1> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(NestedStruct1());
+                if (user_callback)
+                {
+                    user_callback(NestedStruct1());
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const NestedStruct1 value = field.get<NestedStruct1>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({param1}).dump(), callback);
@@ -193,26 +201,34 @@ NestedStruct1 NestedStruct2InterfaceClient::func2(const NestedStruct1& param1, c
     return value;
 }
 
-std::future<NestedStruct1> NestedStruct2InterfaceClient::func2Async(const NestedStruct1& param1, const NestedStruct2& param2)
+std::future<NestedStruct1> NestedStruct2InterfaceClient::func2Async(const NestedStruct1& param1, const NestedStruct2& param2, std::function<void(NestedStruct1)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("testbed2.NestedStruct2Interface.rpc.func2");
 
-    return std::async(std::launch::async, [this,param1,param2]()
+    return std::async(std::launch::async, [this, user_callback,param1,param2]()
     {
         std::promise<NestedStruct1> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(NestedStruct1());
+                if (user_callback)
+                {
+                    user_callback(NestedStruct1());
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const NestedStruct1 value = field.get<NestedStruct1>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({param1, param2}).dump(), callback);

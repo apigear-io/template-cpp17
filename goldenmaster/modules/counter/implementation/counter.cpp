@@ -73,12 +73,15 @@ Eigen::Vector3f Counter::increment(const Eigen::Vector3f& vec)
     return Eigen::Vector3f(0,0,0);
 }
 
-std::future<Eigen::Vector3f> Counter::incrementAsync(const Eigen::Vector3f& vec)
+std::future<Eigen::Vector3f> Counter::incrementAsync(const Eigen::Vector3f& vec, std::function<void(Eigen::Vector3f)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     vec]()
-        {
-            return increment(vec);
+        {auto result = increment(vec);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }
@@ -90,12 +93,15 @@ std::list<Eigen::Vector3f> Counter::incrementArray(const std::list<Eigen::Vector
     return std::list<Eigen::Vector3f>();
 }
 
-std::future<std::list<Eigen::Vector3f>> Counter::incrementArrayAsync(const std::list<Eigen::Vector3f>& vec)
+std::future<std::list<Eigen::Vector3f>> Counter::incrementArrayAsync(const std::list<Eigen::Vector3f>& vec, std::function<void(std::list<Eigen::Vector3f>)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     vec]()
-        {
-            return incrementArray(vec);
+        {auto result = incrementArray(vec);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }
@@ -107,12 +113,15 @@ Test::CustomTypes::Vector3D Counter::decrement(const Test::CustomTypes::Vector3D
     return Test::CustomTypes::Vector3D();
 }
 
-std::future<Test::CustomTypes::Vector3D> Counter::decrementAsync(const Test::CustomTypes::Vector3D& vec)
+std::future<Test::CustomTypes::Vector3D> Counter::decrementAsync(const Test::CustomTypes::Vector3D& vec, std::function<void(Test::CustomTypes::Vector3D)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     vec]()
-        {
-            return decrement(vec);
+        {auto result = decrement(vec);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }
@@ -124,12 +133,15 @@ std::list<Test::CustomTypes::Vector3D> Counter::decrementArray(const std::list<T
     return std::list<Test::CustomTypes::Vector3D>();
 }
 
-std::future<std::list<Test::CustomTypes::Vector3D>> Counter::decrementArrayAsync(const std::list<Test::CustomTypes::Vector3D>& vec)
+std::future<std::list<Test::CustomTypes::Vector3D>> Counter::decrementArrayAsync(const std::list<Test::CustomTypes::Vector3D>& vec, std::function<void(std::list<Test::CustomTypes::Vector3D>)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     vec]()
-        {
-            return decrementArray(vec);
+        {auto result = decrementArray(vec);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }

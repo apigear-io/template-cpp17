@@ -11,4 +11,17 @@ TEST_CASE("Testing VoidInterface", "[VoidInterface]"){
         // Do implement test here
         testVoidInterface->funcVoid();
     }
+
+    SECTION("Test operation async funcVoid") {
+        // Do implement test here
+
+        auto future = testVoidInterface->funcVoidAsync();
+    }
+
+    SECTION("Test operation async funcVoid with a callback") {
+        // Do implement test here
+
+        auto future = testVoidInterface->funcVoidAsync([]( ){ /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
+    }
 }

@@ -37,22 +37,22 @@ public:
     /** Traces increment and forwards call to Counter implementation. */
     Eigen::Vector3f increment(const Eigen::Vector3f& vec) override;
     /** Traces increment and forwards call to Counter implementation. */
-    std::future<Eigen::Vector3f> incrementAsync(const Eigen::Vector3f& vec) override;
+    std::future<Eigen::Vector3f> incrementAsync(const Eigen::Vector3f& vec, std::function<void(Eigen::Vector3f)> callback = nullptr) override;
     
     /** Traces incrementArray and forwards call to Counter implementation. */
     std::list<Eigen::Vector3f> incrementArray(const std::list<Eigen::Vector3f>& vec) override;
     /** Traces incrementArray and forwards call to Counter implementation. */
-    std::future<std::list<Eigen::Vector3f>> incrementArrayAsync(const std::list<Eigen::Vector3f>& vec) override;
+    std::future<std::list<Eigen::Vector3f>> incrementArrayAsync(const std::list<Eigen::Vector3f>& vec, std::function<void(std::list<Eigen::Vector3f>)> callback = nullptr) override;
     
     /** Traces decrement and forwards call to Counter implementation. */
     Test::CustomTypes::Vector3D decrement(const Test::CustomTypes::Vector3D& vec) override;
     /** Traces decrement and forwards call to Counter implementation. */
-    std::future<Test::CustomTypes::Vector3D> decrementAsync(const Test::CustomTypes::Vector3D& vec) override;
+    std::future<Test::CustomTypes::Vector3D> decrementAsync(const Test::CustomTypes::Vector3D& vec, std::function<void(Test::CustomTypes::Vector3D)> callback = nullptr) override;
     
     /** Traces decrementArray and forwards call to Counter implementation. */
     std::list<Test::CustomTypes::Vector3D> decrementArray(const std::list<Test::CustomTypes::Vector3D>& vec) override;
     /** Traces decrementArray and forwards call to Counter implementation. */
-    std::future<std::list<Test::CustomTypes::Vector3D>> decrementArrayAsync(const std::list<Test::CustomTypes::Vector3D>& vec) override;
+    std::future<std::list<Test::CustomTypes::Vector3D>> decrementArrayAsync(const std::list<Test::CustomTypes::Vector3D>& vec, std::function<void(std::list<Test::CustomTypes::Vector3D>)> callback = nullptr) override;
     
     /** Forwards call to Counter implementation. */
     void setVector(const Test::CustomTypes::Vector3D& vector) override;

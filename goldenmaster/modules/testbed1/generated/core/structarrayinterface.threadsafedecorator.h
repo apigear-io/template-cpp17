@@ -53,7 +53,7 @@ public:
     * Forwards call to StructArrayInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<std::list<StructBool>> funcBoolAsync(const std::list<StructBool>& paramBool) override;
+    std::future<std::list<StructBool>> funcBoolAsync(const std::list<StructBool>& paramBool, std::function<void(std::list<StructBool>)> callback = nullptr) override;
 
     /** 
     * Forwards call to StructArrayInterface implementation.
@@ -64,7 +64,7 @@ public:
     * Forwards call to StructArrayInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<std::list<StructInt>> funcIntAsync(const std::list<StructInt>& paramInt) override;
+    std::future<std::list<StructInt>> funcIntAsync(const std::list<StructInt>& paramInt, std::function<void(std::list<StructInt>)> callback = nullptr) override;
 
     /** 
     * Forwards call to StructArrayInterface implementation.
@@ -75,7 +75,7 @@ public:
     * Forwards call to StructArrayInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<std::list<StructFloat>> funcFloatAsync(const std::list<StructFloat>& paramFloat) override;
+    std::future<std::list<StructFloat>> funcFloatAsync(const std::list<StructFloat>& paramFloat, std::function<void(std::list<StructFloat>)> callback = nullptr) override;
 
     /** 
     * Forwards call to StructArrayInterface implementation.
@@ -86,7 +86,7 @@ public:
     * Forwards call to StructArrayInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<std::list<StructString>> funcStringAsync(const std::list<StructString>& paramString) override;
+    std::future<std::list<StructString>> funcStringAsync(const std::list<StructString>& paramString, std::function<void(std::list<StructString>)> callback = nullptr) override;
 
     /** Guards and forwards call to StructArrayInterface implementation. */
     void setPropBool(const std::list<StructBool>& propBool) override;

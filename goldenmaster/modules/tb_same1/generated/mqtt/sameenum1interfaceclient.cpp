@@ -89,24 +89,27 @@ Enum1Enum SameEnum1InterfaceClient::func1(Enum1Enum param1)
     return value;
 }
 
-std::future<Enum1Enum> SameEnum1InterfaceClient::func1Async(Enum1Enum param1)
+std::future<Enum1Enum> SameEnum1InterfaceClient::func1Async(Enum1Enum param1, std::function<void(Enum1Enum)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     param1]()
         {
             std::promise<Enum1Enum> resultPromise;
             static const auto topic = std::string("tb.same1/SameEnum1Interface/rpc/func1");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise](ApiGear::MQTT::InvokeReplyArg arg) {
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
                 const Enum1Enum& value = arg.value.get<Enum1Enum>();
                 resultPromise.set_value(value);
+                if (callback)
+                {
+                    callback(value);
+                }
             };
             auto responseId = registerResponseHandler(responseHandler);
-            m_client->invokeRemote(topic, responseTopic,
-                nlohmann::json::array({param1}).dump(), responseId);
+            m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({param1}).dump(), responseId);
             return resultPromise.get_future().get();
         }
     );

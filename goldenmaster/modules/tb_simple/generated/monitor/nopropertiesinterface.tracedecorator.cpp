@@ -24,20 +24,20 @@ void NoPropertiesInterfaceTraceDecorator::funcVoid()
     m_tracer->trace_funcVoid();
     return m_impl.funcVoid();
 }
-std::future<void> NoPropertiesInterfaceTraceDecorator::funcVoidAsync()
+std::future<void> NoPropertiesInterfaceTraceDecorator::funcVoidAsync( std::function<void(void)> callback)
 {
     m_tracer->trace_funcVoid();
-    return m_impl.funcVoidAsync();
+    return m_impl.funcVoidAsync( callback);
 }
 bool NoPropertiesInterfaceTraceDecorator::funcBool(bool paramBool)
 {
     m_tracer->trace_funcBool(paramBool);
     return m_impl.funcBool(paramBool);
 }
-std::future<bool> NoPropertiesInterfaceTraceDecorator::funcBoolAsync(bool paramBool)
+std::future<bool> NoPropertiesInterfaceTraceDecorator::funcBoolAsync(bool paramBool, std::function<void(bool)> callback)
 {
     m_tracer->trace_funcBool(paramBool);
-    return m_impl.funcBoolAsync(paramBool);
+    return m_impl.funcBoolAsync(paramBool, callback);
 }
 void NoPropertiesInterfaceTraceDecorator::onSigVoid()
 {

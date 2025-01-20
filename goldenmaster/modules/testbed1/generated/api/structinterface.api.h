@@ -32,7 +32,7 @@ public:
     * Asynchronous version of funcBool(const StructBool& paramBool)
     * @return Promise of type StructBool which is set once the function has completed
     */
-    virtual std::future<StructBool> funcBoolAsync(const StructBool& paramBool) = 0;
+    virtual std::future<StructBool> funcBoolAsync(const StructBool& paramBool, std::function<void(StructBool)> callback = nullptr) = 0;
 
 
     virtual StructInt funcInt(const StructInt& paramInt) = 0;
@@ -40,7 +40,7 @@ public:
     * Asynchronous version of funcInt(const StructInt& paramInt)
     * @return Promise of type StructInt which is set once the function has completed
     */
-    virtual std::future<StructInt> funcIntAsync(const StructInt& paramInt) = 0;
+    virtual std::future<StructInt> funcIntAsync(const StructInt& paramInt, std::function<void(StructInt)> callback = nullptr) = 0;
 
 
     virtual StructFloat funcFloat(const StructFloat& paramFloat) = 0;
@@ -48,7 +48,7 @@ public:
     * Asynchronous version of funcFloat(const StructFloat& paramFloat)
     * @return Promise of type StructFloat which is set once the function has completed
     */
-    virtual std::future<StructFloat> funcFloatAsync(const StructFloat& paramFloat) = 0;
+    virtual std::future<StructFloat> funcFloatAsync(const StructFloat& paramFloat, std::function<void(StructFloat)> callback = nullptr) = 0;
 
 
     virtual StructString funcString(const StructString& paramString) = 0;
@@ -56,7 +56,7 @@ public:
     * Asynchronous version of funcString(const StructString& paramString)
     * @return Promise of type StructString which is set once the function has completed
     */
-    virtual std::future<StructString> funcStringAsync(const StructString& paramString) = 0;
+    virtual std::future<StructString> funcStringAsync(const StructString& paramString, std::function<void(StructString)> callback = nullptr) = 0;
 
     /**
     * Sets the value of the propBool property.

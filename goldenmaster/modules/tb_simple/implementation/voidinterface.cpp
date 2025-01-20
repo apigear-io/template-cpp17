@@ -19,11 +19,14 @@ void VoidInterface::funcVoid()
     // do business logic here
 }
 
-std::future<void> VoidInterface::funcVoidAsync()
+std::future<void> VoidInterface::funcVoidAsync( std::function<void(void)> callback)
 {
-    return std::async(std::launch::async, [this]()
-        {
-            return funcVoid();
+    return std::async(std::launch::async, [this, callback]()
+        {funcVoid();
+            if (callback)
+            {
+                callback();
+            }
         }
     );
 }

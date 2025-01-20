@@ -225,6 +225,23 @@ TEST_CASE("Nats  testbed1 StructArrayInterface tests")
         REQUIRE(return_value == std::list<Testbed1::StructBool>()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+    SECTION("Test method funcBool async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientStructArrayInterface->funcBoolAsync(std::list<Testbed1::StructBool>(),
+            [&finished, &m_wait](std::list<StructBool> value)
+            {
+                REQUIRE(value == std::list<Testbed1::StructBool>());
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
+    }
     SECTION("Test method funcInt")
     {
         [[maybe_unused]] auto result = clientStructArrayInterface->funcInt(std::list<Testbed1::StructInt>());
@@ -241,6 +258,23 @@ TEST_CASE("Nats  testbed1 StructArrayInterface tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == std::list<Testbed1::StructInt>()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+    SECTION("Test method funcInt async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientStructArrayInterface->funcIntAsync(std::list<Testbed1::StructInt>(),
+            [&finished, &m_wait](std::list<StructInt> value)
+            {
+                REQUIRE(value == std::list<Testbed1::StructInt>());
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
     }
     SECTION("Test method funcFloat")
     {
@@ -259,6 +293,23 @@ TEST_CASE("Nats  testbed1 StructArrayInterface tests")
         REQUIRE(return_value == std::list<Testbed1::StructFloat>()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+    SECTION("Test method funcFloat async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientStructArrayInterface->funcFloatAsync(std::list<Testbed1::StructFloat>(),
+            [&finished, &m_wait](std::list<StructFloat> value)
+            {
+                REQUIRE(value == std::list<Testbed1::StructFloat>());
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
+    }
     SECTION("Test method funcString")
     {
         [[maybe_unused]] auto result = clientStructArrayInterface->funcString(std::list<Testbed1::StructString>());
@@ -275,6 +326,23 @@ TEST_CASE("Nats  testbed1 StructArrayInterface tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == std::list<Testbed1::StructString>()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+    SECTION("Test method funcString async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientStructArrayInterface->funcStringAsync(std::list<Testbed1::StructString>(),
+            [&finished, &m_wait](std::list<StructString> value)
+            {
+                REQUIRE(value == std::list<Testbed1::StructString>());
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
     }
 
     serviceStructArrayInterface.reset();

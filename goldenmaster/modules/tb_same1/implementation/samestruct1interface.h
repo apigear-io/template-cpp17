@@ -21,7 +21,7 @@ public:
     const Struct1& getProp1() const override;
     
     Struct1 func1(const Struct1& param1) override;
-    std::future<Struct1> func1Async(const Struct1& param1) override;
+    std::future<Struct1> func1Async(const Struct1& param1, std::function<void(Struct1)> callback = nullptr) override;
         
     /**
     * Access to a publisher, use it to subscribe for SameStruct1Interface changes and signal emission.

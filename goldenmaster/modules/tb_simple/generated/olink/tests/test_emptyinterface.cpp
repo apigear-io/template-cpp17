@@ -50,7 +50,6 @@ TEST_CASE("olink  tb.simple EmptyInterface tests")
     std::condition_variable m_wait;
     std::mutex m_waitMutex;
     std::unique_lock<std::mutex> lock(m_waitMutex, std::defer_lock);
-
     clientNode->unlinkRemote(clientEmptyInterface->olinkObjectName());
     remote_registry.removeSource(serviceEmptyInterface->olinkObjectName());
     client_registry.removeSink(clientEmptyInterface->olinkObjectName());

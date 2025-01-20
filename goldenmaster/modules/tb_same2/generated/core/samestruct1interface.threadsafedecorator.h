@@ -47,7 +47,7 @@ public:
     * Forwards call to SameStruct1Interface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<Struct1> func1Async(const Struct1& param1) override;
+    std::future<Struct1> func1Async(const Struct1& param1, std::function<void(Struct1)> callback = nullptr) override;
 
     /** Guards and forwards call to SameStruct1Interface implementation. */
     void setProp1(const Struct1& prop1) override;

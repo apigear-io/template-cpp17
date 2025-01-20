@@ -47,7 +47,7 @@ public:
     * Forwards call to NestedStruct1Interface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<NestedStruct1> func1Async(const NestedStruct1& param1) override;
+    std::future<NestedStruct1> func1Async(const NestedStruct1& param1, std::function<void(NestedStruct1)> callback = nullptr) override;
 
     /** Guards and forwards call to NestedStruct1Interface implementation. */
     void setProp1(const NestedStruct1& prop1) override;

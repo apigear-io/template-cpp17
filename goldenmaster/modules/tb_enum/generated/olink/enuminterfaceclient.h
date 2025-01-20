@@ -88,7 +88,7 @@ public:
     /**
     * Remote call of IEnumInterface::func0 on the EnumInterface service.
     */
-    std::future<Enum0Enum> func0Async(Enum0Enum param0) override;
+    std::future<Enum0Enum> func0Async(Enum0Enum param0, std::function<void(Enum0Enum)> callback = nullptr) override;
     /**
     * Remote call of IEnumInterface::func1 on the EnumInterface service.
     * Uses func1Async
@@ -97,7 +97,7 @@ public:
     /**
     * Remote call of IEnumInterface::func1 on the EnumInterface service.
     */
-    std::future<Enum1Enum> func1Async(Enum1Enum param1) override;
+    std::future<Enum1Enum> func1Async(Enum1Enum param1, std::function<void(Enum1Enum)> callback = nullptr) override;
     /**
     * Remote call of IEnumInterface::func2 on the EnumInterface service.
     * Uses func2Async
@@ -106,7 +106,7 @@ public:
     /**
     * Remote call of IEnumInterface::func2 on the EnumInterface service.
     */
-    std::future<Enum2Enum> func2Async(Enum2Enum param2) override;
+    std::future<Enum2Enum> func2Async(Enum2Enum param2, std::function<void(Enum2Enum)> callback = nullptr) override;
     /**
     * Remote call of IEnumInterface::func3 on the EnumInterface service.
     * Uses func3Async
@@ -115,7 +115,7 @@ public:
     /**
     * Remote call of IEnumInterface::func3 on the EnumInterface service.
     */
-    std::future<Enum3Enum> func3Async(Enum3Enum param3) override;
+    std::future<Enum3Enum> func3Async(Enum3Enum param3, std::function<void(Enum3Enum)> callback = nullptr) override;
 
     /** The publisher to subscribe to. */
     IEnumInterfacePublisher& _getPublisher() const override;

@@ -34,12 +34,15 @@ NestedStruct1 NestedStruct1Interface::func1(const NestedStruct1& param1)
     return NestedStruct1();
 }
 
-std::future<NestedStruct1> NestedStruct1Interface::func1Async(const NestedStruct1& param1)
+std::future<NestedStruct1> NestedStruct1Interface::func1Async(const NestedStruct1& param1, std::function<void(NestedStruct1)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     param1]()
-        {
-            return func1(param1);
+        {auto result = func1(param1);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }

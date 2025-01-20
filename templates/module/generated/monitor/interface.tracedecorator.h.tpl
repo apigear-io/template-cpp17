@@ -46,7 +46,7 @@ public:
     /** Traces {{$operation.Name}} and forwards call to {{$interfaceNameOriginal}} implementation. */
     {{cppReturn "" $operation.Return}} {{lower1 $operation.Name}}({{cppParams "" $operation.Params}}) override;
     /** Traces {{$operation.Name}} and forwards call to {{$interfaceNameOriginal}} implementation. */
-    std::future<{{cppReturn "" $operation.Return}}> {{lower1 $operation.Name}}Async({{cppParams "" $operation.Params}}) override;
+    std::future<{{cppReturn "" $operation.Return}}> {{lower1 $operation.Name}}Async({{cppParams "" $operation.Params}}{{- if len ($operation.Params) }},{{end}} std::function<void({{cppReturn "" $operation.Return}})> callback = nullptr) override;
     {{ end -}}
 {{- range .Interface.Properties}}
 {{- $property := . }}

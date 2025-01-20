@@ -37,12 +37,12 @@ public:
     /** Traces funcVoid and forwards call to NoSignalsInterface implementation. */
     void funcVoid() override;
     /** Traces funcVoid and forwards call to NoSignalsInterface implementation. */
-    std::future<void> funcVoidAsync() override;
+    std::future<void> funcVoidAsync( std::function<void(void)> callback = nullptr) override;
     
     /** Traces funcBool and forwards call to NoSignalsInterface implementation. */
     bool funcBool(bool paramBool) override;
     /** Traces funcBool and forwards call to NoSignalsInterface implementation. */
-    std::future<bool> funcBoolAsync(bool paramBool) override;
+    std::future<bool> funcBoolAsync(bool paramBool, std::function<void(bool)> callback = nullptr) override;
     
     /** Forwards call to NoSignalsInterface implementation. */
     void setPropBool(bool propBool) override;

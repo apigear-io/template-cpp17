@@ -21,9 +21,9 @@ using namespace {{ Camel .System.Name }}::{{ Camel .Module.Name }};
     return m_impl->{{lower1 $operation.Name}}({{cppVars $operation.Params }});
 }
 
-std::future<{{cppReturn "" $operation.Return}}> {{$class}}::{{lower1 $operation.Name}}Async({{cppParams "" $operation.Params}})
+std::future<{{cppReturn "" $operation.Return}}> {{$class}}::{{lower1 $operation.Name}}Async({{cppParams "" $operation.Params}}{{- if len ($operation.Params) }},{{end}} std::function<void({{cppReturn "" $operation.Return}})> callback)
 {
-    return m_impl->{{$operation.Name| lower1}}Async({{cppVars $operation.Params }});
+    return m_impl->{{$operation.Name| lower1}}Async({{cppVars $operation.Params }}{{- if len ($operation.Params) }},{{end}} callback);
 }
 
 {{- end }}

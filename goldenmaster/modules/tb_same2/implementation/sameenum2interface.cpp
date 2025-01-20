@@ -47,12 +47,15 @@ Enum1Enum SameEnum2Interface::func1(Enum1Enum param1)
     return Enum1Enum::value1;
 }
 
-std::future<Enum1Enum> SameEnum2Interface::func1Async(Enum1Enum param1)
+std::future<Enum1Enum> SameEnum2Interface::func1Async(Enum1Enum param1, std::function<void(Enum1Enum)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     param1]()
-        {
-            return func1(param1);
+        {auto result = func1(param1);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }
@@ -65,13 +68,16 @@ Enum1Enum SameEnum2Interface::func2(Enum1Enum param1, Enum2Enum param2)
     return Enum1Enum::value1;
 }
 
-std::future<Enum1Enum> SameEnum2Interface::func2Async(Enum1Enum param1, Enum2Enum param2)
+std::future<Enum1Enum> SameEnum2Interface::func2Async(Enum1Enum param1, Enum2Enum param2, std::function<void(Enum1Enum)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     param1,
                     param2]()
-        {
-            return func2(param1, param2);
+        {auto result = func2(param1, param2);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }

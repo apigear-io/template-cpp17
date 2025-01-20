@@ -53,7 +53,7 @@ public:
     * Forwards call to ManyParamInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<int> func1Async(int param1) override;
+    std::future<int> func1Async(int param1, std::function<void(int)> callback = nullptr) override;
 
     /** 
     * Forwards call to ManyParamInterface implementation.
@@ -64,7 +64,7 @@ public:
     * Forwards call to ManyParamInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<int> func2Async(int param1, int param2) override;
+    std::future<int> func2Async(int param1, int param2, std::function<void(int)> callback = nullptr) override;
 
     /** 
     * Forwards call to ManyParamInterface implementation.
@@ -75,7 +75,7 @@ public:
     * Forwards call to ManyParamInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<int> func3Async(int param1, int param2, int param3) override;
+    std::future<int> func3Async(int param1, int param2, int param3, std::function<void(int)> callback = nullptr) override;
 
     /** 
     * Forwards call to ManyParamInterface implementation.
@@ -86,7 +86,7 @@ public:
     * Forwards call to ManyParamInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<int> func4Async(int param1, int param2, int param3, int param4) override;
+    std::future<int> func4Async(int param1, int param2, int param3, int param4, std::function<void(int)> callback = nullptr) override;
 
     /** Guards and forwards call to ManyParamInterface implementation. */
     void setProp1(int prop1) override;

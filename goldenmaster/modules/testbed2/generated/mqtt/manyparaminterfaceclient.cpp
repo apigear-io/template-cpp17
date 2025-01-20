@@ -185,24 +185,27 @@ int ManyParamInterfaceClient::func1(int param1)
     return value;
 }
 
-std::future<int> ManyParamInterfaceClient::func1Async(int param1)
+std::future<int> ManyParamInterfaceClient::func1Async(int param1, std::function<void(int)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     param1]()
         {
             std::promise<int> resultPromise;
             static const auto topic = std::string("testbed2/ManyParamInterface/rpc/func1");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise](ApiGear::MQTT::InvokeReplyArg arg) {
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
                 const int& value = arg.value.get<int>();
                 resultPromise.set_value(value);
+                if (callback)
+                {
+                    callback(value);
+                }
             };
             auto responseId = registerResponseHandler(responseHandler);
-            m_client->invokeRemote(topic, responseTopic,
-                nlohmann::json::array({param1}).dump(), responseId);
+            m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({param1}).dump(), responseId);
             return resultPromise.get_future().get();
         }
     );
@@ -217,25 +220,28 @@ int ManyParamInterfaceClient::func2(int param1, int param2)
     return value;
 }
 
-std::future<int> ManyParamInterfaceClient::func2Async(int param1, int param2)
+std::future<int> ManyParamInterfaceClient::func2Async(int param1, int param2, std::function<void(int)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     param1,
                     param2]()
         {
             std::promise<int> resultPromise;
             static const auto topic = std::string("testbed2/ManyParamInterface/rpc/func2");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise](ApiGear::MQTT::InvokeReplyArg arg) {
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
                 const int& value = arg.value.get<int>();
                 resultPromise.set_value(value);
+                if (callback)
+                {
+                    callback(value);
+                }
             };
             auto responseId = registerResponseHandler(responseHandler);
-            m_client->invokeRemote(topic, responseTopic,
-                nlohmann::json::array({param1, param2}).dump(), responseId);
+            m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({param1, param2}).dump(), responseId);
             return resultPromise.get_future().get();
         }
     );
@@ -250,12 +256,12 @@ int ManyParamInterfaceClient::func3(int param1, int param2, int param3)
     return value;
 }
 
-std::future<int> ManyParamInterfaceClient::func3Async(int param1, int param2, int param3)
+std::future<int> ManyParamInterfaceClient::func3Async(int param1, int param2, int param3, std::function<void(int)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     param1,
                     param2,
                     param3]()
@@ -263,13 +269,16 @@ std::future<int> ManyParamInterfaceClient::func3Async(int param1, int param2, in
             std::promise<int> resultPromise;
             static const auto topic = std::string("testbed2/ManyParamInterface/rpc/func3");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise](ApiGear::MQTT::InvokeReplyArg arg) {
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
                 const int& value = arg.value.get<int>();
                 resultPromise.set_value(value);
+                if (callback)
+                {
+                    callback(value);
+                }
             };
             auto responseId = registerResponseHandler(responseHandler);
-            m_client->invokeRemote(topic, responseTopic,
-                nlohmann::json::array({param1, param2, param3}).dump(), responseId);
+            m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({param1, param2, param3}).dump(), responseId);
             return resultPromise.get_future().get();
         }
     );
@@ -284,12 +293,12 @@ int ManyParamInterfaceClient::func4(int param1, int param2, int param3, int para
     return value;
 }
 
-std::future<int> ManyParamInterfaceClient::func4Async(int param1, int param2, int param3, int param4)
+std::future<int> ManyParamInterfaceClient::func4Async(int param1, int param2, int param3, int param4, std::function<void(int)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     param1,
                     param2,
                     param3,
@@ -298,13 +307,16 @@ std::future<int> ManyParamInterfaceClient::func4Async(int param1, int param2, in
             std::promise<int> resultPromise;
             static const auto topic = std::string("testbed2/ManyParamInterface/rpc/func4");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise](ApiGear::MQTT::InvokeReplyArg arg) {
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
                 const int& value = arg.value.get<int>();
                 resultPromise.set_value(value);
+                if (callback)
+                {
+                    callback(value);
+                }
             };
             auto responseId = registerResponseHandler(responseHandler);
-            m_client->invokeRemote(topic, responseTopic,
-                nlohmann::json::array({param1, param2, param3, param4}).dump(), responseId);
+            m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({param1, param2, param3, param4}).dump(), responseId);
             return resultPromise.get_future().get();
         }
     );

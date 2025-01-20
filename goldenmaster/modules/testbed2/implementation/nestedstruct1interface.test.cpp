@@ -11,6 +11,19 @@ TEST_CASE("Testing NestedStruct1Interface", "[NestedStruct1Interface]"){
         // Do implement test here
         testNestedStruct1Interface->func1(NestedStruct1());
     }
+
+    SECTION("Test operation async func1") {
+        // Do implement test here
+
+        auto future = testNestedStruct1Interface->func1Async(NestedStruct1());
+    }
+
+    SECTION("Test operation async func1 with a callback") {
+        // Do implement test here
+
+        auto future = testNestedStruct1Interface->func1Async(NestedStruct1(),[](NestedStruct1 value){ (void)value; /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
+    }
     SECTION("Test property prop1") {
         // Do implement test here
         testNestedStruct1Interface->setProp1(NestedStruct1());

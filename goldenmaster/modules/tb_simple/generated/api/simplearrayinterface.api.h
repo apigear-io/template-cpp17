@@ -32,7 +32,7 @@ public:
     * Asynchronous version of funcBool(const std::list<bool>& paramBool)
     * @return Promise of type std::list<bool> which is set once the function has completed
     */
-    virtual std::future<std::list<bool>> funcBoolAsync(const std::list<bool>& paramBool) = 0;
+    virtual std::future<std::list<bool>> funcBoolAsync(const std::list<bool>& paramBool, std::function<void(std::list<bool>)> callback = nullptr) = 0;
 
 
     virtual std::list<int> funcInt(const std::list<int>& paramInt) = 0;
@@ -40,7 +40,7 @@ public:
     * Asynchronous version of funcInt(const std::list<int>& paramInt)
     * @return Promise of type std::list<int> which is set once the function has completed
     */
-    virtual std::future<std::list<int>> funcIntAsync(const std::list<int>& paramInt) = 0;
+    virtual std::future<std::list<int>> funcIntAsync(const std::list<int>& paramInt, std::function<void(std::list<int>)> callback = nullptr) = 0;
 
 
     virtual std::list<int32_t> funcInt32(const std::list<int32_t>& paramInt32) = 0;
@@ -48,7 +48,7 @@ public:
     * Asynchronous version of funcInt32(const std::list<int32_t>& paramInt32)
     * @return Promise of type std::list<int32_t> which is set once the function has completed
     */
-    virtual std::future<std::list<int32_t>> funcInt32Async(const std::list<int32_t>& paramInt32) = 0;
+    virtual std::future<std::list<int32_t>> funcInt32Async(const std::list<int32_t>& paramInt32, std::function<void(std::list<int32_t>)> callback = nullptr) = 0;
 
 
     virtual std::list<int64_t> funcInt64(const std::list<int64_t>& paramInt64) = 0;
@@ -56,7 +56,7 @@ public:
     * Asynchronous version of funcInt64(const std::list<int64_t>& paramInt64)
     * @return Promise of type std::list<int64_t> which is set once the function has completed
     */
-    virtual std::future<std::list<int64_t>> funcInt64Async(const std::list<int64_t>& paramInt64) = 0;
+    virtual std::future<std::list<int64_t>> funcInt64Async(const std::list<int64_t>& paramInt64, std::function<void(std::list<int64_t>)> callback = nullptr) = 0;
 
 
     virtual std::list<float> funcFloat(const std::list<float>& paramFloat) = 0;
@@ -64,7 +64,7 @@ public:
     * Asynchronous version of funcFloat(const std::list<float>& paramFloat)
     * @return Promise of type std::list<float> which is set once the function has completed
     */
-    virtual std::future<std::list<float>> funcFloatAsync(const std::list<float>& paramFloat) = 0;
+    virtual std::future<std::list<float>> funcFloatAsync(const std::list<float>& paramFloat, std::function<void(std::list<float>)> callback = nullptr) = 0;
 
 
     virtual std::list<float> funcFloat32(const std::list<float>& paramFloat32) = 0;
@@ -72,7 +72,7 @@ public:
     * Asynchronous version of funcFloat32(const std::list<float>& paramFloat32)
     * @return Promise of type std::list<float> which is set once the function has completed
     */
-    virtual std::future<std::list<float>> funcFloat32Async(const std::list<float>& paramFloat32) = 0;
+    virtual std::future<std::list<float>> funcFloat32Async(const std::list<float>& paramFloat32, std::function<void(std::list<float>)> callback = nullptr) = 0;
 
 
     virtual std::list<double> funcFloat64(const std::list<double>& paramFloat) = 0;
@@ -80,7 +80,7 @@ public:
     * Asynchronous version of funcFloat64(const std::list<double>& paramFloat)
     * @return Promise of type std::list<double> which is set once the function has completed
     */
-    virtual std::future<std::list<double>> funcFloat64Async(const std::list<double>& paramFloat) = 0;
+    virtual std::future<std::list<double>> funcFloat64Async(const std::list<double>& paramFloat, std::function<void(std::list<double>)> callback = nullptr) = 0;
 
 
     virtual std::list<std::string> funcString(const std::list<std::string>& paramString) = 0;
@@ -88,7 +88,7 @@ public:
     * Asynchronous version of funcString(const std::list<std::string>& paramString)
     * @return Promise of type std::list<std::string> which is set once the function has completed
     */
-    virtual std::future<std::list<std::string>> funcStringAsync(const std::list<std::string>& paramString) = 0;
+    virtual std::future<std::list<std::string>> funcStringAsync(const std::list<std::string>& paramString, std::function<void(std::list<std::string>)> callback = nullptr) = 0;
 
     /**
     * Sets the value of the propBool property.

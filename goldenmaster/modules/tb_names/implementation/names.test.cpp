@@ -11,9 +11,35 @@ TEST_CASE("Testing NamEs", "[NamEs]"){
         // Do implement test here
         testNamEs->sOME_FUNCTION(false);
     }
+
+    SECTION("Test operation async SOME_FUNCTION") {
+        // Do implement test here
+
+        auto future = testNamEs->sOME_FUNCTIONAsync(false);
+    }
+
+    SECTION("Test operation async SOME_FUNCTION with a callback") {
+        // Do implement test here
+
+        auto future = testNamEs->sOME_FUNCTIONAsync(false,[]( ){ /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
+    }
     SECTION("Test operation Some_Function2") {
         // Do implement test here
         testNamEs->some_Function2(false);
+    }
+
+    SECTION("Test operation async Some_Function2") {
+        // Do implement test here
+
+        auto future = testNamEs->some_Function2Async(false);
+    }
+
+    SECTION("Test operation async Some_Function2 with a callback") {
+        // Do implement test here
+
+        auto future = testNamEs->some_Function2Async(false,[]( ){ /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
     }
     SECTION("Test property Switch") {
         // Do implement test here

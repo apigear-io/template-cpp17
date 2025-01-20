@@ -184,6 +184,19 @@ TEST_CASE("olink  testbed2 NestedStruct3Interface tests")
         REQUIRE(return_value == Testbed2::NestedStruct1()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+
+    SECTION("Test method func1 async with a callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientNestedStruct3Interface->func1Async(Testbed2::NestedStruct1(),[&finished, &m_wait](NestedStruct1 value){ (void) value;finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+         
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == Testbed2::NestedStruct1()); 
+        
+    }
     SECTION("Test method func2")
     {
         [[maybe_unused]] auto result = clientNestedStruct3Interface->func2(Testbed2::NestedStruct1(), Testbed2::NestedStruct2());
@@ -200,6 +213,19 @@ TEST_CASE("olink  testbed2 NestedStruct3Interface tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == Testbed2::NestedStruct1()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+
+    SECTION("Test method func2 async with a callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientNestedStruct3Interface->func2Async(Testbed2::NestedStruct1(), Testbed2::NestedStruct2(),[&finished, &m_wait](NestedStruct1 value){ (void) value;finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+         
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == Testbed2::NestedStruct1()); 
+        
     }
     SECTION("Test method func3")
     {
@@ -219,6 +245,18 @@ TEST_CASE("olink  testbed2 NestedStruct3Interface tests")
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
 
+    SECTION("Test method func3 async with a callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientNestedStruct3Interface->func3Async(Testbed2::NestedStruct1(), Testbed2::NestedStruct2(), Testbed2::NestedStruct3(),[&finished, &m_wait](NestedStruct1 value){ (void) value;finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+         
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == Testbed2::NestedStruct1()); 
+        
+    }
     clientNode->unlinkRemote(clientNestedStruct3Interface->olinkObjectName());
     remote_registry.removeSource(serviceNestedStruct3Interface->olinkObjectName());
     client_registry.removeSink(clientNestedStruct3Interface->olinkObjectName());

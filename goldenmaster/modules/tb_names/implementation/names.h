@@ -30,10 +30,10 @@ public:
     Enum_With_Under_scoresEnum getEnumProperty() const override;
     
     void sOME_FUNCTION(bool SOME_PARAM) override;
-    std::future<void> sOME_FUNCTIONAsync(bool SOME_PARAM) override;
+    std::future<void> sOME_FUNCTIONAsync(bool SOME_PARAM, std::function<void(void)> callback = nullptr) override;
         
     void some_Function2(bool Some_Param) override;
-    std::future<void> some_Function2Async(bool Some_Param) override;
+    std::future<void> some_Function2Async(bool Some_Param, std::function<void(void)> callback = nullptr) override;
         
     /**
     * Access to a publisher, use it to subscribe for Nam_Es changes and signal emission.

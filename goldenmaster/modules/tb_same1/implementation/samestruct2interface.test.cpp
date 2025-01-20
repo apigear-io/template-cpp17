@@ -11,9 +11,35 @@ TEST_CASE("Testing SameStruct2Interface", "[SameStruct2Interface]"){
         // Do implement test here
         testSameStruct2Interface->func1(Struct1());
     }
+
+    SECTION("Test operation async func1") {
+        // Do implement test here
+
+        auto future = testSameStruct2Interface->func1Async(Struct1());
+    }
+
+    SECTION("Test operation async func1 with a callback") {
+        // Do implement test here
+
+        auto future = testSameStruct2Interface->func1Async(Struct1(),[](Struct1 value){ (void)value; /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
+    }
     SECTION("Test operation func2") {
         // Do implement test here
         testSameStruct2Interface->func2(Struct1(), Struct2());
+    }
+
+    SECTION("Test operation async func2") {
+        // Do implement test here
+
+        auto future = testSameStruct2Interface->func2Async(Struct1(), Struct2());
+    }
+
+    SECTION("Test operation async func2 with a callback") {
+        // Do implement test here
+
+        auto future = testSameStruct2Interface->func2Async(Struct1(), Struct2(),[](Struct1 value){ (void)value; /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
     }
     SECTION("Test property prop1") {
         // Do implement test here

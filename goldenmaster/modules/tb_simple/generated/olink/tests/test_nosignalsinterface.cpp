@@ -98,6 +98,18 @@ TEST_CASE("olink  tb.simple NoSignalsInterface tests")
         resultFuture.wait();
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+
+    SECTION("Test method funcVoid async with a callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientNoSignalsInterface->funcVoidAsync([&finished, &m_wait](){finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+         
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        resultFuture.wait();
+        
+    }
     SECTION("Test method funcBool")
     {
         [[maybe_unused]] auto result = clientNoSignalsInterface->funcBool(false);
@@ -116,6 +128,18 @@ TEST_CASE("olink  tb.simple NoSignalsInterface tests")
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
 
+    SECTION("Test method funcBool async with a callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientNoSignalsInterface->funcBoolAsync(false,[&finished, &m_wait](bool value){ (void) value;finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+         
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == false); 
+        
+    }
     clientNode->unlinkRemote(clientNoSignalsInterface->olinkObjectName());
     remote_registry.removeSource(serviceNoSignalsInterface->olinkObjectName());
     client_registry.removeSink(clientNoSignalsInterface->olinkObjectName());

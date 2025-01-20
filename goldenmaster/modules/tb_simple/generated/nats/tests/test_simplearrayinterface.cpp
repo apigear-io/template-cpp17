@@ -353,6 +353,23 @@ TEST_CASE("Nats  tb.simple SimpleArrayInterface tests")
         REQUIRE(return_value == std::list<bool>()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+    SECTION("Test method funcBool async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSimpleArrayInterface->funcBoolAsync(std::list<bool>(),
+            [&finished, &m_wait](std::list<bool> value)
+            {
+                REQUIRE(value == std::list<bool>());
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
+    }
     SECTION("Test method funcInt")
     {
         [[maybe_unused]] auto result = clientSimpleArrayInterface->funcInt(std::list<int>());
@@ -369,6 +386,23 @@ TEST_CASE("Nats  tb.simple SimpleArrayInterface tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == std::list<int>()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+    SECTION("Test method funcInt async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSimpleArrayInterface->funcIntAsync(std::list<int>(),
+            [&finished, &m_wait](std::list<int> value)
+            {
+                REQUIRE(value == std::list<int>());
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
     }
     SECTION("Test method funcInt32")
     {
@@ -387,6 +421,23 @@ TEST_CASE("Nats  tb.simple SimpleArrayInterface tests")
         REQUIRE(return_value == std::list<int32_t>()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+    SECTION("Test method funcInt32 async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSimpleArrayInterface->funcInt32Async(std::list<int32_t>(),
+            [&finished, &m_wait](std::list<int32_t> value)
+            {
+                REQUIRE(value == std::list<int32_t>());
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
+    }
     SECTION("Test method funcInt64")
     {
         [[maybe_unused]] auto result = clientSimpleArrayInterface->funcInt64(std::list<int64_t>());
@@ -403,6 +454,23 @@ TEST_CASE("Nats  tb.simple SimpleArrayInterface tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == std::list<int64_t>()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+    SECTION("Test method funcInt64 async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSimpleArrayInterface->funcInt64Async(std::list<int64_t>(),
+            [&finished, &m_wait](std::list<int64_t> value)
+            {
+                REQUIRE(value == std::list<int64_t>());
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
     }
     SECTION("Test method funcFloat")
     {
@@ -421,6 +489,23 @@ TEST_CASE("Nats  tb.simple SimpleArrayInterface tests")
         REQUIRE(return_value == std::list<float>()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+    SECTION("Test method funcFloat async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSimpleArrayInterface->funcFloatAsync(std::list<float>(),
+            [&finished, &m_wait](std::list<float> value)
+            {
+                REQUIRE(value == std::list<float>());
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
+    }
     SECTION("Test method funcFloat32")
     {
         [[maybe_unused]] auto result = clientSimpleArrayInterface->funcFloat32(std::list<float>());
@@ -437,6 +522,23 @@ TEST_CASE("Nats  tb.simple SimpleArrayInterface tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == std::list<float>()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+    SECTION("Test method funcFloat32 async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSimpleArrayInterface->funcFloat32Async(std::list<float>(),
+            [&finished, &m_wait](std::list<float> value)
+            {
+                REQUIRE(value == std::list<float>());
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
     }
     SECTION("Test method funcFloat64")
     {
@@ -455,6 +557,23 @@ TEST_CASE("Nats  tb.simple SimpleArrayInterface tests")
         REQUIRE(return_value == std::list<double>()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+    SECTION("Test method funcFloat64 async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSimpleArrayInterface->funcFloat64Async(std::list<double>(),
+            [&finished, &m_wait](std::list<double> value)
+            {
+                REQUIRE(value == std::list<double>());
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
+    }
     SECTION("Test method funcString")
     {
         [[maybe_unused]] auto result = clientSimpleArrayInterface->funcString(std::list<std::string>());
@@ -471,6 +590,23 @@ TEST_CASE("Nats  tb.simple SimpleArrayInterface tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == std::list<std::string>()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+    SECTION("Test method funcString async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSimpleArrayInterface->funcStringAsync(std::list<std::string>(),
+            [&finished, &m_wait](std::list<std::string> value)
+            {
+                REQUIRE(value == std::list<std::string>());
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
     }
 
     serviceSimpleArrayInterface.reset();

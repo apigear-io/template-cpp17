@@ -45,11 +45,14 @@ void NoSignalsInterface::funcVoid()
     // do business logic here
 }
 
-std::future<void> NoSignalsInterface::funcVoidAsync()
+std::future<void> NoSignalsInterface::funcVoidAsync( std::function<void(void)> callback)
 {
-    return std::async(std::launch::async, [this]()
-        {
-            return funcVoid();
+    return std::async(std::launch::async, [this, callback]()
+        {funcVoid();
+            if (callback)
+            {
+                callback();
+            }
         }
     );
 }
@@ -61,12 +64,15 @@ bool NoSignalsInterface::funcBool(bool paramBool)
     return false;
 }
 
-std::future<bool> NoSignalsInterface::funcBoolAsync(bool paramBool)
+std::future<bool> NoSignalsInterface::funcBoolAsync(bool paramBool, std::function<void(bool)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramBool]()
-        {
-            return funcBool(paramBool);
+        {auto result = funcBool(paramBool);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }

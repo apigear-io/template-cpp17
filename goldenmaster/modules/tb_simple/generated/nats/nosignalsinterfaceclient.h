@@ -26,9 +26,9 @@ public:
     int getPropInt() const override;
     void setPropInt(int propInt) override;
     void funcVoid() override;
-    std::future<void> funcVoidAsync() override;
+    std::future<void> funcVoidAsync( std::function<void(void)> callback = nullptr) override;
     bool funcBool(bool paramBool) override;
-    std::future<bool> funcBoolAsync(bool paramBool) override;
+    std::future<bool> funcBoolAsync(bool paramBool, std::function<void(bool)> callback = nullptr) override;
     INoSignalsInterfacePublisher& _getPublisher() const override;
 private:
     std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;

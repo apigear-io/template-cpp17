@@ -32,7 +32,7 @@ public:
     * Asynchronous version of func1(int param1)
     * @return Promise of type int which is set once the function has completed
     */
-    virtual std::future<int> func1Async(int param1) = 0;
+    virtual std::future<int> func1Async(int param1, std::function<void(int)> callback = nullptr) = 0;
 
 
     virtual int func2(int param1, int param2) = 0;
@@ -40,7 +40,7 @@ public:
     * Asynchronous version of func2(int param1, int param2)
     * @return Promise of type int which is set once the function has completed
     */
-    virtual std::future<int> func2Async(int param1, int param2) = 0;
+    virtual std::future<int> func2Async(int param1, int param2, std::function<void(int)> callback = nullptr) = 0;
 
 
     virtual int func3(int param1, int param2, int param3) = 0;
@@ -48,7 +48,7 @@ public:
     * Asynchronous version of func3(int param1, int param2, int param3)
     * @return Promise of type int which is set once the function has completed
     */
-    virtual std::future<int> func3Async(int param1, int param2, int param3) = 0;
+    virtual std::future<int> func3Async(int param1, int param2, int param3, std::function<void(int)> callback = nullptr) = 0;
 
 
     virtual int func4(int param1, int param2, int param3, int param4) = 0;
@@ -56,7 +56,7 @@ public:
     * Asynchronous version of func4(int param1, int param2, int param3, int param4)
     * @return Promise of type int which is set once the function has completed
     */
-    virtual std::future<int> func4Async(int param1, int param2, int param3, int param4) = 0;
+    virtual std::future<int> func4Async(int param1, int param2, int param3, int param4, std::function<void(int)> callback = nullptr) = 0;
 
     /**
     * Sets the value of the prop1 property.

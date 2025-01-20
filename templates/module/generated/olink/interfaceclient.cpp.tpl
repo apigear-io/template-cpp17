@@ -110,7 +110,7 @@ void {{$class}}::set{{Camel $name}}Local({{cppParam "" $property }})
     return {{lower1 $operation.Name}}Async({{ cppVars $operation.Params }}).get();
 }
 
-std::future<{{$returnType}}> {{$class}}::{{$operation.Name| lower1}}Async({{cppParams "" $operation.Params}})
+std::future<{{$returnType}}> {{$class}}::{{$operation.Name| lower1}}Async({{cppParams "" $operation.Params}}{{- if len ($operation.Params) }},{{end}} std::function<void({{cppReturn "" $operation.Return}})> callback)
 {
     if(!m_node) {
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
@@ -119,13 +119,21 @@ std::future<{{$returnType}}> {{$class}}::{{$operation.Name| lower1}}Async({{cppP
     std::shared_ptr<std::promise<{{$returnType}}>> resultPromise = std::make_shared<std::promise<{{$returnType}}>>();
     static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "{{$operation.Name}}");
     m_node->invokeRemote(operationId,
-        nlohmann::json::array({ {{- cppVars $operation.Params -}} }), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {        
+        nlohmann::json::array({ {{- cppVars $operation.Params -}} }), [resultPromise, callback](ApiGear::ObjectLink::InvokeReplyArg arg) {        
             {{- if .Return.IsVoid }}
             (void) arg;
             resultPromise->set_value();
+            if (callback)
+            {
+                callback();
+            }
             {{- else }}
             const {{$returnType}}& value = arg.value.get<{{$returnType}}>();
             resultPromise->set_value(value);
+            if (callback)
+            {
+                callback(value);
+            }
             {{- end }}
         });
     return resultPromise->get_future();

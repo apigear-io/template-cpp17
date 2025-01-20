@@ -128,7 +128,7 @@ public:
     /**
     * Remote call of ISimpleInterface::funcNoReturnValue on the SimpleInterface service.
     */
-    std::future<void> funcNoReturnValueAsync(bool paramBool) override;
+    std::future<void> funcNoReturnValueAsync(bool paramBool, std::function<void(void)> callback = nullptr) override;
     /**
     * Remote call of ISimpleInterface::funcBool on the SimpleInterface service.
     * Uses funcBoolAsync
@@ -137,7 +137,7 @@ public:
     /**
     * Remote call of ISimpleInterface::funcBool on the SimpleInterface service.
     */
-    std::future<bool> funcBoolAsync(bool paramBool) override;
+    std::future<bool> funcBoolAsync(bool paramBool, std::function<void(bool)> callback = nullptr) override;
     /**
     * Remote call of ISimpleInterface::funcInt on the SimpleInterface service.
     * Uses funcIntAsync
@@ -146,7 +146,7 @@ public:
     /**
     * Remote call of ISimpleInterface::funcInt on the SimpleInterface service.
     */
-    std::future<int> funcIntAsync(int paramInt) override;
+    std::future<int> funcIntAsync(int paramInt, std::function<void(int)> callback = nullptr) override;
     /**
     * Remote call of ISimpleInterface::funcInt32 on the SimpleInterface service.
     * Uses funcInt32Async
@@ -155,7 +155,7 @@ public:
     /**
     * Remote call of ISimpleInterface::funcInt32 on the SimpleInterface service.
     */
-    std::future<int32_t> funcInt32Async(int32_t paramInt32) override;
+    std::future<int32_t> funcInt32Async(int32_t paramInt32, std::function<void(int32_t)> callback = nullptr) override;
     /**
     * Remote call of ISimpleInterface::funcInt64 on the SimpleInterface service.
     * Uses funcInt64Async
@@ -164,7 +164,7 @@ public:
     /**
     * Remote call of ISimpleInterface::funcInt64 on the SimpleInterface service.
     */
-    std::future<int64_t> funcInt64Async(int64_t paramInt64) override;
+    std::future<int64_t> funcInt64Async(int64_t paramInt64, std::function<void(int64_t)> callback = nullptr) override;
     /**
     * Remote call of ISimpleInterface::funcFloat on the SimpleInterface service.
     * Uses funcFloatAsync
@@ -173,7 +173,7 @@ public:
     /**
     * Remote call of ISimpleInterface::funcFloat on the SimpleInterface service.
     */
-    std::future<float> funcFloatAsync(float paramFloat) override;
+    std::future<float> funcFloatAsync(float paramFloat, std::function<void(float)> callback = nullptr) override;
     /**
     * Remote call of ISimpleInterface::funcFloat32 on the SimpleInterface service.
     * Uses funcFloat32Async
@@ -182,7 +182,7 @@ public:
     /**
     * Remote call of ISimpleInterface::funcFloat32 on the SimpleInterface service.
     */
-    std::future<float> funcFloat32Async(float paramFloat32) override;
+    std::future<float> funcFloat32Async(float paramFloat32, std::function<void(float)> callback = nullptr) override;
     /**
     * Remote call of ISimpleInterface::funcFloat64 on the SimpleInterface service.
     * Uses funcFloat64Async
@@ -191,7 +191,7 @@ public:
     /**
     * Remote call of ISimpleInterface::funcFloat64 on the SimpleInterface service.
     */
-    std::future<double> funcFloat64Async(double paramFloat) override;
+    std::future<double> funcFloat64Async(double paramFloat, std::function<void(double)> callback = nullptr) override;
     /**
     * Remote call of ISimpleInterface::funcString on the SimpleInterface service.
     * Uses funcStringAsync
@@ -200,7 +200,7 @@ public:
     /**
     * Remote call of ISimpleInterface::funcString on the SimpleInterface service.
     */
-    std::future<std::string> funcStringAsync(const std::string& paramString) override;
+    std::future<std::string> funcStringAsync(const std::string& paramString, std::function<void(std::string)> callback = nullptr) override;
 
     /** The publisher to subscribe to. */
     ISimpleInterfacePublisher& _getPublisher() const override;

@@ -32,7 +32,7 @@ public:
     * Asynchronous version of funcVoid()
     * @return Promise of type void which is set once the function has completed
     */
-    virtual std::future<void> funcVoidAsync() = 0;
+    virtual std::future<void> funcVoidAsync( std::function<void(void)> callback = nullptr) = 0;
 
 
     virtual bool funcBool(bool paramBool) = 0;
@@ -40,7 +40,7 @@ public:
     * Asynchronous version of funcBool(bool paramBool)
     * @return Promise of type bool which is set once the function has completed
     */
-    virtual std::future<bool> funcBoolAsync(bool paramBool) = 0;
+    virtual std::future<bool> funcBoolAsync(bool paramBool, std::function<void(bool)> callback = nullptr) = 0;
 
     /**
     * Access to a publisher, use it to subscribe for NoPropertiesInterface changes and signal emission.

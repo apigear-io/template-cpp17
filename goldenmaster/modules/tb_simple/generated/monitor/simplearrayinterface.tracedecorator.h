@@ -37,42 +37,42 @@ public:
     /** Traces funcBool and forwards call to SimpleArrayInterface implementation. */
     std::list<bool> funcBool(const std::list<bool>& paramBool) override;
     /** Traces funcBool and forwards call to SimpleArrayInterface implementation. */
-    std::future<std::list<bool>> funcBoolAsync(const std::list<bool>& paramBool) override;
+    std::future<std::list<bool>> funcBoolAsync(const std::list<bool>& paramBool, std::function<void(std::list<bool>)> callback = nullptr) override;
     
     /** Traces funcInt and forwards call to SimpleArrayInterface implementation. */
     std::list<int> funcInt(const std::list<int>& paramInt) override;
     /** Traces funcInt and forwards call to SimpleArrayInterface implementation. */
-    std::future<std::list<int>> funcIntAsync(const std::list<int>& paramInt) override;
+    std::future<std::list<int>> funcIntAsync(const std::list<int>& paramInt, std::function<void(std::list<int>)> callback = nullptr) override;
     
     /** Traces funcInt32 and forwards call to SimpleArrayInterface implementation. */
     std::list<int32_t> funcInt32(const std::list<int32_t>& paramInt32) override;
     /** Traces funcInt32 and forwards call to SimpleArrayInterface implementation. */
-    std::future<std::list<int32_t>> funcInt32Async(const std::list<int32_t>& paramInt32) override;
+    std::future<std::list<int32_t>> funcInt32Async(const std::list<int32_t>& paramInt32, std::function<void(std::list<int32_t>)> callback = nullptr) override;
     
     /** Traces funcInt64 and forwards call to SimpleArrayInterface implementation. */
     std::list<int64_t> funcInt64(const std::list<int64_t>& paramInt64) override;
     /** Traces funcInt64 and forwards call to SimpleArrayInterface implementation. */
-    std::future<std::list<int64_t>> funcInt64Async(const std::list<int64_t>& paramInt64) override;
+    std::future<std::list<int64_t>> funcInt64Async(const std::list<int64_t>& paramInt64, std::function<void(std::list<int64_t>)> callback = nullptr) override;
     
     /** Traces funcFloat and forwards call to SimpleArrayInterface implementation. */
     std::list<float> funcFloat(const std::list<float>& paramFloat) override;
     /** Traces funcFloat and forwards call to SimpleArrayInterface implementation. */
-    std::future<std::list<float>> funcFloatAsync(const std::list<float>& paramFloat) override;
+    std::future<std::list<float>> funcFloatAsync(const std::list<float>& paramFloat, std::function<void(std::list<float>)> callback = nullptr) override;
     
     /** Traces funcFloat32 and forwards call to SimpleArrayInterface implementation. */
     std::list<float> funcFloat32(const std::list<float>& paramFloat32) override;
     /** Traces funcFloat32 and forwards call to SimpleArrayInterface implementation. */
-    std::future<std::list<float>> funcFloat32Async(const std::list<float>& paramFloat32) override;
+    std::future<std::list<float>> funcFloat32Async(const std::list<float>& paramFloat32, std::function<void(std::list<float>)> callback = nullptr) override;
     
     /** Traces funcFloat64 and forwards call to SimpleArrayInterface implementation. */
     std::list<double> funcFloat64(const std::list<double>& paramFloat) override;
     /** Traces funcFloat64 and forwards call to SimpleArrayInterface implementation. */
-    std::future<std::list<double>> funcFloat64Async(const std::list<double>& paramFloat) override;
+    std::future<std::list<double>> funcFloat64Async(const std::list<double>& paramFloat, std::function<void(std::list<double>)> callback = nullptr) override;
     
     /** Traces funcString and forwards call to SimpleArrayInterface implementation. */
     std::list<std::string> funcString(const std::list<std::string>& paramString) override;
     /** Traces funcString and forwards call to SimpleArrayInterface implementation. */
-    std::future<std::list<std::string>> funcStringAsync(const std::list<std::string>& paramString) override;
+    std::future<std::list<std::string>> funcStringAsync(const std::list<std::string>& paramString, std::function<void(std::list<std::string>)> callback = nullptr) override;
     
     /** Forwards call to SimpleArrayInterface implementation. */
     void setPropBool(const std::list<bool>& propBool) override;

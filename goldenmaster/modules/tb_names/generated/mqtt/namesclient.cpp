@@ -180,24 +180,27 @@ void Nam_EsClient::sOME_FUNCTION(bool SOME_PARAM)
     sOME_FUNCTIONAsync(SOME_PARAM);
 }
 
-std::future<void> Nam_EsClient::sOME_FUNCTIONAsync(bool SOME_PARAM)
+std::future<void> Nam_EsClient::sOME_FUNCTIONAsync(bool SOME_PARAM, std::function<void(void)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     SOME_PARAM]()
         {
             std::promise<void> resultPromise;
             static const auto topic = std::string("tb.names/NamEs/rpc/SOME_FUNCTION");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise](ApiGear::MQTT::InvokeReplyArg arg) {
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
                 (void) arg;
                 resultPromise.set_value();
+                if (callback)
+                {
+                    callback();
+                }
             };
             auto responseId = registerResponseHandler(responseHandler);
-            m_client->invokeRemote(topic, responseTopic,
-                nlohmann::json::array({SOME_PARAM}).dump(), responseId);
+            m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({SOME_PARAM}).dump(), responseId);
             return resultPromise.get_future().get();
         }
     );
@@ -211,24 +214,27 @@ void Nam_EsClient::some_Function2(bool Some_Param)
     some_Function2Async(Some_Param);
 }
 
-std::future<void> Nam_EsClient::some_Function2Async(bool Some_Param)
+std::future<void> Nam_EsClient::some_Function2Async(bool Some_Param, std::function<void(void)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     Some_Param]()
         {
             std::promise<void> resultPromise;
             static const auto topic = std::string("tb.names/NamEs/rpc/Some_Function2");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise](ApiGear::MQTT::InvokeReplyArg arg) {
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
                 (void) arg;
                 resultPromise.set_value();
+                if (callback)
+                {
+                    callback();
+                }
             };
             auto responseId = registerResponseHandler(responseHandler);
-            m_client->invokeRemote(topic, responseTopic,
-                nlohmann::json::array({Some_Param}).dump(), responseId);
+            m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({Some_Param}).dump(), responseId);
             return resultPromise.get_future().get();
         }
     );

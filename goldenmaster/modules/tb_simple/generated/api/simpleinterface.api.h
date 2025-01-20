@@ -32,7 +32,7 @@ public:
     * Asynchronous version of funcNoReturnValue(bool paramBool)
     * @return Promise of type void which is set once the function has completed
     */
-    virtual std::future<void> funcNoReturnValueAsync(bool paramBool) = 0;
+    virtual std::future<void> funcNoReturnValueAsync(bool paramBool, std::function<void(void)> callback = nullptr) = 0;
 
 
     virtual bool funcBool(bool paramBool) = 0;
@@ -40,7 +40,7 @@ public:
     * Asynchronous version of funcBool(bool paramBool)
     * @return Promise of type bool which is set once the function has completed
     */
-    virtual std::future<bool> funcBoolAsync(bool paramBool) = 0;
+    virtual std::future<bool> funcBoolAsync(bool paramBool, std::function<void(bool)> callback = nullptr) = 0;
 
 
     virtual int funcInt(int paramInt) = 0;
@@ -48,7 +48,7 @@ public:
     * Asynchronous version of funcInt(int paramInt)
     * @return Promise of type int which is set once the function has completed
     */
-    virtual std::future<int> funcIntAsync(int paramInt) = 0;
+    virtual std::future<int> funcIntAsync(int paramInt, std::function<void(int)> callback = nullptr) = 0;
 
 
     virtual int32_t funcInt32(int32_t paramInt32) = 0;
@@ -56,7 +56,7 @@ public:
     * Asynchronous version of funcInt32(int32_t paramInt32)
     * @return Promise of type int32_t which is set once the function has completed
     */
-    virtual std::future<int32_t> funcInt32Async(int32_t paramInt32) = 0;
+    virtual std::future<int32_t> funcInt32Async(int32_t paramInt32, std::function<void(int32_t)> callback = nullptr) = 0;
 
 
     virtual int64_t funcInt64(int64_t paramInt64) = 0;
@@ -64,7 +64,7 @@ public:
     * Asynchronous version of funcInt64(int64_t paramInt64)
     * @return Promise of type int64_t which is set once the function has completed
     */
-    virtual std::future<int64_t> funcInt64Async(int64_t paramInt64) = 0;
+    virtual std::future<int64_t> funcInt64Async(int64_t paramInt64, std::function<void(int64_t)> callback = nullptr) = 0;
 
 
     virtual float funcFloat(float paramFloat) = 0;
@@ -72,7 +72,7 @@ public:
     * Asynchronous version of funcFloat(float paramFloat)
     * @return Promise of type float which is set once the function has completed
     */
-    virtual std::future<float> funcFloatAsync(float paramFloat) = 0;
+    virtual std::future<float> funcFloatAsync(float paramFloat, std::function<void(float)> callback = nullptr) = 0;
 
 
     virtual float funcFloat32(float paramFloat32) = 0;
@@ -80,7 +80,7 @@ public:
     * Asynchronous version of funcFloat32(float paramFloat32)
     * @return Promise of type float which is set once the function has completed
     */
-    virtual std::future<float> funcFloat32Async(float paramFloat32) = 0;
+    virtual std::future<float> funcFloat32Async(float paramFloat32, std::function<void(float)> callback = nullptr) = 0;
 
 
     virtual double funcFloat64(double paramFloat) = 0;
@@ -88,7 +88,7 @@ public:
     * Asynchronous version of funcFloat64(double paramFloat)
     * @return Promise of type double which is set once the function has completed
     */
-    virtual std::future<double> funcFloat64Async(double paramFloat) = 0;
+    virtual std::future<double> funcFloat64Async(double paramFloat, std::function<void(double)> callback = nullptr) = 0;
 
 
     virtual std::string funcString(const std::string& paramString) = 0;
@@ -96,7 +96,7 @@ public:
     * Asynchronous version of funcString(const std::string& paramString)
     * @return Promise of type std::string which is set once the function has completed
     */
-    virtual std::future<std::string> funcStringAsync(const std::string& paramString) = 0;
+    virtual std::future<std::string> funcStringAsync(const std::string& paramString, std::function<void(std::string)> callback = nullptr) = 0;
 
     /**
     * Sets the value of the propBool property.

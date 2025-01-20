@@ -72,12 +72,15 @@ void NamEs::sOME_FUNCTION(bool SOME_PARAM)
     // do business logic here
 }
 
-std::future<void> NamEs::sOME_FUNCTIONAsync(bool SOME_PARAM)
+std::future<void> NamEs::sOME_FUNCTIONAsync(bool SOME_PARAM, std::function<void(void)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     SOME_PARAM]()
-        {
-            return sOME_FUNCTION(SOME_PARAM);
+        {sOME_FUNCTION(SOME_PARAM);
+            if (callback)
+            {
+                callback();
+            }
         }
     );
 }
@@ -88,12 +91,15 @@ void NamEs::some_Function2(bool Some_Param)
     // do business logic here
 }
 
-std::future<void> NamEs::some_Function2Async(bool Some_Param)
+std::future<void> NamEs::some_Function2Async(bool Some_Param, std::function<void(void)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     Some_Param]()
-        {
-            return some_Function2(Some_Param);
+        {some_Function2(Some_Param);
+            if (callback)
+            {
+                callback();
+            }
         }
     );
 }

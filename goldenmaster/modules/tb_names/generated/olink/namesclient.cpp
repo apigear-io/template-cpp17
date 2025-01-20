@@ -172,7 +172,7 @@ void Nam_EsClient::sOME_FUNCTION(bool SOME_PARAM)
     return sOME_FUNCTIONAsync(SOME_PARAM).get();
 }
 
-std::future<void> Nam_EsClient::sOME_FUNCTIONAsync(bool SOME_PARAM)
+std::future<void> Nam_EsClient::sOME_FUNCTIONAsync(bool SOME_PARAM, std::function<void(void)> callback)
 {
     if(!m_node) {
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
@@ -181,9 +181,13 @@ std::future<void> Nam_EsClient::sOME_FUNCTIONAsync(bool SOME_PARAM)
     std::shared_ptr<std::promise<void>> resultPromise = std::make_shared<std::promise<void>>();
     static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "SOME_FUNCTION");
     m_node->invokeRemote(operationId,
-        nlohmann::json::array({SOME_PARAM}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+        nlohmann::json::array({SOME_PARAM}), [resultPromise, callback](ApiGear::ObjectLink::InvokeReplyArg arg) {
             (void) arg;
             resultPromise->set_value();
+            if (callback)
+            {
+                callback();
+            }
         });
     return resultPromise->get_future();
 }
@@ -193,7 +197,7 @@ void Nam_EsClient::some_Function2(bool Some_Param)
     return some_Function2Async(Some_Param).get();
 }
 
-std::future<void> Nam_EsClient::some_Function2Async(bool Some_Param)
+std::future<void> Nam_EsClient::some_Function2Async(bool Some_Param, std::function<void(void)> callback)
 {
     if(!m_node) {
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
@@ -202,9 +206,13 @@ std::future<void> Nam_EsClient::some_Function2Async(bool Some_Param)
     std::shared_ptr<std::promise<void>> resultPromise = std::make_shared<std::promise<void>>();
     static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "Some_Function2");
     m_node->invokeRemote(operationId,
-        nlohmann::json::array({Some_Param}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+        nlohmann::json::array({Some_Param}), [resultPromise, callback](ApiGear::ObjectLink::InvokeReplyArg arg) {
             (void) arg;
             resultPromise->set_value();
+            if (callback)
+            {
+                callback();
+            }
         });
     return resultPromise->get_future();
 }

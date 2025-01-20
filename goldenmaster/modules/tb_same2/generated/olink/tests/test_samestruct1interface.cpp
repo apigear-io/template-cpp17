@@ -104,6 +104,18 @@ TEST_CASE("olink  tb.same2 SameStruct1Interface tests")
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
 
+    SECTION("Test method func1 async with a callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSameStruct1Interface->func1Async(TbSame2::Struct1(),[&finished, &m_wait](Struct1 value){ (void) value;finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+         
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == TbSame2::Struct1()); 
+        
+    }
     clientNode->unlinkRemote(clientSameStruct1Interface->olinkObjectName());
     remote_registry.removeSource(serviceSameStruct1Interface->olinkObjectName());
     client_registry.removeSink(clientSameStruct1Interface->olinkObjectName());

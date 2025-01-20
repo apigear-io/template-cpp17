@@ -237,26 +237,34 @@ std::list<StructBool> StructArrayInterfaceClient::funcBool(const std::list<Struc
     return value;
 }
 
-std::future<std::list<StructBool>> StructArrayInterfaceClient::funcBoolAsync(const std::list<StructBool>& paramBool)
+std::future<std::list<StructBool>> StructArrayInterfaceClient::funcBoolAsync(const std::list<StructBool>& paramBool, std::function<void(std::list<StructBool>)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("testbed1.StructArrayInterface.rpc.funcBool");
 
-    return std::async(std::launch::async, [this,paramBool]()
+    return std::async(std::launch::async, [this, user_callback,paramBool]()
     {
         std::promise<std::list<StructBool>> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(std::list<StructBool>());
+                if (user_callback)
+                {
+                    user_callback(std::list<StructBool>());
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const std::list<StructBool> value = field.get<std::list<StructBool>>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({paramBool}).dump(), callback);
@@ -273,26 +281,34 @@ std::list<StructInt> StructArrayInterfaceClient::funcInt(const std::list<StructI
     return value;
 }
 
-std::future<std::list<StructInt>> StructArrayInterfaceClient::funcIntAsync(const std::list<StructInt>& paramInt)
+std::future<std::list<StructInt>> StructArrayInterfaceClient::funcIntAsync(const std::list<StructInt>& paramInt, std::function<void(std::list<StructInt>)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("testbed1.StructArrayInterface.rpc.funcInt");
 
-    return std::async(std::launch::async, [this,paramInt]()
+    return std::async(std::launch::async, [this, user_callback,paramInt]()
     {
         std::promise<std::list<StructInt>> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(std::list<StructInt>());
+                if (user_callback)
+                {
+                    user_callback(std::list<StructInt>());
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const std::list<StructInt> value = field.get<std::list<StructInt>>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({paramInt}).dump(), callback);
@@ -309,26 +325,34 @@ std::list<StructFloat> StructArrayInterfaceClient::funcFloat(const std::list<Str
     return value;
 }
 
-std::future<std::list<StructFloat>> StructArrayInterfaceClient::funcFloatAsync(const std::list<StructFloat>& paramFloat)
+std::future<std::list<StructFloat>> StructArrayInterfaceClient::funcFloatAsync(const std::list<StructFloat>& paramFloat, std::function<void(std::list<StructFloat>)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("testbed1.StructArrayInterface.rpc.funcFloat");
 
-    return std::async(std::launch::async, [this,paramFloat]()
+    return std::async(std::launch::async, [this, user_callback,paramFloat]()
     {
         std::promise<std::list<StructFloat>> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(std::list<StructFloat>());
+                if (user_callback)
+                {
+                    user_callback(std::list<StructFloat>());
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const std::list<StructFloat> value = field.get<std::list<StructFloat>>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({paramFloat}).dump(), callback);
@@ -345,26 +369,34 @@ std::list<StructString> StructArrayInterfaceClient::funcString(const std::list<S
     return value;
 }
 
-std::future<std::list<StructString>> StructArrayInterfaceClient::funcStringAsync(const std::list<StructString>& paramString)
+std::future<std::list<StructString>> StructArrayInterfaceClient::funcStringAsync(const std::list<StructString>& paramString, std::function<void(std::list<StructString>)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("testbed1.StructArrayInterface.rpc.funcString");
 
-    return std::async(std::launch::async, [this,paramString]()
+    return std::async(std::launch::async, [this, user_callback,paramString]()
     {
         std::promise<std::list<StructString>> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(std::list<StructString>());
+                if (user_callback)
+                {
+                    user_callback(std::list<StructString>());
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const std::list<StructString> value = field.get<std::list<StructString>>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({paramString}).dump(), callback);

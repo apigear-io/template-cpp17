@@ -12,36 +12,36 @@ Eigen::Vector3f CounterThreadSafeDecorator::increment(const Eigen::Vector3f& vec
     return m_impl->increment(vec);
 }
 
-std::future<Eigen::Vector3f> CounterThreadSafeDecorator::incrementAsync(const Eigen::Vector3f& vec)
+std::future<Eigen::Vector3f> CounterThreadSafeDecorator::incrementAsync(const Eigen::Vector3f& vec, std::function<void(Eigen::Vector3f)> callback)
 {
-    return m_impl->incrementAsync(vec);
+    return m_impl->incrementAsync(vec, callback);
 }
 std::list<Eigen::Vector3f> CounterThreadSafeDecorator::incrementArray(const std::list<Eigen::Vector3f>& vec)
 {
     return m_impl->incrementArray(vec);
 }
 
-std::future<std::list<Eigen::Vector3f>> CounterThreadSafeDecorator::incrementArrayAsync(const std::list<Eigen::Vector3f>& vec)
+std::future<std::list<Eigen::Vector3f>> CounterThreadSafeDecorator::incrementArrayAsync(const std::list<Eigen::Vector3f>& vec, std::function<void(std::list<Eigen::Vector3f>)> callback)
 {
-    return m_impl->incrementArrayAsync(vec);
+    return m_impl->incrementArrayAsync(vec, callback);
 }
 Test::CustomTypes::Vector3D CounterThreadSafeDecorator::decrement(const Test::CustomTypes::Vector3D& vec)
 {
     return m_impl->decrement(vec);
 }
 
-std::future<Test::CustomTypes::Vector3D> CounterThreadSafeDecorator::decrementAsync(const Test::CustomTypes::Vector3D& vec)
+std::future<Test::CustomTypes::Vector3D> CounterThreadSafeDecorator::decrementAsync(const Test::CustomTypes::Vector3D& vec, std::function<void(Test::CustomTypes::Vector3D)> callback)
 {
-    return m_impl->decrementAsync(vec);
+    return m_impl->decrementAsync(vec, callback);
 }
 std::list<Test::CustomTypes::Vector3D> CounterThreadSafeDecorator::decrementArray(const std::list<Test::CustomTypes::Vector3D>& vec)
 {
     return m_impl->decrementArray(vec);
 }
 
-std::future<std::list<Test::CustomTypes::Vector3D>> CounterThreadSafeDecorator::decrementArrayAsync(const std::list<Test::CustomTypes::Vector3D>& vec)
+std::future<std::list<Test::CustomTypes::Vector3D>> CounterThreadSafeDecorator::decrementArrayAsync(const std::list<Test::CustomTypes::Vector3D>& vec, std::function<void(std::list<Test::CustomTypes::Vector3D>)> callback)
 {
-    return m_impl->decrementArrayAsync(vec);
+    return m_impl->decrementArrayAsync(vec, callback);
 }
 void CounterThreadSafeDecorator::setVector(const Test::CustomTypes::Vector3D& vector)
 {

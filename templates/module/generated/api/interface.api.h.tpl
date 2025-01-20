@@ -66,7 +66,7 @@ public:
 {{- end }}   {{- /* end range operation params */}}
     * @return Promise of type {{cppReturn "" $operation.Return}} which is set once the function has completed
     */
-    virtual std::future<{{cppReturn "" $operation.Return}}> {{lower1 $operation.Name }}Async({{cppParams "" $operation.Params}}) = 0;
+    virtual std::future<{{cppReturn "" $operation.Return}}> {{lower1 $operation.Name }}Async({{cppParams "" $operation.Params}} {{- if len ($operation.Params) }},{{end}} std::function<void({{cppReturn "" $operation.Return}})> callback = nullptr) = 0;
 {{ end }}   {{- /* end range operations */}}
 
 {{- range .Interface.Properties }}

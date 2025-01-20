@@ -73,12 +73,15 @@ int ManyParamInterface::func1(int param1)
     return 0;
 }
 
-std::future<int> ManyParamInterface::func1Async(int param1)
+std::future<int> ManyParamInterface::func1Async(int param1, std::function<void(int)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     param1]()
-        {
-            return func1(param1);
+        {auto result = func1(param1);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }
@@ -91,13 +94,16 @@ int ManyParamInterface::func2(int param1, int param2)
     return 0;
 }
 
-std::future<int> ManyParamInterface::func2Async(int param1, int param2)
+std::future<int> ManyParamInterface::func2Async(int param1, int param2, std::function<void(int)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     param1,
                     param2]()
-        {
-            return func2(param1, param2);
+        {auto result = func2(param1, param2);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }
@@ -111,14 +117,17 @@ int ManyParamInterface::func3(int param1, int param2, int param3)
     return 0;
 }
 
-std::future<int> ManyParamInterface::func3Async(int param1, int param2, int param3)
+std::future<int> ManyParamInterface::func3Async(int param1, int param2, int param3, std::function<void(int)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     param1,
                     param2,
                     param3]()
-        {
-            return func3(param1, param2, param3);
+        {auto result = func3(param1, param2, param3);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }
@@ -133,15 +142,18 @@ int ManyParamInterface::func4(int param1, int param2, int param3, int param4)
     return 0;
 }
 
-std::future<int> ManyParamInterface::func4Async(int param1, int param2, int param3, int param4)
+std::future<int> ManyParamInterface::func4Async(int param1, int param2, int param3, int param4, std::function<void(int)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     param1,
                     param2,
                     param3,
                     param4]()
-        {
-            return func4(param1, param2, param3, param4);
+        {auto result = func4(param1, param2, param3, param4);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }

@@ -11,17 +11,69 @@ TEST_CASE("Testing EnumInterface", "[EnumInterface]"){
         // Do implement test here
         testEnumInterface->func0(Enum0Enum::value0);
     }
+
+    SECTION("Test operation async func0") {
+        // Do implement test here
+
+        auto future = testEnumInterface->func0Async(Enum0Enum::value0);
+    }
+
+    SECTION("Test operation async func0 with a callback") {
+        // Do implement test here
+
+        auto future = testEnumInterface->func0Async(Enum0Enum::value0,[](Enum0Enum value){ (void)value; /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
+    }
     SECTION("Test operation func1") {
         // Do implement test here
         testEnumInterface->func1(Enum1Enum::value1);
+    }
+
+    SECTION("Test operation async func1") {
+        // Do implement test here
+
+        auto future = testEnumInterface->func1Async(Enum1Enum::value1);
+    }
+
+    SECTION("Test operation async func1 with a callback") {
+        // Do implement test here
+
+        auto future = testEnumInterface->func1Async(Enum1Enum::value1,[](Enum1Enum value){ (void)value; /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
     }
     SECTION("Test operation func2") {
         // Do implement test here
         testEnumInterface->func2(Enum2Enum::value2);
     }
+
+    SECTION("Test operation async func2") {
+        // Do implement test here
+
+        auto future = testEnumInterface->func2Async(Enum2Enum::value2);
+    }
+
+    SECTION("Test operation async func2 with a callback") {
+        // Do implement test here
+
+        auto future = testEnumInterface->func2Async(Enum2Enum::value2,[](Enum2Enum value){ (void)value; /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
+    }
     SECTION("Test operation func3") {
         // Do implement test here
         testEnumInterface->func3(Enum3Enum::value3);
+    }
+
+    SECTION("Test operation async func3") {
+        // Do implement test here
+
+        auto future = testEnumInterface->func3Async(Enum3Enum::value3);
+    }
+
+    SECTION("Test operation async func3 with a callback") {
+        // Do implement test here
+
+        auto future = testEnumInterface->func3Async(Enum3Enum::value3,[](Enum3Enum value){ (void)value; /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
     }
     SECTION("Test property prop0") {
         // Do implement test here
