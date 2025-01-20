@@ -47,7 +47,7 @@ public:
     /**
     * Remote call of IVoidInterface::funcVoid on the VoidInterface service.
     */
-    std::future<void> funcVoidAsync() override;
+    std::future<void> funcVoidAsync( std::function<void(void)> callback = nullptr) override;
 
     /** The publisher to subscribe to. */
     IVoidInterfacePublisher& _getPublisher() const override;

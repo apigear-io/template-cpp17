@@ -88,7 +88,7 @@ public:
     /**
     * Remote call of IStructInterface::funcBool on the StructInterface service.
     */
-    std::future<StructBool> funcBoolAsync(const StructBool& paramBool) override;
+    std::future<StructBool> funcBoolAsync(const StructBool& paramBool, std::function<void(StructBool)> callback = nullptr) override;
     /**
     * Remote call of IStructInterface::funcInt on the StructInterface service.
     * Uses funcIntAsync
@@ -97,7 +97,7 @@ public:
     /**
     * Remote call of IStructInterface::funcInt on the StructInterface service.
     */
-    std::future<StructInt> funcIntAsync(const StructInt& paramInt) override;
+    std::future<StructInt> funcIntAsync(const StructInt& paramInt, std::function<void(StructInt)> callback = nullptr) override;
     /**
     * Remote call of IStructInterface::funcFloat on the StructInterface service.
     * Uses funcFloatAsync
@@ -106,7 +106,7 @@ public:
     /**
     * Remote call of IStructInterface::funcFloat on the StructInterface service.
     */
-    std::future<StructFloat> funcFloatAsync(const StructFloat& paramFloat) override;
+    std::future<StructFloat> funcFloatAsync(const StructFloat& paramFloat, std::function<void(StructFloat)> callback = nullptr) override;
     /**
     * Remote call of IStructInterface::funcString on the StructInterface service.
     * Uses funcStringAsync
@@ -115,7 +115,7 @@ public:
     /**
     * Remote call of IStructInterface::funcString on the StructInterface service.
     */
-    std::future<StructString> funcStringAsync(const StructString& paramString) override;
+    std::future<StructString> funcStringAsync(const StructString& paramString, std::function<void(StructString)> callback = nullptr) override;
 
     /** The publisher to subscribe to. */
     IStructInterfacePublisher& _getPublisher() const override;

@@ -45,7 +45,7 @@ public:
     * Forwards call to NoPropertiesInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<void> funcVoidAsync() override;
+    std::future<void> funcVoidAsync( std::function<void(void)> callback = nullptr) override;
 
     /** 
     * Forwards call to NoPropertiesInterface implementation.
@@ -56,7 +56,7 @@ public:
     * Forwards call to NoPropertiesInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<bool> funcBoolAsync(bool paramBool) override;
+    std::future<bool> funcBoolAsync(bool paramBool, std::function<void(bool)> callback = nullptr) override;
 
     /**
     * Access to a publisher, use it to subscribe for NoPropertiesInterface changes and signal emission.

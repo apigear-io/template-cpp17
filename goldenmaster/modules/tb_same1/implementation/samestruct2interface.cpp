@@ -47,12 +47,15 @@ Struct1 SameStruct2Interface::func1(const Struct1& param1)
     return Struct1();
 }
 
-std::future<Struct1> SameStruct2Interface::func1Async(const Struct1& param1)
+std::future<Struct1> SameStruct2Interface::func1Async(const Struct1& param1, std::function<void(Struct1)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     param1]()
-        {
-            return func1(param1);
+        {auto result = func1(param1);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }
@@ -65,13 +68,16 @@ Struct1 SameStruct2Interface::func2(const Struct1& param1, const Struct2& param2
     return Struct1();
 }
 
-std::future<Struct1> SameStruct2Interface::func2Async(const Struct1& param1, const Struct2& param2)
+std::future<Struct1> SameStruct2Interface::func2Async(const Struct1& param1, const Struct2& param2, std::function<void(Struct1)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     param1,
                     param2]()
-        {
-            return func2(param1, param2);
+        {auto result = func2(param1, param2);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }

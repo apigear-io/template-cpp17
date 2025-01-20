@@ -24,7 +24,7 @@ public:
     const Struct1& getProp1() const override;
     void setProp1(const Struct1& prop1) override;
     Struct1 func1(const Struct1& param1) override;
-    std::future<Struct1> func1Async(const Struct1& param1) override;
+    std::future<Struct1> func1Async(const Struct1& param1, std::function<void(Struct1)> callback = nullptr) override;
     ISameStruct1InterfacePublisher& _getPublisher() const override;
 private:
     std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;

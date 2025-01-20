@@ -37,47 +37,47 @@ public:
     /** Traces funcNoReturnValue and forwards call to SimpleInterface implementation. */
     void funcNoReturnValue(bool paramBool) override;
     /** Traces funcNoReturnValue and forwards call to SimpleInterface implementation. */
-    std::future<void> funcNoReturnValueAsync(bool paramBool) override;
+    std::future<void> funcNoReturnValueAsync(bool paramBool, std::function<void(void)> callback = nullptr) override;
     
     /** Traces funcBool and forwards call to SimpleInterface implementation. */
     bool funcBool(bool paramBool) override;
     /** Traces funcBool and forwards call to SimpleInterface implementation. */
-    std::future<bool> funcBoolAsync(bool paramBool) override;
+    std::future<bool> funcBoolAsync(bool paramBool, std::function<void(bool)> callback = nullptr) override;
     
     /** Traces funcInt and forwards call to SimpleInterface implementation. */
     int funcInt(int paramInt) override;
     /** Traces funcInt and forwards call to SimpleInterface implementation. */
-    std::future<int> funcIntAsync(int paramInt) override;
+    std::future<int> funcIntAsync(int paramInt, std::function<void(int)> callback = nullptr) override;
     
     /** Traces funcInt32 and forwards call to SimpleInterface implementation. */
     int32_t funcInt32(int32_t paramInt32) override;
     /** Traces funcInt32 and forwards call to SimpleInterface implementation. */
-    std::future<int32_t> funcInt32Async(int32_t paramInt32) override;
+    std::future<int32_t> funcInt32Async(int32_t paramInt32, std::function<void(int32_t)> callback = nullptr) override;
     
     /** Traces funcInt64 and forwards call to SimpleInterface implementation. */
     int64_t funcInt64(int64_t paramInt64) override;
     /** Traces funcInt64 and forwards call to SimpleInterface implementation. */
-    std::future<int64_t> funcInt64Async(int64_t paramInt64) override;
+    std::future<int64_t> funcInt64Async(int64_t paramInt64, std::function<void(int64_t)> callback = nullptr) override;
     
     /** Traces funcFloat and forwards call to SimpleInterface implementation. */
     float funcFloat(float paramFloat) override;
     /** Traces funcFloat and forwards call to SimpleInterface implementation. */
-    std::future<float> funcFloatAsync(float paramFloat) override;
+    std::future<float> funcFloatAsync(float paramFloat, std::function<void(float)> callback = nullptr) override;
     
     /** Traces funcFloat32 and forwards call to SimpleInterface implementation. */
     float funcFloat32(float paramFloat32) override;
     /** Traces funcFloat32 and forwards call to SimpleInterface implementation. */
-    std::future<float> funcFloat32Async(float paramFloat32) override;
+    std::future<float> funcFloat32Async(float paramFloat32, std::function<void(float)> callback = nullptr) override;
     
     /** Traces funcFloat64 and forwards call to SimpleInterface implementation. */
     double funcFloat64(double paramFloat) override;
     /** Traces funcFloat64 and forwards call to SimpleInterface implementation. */
-    std::future<double> funcFloat64Async(double paramFloat) override;
+    std::future<double> funcFloat64Async(double paramFloat, std::function<void(double)> callback = nullptr) override;
     
     /** Traces funcString and forwards call to SimpleInterface implementation. */
     std::string funcString(const std::string& paramString) override;
     /** Traces funcString and forwards call to SimpleInterface implementation. */
-    std::future<std::string> funcStringAsync(const std::string& paramString) override;
+    std::future<std::string> funcStringAsync(const std::string& paramString, std::function<void(std::string)> callback = nullptr) override;
     
     /** Forwards call to SimpleInterface implementation. */
     void setPropBool(bool propBool) override;

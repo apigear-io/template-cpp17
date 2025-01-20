@@ -37,17 +37,17 @@ public:
     /** Traces func1 and forwards call to NestedStruct3Interface implementation. */
     NestedStruct1 func1(const NestedStruct1& param1) override;
     /** Traces func1 and forwards call to NestedStruct3Interface implementation. */
-    std::future<NestedStruct1> func1Async(const NestedStruct1& param1) override;
+    std::future<NestedStruct1> func1Async(const NestedStruct1& param1, std::function<void(NestedStruct1)> callback = nullptr) override;
     
     /** Traces func2 and forwards call to NestedStruct3Interface implementation. */
     NestedStruct1 func2(const NestedStruct1& param1, const NestedStruct2& param2) override;
     /** Traces func2 and forwards call to NestedStruct3Interface implementation. */
-    std::future<NestedStruct1> func2Async(const NestedStruct1& param1, const NestedStruct2& param2) override;
+    std::future<NestedStruct1> func2Async(const NestedStruct1& param1, const NestedStruct2& param2, std::function<void(NestedStruct1)> callback = nullptr) override;
     
     /** Traces func3 and forwards call to NestedStruct3Interface implementation. */
     NestedStruct1 func3(const NestedStruct1& param1, const NestedStruct2& param2, const NestedStruct3& param3) override;
     /** Traces func3 and forwards call to NestedStruct3Interface implementation. */
-    std::future<NestedStruct1> func3Async(const NestedStruct1& param1, const NestedStruct2& param2, const NestedStruct3& param3) override;
+    std::future<NestedStruct1> func3Async(const NestedStruct1& param1, const NestedStruct2& param2, const NestedStruct3& param3, std::function<void(NestedStruct1)> callback = nullptr) override;
     
     /** Forwards call to NestedStruct3Interface implementation. */
     void setProp1(const NestedStruct1& prop1) override;

@@ -26,9 +26,9 @@ public:
     Enum2Enum getProp2() const override;
     void setProp2(Enum2Enum prop2) override;
     Enum1Enum func1(Enum1Enum param1) override;
-    std::future<Enum1Enum> func1Async(Enum1Enum param1) override;
+    std::future<Enum1Enum> func1Async(Enum1Enum param1, std::function<void(Enum1Enum)> callback = nullptr) override;
     Enum1Enum func2(Enum1Enum param1, Enum2Enum param2) override;
-    std::future<Enum1Enum> func2Async(Enum1Enum param1, Enum2Enum param2) override;
+    std::future<Enum1Enum> func2Async(Enum1Enum param1, Enum2Enum param2, std::function<void(Enum1Enum)> callback = nullptr) override;
     ISameEnum2InterfacePublisher& _getPublisher() const override;
 private:
     std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;

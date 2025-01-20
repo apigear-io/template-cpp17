@@ -12,9 +12,9 @@ void VoidInterfaceThreadSafeDecorator::funcVoid()
     return m_impl->funcVoid();
 }
 
-std::future<void> VoidInterfaceThreadSafeDecorator::funcVoidAsync()
+std::future<void> VoidInterfaceThreadSafeDecorator::funcVoidAsync( std::function<void(void)> callback)
 {
-    return m_impl->funcVoidAsync();
+    return m_impl->funcVoidAsync( callback);
 }
 
 IVoidInterfacePublisher& VoidInterfaceThreadSafeDecorator::_getPublisher() const

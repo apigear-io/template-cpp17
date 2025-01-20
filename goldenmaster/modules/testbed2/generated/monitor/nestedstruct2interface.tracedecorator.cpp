@@ -24,20 +24,20 @@ NestedStruct1 NestedStruct2InterfaceTraceDecorator::func1(const NestedStruct1& p
     m_tracer->trace_func1(param1);
     return m_impl.func1(param1);
 }
-std::future<NestedStruct1> NestedStruct2InterfaceTraceDecorator::func1Async(const NestedStruct1& param1)
+std::future<NestedStruct1> NestedStruct2InterfaceTraceDecorator::func1Async(const NestedStruct1& param1, std::function<void(NestedStruct1)> callback)
 {
     m_tracer->trace_func1(param1);
-    return m_impl.func1Async(param1);
+    return m_impl.func1Async(param1, callback);
 }
 NestedStruct1 NestedStruct2InterfaceTraceDecorator::func2(const NestedStruct1& param1, const NestedStruct2& param2)
 {
     m_tracer->trace_func2(param1, param2);
     return m_impl.func2(param1, param2);
 }
-std::future<NestedStruct1> NestedStruct2InterfaceTraceDecorator::func2Async(const NestedStruct1& param1, const NestedStruct2& param2)
+std::future<NestedStruct1> NestedStruct2InterfaceTraceDecorator::func2Async(const NestedStruct1& param1, const NestedStruct2& param2, std::function<void(NestedStruct1)> callback)
 {
     m_tracer->trace_func2(param1, param2);
-    return m_impl.func2Async(param1, param2);
+    return m_impl.func2Async(param1, param2, callback);
 }
 void NestedStruct2InterfaceTraceDecorator::setProp1(const NestedStruct1& prop1)
 {

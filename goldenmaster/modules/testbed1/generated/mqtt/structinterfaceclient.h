@@ -23,13 +23,13 @@ public:
     const StructString& getPropString() const override;
     void setPropString(const StructString& propString) override;
     StructBool funcBool(const StructBool& paramBool) override;
-    std::future<StructBool> funcBoolAsync(const StructBool& paramBool) override;
+    std::future<StructBool> funcBoolAsync(const StructBool& paramBool, std::function<void(StructBool)> callback = nullptr) override;
     StructInt funcInt(const StructInt& paramInt) override;
-    std::future<StructInt> funcIntAsync(const StructInt& paramInt) override;
+    std::future<StructInt> funcIntAsync(const StructInt& paramInt, std::function<void(StructInt)> callback = nullptr) override;
     StructFloat funcFloat(const StructFloat& paramFloat) override;
-    std::future<StructFloat> funcFloatAsync(const StructFloat& paramFloat) override;
+    std::future<StructFloat> funcFloatAsync(const StructFloat& paramFloat, std::function<void(StructFloat)> callback = nullptr) override;
     StructString funcString(const StructString& paramString) override;
-    std::future<StructString> funcStringAsync(const StructString& paramString) override;
+    std::future<StructString> funcStringAsync(const StructString& paramString, std::function<void(StructString)> callback = nullptr) override;
     IStructInterfacePublisher& _getPublisher() const override;
 
     bool isReady() const;

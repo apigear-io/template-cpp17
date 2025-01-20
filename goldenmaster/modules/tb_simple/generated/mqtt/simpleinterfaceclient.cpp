@@ -316,24 +316,27 @@ void SimpleInterfaceClient::funcNoReturnValue(bool paramBool)
     funcNoReturnValueAsync(paramBool);
 }
 
-std::future<void> SimpleInterfaceClient::funcNoReturnValueAsync(bool paramBool)
+std::future<void> SimpleInterfaceClient::funcNoReturnValueAsync(bool paramBool, std::function<void(void)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramBool]()
         {
             std::promise<void> resultPromise;
             static const auto topic = std::string("tb.simple/SimpleInterface/rpc/funcNoReturnValue");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise](ApiGear::MQTT::InvokeReplyArg arg) {
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
                 (void) arg;
                 resultPromise.set_value();
+                if (callback)
+                {
+                    callback();
+                }
             };
             auto responseId = registerResponseHandler(responseHandler);
-            m_client->invokeRemote(topic, responseTopic,
-                nlohmann::json::array({paramBool}).dump(), responseId);
+            m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({paramBool}).dump(), responseId);
             return resultPromise.get_future().get();
         }
     );
@@ -348,24 +351,27 @@ bool SimpleInterfaceClient::funcBool(bool paramBool)
     return value;
 }
 
-std::future<bool> SimpleInterfaceClient::funcBoolAsync(bool paramBool)
+std::future<bool> SimpleInterfaceClient::funcBoolAsync(bool paramBool, std::function<void(bool)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramBool]()
         {
             std::promise<bool> resultPromise;
             static const auto topic = std::string("tb.simple/SimpleInterface/rpc/funcBool");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise](ApiGear::MQTT::InvokeReplyArg arg) {
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
                 const bool& value = arg.value.get<bool>();
                 resultPromise.set_value(value);
+                if (callback)
+                {
+                    callback(value);
+                }
             };
             auto responseId = registerResponseHandler(responseHandler);
-            m_client->invokeRemote(topic, responseTopic,
-                nlohmann::json::array({paramBool}).dump(), responseId);
+            m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({paramBool}).dump(), responseId);
             return resultPromise.get_future().get();
         }
     );
@@ -380,24 +386,27 @@ int SimpleInterfaceClient::funcInt(int paramInt)
     return value;
 }
 
-std::future<int> SimpleInterfaceClient::funcIntAsync(int paramInt)
+std::future<int> SimpleInterfaceClient::funcIntAsync(int paramInt, std::function<void(int)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramInt]()
         {
             std::promise<int> resultPromise;
             static const auto topic = std::string("tb.simple/SimpleInterface/rpc/funcInt");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise](ApiGear::MQTT::InvokeReplyArg arg) {
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
                 const int& value = arg.value.get<int>();
                 resultPromise.set_value(value);
+                if (callback)
+                {
+                    callback(value);
+                }
             };
             auto responseId = registerResponseHandler(responseHandler);
-            m_client->invokeRemote(topic, responseTopic,
-                nlohmann::json::array({paramInt}).dump(), responseId);
+            m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({paramInt}).dump(), responseId);
             return resultPromise.get_future().get();
         }
     );
@@ -412,24 +421,27 @@ int32_t SimpleInterfaceClient::funcInt32(int32_t paramInt32)
     return value;
 }
 
-std::future<int32_t> SimpleInterfaceClient::funcInt32Async(int32_t paramInt32)
+std::future<int32_t> SimpleInterfaceClient::funcInt32Async(int32_t paramInt32, std::function<void(int32_t)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramInt32]()
         {
             std::promise<int32_t> resultPromise;
             static const auto topic = std::string("tb.simple/SimpleInterface/rpc/funcInt32");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise](ApiGear::MQTT::InvokeReplyArg arg) {
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
                 const int32_t& value = arg.value.get<int32_t>();
                 resultPromise.set_value(value);
+                if (callback)
+                {
+                    callback(value);
+                }
             };
             auto responseId = registerResponseHandler(responseHandler);
-            m_client->invokeRemote(topic, responseTopic,
-                nlohmann::json::array({paramInt32}).dump(), responseId);
+            m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({paramInt32}).dump(), responseId);
             return resultPromise.get_future().get();
         }
     );
@@ -444,24 +456,27 @@ int64_t SimpleInterfaceClient::funcInt64(int64_t paramInt64)
     return value;
 }
 
-std::future<int64_t> SimpleInterfaceClient::funcInt64Async(int64_t paramInt64)
+std::future<int64_t> SimpleInterfaceClient::funcInt64Async(int64_t paramInt64, std::function<void(int64_t)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramInt64]()
         {
             std::promise<int64_t> resultPromise;
             static const auto topic = std::string("tb.simple/SimpleInterface/rpc/funcInt64");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise](ApiGear::MQTT::InvokeReplyArg arg) {
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
                 const int64_t& value = arg.value.get<int64_t>();
                 resultPromise.set_value(value);
+                if (callback)
+                {
+                    callback(value);
+                }
             };
             auto responseId = registerResponseHandler(responseHandler);
-            m_client->invokeRemote(topic, responseTopic,
-                nlohmann::json::array({paramInt64}).dump(), responseId);
+            m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({paramInt64}).dump(), responseId);
             return resultPromise.get_future().get();
         }
     );
@@ -476,24 +491,27 @@ float SimpleInterfaceClient::funcFloat(float paramFloat)
     return value;
 }
 
-std::future<float> SimpleInterfaceClient::funcFloatAsync(float paramFloat)
+std::future<float> SimpleInterfaceClient::funcFloatAsync(float paramFloat, std::function<void(float)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramFloat]()
         {
             std::promise<float> resultPromise;
             static const auto topic = std::string("tb.simple/SimpleInterface/rpc/funcFloat");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise](ApiGear::MQTT::InvokeReplyArg arg) {
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
                 const float& value = arg.value.get<float>();
                 resultPromise.set_value(value);
+                if (callback)
+                {
+                    callback(value);
+                }
             };
             auto responseId = registerResponseHandler(responseHandler);
-            m_client->invokeRemote(topic, responseTopic,
-                nlohmann::json::array({paramFloat}).dump(), responseId);
+            m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({paramFloat}).dump(), responseId);
             return resultPromise.get_future().get();
         }
     );
@@ -508,24 +526,27 @@ float SimpleInterfaceClient::funcFloat32(float paramFloat32)
     return value;
 }
 
-std::future<float> SimpleInterfaceClient::funcFloat32Async(float paramFloat32)
+std::future<float> SimpleInterfaceClient::funcFloat32Async(float paramFloat32, std::function<void(float)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramFloat32]()
         {
             std::promise<float> resultPromise;
             static const auto topic = std::string("tb.simple/SimpleInterface/rpc/funcFloat32");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise](ApiGear::MQTT::InvokeReplyArg arg) {
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
                 const float& value = arg.value.get<float>();
                 resultPromise.set_value(value);
+                if (callback)
+                {
+                    callback(value);
+                }
             };
             auto responseId = registerResponseHandler(responseHandler);
-            m_client->invokeRemote(topic, responseTopic,
-                nlohmann::json::array({paramFloat32}).dump(), responseId);
+            m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({paramFloat32}).dump(), responseId);
             return resultPromise.get_future().get();
         }
     );
@@ -540,24 +561,27 @@ double SimpleInterfaceClient::funcFloat64(double paramFloat)
     return value;
 }
 
-std::future<double> SimpleInterfaceClient::funcFloat64Async(double paramFloat)
+std::future<double> SimpleInterfaceClient::funcFloat64Async(double paramFloat, std::function<void(double)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramFloat]()
         {
             std::promise<double> resultPromise;
             static const auto topic = std::string("tb.simple/SimpleInterface/rpc/funcFloat64");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise](ApiGear::MQTT::InvokeReplyArg arg) {
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
                 const double& value = arg.value.get<double>();
                 resultPromise.set_value(value);
+                if (callback)
+                {
+                    callback(value);
+                }
             };
             auto responseId = registerResponseHandler(responseHandler);
-            m_client->invokeRemote(topic, responseTopic,
-                nlohmann::json::array({paramFloat}).dump(), responseId);
+            m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({paramFloat}).dump(), responseId);
             return resultPromise.get_future().get();
         }
     );
@@ -572,24 +596,27 @@ std::string SimpleInterfaceClient::funcString(const std::string& paramString)
     return value;
 }
 
-std::future<std::string> SimpleInterfaceClient::funcStringAsync(const std::string& paramString)
+std::future<std::string> SimpleInterfaceClient::funcStringAsync(const std::string& paramString, std::function<void(std::string)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramString]()
         {
             std::promise<std::string> resultPromise;
             static const auto topic = std::string("tb.simple/SimpleInterface/rpc/funcString");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise](ApiGear::MQTT::InvokeReplyArg arg) {
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
                 const std::string& value = arg.value.get<std::string>();
                 resultPromise.set_value(value);
+                if (callback)
+                {
+                    callback(value);
+                }
             };
             auto responseId = registerResponseHandler(responseHandler);
-            m_client->invokeRemote(topic, responseTopic,
-                nlohmann::json::array({paramString}).dump(), responseId);
+            m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({paramString}).dump(), responseId);
             return resultPromise.get_future().get();
         }
     );

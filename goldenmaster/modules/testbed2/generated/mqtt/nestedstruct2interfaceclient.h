@@ -19,9 +19,9 @@ public:
     const NestedStruct2& getProp2() const override;
     void setProp2(const NestedStruct2& prop2) override;
     NestedStruct1 func1(const NestedStruct1& param1) override;
-    std::future<NestedStruct1> func1Async(const NestedStruct1& param1) override;
+    std::future<NestedStruct1> func1Async(const NestedStruct1& param1, std::function<void(NestedStruct1)> callback = nullptr) override;
     NestedStruct1 func2(const NestedStruct1& param1, const NestedStruct2& param2) override;
-    std::future<NestedStruct1> func2Async(const NestedStruct1& param1, const NestedStruct2& param2) override;
+    std::future<NestedStruct1> func2Async(const NestedStruct1& param1, const NestedStruct2& param2, std::function<void(NestedStruct1)> callback = nullptr) override;
     INestedStruct2InterfacePublisher& _getPublisher() const override;
 
     bool isReady() const;

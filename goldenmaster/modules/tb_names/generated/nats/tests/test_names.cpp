@@ -162,6 +162,22 @@ TEST_CASE("Nats  tb.names NamEs tests")
         resultFuture.wait();
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+    SECTION("Test method SOME_FUNCTION async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientNamEs->sOME_FUNCTIONAsync(false,
+            [&finished, &m_wait]()
+            { 
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
+    }
     SECTION("Test method Some_Function2")
     {
         clientNamEs->some_Function2(false);
@@ -177,6 +193,22 @@ TEST_CASE("Nats  tb.names NamEs tests")
         lock.unlock();
         resultFuture.wait();
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+    SECTION("Test method Some_Function2 async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientNamEs->some_Function2Async(false,
+            [&finished, &m_wait]()
+            { 
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
     }
 
     serviceNamEs.reset();

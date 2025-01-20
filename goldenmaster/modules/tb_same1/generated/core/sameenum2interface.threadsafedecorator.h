@@ -49,7 +49,7 @@ public:
     * Forwards call to SameEnum2Interface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<Enum1Enum> func1Async(Enum1Enum param1) override;
+    std::future<Enum1Enum> func1Async(Enum1Enum param1, std::function<void(Enum1Enum)> callback = nullptr) override;
 
     /** 
     * Forwards call to SameEnum2Interface implementation.
@@ -60,7 +60,7 @@ public:
     * Forwards call to SameEnum2Interface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<Enum1Enum> func2Async(Enum1Enum param1, Enum2Enum param2) override;
+    std::future<Enum1Enum> func2Async(Enum1Enum param1, Enum2Enum param2, std::function<void(Enum1Enum)> callback = nullptr) override;
 
     /** Guards and forwards call to SameEnum2Interface implementation. */
     void setProp1(Enum1Enum prop1) override;

@@ -23,6 +23,31 @@ TEST_CASE("Testing {{$class}}", "[{{$class}}]"){
             {{- end -}}
             );
     }
+
+    SECTION("Test operation async {{$operation.Name}}") {
+        // Do implement test here
+
+        auto future = test{{$class}}->{{lower1 $operation.Name}}Async(
+            {{- range  $idx, $elem := $operation.Params -}}
+            {{- $param := . -}}
+                {{- if $idx}}, {{end}}
+                {{- cppDefault "" $param -}}
+            {{- end -}}
+            );
+    }
+
+    SECTION("Test operation async {{$operation.Name}} with a callback") {
+        // Do implement test here
+
+        auto future = test{{$class}}->{{lower1 $operation.Name}}Async(
+            {{- range  $idx, $elem := $operation.Params -}}
+            {{- $param := . -}}
+                {{- if $idx}}, {{end}}
+                {{- cppDefault "" $param -}}
+            {{- end -}}{{- if (len .Params) }},{{end -}}
+            []({{- if (not .Return.IsVoid) }}{{cppType "" .Return}} value){ (void)value; {{ else}} ){ {{end}}/* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
+    }
 {{- end }}
 
 {{- range .Interface.Properties}}
@@ -41,5 +66,6 @@ TEST_CASE("Testing {{$class}}", "[{{$class}}]"){
         {{- end -}} 
         );
     }
+
 {{- end }}
 }

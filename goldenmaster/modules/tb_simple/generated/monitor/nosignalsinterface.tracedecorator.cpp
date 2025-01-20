@@ -24,20 +24,20 @@ void NoSignalsInterfaceTraceDecorator::funcVoid()
     m_tracer->trace_funcVoid();
     return m_impl.funcVoid();
 }
-std::future<void> NoSignalsInterfaceTraceDecorator::funcVoidAsync()
+std::future<void> NoSignalsInterfaceTraceDecorator::funcVoidAsync( std::function<void(void)> callback)
 {
     m_tracer->trace_funcVoid();
-    return m_impl.funcVoidAsync();
+    return m_impl.funcVoidAsync( callback);
 }
 bool NoSignalsInterfaceTraceDecorator::funcBool(bool paramBool)
 {
     m_tracer->trace_funcBool(paramBool);
     return m_impl.funcBool(paramBool);
 }
-std::future<bool> NoSignalsInterfaceTraceDecorator::funcBoolAsync(bool paramBool)
+std::future<bool> NoSignalsInterfaceTraceDecorator::funcBoolAsync(bool paramBool, std::function<void(bool)> callback)
 {
     m_tracer->trace_funcBool(paramBool);
-    return m_impl.funcBoolAsync(paramBool);
+    return m_impl.funcBoolAsync(paramBool, callback);
 }
 void NoSignalsInterfaceTraceDecorator::setPropBool(bool propBool)
 {

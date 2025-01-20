@@ -80,6 +80,22 @@ TEST_CASE("Nats  tb.simple VoidInterface tests")
         resultFuture.wait();
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+    SECTION("Test method funcVoid async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientVoidInterface->funcVoidAsync(
+            [&finished, &m_wait]()
+            { 
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
+    }
 
     serviceVoidInterface.reset();
     clientVoidInterface.reset();

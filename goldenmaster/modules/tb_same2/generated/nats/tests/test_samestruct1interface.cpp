@@ -101,6 +101,23 @@ TEST_CASE("Nats  tb.same2 SameStruct1Interface tests")
         REQUIRE(return_value == TbSame2::Struct1()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+    SECTION("Test method func1 async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSameStruct1Interface->func1Async(TbSame2::Struct1(),
+            [&finished, &m_wait](Struct1 value)
+            {
+                REQUIRE(value == TbSame2::Struct1());
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
+    }
 
     serviceSameStruct1Interface.reset();
     clientSameStruct1Interface.reset();

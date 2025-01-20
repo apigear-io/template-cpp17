@@ -24,90 +24,90 @@ void SimpleInterfaceTraceDecorator::funcNoReturnValue(bool paramBool)
     m_tracer->trace_funcNoReturnValue(paramBool);
     return m_impl.funcNoReturnValue(paramBool);
 }
-std::future<void> SimpleInterfaceTraceDecorator::funcNoReturnValueAsync(bool paramBool)
+std::future<void> SimpleInterfaceTraceDecorator::funcNoReturnValueAsync(bool paramBool, std::function<void(void)> callback)
 {
     m_tracer->trace_funcNoReturnValue(paramBool);
-    return m_impl.funcNoReturnValueAsync(paramBool);
+    return m_impl.funcNoReturnValueAsync(paramBool, callback);
 }
 bool SimpleInterfaceTraceDecorator::funcBool(bool paramBool)
 {
     m_tracer->trace_funcBool(paramBool);
     return m_impl.funcBool(paramBool);
 }
-std::future<bool> SimpleInterfaceTraceDecorator::funcBoolAsync(bool paramBool)
+std::future<bool> SimpleInterfaceTraceDecorator::funcBoolAsync(bool paramBool, std::function<void(bool)> callback)
 {
     m_tracer->trace_funcBool(paramBool);
-    return m_impl.funcBoolAsync(paramBool);
+    return m_impl.funcBoolAsync(paramBool, callback);
 }
 int SimpleInterfaceTraceDecorator::funcInt(int paramInt)
 {
     m_tracer->trace_funcInt(paramInt);
     return m_impl.funcInt(paramInt);
 }
-std::future<int> SimpleInterfaceTraceDecorator::funcIntAsync(int paramInt)
+std::future<int> SimpleInterfaceTraceDecorator::funcIntAsync(int paramInt, std::function<void(int)> callback)
 {
     m_tracer->trace_funcInt(paramInt);
-    return m_impl.funcIntAsync(paramInt);
+    return m_impl.funcIntAsync(paramInt, callback);
 }
 int32_t SimpleInterfaceTraceDecorator::funcInt32(int32_t paramInt32)
 {
     m_tracer->trace_funcInt32(paramInt32);
     return m_impl.funcInt32(paramInt32);
 }
-std::future<int32_t> SimpleInterfaceTraceDecorator::funcInt32Async(int32_t paramInt32)
+std::future<int32_t> SimpleInterfaceTraceDecorator::funcInt32Async(int32_t paramInt32, std::function<void(int32_t)> callback)
 {
     m_tracer->trace_funcInt32(paramInt32);
-    return m_impl.funcInt32Async(paramInt32);
+    return m_impl.funcInt32Async(paramInt32, callback);
 }
 int64_t SimpleInterfaceTraceDecorator::funcInt64(int64_t paramInt64)
 {
     m_tracer->trace_funcInt64(paramInt64);
     return m_impl.funcInt64(paramInt64);
 }
-std::future<int64_t> SimpleInterfaceTraceDecorator::funcInt64Async(int64_t paramInt64)
+std::future<int64_t> SimpleInterfaceTraceDecorator::funcInt64Async(int64_t paramInt64, std::function<void(int64_t)> callback)
 {
     m_tracer->trace_funcInt64(paramInt64);
-    return m_impl.funcInt64Async(paramInt64);
+    return m_impl.funcInt64Async(paramInt64, callback);
 }
 float SimpleInterfaceTraceDecorator::funcFloat(float paramFloat)
 {
     m_tracer->trace_funcFloat(paramFloat);
     return m_impl.funcFloat(paramFloat);
 }
-std::future<float> SimpleInterfaceTraceDecorator::funcFloatAsync(float paramFloat)
+std::future<float> SimpleInterfaceTraceDecorator::funcFloatAsync(float paramFloat, std::function<void(float)> callback)
 {
     m_tracer->trace_funcFloat(paramFloat);
-    return m_impl.funcFloatAsync(paramFloat);
+    return m_impl.funcFloatAsync(paramFloat, callback);
 }
 float SimpleInterfaceTraceDecorator::funcFloat32(float paramFloat32)
 {
     m_tracer->trace_funcFloat32(paramFloat32);
     return m_impl.funcFloat32(paramFloat32);
 }
-std::future<float> SimpleInterfaceTraceDecorator::funcFloat32Async(float paramFloat32)
+std::future<float> SimpleInterfaceTraceDecorator::funcFloat32Async(float paramFloat32, std::function<void(float)> callback)
 {
     m_tracer->trace_funcFloat32(paramFloat32);
-    return m_impl.funcFloat32Async(paramFloat32);
+    return m_impl.funcFloat32Async(paramFloat32, callback);
 }
 double SimpleInterfaceTraceDecorator::funcFloat64(double paramFloat)
 {
     m_tracer->trace_funcFloat64(paramFloat);
     return m_impl.funcFloat64(paramFloat);
 }
-std::future<double> SimpleInterfaceTraceDecorator::funcFloat64Async(double paramFloat)
+std::future<double> SimpleInterfaceTraceDecorator::funcFloat64Async(double paramFloat, std::function<void(double)> callback)
 {
     m_tracer->trace_funcFloat64(paramFloat);
-    return m_impl.funcFloat64Async(paramFloat);
+    return m_impl.funcFloat64Async(paramFloat, callback);
 }
 std::string SimpleInterfaceTraceDecorator::funcString(const std::string& paramString)
 {
     m_tracer->trace_funcString(paramString);
     return m_impl.funcString(paramString);
 }
-std::future<std::string> SimpleInterfaceTraceDecorator::funcStringAsync(const std::string& paramString)
+std::future<std::string> SimpleInterfaceTraceDecorator::funcStringAsync(const std::string& paramString, std::function<void(std::string)> callback)
 {
     m_tracer->trace_funcString(paramString);
-    return m_impl.funcStringAsync(paramString);
+    return m_impl.funcStringAsync(paramString, callback);
 }
 void SimpleInterfaceTraceDecorator::setPropBool(bool propBool)
 {

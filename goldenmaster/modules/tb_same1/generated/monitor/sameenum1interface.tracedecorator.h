@@ -37,7 +37,7 @@ public:
     /** Traces func1 and forwards call to SameEnum1Interface implementation. */
     Enum1Enum func1(Enum1Enum param1) override;
     /** Traces func1 and forwards call to SameEnum1Interface implementation. */
-    std::future<Enum1Enum> func1Async(Enum1Enum param1) override;
+    std::future<Enum1Enum> func1Async(Enum1Enum param1, std::function<void(Enum1Enum)> callback = nullptr) override;
     
     /** Forwards call to SameEnum1Interface implementation. */
     void setProp1(Enum1Enum prop1) override;

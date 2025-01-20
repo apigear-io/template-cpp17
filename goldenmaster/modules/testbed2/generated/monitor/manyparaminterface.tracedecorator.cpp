@@ -24,40 +24,40 @@ int ManyParamInterfaceTraceDecorator::func1(int param1)
     m_tracer->trace_func1(param1);
     return m_impl.func1(param1);
 }
-std::future<int> ManyParamInterfaceTraceDecorator::func1Async(int param1)
+std::future<int> ManyParamInterfaceTraceDecorator::func1Async(int param1, std::function<void(int)> callback)
 {
     m_tracer->trace_func1(param1);
-    return m_impl.func1Async(param1);
+    return m_impl.func1Async(param1, callback);
 }
 int ManyParamInterfaceTraceDecorator::func2(int param1, int param2)
 {
     m_tracer->trace_func2(param1, param2);
     return m_impl.func2(param1, param2);
 }
-std::future<int> ManyParamInterfaceTraceDecorator::func2Async(int param1, int param2)
+std::future<int> ManyParamInterfaceTraceDecorator::func2Async(int param1, int param2, std::function<void(int)> callback)
 {
     m_tracer->trace_func2(param1, param2);
-    return m_impl.func2Async(param1, param2);
+    return m_impl.func2Async(param1, param2, callback);
 }
 int ManyParamInterfaceTraceDecorator::func3(int param1, int param2, int param3)
 {
     m_tracer->trace_func3(param1, param2, param3);
     return m_impl.func3(param1, param2, param3);
 }
-std::future<int> ManyParamInterfaceTraceDecorator::func3Async(int param1, int param2, int param3)
+std::future<int> ManyParamInterfaceTraceDecorator::func3Async(int param1, int param2, int param3, std::function<void(int)> callback)
 {
     m_tracer->trace_func3(param1, param2, param3);
-    return m_impl.func3Async(param1, param2, param3);
+    return m_impl.func3Async(param1, param2, param3, callback);
 }
 int ManyParamInterfaceTraceDecorator::func4(int param1, int param2, int param3, int param4)
 {
     m_tracer->trace_func4(param1, param2, param3, param4);
     return m_impl.func4(param1, param2, param3, param4);
 }
-std::future<int> ManyParamInterfaceTraceDecorator::func4Async(int param1, int param2, int param3, int param4)
+std::future<int> ManyParamInterfaceTraceDecorator::func4Async(int param1, int param2, int param3, int param4, std::function<void(int)> callback)
 {
     m_tracer->trace_func4(param1, param2, param3, param4);
-    return m_impl.func4Async(param1, param2, param3, param4);
+    return m_impl.func4Async(param1, param2, param3, param4, callback);
 }
 void ManyParamInterfaceTraceDecorator::setProp1(int prop1)
 {

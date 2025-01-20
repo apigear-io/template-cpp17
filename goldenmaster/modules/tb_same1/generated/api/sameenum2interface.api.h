@@ -32,7 +32,7 @@ public:
     * Asynchronous version of func1(Enum1Enum param1)
     * @return Promise of type Enum1Enum which is set once the function has completed
     */
-    virtual std::future<Enum1Enum> func1Async(Enum1Enum param1) = 0;
+    virtual std::future<Enum1Enum> func1Async(Enum1Enum param1, std::function<void(Enum1Enum)> callback = nullptr) = 0;
 
 
     virtual Enum1Enum func2(Enum1Enum param1, Enum2Enum param2) = 0;
@@ -40,7 +40,7 @@ public:
     * Asynchronous version of func2(Enum1Enum param1, Enum2Enum param2)
     * @return Promise of type Enum1Enum which is set once the function has completed
     */
-    virtual std::future<Enum1Enum> func2Async(Enum1Enum param1, Enum2Enum param2) = 0;
+    virtual std::future<Enum1Enum> func2Async(Enum1Enum param1, Enum2Enum param2, std::function<void(Enum1Enum)> callback = nullptr) = 0;
 
     /**
     * Sets the value of the prop1 property.

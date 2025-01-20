@@ -89,24 +89,27 @@ Struct1 SameStruct1InterfaceClient::func1(const Struct1& param1)
     return value;
 }
 
-std::future<Struct1> SameStruct1InterfaceClient::func1Async(const Struct1& param1)
+std::future<Struct1> SameStruct1InterfaceClient::func1Async(const Struct1& param1, std::function<void(Struct1)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     param1]()
         {
             std::promise<Struct1> resultPromise;
             static const auto topic = std::string("tb.same1/SameStruct1Interface/rpc/func1");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise](ApiGear::MQTT::InvokeReplyArg arg) {
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
                 const Struct1& value = arg.value.get<Struct1>();
                 resultPromise.set_value(value);
+                if (callback)
+                {
+                    callback(value);
+                }
             };
             auto responseId = registerResponseHandler(responseHandler);
-            m_client->invokeRemote(topic, responseTopic,
-                nlohmann::json::array({param1}).dump(), responseId);
+            m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({param1}).dump(), responseId);
             return resultPromise.get_future().get();
         }
     );

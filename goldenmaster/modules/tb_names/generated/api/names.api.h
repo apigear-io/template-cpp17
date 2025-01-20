@@ -32,7 +32,7 @@ public:
     * Asynchronous version of SOME_FUNCTION(bool SOME_PARAM)
     * @return Promise of type void which is set once the function has completed
     */
-    virtual std::future<void> sOME_FUNCTIONAsync(bool SOME_PARAM) = 0;
+    virtual std::future<void> sOME_FUNCTIONAsync(bool SOME_PARAM, std::function<void(void)> callback = nullptr) = 0;
 
 
     virtual void some_Function2(bool Some_Param) = 0;
@@ -40,7 +40,7 @@ public:
     * Asynchronous version of Some_Function2(bool Some_Param)
     * @return Promise of type void which is set once the function has completed
     */
-    virtual std::future<void> some_Function2Async(bool Some_Param) = 0;
+    virtual std::future<void> some_Function2Async(bool Some_Param, std::function<void(void)> callback = nullptr) = 0;
 
     /**
     * Sets the value of the Switch property.

@@ -131,6 +131,22 @@ TEST_CASE("Nats  counter Counter tests")
         //REQUIRE(return_value == Eigen::Vector3f(0,0,0)); // Make sure the comparison is valid for extern type. 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+    SECTION("Test method increment async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientCounter->incrementAsync(Eigen::Vector3f(0,0,0),
+            [&finished, &m_wait](Eigen::Vector3f value)
+            { (void) value;// Make sure the comparison is valid for extern type.
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
+    }
     SECTION("Test method incrementArray")
     {
         [[maybe_unused]] auto result = clientCounter->incrementArray(std::list<Eigen::Vector3f>());
@@ -147,6 +163,22 @@ TEST_CASE("Nats  counter Counter tests")
         auto return_value = resultFuture.get();
         //REQUIRE(return_value == std::list<Eigen::Vector3f>()); // Make sure the comparison is valid for extern type. 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+    SECTION("Test method incrementArray async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientCounter->incrementArrayAsync(std::list<Eigen::Vector3f>(),
+            [&finished, &m_wait](std::list<Eigen::Vector3f> value)
+            { (void) value;// Make sure the comparison is valid for extern type.
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
     }
     SECTION("Test method decrement")
     {
@@ -165,6 +197,23 @@ TEST_CASE("Nats  counter Counter tests")
         REQUIRE(return_value == Test::CustomTypes::Vector3D()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+    SECTION("Test method decrement async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientCounter->decrementAsync(Test::CustomTypes::Vector3D(),
+            [&finished, &m_wait](Test::CustomTypes::Vector3D value)
+            {
+                REQUIRE(value == Test::CustomTypes::Vector3D());
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
+    }
     SECTION("Test method decrementArray")
     {
         [[maybe_unused]] auto result = clientCounter->decrementArray(std::list<Test::CustomTypes::Vector3D>());
@@ -181,6 +230,23 @@ TEST_CASE("Nats  counter Counter tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == std::list<Test::CustomTypes::Vector3D>()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+    SECTION("Test method decrementArray async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientCounter->decrementArrayAsync(std::list<Test::CustomTypes::Vector3D>(),
+            [&finished, &m_wait](std::list<Test::CustomTypes::Vector3D> value)
+            {
+                REQUIRE(value == std::list<Test::CustomTypes::Vector3D>());
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
     }
 
     serviceCounter.reset();

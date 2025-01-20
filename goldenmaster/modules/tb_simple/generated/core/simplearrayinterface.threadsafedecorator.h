@@ -62,7 +62,7 @@ public:
     * Forwards call to SimpleArrayInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<std::list<bool>> funcBoolAsync(const std::list<bool>& paramBool) override;
+    std::future<std::list<bool>> funcBoolAsync(const std::list<bool>& paramBool, std::function<void(std::list<bool>)> callback = nullptr) override;
 
     /** 
     * Forwards call to SimpleArrayInterface implementation.
@@ -73,7 +73,7 @@ public:
     * Forwards call to SimpleArrayInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<std::list<int>> funcIntAsync(const std::list<int>& paramInt) override;
+    std::future<std::list<int>> funcIntAsync(const std::list<int>& paramInt, std::function<void(std::list<int>)> callback = nullptr) override;
 
     /** 
     * Forwards call to SimpleArrayInterface implementation.
@@ -84,7 +84,7 @@ public:
     * Forwards call to SimpleArrayInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<std::list<int32_t>> funcInt32Async(const std::list<int32_t>& paramInt32) override;
+    std::future<std::list<int32_t>> funcInt32Async(const std::list<int32_t>& paramInt32, std::function<void(std::list<int32_t>)> callback = nullptr) override;
 
     /** 
     * Forwards call to SimpleArrayInterface implementation.
@@ -95,7 +95,7 @@ public:
     * Forwards call to SimpleArrayInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<std::list<int64_t>> funcInt64Async(const std::list<int64_t>& paramInt64) override;
+    std::future<std::list<int64_t>> funcInt64Async(const std::list<int64_t>& paramInt64, std::function<void(std::list<int64_t>)> callback = nullptr) override;
 
     /** 
     * Forwards call to SimpleArrayInterface implementation.
@@ -106,7 +106,7 @@ public:
     * Forwards call to SimpleArrayInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<std::list<float>> funcFloatAsync(const std::list<float>& paramFloat) override;
+    std::future<std::list<float>> funcFloatAsync(const std::list<float>& paramFloat, std::function<void(std::list<float>)> callback = nullptr) override;
 
     /** 
     * Forwards call to SimpleArrayInterface implementation.
@@ -117,7 +117,7 @@ public:
     * Forwards call to SimpleArrayInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<std::list<float>> funcFloat32Async(const std::list<float>& paramFloat32) override;
+    std::future<std::list<float>> funcFloat32Async(const std::list<float>& paramFloat32, std::function<void(std::list<float>)> callback = nullptr) override;
 
     /** 
     * Forwards call to SimpleArrayInterface implementation.
@@ -128,7 +128,7 @@ public:
     * Forwards call to SimpleArrayInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<std::list<double>> funcFloat64Async(const std::list<double>& paramFloat) override;
+    std::future<std::list<double>> funcFloat64Async(const std::list<double>& paramFloat, std::function<void(std::list<double>)> callback = nullptr) override;
 
     /** 
     * Forwards call to SimpleArrayInterface implementation.
@@ -139,7 +139,7 @@ public:
     * Forwards call to SimpleArrayInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<std::list<std::string>> funcStringAsync(const std::list<std::string>& paramString) override;
+    std::future<std::list<std::string>> funcStringAsync(const std::list<std::string>& paramString, std::function<void(std::list<std::string>)> callback = nullptr) override;
 
     /** Guards and forwards call to SimpleArrayInterface implementation. */
     void setPropBool(const std::list<bool>& propBool) override;

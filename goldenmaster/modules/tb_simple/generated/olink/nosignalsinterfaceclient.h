@@ -68,7 +68,7 @@ public:
     /**
     * Remote call of INoSignalsInterface::funcVoid on the NoSignalsInterface service.
     */
-    std::future<void> funcVoidAsync() override;
+    std::future<void> funcVoidAsync( std::function<void(void)> callback = nullptr) override;
     /**
     * Remote call of INoSignalsInterface::funcBool on the NoSignalsInterface service.
     * Uses funcBoolAsync
@@ -77,7 +77,7 @@ public:
     /**
     * Remote call of INoSignalsInterface::funcBool on the NoSignalsInterface service.
     */
-    std::future<bool> funcBoolAsync(bool paramBool) override;
+    std::future<bool> funcBoolAsync(bool paramBool, std::function<void(bool)> callback = nullptr) override;
 
     /** The publisher to subscribe to. */
     INoSignalsInterfacePublisher& _getPublisher() const override;

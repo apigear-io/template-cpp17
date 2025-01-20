@@ -18,7 +18,7 @@ public:
     ~VoidInterface();
 public:
     void funcVoid() override;
-    std::future<void> funcVoidAsync() override;
+    std::future<void> funcVoidAsync( std::function<void(void)> callback = nullptr) override;
         
     /**
     * Access to a publisher, use it to subscribe for VoidInterface changes and signal emission.

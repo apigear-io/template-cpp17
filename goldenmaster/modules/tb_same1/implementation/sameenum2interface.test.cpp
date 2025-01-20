@@ -11,9 +11,35 @@ TEST_CASE("Testing SameEnum2Interface", "[SameEnum2Interface]"){
         // Do implement test here
         testSameEnum2Interface->func1(Enum1Enum::value1);
     }
+
+    SECTION("Test operation async func1") {
+        // Do implement test here
+
+        auto future = testSameEnum2Interface->func1Async(Enum1Enum::value1);
+    }
+
+    SECTION("Test operation async func1 with a callback") {
+        // Do implement test here
+
+        auto future = testSameEnum2Interface->func1Async(Enum1Enum::value1,[](Enum1Enum value){ (void)value; /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
+    }
     SECTION("Test operation func2") {
         // Do implement test here
         testSameEnum2Interface->func2(Enum1Enum::value1, Enum2Enum::value1);
+    }
+
+    SECTION("Test operation async func2") {
+        // Do implement test here
+
+        auto future = testSameEnum2Interface->func2Async(Enum1Enum::value1, Enum2Enum::value1);
+    }
+
+    SECTION("Test operation async func2 with a callback") {
+        // Do implement test here
+
+        auto future = testSameEnum2Interface->func2Async(Enum1Enum::value1, Enum2Enum::value1,[](Enum1Enum value){ (void)value; /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
     }
     SECTION("Test property prop1") {
         // Do implement test here

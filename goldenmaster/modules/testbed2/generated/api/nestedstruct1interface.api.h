@@ -32,7 +32,7 @@ public:
     * Asynchronous version of func1(const NestedStruct1& param1)
     * @return Promise of type NestedStruct1 which is set once the function has completed
     */
-    virtual std::future<NestedStruct1> func1Async(const NestedStruct1& param1) = 0;
+    virtual std::future<NestedStruct1> func1Async(const NestedStruct1& param1, std::function<void(NestedStruct1)> callback = nullptr) = 0;
 
     /**
     * Sets the value of the prop1 property.

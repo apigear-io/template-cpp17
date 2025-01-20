@@ -12,18 +12,18 @@ Struct1 SameStruct2InterfaceThreadSafeDecorator::func1(const Struct1& param1)
     return m_impl->func1(param1);
 }
 
-std::future<Struct1> SameStruct2InterfaceThreadSafeDecorator::func1Async(const Struct1& param1)
+std::future<Struct1> SameStruct2InterfaceThreadSafeDecorator::func1Async(const Struct1& param1, std::function<void(Struct1)> callback)
 {
-    return m_impl->func1Async(param1);
+    return m_impl->func1Async(param1, callback);
 }
 Struct1 SameStruct2InterfaceThreadSafeDecorator::func2(const Struct1& param1, const Struct2& param2)
 {
     return m_impl->func2(param1, param2);
 }
 
-std::future<Struct1> SameStruct2InterfaceThreadSafeDecorator::func2Async(const Struct1& param1, const Struct2& param2)
+std::future<Struct1> SameStruct2InterfaceThreadSafeDecorator::func2Async(const Struct1& param1, const Struct2& param2, std::function<void(Struct1)> callback)
 {
-    return m_impl->func2Async(param1, param2);
+    return m_impl->func2Async(param1, param2, callback);
 }
 void SameStruct2InterfaceThreadSafeDecorator::setProp1(const Struct2& prop1)
 {

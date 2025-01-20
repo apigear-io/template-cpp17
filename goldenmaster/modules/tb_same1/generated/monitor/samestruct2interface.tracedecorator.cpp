@@ -24,20 +24,20 @@ Struct1 SameStruct2InterfaceTraceDecorator::func1(const Struct1& param1)
     m_tracer->trace_func1(param1);
     return m_impl.func1(param1);
 }
-std::future<Struct1> SameStruct2InterfaceTraceDecorator::func1Async(const Struct1& param1)
+std::future<Struct1> SameStruct2InterfaceTraceDecorator::func1Async(const Struct1& param1, std::function<void(Struct1)> callback)
 {
     m_tracer->trace_func1(param1);
-    return m_impl.func1Async(param1);
+    return m_impl.func1Async(param1, callback);
 }
 Struct1 SameStruct2InterfaceTraceDecorator::func2(const Struct1& param1, const Struct2& param2)
 {
     m_tracer->trace_func2(param1, param2);
     return m_impl.func2(param1, param2);
 }
-std::future<Struct1> SameStruct2InterfaceTraceDecorator::func2Async(const Struct1& param1, const Struct2& param2)
+std::future<Struct1> SameStruct2InterfaceTraceDecorator::func2Async(const Struct1& param1, const Struct2& param2, std::function<void(Struct1)> callback)
 {
     m_tracer->trace_func2(param1, param2);
-    return m_impl.func2Async(param1, param2);
+    return m_impl.func2Async(param1, param2, callback);
 }
 void SameStruct2InterfaceTraceDecorator::setProp1(const Struct2& prop1)
 {

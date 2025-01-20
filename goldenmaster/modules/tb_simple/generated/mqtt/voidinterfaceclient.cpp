@@ -58,23 +58,26 @@ void VoidInterfaceClient::funcVoid()
     funcVoidAsync();
 }
 
-std::future<void> VoidInterfaceClient::funcVoidAsync()
+std::future<void> VoidInterfaceClient::funcVoidAsync( std::function<void(void)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this]()
+    return std::async(std::launch::async, [this, callback]()
         {
             std::promise<void> resultPromise;
             static const auto topic = std::string("tb.simple/VoidInterface/rpc/funcVoid");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise](ApiGear::MQTT::InvokeReplyArg arg) {
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
                 (void) arg;
                 resultPromise.set_value();
+                if (callback)
+                {
+                    callback();
+                }
             };
             auto responseId = registerResponseHandler(responseHandler);
-            m_client->invokeRemote(topic, responseTopic,
-                nlohmann::json::array({}).dump(), responseId);
+            m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({}).dump(), responseId);
             return resultPromise.get_future().get();
         }
     );

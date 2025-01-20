@@ -53,7 +53,7 @@ public:
     * Forwards call to Counter implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<Eigen::Vector3f> incrementAsync(const Eigen::Vector3f& vec) override;
+    std::future<Eigen::Vector3f> incrementAsync(const Eigen::Vector3f& vec, std::function<void(Eigen::Vector3f)> callback = nullptr) override;
 
     /** 
     * Forwards call to Counter implementation.
@@ -64,7 +64,7 @@ public:
     * Forwards call to Counter implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<std::list<Eigen::Vector3f>> incrementArrayAsync(const std::list<Eigen::Vector3f>& vec) override;
+    std::future<std::list<Eigen::Vector3f>> incrementArrayAsync(const std::list<Eigen::Vector3f>& vec, std::function<void(std::list<Eigen::Vector3f>)> callback = nullptr) override;
 
     /** 
     * Forwards call to Counter implementation.
@@ -75,7 +75,7 @@ public:
     * Forwards call to Counter implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<Test::CustomTypes::Vector3D> decrementAsync(const Test::CustomTypes::Vector3D& vec) override;
+    std::future<Test::CustomTypes::Vector3D> decrementAsync(const Test::CustomTypes::Vector3D& vec, std::function<void(Test::CustomTypes::Vector3D)> callback = nullptr) override;
 
     /** 
     * Forwards call to Counter implementation.
@@ -86,7 +86,7 @@ public:
     * Forwards call to Counter implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<std::list<Test::CustomTypes::Vector3D>> decrementArrayAsync(const std::list<Test::CustomTypes::Vector3D>& vec) override;
+    std::future<std::list<Test::CustomTypes::Vector3D>> decrementArrayAsync(const std::list<Test::CustomTypes::Vector3D>& vec, std::function<void(std::list<Test::CustomTypes::Vector3D>)> callback = nullptr) override;
 
     /** Guards and forwards call to Counter implementation. */
     void setVector(const Test::CustomTypes::Vector3D& vector) override;

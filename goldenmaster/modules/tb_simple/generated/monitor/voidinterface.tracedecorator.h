@@ -37,7 +37,7 @@ public:
     /** Traces funcVoid and forwards call to VoidInterface implementation. */
     void funcVoid() override;
     /** Traces funcVoid and forwards call to VoidInterface implementation. */
-    std::future<void> funcVoidAsync() override;
+    std::future<void> funcVoidAsync( std::function<void(void)> callback = nullptr) override;
     
     /**
     Traces sigVoid emission.

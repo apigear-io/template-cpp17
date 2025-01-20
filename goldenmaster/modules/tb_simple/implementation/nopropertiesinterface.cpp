@@ -19,11 +19,14 @@ void NoPropertiesInterface::funcVoid()
     // do business logic here
 }
 
-std::future<void> NoPropertiesInterface::funcVoidAsync()
+std::future<void> NoPropertiesInterface::funcVoidAsync( std::function<void(void)> callback)
 {
-    return std::async(std::launch::async, [this]()
-        {
-            return funcVoid();
+    return std::async(std::launch::async, [this, callback]()
+        {funcVoid();
+            if (callback)
+            {
+                callback();
+            }
         }
     );
 }
@@ -35,12 +38,15 @@ bool NoPropertiesInterface::funcBool(bool paramBool)
     return false;
 }
 
-std::future<bool> NoPropertiesInterface::funcBoolAsync(bool paramBool)
+std::future<bool> NoPropertiesInterface::funcBoolAsync(bool paramBool, std::function<void(bool)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramBool]()
-        {
-            return funcBool(paramBool);
+        {auto result = funcBool(paramBool);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }

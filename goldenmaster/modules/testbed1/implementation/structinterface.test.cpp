@@ -11,17 +11,69 @@ TEST_CASE("Testing StructInterface", "[StructInterface]"){
         // Do implement test here
         testStructInterface->funcBool(StructBool());
     }
+
+    SECTION("Test operation async funcBool") {
+        // Do implement test here
+
+        auto future = testStructInterface->funcBoolAsync(StructBool());
+    }
+
+    SECTION("Test operation async funcBool with a callback") {
+        // Do implement test here
+
+        auto future = testStructInterface->funcBoolAsync(StructBool(),[](StructBool value){ (void)value; /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
+    }
     SECTION("Test operation funcInt") {
         // Do implement test here
         testStructInterface->funcInt(StructInt());
+    }
+
+    SECTION("Test operation async funcInt") {
+        // Do implement test here
+
+        auto future = testStructInterface->funcIntAsync(StructInt());
+    }
+
+    SECTION("Test operation async funcInt with a callback") {
+        // Do implement test here
+
+        auto future = testStructInterface->funcIntAsync(StructInt(),[](StructInt value){ (void)value; /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
     }
     SECTION("Test operation funcFloat") {
         // Do implement test here
         testStructInterface->funcFloat(StructFloat());
     }
+
+    SECTION("Test operation async funcFloat") {
+        // Do implement test here
+
+        auto future = testStructInterface->funcFloatAsync(StructFloat());
+    }
+
+    SECTION("Test operation async funcFloat with a callback") {
+        // Do implement test here
+
+        auto future = testStructInterface->funcFloatAsync(StructFloat(),[](StructFloat value){ (void)value; /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
+    }
     SECTION("Test operation funcString") {
         // Do implement test here
         testStructInterface->funcString(StructString());
+    }
+
+    SECTION("Test operation async funcString") {
+        // Do implement test here
+
+        auto future = testStructInterface->funcStringAsync(StructString());
+    }
+
+    SECTION("Test operation async funcString with a callback") {
+        // Do implement test here
+
+        auto future = testStructInterface->funcStringAsync(StructString(),[](StructString value){ (void)value; /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
     }
     SECTION("Test property propBool") {
         // Do implement test here

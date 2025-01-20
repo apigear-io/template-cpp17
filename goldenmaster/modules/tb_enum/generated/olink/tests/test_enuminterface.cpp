@@ -199,6 +199,19 @@ TEST_CASE("olink  tb.enum EnumInterface tests")
         REQUIRE(return_value == TbEnum::Enum0Enum::value0); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+
+    SECTION("Test method func0 async with a callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientEnumInterface->func0Async(TbEnum::Enum0Enum::value0,[&finished, &m_wait](Enum0Enum value){ (void) value;finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+         
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == TbEnum::Enum0Enum::value0); 
+        
+    }
     SECTION("Test method func1")
     {
         [[maybe_unused]] auto result = clientEnumInterface->func1(TbEnum::Enum1Enum::value1);
@@ -216,6 +229,19 @@ TEST_CASE("olink  tb.enum EnumInterface tests")
         REQUIRE(return_value == TbEnum::Enum1Enum::value1); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+
+    SECTION("Test method func1 async with a callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientEnumInterface->func1Async(TbEnum::Enum1Enum::value1,[&finished, &m_wait](Enum1Enum value){ (void) value;finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+         
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == TbEnum::Enum1Enum::value1); 
+        
+    }
     SECTION("Test method func2")
     {
         [[maybe_unused]] auto result = clientEnumInterface->func2(TbEnum::Enum2Enum::value2);
@@ -232,6 +258,19 @@ TEST_CASE("olink  tb.enum EnumInterface tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == TbEnum::Enum2Enum::value2); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+
+    SECTION("Test method func2 async with a callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientEnumInterface->func2Async(TbEnum::Enum2Enum::value2,[&finished, &m_wait](Enum2Enum value){ (void) value;finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+         
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == TbEnum::Enum2Enum::value2); 
+        
     }
     SECTION("Test method func3")
     {
@@ -251,6 +290,18 @@ TEST_CASE("olink  tb.enum EnumInterface tests")
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
 
+    SECTION("Test method func3 async with a callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientEnumInterface->func3Async(TbEnum::Enum3Enum::value3,[&finished, &m_wait](Enum3Enum value){ (void) value;finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+         
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == TbEnum::Enum3Enum::value3); 
+        
+    }
     clientNode->unlinkRemote(clientEnumInterface->olinkObjectName());
     remote_registry.removeSource(serviceEnumInterface->olinkObjectName());
     client_registry.removeSink(clientEnumInterface->olinkObjectName());

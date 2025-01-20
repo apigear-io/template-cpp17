@@ -37,12 +37,12 @@ public:
     /** Traces funcVoid and forwards call to NoPropertiesInterface implementation. */
     void funcVoid() override;
     /** Traces funcVoid and forwards call to NoPropertiesInterface implementation. */
-    std::future<void> funcVoidAsync() override;
+    std::future<void> funcVoidAsync( std::function<void(void)> callback = nullptr) override;
     
     /** Traces funcBool and forwards call to NoPropertiesInterface implementation. */
     bool funcBool(bool paramBool) override;
     /** Traces funcBool and forwards call to NoPropertiesInterface implementation. */
-    std::future<bool> funcBoolAsync(bool paramBool) override;
+    std::future<bool> funcBoolAsync(bool paramBool, std::function<void(bool)> callback = nullptr) override;
     
     /**
     Traces sigVoid emission.

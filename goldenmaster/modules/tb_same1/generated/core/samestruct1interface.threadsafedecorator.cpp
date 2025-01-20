@@ -12,9 +12,9 @@ Struct1 SameStruct1InterfaceThreadSafeDecorator::func1(const Struct1& param1)
     return m_impl->func1(param1);
 }
 
-std::future<Struct1> SameStruct1InterfaceThreadSafeDecorator::func1Async(const Struct1& param1)
+std::future<Struct1> SameStruct1InterfaceThreadSafeDecorator::func1Async(const Struct1& param1, std::function<void(Struct1)> callback)
 {
-    return m_impl->func1Async(param1);
+    return m_impl->func1Async(param1, callback);
 }
 void SameStruct1InterfaceThreadSafeDecorator::setProp1(const Struct1& prop1)
 {

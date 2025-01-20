@@ -101,6 +101,23 @@ TEST_CASE("Nats  testbed2 NestedStruct1Interface tests")
         REQUIRE(return_value == Testbed2::NestedStruct1()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+    SECTION("Test method func1 async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientNestedStruct1Interface->func1Async(Testbed2::NestedStruct1(),
+            [&finished, &m_wait](NestedStruct1 value)
+            {
+                REQUIRE(value == Testbed2::NestedStruct1());
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
+    }
 
     serviceNestedStruct1Interface.reset();
     clientNestedStruct1Interface.reset();

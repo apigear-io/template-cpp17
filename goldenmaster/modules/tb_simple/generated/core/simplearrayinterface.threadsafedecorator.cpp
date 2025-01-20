@@ -12,72 +12,72 @@ std::list<bool> SimpleArrayInterfaceThreadSafeDecorator::funcBool(const std::lis
     return m_impl->funcBool(paramBool);
 }
 
-std::future<std::list<bool>> SimpleArrayInterfaceThreadSafeDecorator::funcBoolAsync(const std::list<bool>& paramBool)
+std::future<std::list<bool>> SimpleArrayInterfaceThreadSafeDecorator::funcBoolAsync(const std::list<bool>& paramBool, std::function<void(std::list<bool>)> callback)
 {
-    return m_impl->funcBoolAsync(paramBool);
+    return m_impl->funcBoolAsync(paramBool, callback);
 }
 std::list<int> SimpleArrayInterfaceThreadSafeDecorator::funcInt(const std::list<int>& paramInt)
 {
     return m_impl->funcInt(paramInt);
 }
 
-std::future<std::list<int>> SimpleArrayInterfaceThreadSafeDecorator::funcIntAsync(const std::list<int>& paramInt)
+std::future<std::list<int>> SimpleArrayInterfaceThreadSafeDecorator::funcIntAsync(const std::list<int>& paramInt, std::function<void(std::list<int>)> callback)
 {
-    return m_impl->funcIntAsync(paramInt);
+    return m_impl->funcIntAsync(paramInt, callback);
 }
 std::list<int32_t> SimpleArrayInterfaceThreadSafeDecorator::funcInt32(const std::list<int32_t>& paramInt32)
 {
     return m_impl->funcInt32(paramInt32);
 }
 
-std::future<std::list<int32_t>> SimpleArrayInterfaceThreadSafeDecorator::funcInt32Async(const std::list<int32_t>& paramInt32)
+std::future<std::list<int32_t>> SimpleArrayInterfaceThreadSafeDecorator::funcInt32Async(const std::list<int32_t>& paramInt32, std::function<void(std::list<int32_t>)> callback)
 {
-    return m_impl->funcInt32Async(paramInt32);
+    return m_impl->funcInt32Async(paramInt32, callback);
 }
 std::list<int64_t> SimpleArrayInterfaceThreadSafeDecorator::funcInt64(const std::list<int64_t>& paramInt64)
 {
     return m_impl->funcInt64(paramInt64);
 }
 
-std::future<std::list<int64_t>> SimpleArrayInterfaceThreadSafeDecorator::funcInt64Async(const std::list<int64_t>& paramInt64)
+std::future<std::list<int64_t>> SimpleArrayInterfaceThreadSafeDecorator::funcInt64Async(const std::list<int64_t>& paramInt64, std::function<void(std::list<int64_t>)> callback)
 {
-    return m_impl->funcInt64Async(paramInt64);
+    return m_impl->funcInt64Async(paramInt64, callback);
 }
 std::list<float> SimpleArrayInterfaceThreadSafeDecorator::funcFloat(const std::list<float>& paramFloat)
 {
     return m_impl->funcFloat(paramFloat);
 }
 
-std::future<std::list<float>> SimpleArrayInterfaceThreadSafeDecorator::funcFloatAsync(const std::list<float>& paramFloat)
+std::future<std::list<float>> SimpleArrayInterfaceThreadSafeDecorator::funcFloatAsync(const std::list<float>& paramFloat, std::function<void(std::list<float>)> callback)
 {
-    return m_impl->funcFloatAsync(paramFloat);
+    return m_impl->funcFloatAsync(paramFloat, callback);
 }
 std::list<float> SimpleArrayInterfaceThreadSafeDecorator::funcFloat32(const std::list<float>& paramFloat32)
 {
     return m_impl->funcFloat32(paramFloat32);
 }
 
-std::future<std::list<float>> SimpleArrayInterfaceThreadSafeDecorator::funcFloat32Async(const std::list<float>& paramFloat32)
+std::future<std::list<float>> SimpleArrayInterfaceThreadSafeDecorator::funcFloat32Async(const std::list<float>& paramFloat32, std::function<void(std::list<float>)> callback)
 {
-    return m_impl->funcFloat32Async(paramFloat32);
+    return m_impl->funcFloat32Async(paramFloat32, callback);
 }
 std::list<double> SimpleArrayInterfaceThreadSafeDecorator::funcFloat64(const std::list<double>& paramFloat)
 {
     return m_impl->funcFloat64(paramFloat);
 }
 
-std::future<std::list<double>> SimpleArrayInterfaceThreadSafeDecorator::funcFloat64Async(const std::list<double>& paramFloat)
+std::future<std::list<double>> SimpleArrayInterfaceThreadSafeDecorator::funcFloat64Async(const std::list<double>& paramFloat, std::function<void(std::list<double>)> callback)
 {
-    return m_impl->funcFloat64Async(paramFloat);
+    return m_impl->funcFloat64Async(paramFloat, callback);
 }
 std::list<std::string> SimpleArrayInterfaceThreadSafeDecorator::funcString(const std::list<std::string>& paramString)
 {
     return m_impl->funcString(paramString);
 }
 
-std::future<std::list<std::string>> SimpleArrayInterfaceThreadSafeDecorator::funcStringAsync(const std::list<std::string>& paramString)
+std::future<std::list<std::string>> SimpleArrayInterfaceThreadSafeDecorator::funcStringAsync(const std::list<std::string>& paramString, std::function<void(std::list<std::string>)> callback)
 {
-    return m_impl->funcStringAsync(paramString);
+    return m_impl->funcStringAsync(paramString, callback);
 }
 void SimpleArrayInterfaceThreadSafeDecorator::setPropBool(const std::list<bool>& propBool)
 {

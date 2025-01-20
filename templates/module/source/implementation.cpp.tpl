@@ -52,13 +52,18 @@ void {{$class}}::set{{Camel $property.Name}}({{cppParam "" $property }})
     {{- end }}
 }
 {{ $returnType := cppReturn "" $operation.Return }}
-std::future<{{$returnType}}> {{$class}}::{{lower1 $operation.Name}}Async({{cppParams "" $operation.Params}})
+std::future<{{$returnType}}> {{$class}}::{{lower1 $operation.Name}}Async({{cppParams "" $operation.Params}}{{- if len ($operation.Params) }},{{end}} std::function<void({{cppReturn "" $operation.Return}})> callback)
 {
-    return std::async(std::launch::async, [this{{- range $operation.Params -}},
+    return std::async(std::launch::async, [this, callback{{- range $operation.Params -}},
                     {{.Name}}
                 {{- end -}}]()
         {
-            return {{lower1 $operation.Name}}({{cppVars $operation.Params}});
+            {{- if not .Return.IsVoid }}auto result = {{ end }}{{lower1 $operation.Name}}({{cppVars $operation.Params}});
+            if (callback)
+            {
+                callback({{- if not .Return.IsVoid }}result{{ end }});
+            }
+            {{- if not .Return.IsVoid }}return result;{{ end }}
         }
     );
 }

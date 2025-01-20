@@ -37,7 +37,7 @@ public:
     /** Traces func1 and forwards call to NestedStruct1Interface implementation. */
     NestedStruct1 func1(const NestedStruct1& param1) override;
     /** Traces func1 and forwards call to NestedStruct1Interface implementation. */
-    std::future<NestedStruct1> func1Async(const NestedStruct1& param1) override;
+    std::future<NestedStruct1> func1Async(const NestedStruct1& param1, std::function<void(NestedStruct1)> callback = nullptr) override;
     
     /** Forwards call to NestedStruct1Interface implementation. */
     void setProp1(const NestedStruct1& prop1) override;

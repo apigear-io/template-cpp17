@@ -12,18 +12,18 @@ NestedStruct1 NestedStruct2InterfaceThreadSafeDecorator::func1(const NestedStruc
     return m_impl->func1(param1);
 }
 
-std::future<NestedStruct1> NestedStruct2InterfaceThreadSafeDecorator::func1Async(const NestedStruct1& param1)
+std::future<NestedStruct1> NestedStruct2InterfaceThreadSafeDecorator::func1Async(const NestedStruct1& param1, std::function<void(NestedStruct1)> callback)
 {
-    return m_impl->func1Async(param1);
+    return m_impl->func1Async(param1, callback);
 }
 NestedStruct1 NestedStruct2InterfaceThreadSafeDecorator::func2(const NestedStruct1& param1, const NestedStruct2& param2)
 {
     return m_impl->func2(param1, param2);
 }
 
-std::future<NestedStruct1> NestedStruct2InterfaceThreadSafeDecorator::func2Async(const NestedStruct1& param1, const NestedStruct2& param2)
+std::future<NestedStruct1> NestedStruct2InterfaceThreadSafeDecorator::func2Async(const NestedStruct1& param1, const NestedStruct2& param2, std::function<void(NestedStruct1)> callback)
 {
-    return m_impl->func2Async(param1, param2);
+    return m_impl->func2Async(param1, param2, callback);
 }
 void NestedStruct2InterfaceThreadSafeDecorator::setProp1(const NestedStruct1& prop1)
 {

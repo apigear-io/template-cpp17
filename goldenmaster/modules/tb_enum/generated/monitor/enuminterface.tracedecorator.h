@@ -37,22 +37,22 @@ public:
     /** Traces func0 and forwards call to EnumInterface implementation. */
     Enum0Enum func0(Enum0Enum param0) override;
     /** Traces func0 and forwards call to EnumInterface implementation. */
-    std::future<Enum0Enum> func0Async(Enum0Enum param0) override;
+    std::future<Enum0Enum> func0Async(Enum0Enum param0, std::function<void(Enum0Enum)> callback = nullptr) override;
     
     /** Traces func1 and forwards call to EnumInterface implementation. */
     Enum1Enum func1(Enum1Enum param1) override;
     /** Traces func1 and forwards call to EnumInterface implementation. */
-    std::future<Enum1Enum> func1Async(Enum1Enum param1) override;
+    std::future<Enum1Enum> func1Async(Enum1Enum param1, std::function<void(Enum1Enum)> callback = nullptr) override;
     
     /** Traces func2 and forwards call to EnumInterface implementation. */
     Enum2Enum func2(Enum2Enum param2) override;
     /** Traces func2 and forwards call to EnumInterface implementation. */
-    std::future<Enum2Enum> func2Async(Enum2Enum param2) override;
+    std::future<Enum2Enum> func2Async(Enum2Enum param2, std::function<void(Enum2Enum)> callback = nullptr) override;
     
     /** Traces func3 and forwards call to EnumInterface implementation. */
     Enum3Enum func3(Enum3Enum param3) override;
     /** Traces func3 and forwards call to EnumInterface implementation. */
-    std::future<Enum3Enum> func3Async(Enum3Enum param3) override;
+    std::future<Enum3Enum> func3Async(Enum3Enum param3, std::function<void(Enum3Enum)> callback = nullptr) override;
     
     /** Forwards call to EnumInterface implementation. */
     void setProp0(Enum0Enum prop0) override;

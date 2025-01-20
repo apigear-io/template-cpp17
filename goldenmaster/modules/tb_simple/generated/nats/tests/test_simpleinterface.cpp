@@ -328,6 +328,22 @@ TEST_CASE("Nats  tb.simple SimpleInterface tests")
         resultFuture.wait();
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+    SECTION("Test method funcNoReturnValue async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSimpleInterface->funcNoReturnValueAsync(false,
+            [&finished, &m_wait]()
+            { 
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
+    }
     SECTION("Test method funcBool")
     {
         [[maybe_unused]] auto result = clientSimpleInterface->funcBool(false);
@@ -344,6 +360,23 @@ TEST_CASE("Nats  tb.simple SimpleInterface tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == false); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+    SECTION("Test method funcBool async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSimpleInterface->funcBoolAsync(false,
+            [&finished, &m_wait](bool value)
+            {
+                REQUIRE(value == false);
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
     }
     SECTION("Test method funcInt")
     {
@@ -362,6 +395,23 @@ TEST_CASE("Nats  tb.simple SimpleInterface tests")
         REQUIRE(return_value == 0); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+    SECTION("Test method funcInt async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSimpleInterface->funcIntAsync(0,
+            [&finished, &m_wait](int value)
+            {
+                REQUIRE(value == 0);
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
+    }
     SECTION("Test method funcInt32")
     {
         [[maybe_unused]] auto result = clientSimpleInterface->funcInt32(0);
@@ -378,6 +428,23 @@ TEST_CASE("Nats  tb.simple SimpleInterface tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == 0); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+    SECTION("Test method funcInt32 async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSimpleInterface->funcInt32Async(0,
+            [&finished, &m_wait](int32_t value)
+            {
+                REQUIRE(value == 0);
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
     }
     SECTION("Test method funcInt64")
     {
@@ -396,6 +463,23 @@ TEST_CASE("Nats  tb.simple SimpleInterface tests")
         REQUIRE(return_value == 0LL); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+    SECTION("Test method funcInt64 async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSimpleInterface->funcInt64Async(0LL,
+            [&finished, &m_wait](int64_t value)
+            {
+                REQUIRE(value == 0LL);
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
+    }
     SECTION("Test method funcFloat")
     {
         [[maybe_unused]] auto result = clientSimpleInterface->funcFloat(0.0f);
@@ -412,6 +496,23 @@ TEST_CASE("Nats  tb.simple SimpleInterface tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == 0.0f); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+    SECTION("Test method funcFloat async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSimpleInterface->funcFloatAsync(0.0f,
+            [&finished, &m_wait](float value)
+            {
+                REQUIRE(value == 0.0f);
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
     }
     SECTION("Test method funcFloat32")
     {
@@ -430,6 +531,23 @@ TEST_CASE("Nats  tb.simple SimpleInterface tests")
         REQUIRE(return_value == 0.0f); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+    SECTION("Test method funcFloat32 async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSimpleInterface->funcFloat32Async(0.0f,
+            [&finished, &m_wait](float value)
+            {
+                REQUIRE(value == 0.0f);
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
+    }
     SECTION("Test method funcFloat64")
     {
         [[maybe_unused]] auto result = clientSimpleInterface->funcFloat64(0.0);
@@ -447,6 +565,23 @@ TEST_CASE("Nats  tb.simple SimpleInterface tests")
         REQUIRE(return_value == 0.0); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+    SECTION("Test method funcFloat64 async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSimpleInterface->funcFloat64Async(0.0,
+            [&finished, &m_wait](double value)
+            {
+                REQUIRE(value == 0.0);
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
+    }
     SECTION("Test method funcString")
     {
         [[maybe_unused]] auto result = clientSimpleInterface->funcString(std::string());
@@ -463,6 +598,23 @@ TEST_CASE("Nats  tb.simple SimpleInterface tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == std::string()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+    SECTION("Test method funcString async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSimpleInterface->funcStringAsync(std::string(),
+            [&finished, &m_wait](std::string value)
+            {
+                REQUIRE(value == std::string());
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
     }
 
     serviceSimpleInterface.reset();

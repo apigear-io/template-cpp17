@@ -24,10 +24,10 @@ void VoidInterfaceTraceDecorator::funcVoid()
     m_tracer->trace_funcVoid();
     return m_impl.funcVoid();
 }
-std::future<void> VoidInterfaceTraceDecorator::funcVoidAsync()
+std::future<void> VoidInterfaceTraceDecorator::funcVoidAsync( std::function<void(void)> callback)
 {
     m_tracer->trace_funcVoid();
-    return m_impl.funcVoidAsync();
+    return m_impl.funcVoidAsync( callback);
 }
 void VoidInterfaceTraceDecorator::onSigVoid()
 {

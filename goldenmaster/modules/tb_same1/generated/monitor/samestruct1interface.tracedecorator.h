@@ -37,7 +37,7 @@ public:
     /** Traces func1 and forwards call to SameStruct1Interface implementation. */
     Struct1 func1(const Struct1& param1) override;
     /** Traces func1 and forwards call to SameStruct1Interface implementation. */
-    std::future<Struct1> func1Async(const Struct1& param1) override;
+    std::future<Struct1> func1Async(const Struct1& param1, std::function<void(Struct1)> callback = nullptr) override;
     
     /** Forwards call to SameStruct1Interface implementation. */
     void setProp1(const Struct1& prop1) override;

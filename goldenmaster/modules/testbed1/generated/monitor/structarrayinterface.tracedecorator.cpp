@@ -24,40 +24,40 @@ std::list<StructBool> StructArrayInterfaceTraceDecorator::funcBool(const std::li
     m_tracer->trace_funcBool(paramBool);
     return m_impl.funcBool(paramBool);
 }
-std::future<std::list<StructBool>> StructArrayInterfaceTraceDecorator::funcBoolAsync(const std::list<StructBool>& paramBool)
+std::future<std::list<StructBool>> StructArrayInterfaceTraceDecorator::funcBoolAsync(const std::list<StructBool>& paramBool, std::function<void(std::list<StructBool>)> callback)
 {
     m_tracer->trace_funcBool(paramBool);
-    return m_impl.funcBoolAsync(paramBool);
+    return m_impl.funcBoolAsync(paramBool, callback);
 }
 std::list<StructInt> StructArrayInterfaceTraceDecorator::funcInt(const std::list<StructInt>& paramInt)
 {
     m_tracer->trace_funcInt(paramInt);
     return m_impl.funcInt(paramInt);
 }
-std::future<std::list<StructInt>> StructArrayInterfaceTraceDecorator::funcIntAsync(const std::list<StructInt>& paramInt)
+std::future<std::list<StructInt>> StructArrayInterfaceTraceDecorator::funcIntAsync(const std::list<StructInt>& paramInt, std::function<void(std::list<StructInt>)> callback)
 {
     m_tracer->trace_funcInt(paramInt);
-    return m_impl.funcIntAsync(paramInt);
+    return m_impl.funcIntAsync(paramInt, callback);
 }
 std::list<StructFloat> StructArrayInterfaceTraceDecorator::funcFloat(const std::list<StructFloat>& paramFloat)
 {
     m_tracer->trace_funcFloat(paramFloat);
     return m_impl.funcFloat(paramFloat);
 }
-std::future<std::list<StructFloat>> StructArrayInterfaceTraceDecorator::funcFloatAsync(const std::list<StructFloat>& paramFloat)
+std::future<std::list<StructFloat>> StructArrayInterfaceTraceDecorator::funcFloatAsync(const std::list<StructFloat>& paramFloat, std::function<void(std::list<StructFloat>)> callback)
 {
     m_tracer->trace_funcFloat(paramFloat);
-    return m_impl.funcFloatAsync(paramFloat);
+    return m_impl.funcFloatAsync(paramFloat, callback);
 }
 std::list<StructString> StructArrayInterfaceTraceDecorator::funcString(const std::list<StructString>& paramString)
 {
     m_tracer->trace_funcString(paramString);
     return m_impl.funcString(paramString);
 }
-std::future<std::list<StructString>> StructArrayInterfaceTraceDecorator::funcStringAsync(const std::list<StructString>& paramString)
+std::future<std::list<StructString>> StructArrayInterfaceTraceDecorator::funcStringAsync(const std::list<StructString>& paramString, std::function<void(std::list<StructString>)> callback)
 {
     m_tracer->trace_funcString(paramString);
-    return m_impl.funcStringAsync(paramString);
+    return m_impl.funcStringAsync(paramString, callback);
 }
 void StructArrayInterfaceTraceDecorator::setPropBool(const std::list<StructBool>& propBool)
 {

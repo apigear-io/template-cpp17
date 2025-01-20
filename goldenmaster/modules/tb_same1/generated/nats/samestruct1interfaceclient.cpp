@@ -117,26 +117,34 @@ Struct1 SameStruct1InterfaceClient::func1(const Struct1& param1)
     return value;
 }
 
-std::future<Struct1> SameStruct1InterfaceClient::func1Async(const Struct1& param1)
+std::future<Struct1> SameStruct1InterfaceClient::func1Async(const Struct1& param1, std::function<void(Struct1)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("tb.same1.SameStruct1Interface.rpc.func1");
 
-    return std::async(std::launch::async, [this,param1]()
+    return std::async(std::launch::async, [this, user_callback,param1]()
     {
         std::promise<Struct1> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(Struct1());
+                if (user_callback)
+                {
+                    user_callback(Struct1());
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const Struct1 value = field.get<Struct1>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({param1}).dump(), callback);

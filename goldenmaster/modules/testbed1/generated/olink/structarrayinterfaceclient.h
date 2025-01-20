@@ -88,7 +88,7 @@ public:
     /**
     * Remote call of IStructArrayInterface::funcBool on the StructArrayInterface service.
     */
-    std::future<std::list<StructBool>> funcBoolAsync(const std::list<StructBool>& paramBool) override;
+    std::future<std::list<StructBool>> funcBoolAsync(const std::list<StructBool>& paramBool, std::function<void(std::list<StructBool>)> callback = nullptr) override;
     /**
     * Remote call of IStructArrayInterface::funcInt on the StructArrayInterface service.
     * Uses funcIntAsync
@@ -97,7 +97,7 @@ public:
     /**
     * Remote call of IStructArrayInterface::funcInt on the StructArrayInterface service.
     */
-    std::future<std::list<StructInt>> funcIntAsync(const std::list<StructInt>& paramInt) override;
+    std::future<std::list<StructInt>> funcIntAsync(const std::list<StructInt>& paramInt, std::function<void(std::list<StructInt>)> callback = nullptr) override;
     /**
     * Remote call of IStructArrayInterface::funcFloat on the StructArrayInterface service.
     * Uses funcFloatAsync
@@ -106,7 +106,7 @@ public:
     /**
     * Remote call of IStructArrayInterface::funcFloat on the StructArrayInterface service.
     */
-    std::future<std::list<StructFloat>> funcFloatAsync(const std::list<StructFloat>& paramFloat) override;
+    std::future<std::list<StructFloat>> funcFloatAsync(const std::list<StructFloat>& paramFloat, std::function<void(std::list<StructFloat>)> callback = nullptr) override;
     /**
     * Remote call of IStructArrayInterface::funcString on the StructArrayInterface service.
     * Uses funcStringAsync
@@ -115,7 +115,7 @@ public:
     /**
     * Remote call of IStructArrayInterface::funcString on the StructArrayInterface service.
     */
-    std::future<std::list<StructString>> funcStringAsync(const std::list<StructString>& paramString) override;
+    std::future<std::list<StructString>> funcStringAsync(const std::list<StructString>& paramString, std::function<void(std::list<StructString>)> callback = nullptr) override;
 
     /** The publisher to subscribe to. */
     IStructArrayInterfacePublisher& _getPublisher() const override;

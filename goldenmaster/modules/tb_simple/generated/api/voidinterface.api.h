@@ -32,7 +32,7 @@ public:
     * Asynchronous version of funcVoid()
     * @return Promise of type void which is set once the function has completed
     */
-    virtual std::future<void> funcVoidAsync() = 0;
+    virtual std::future<void> funcVoidAsync( std::function<void(void)> callback = nullptr) = 0;
 
     /**
     * Access to a publisher, use it to subscribe for VoidInterface changes and signal emission.

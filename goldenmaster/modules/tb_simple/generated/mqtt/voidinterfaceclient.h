@@ -15,7 +15,7 @@ public:
     explicit VoidInterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> client);
     virtual ~VoidInterfaceClient() override;
     void funcVoid() override;
-    std::future<void> funcVoidAsync() override;
+    std::future<void> funcVoidAsync( std::function<void(void)> callback = nullptr) override;
     IVoidInterfacePublisher& _getPublisher() const override;
 
     bool isReady() const;

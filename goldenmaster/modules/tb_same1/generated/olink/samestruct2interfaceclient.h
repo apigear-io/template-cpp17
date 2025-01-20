@@ -68,7 +68,7 @@ public:
     /**
     * Remote call of ISameStruct2Interface::func1 on the SameStruct2Interface service.
     */
-    std::future<Struct1> func1Async(const Struct1& param1) override;
+    std::future<Struct1> func1Async(const Struct1& param1, std::function<void(Struct1)> callback = nullptr) override;
     /**
     * Remote call of ISameStruct2Interface::func2 on the SameStruct2Interface service.
     * Uses func2Async
@@ -77,7 +77,7 @@ public:
     /**
     * Remote call of ISameStruct2Interface::func2 on the SameStruct2Interface service.
     */
-    std::future<Struct1> func2Async(const Struct1& param1, const Struct2& param2) override;
+    std::future<Struct1> func2Async(const Struct1& param1, const Struct2& param2, std::function<void(Struct1)> callback = nullptr) override;
 
     /** The publisher to subscribe to. */
     ISameStruct2InterfacePublisher& _getPublisher() const override;
