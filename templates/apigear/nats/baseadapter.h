@@ -13,6 +13,11 @@
 
 namespace ApiGear {
 namespace Nats {
+
+/**
+Base class for generated interface client and service adapters.
+It provides common functionality for them like tracking if the object is ready.
+*/
 class APIGEAR_NATS_EXPORT BaseAdapter
 {
 public:
