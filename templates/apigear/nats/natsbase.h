@@ -16,7 +16,11 @@ namespace Utilities {
 
 namespace Nats {
 
-
+/**
+Base class for Apigear Client and Apigear Service general (interface independent) adapters for NATS Client.
+It provides common functionality for them like managing the subscriptions and connection state and provides an access 
+to common methods implemented in a wrapper of CNATS library.
+*/
 class APIGEAR_NATS_EXPORT Base
 {
 public:
