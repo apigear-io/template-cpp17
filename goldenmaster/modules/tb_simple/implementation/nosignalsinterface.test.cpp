@@ -10,9 +10,35 @@ TEST_CASE("Testing NoSignalsInterface", "[NoSignalsInterface]"){
         // Do implement test here
         testNoSignalsInterface->funcVoid();
     }
+
+    SECTION("Test operation async funcVoid") {
+        // Do implement test here
+
+        auto future = testNoSignalsInterface->funcVoidAsync();
+    }
+
+    SECTION("Test operation async funcVoid with a callback") {
+        // Do implement test here
+
+        auto future = testNoSignalsInterface->funcVoidAsync([]( ){ /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
+    }
     SECTION("Test operation funcBool") {
         // Do implement test here
         testNoSignalsInterface->funcBool(false);
+    }
+
+    SECTION("Test operation async funcBool") {
+        // Do implement test here
+
+        auto future = testNoSignalsInterface->funcBoolAsync(false);
+    }
+
+    SECTION("Test operation async funcBool with a callback") {
+        // Do implement test here
+
+        auto future = testNoSignalsInterface->funcBoolAsync(false,[](bool value){ (void)value; /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
     }
     SECTION("Test property propBool") {
         // Do implement test here

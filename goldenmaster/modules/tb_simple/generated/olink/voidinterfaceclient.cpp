@@ -36,7 +36,7 @@ void VoidInterfaceClient::funcVoid()
     return funcVoidAsync().get();
 }
 
-std::future<void> VoidInterfaceClient::funcVoidAsync()
+std::future<void> VoidInterfaceClient::funcVoidAsync( std::function<void(void)> callback)
 {
     if(!m_node) {
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
@@ -45,9 +45,13 @@ std::future<void> VoidInterfaceClient::funcVoidAsync()
     std::shared_ptr<std::promise<void>> resultPromise = std::make_shared<std::promise<void>>();
     static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcVoid");
     m_node->invokeRemote(operationId,
-        nlohmann::json::array({}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+        nlohmann::json::array({}), [resultPromise, callback](ApiGear::ObjectLink::InvokeReplyArg arg) {
             (void) arg;
             resultPromise->set_value();
+            if (callback)
+            {
+                callback();
+            }
         });
     return resultPromise->get_future();
 }

@@ -83,6 +83,17 @@ TEST_CASE("olink  tb.simple VoidInterface tests")
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
 
+    SECTION("Test method funcVoid async with a callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientVoidInterface->funcVoidAsync([&finished, &m_wait](){finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+         
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        resultFuture.wait();
+        
+    }
     clientNode->unlinkRemote(clientVoidInterface->olinkObjectName());
     remote_registry.removeSource(serviceVoidInterface->olinkObjectName());
     client_registry.removeSink(clientVoidInterface->olinkObjectName());

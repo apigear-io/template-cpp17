@@ -58,7 +58,7 @@ public:
     /**
     * Remote call of ISameEnum1Interface::func1 on the SameEnum1Interface service.
     */
-    std::future<Enum1Enum> func1Async(Enum1Enum param1) override;
+    std::future<Enum1Enum> func1Async(Enum1Enum param1, std::function<void(Enum1Enum)> callback = nullptr) override;
 
     /** The publisher to subscribe to. */
     ISameEnum1InterfacePublisher& _getPublisher() const override;

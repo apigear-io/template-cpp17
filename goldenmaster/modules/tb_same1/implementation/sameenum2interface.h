@@ -24,10 +24,10 @@ public:
     Enum2Enum getProp2() const override;
     
     Enum1Enum func1(Enum1Enum param1) override;
-    std::future<Enum1Enum> func1Async(Enum1Enum param1) override;
+    std::future<Enum1Enum> func1Async(Enum1Enum param1, std::function<void(Enum1Enum)> callback = nullptr) override;
         
     Enum1Enum func2(Enum1Enum param1, Enum2Enum param2) override;
-    std::future<Enum1Enum> func2Async(Enum1Enum param1, Enum2Enum param2) override;
+    std::future<Enum1Enum> func2Async(Enum1Enum param1, Enum2Enum param2, std::function<void(Enum1Enum)> callback = nullptr) override;
         
     /**
     * Access to a publisher, use it to subscribe for SameEnum2Interface changes and signal emission.

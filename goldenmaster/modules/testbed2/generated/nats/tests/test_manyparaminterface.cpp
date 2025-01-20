@@ -203,6 +203,23 @@ TEST_CASE("Nats  testbed2 ManyParamInterface tests")
         REQUIRE(return_value == 0); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+    SECTION("Test method func1 async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientManyParamInterface->func1Async(0,
+            [&finished, &m_wait](int value)
+            {
+                REQUIRE(value == 0);
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
+    }
     SECTION("Test method func2")
     {
         [[maybe_unused]] auto result = clientManyParamInterface->func2(0, 0);
@@ -219,6 +236,23 @@ TEST_CASE("Nats  testbed2 ManyParamInterface tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == 0); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+    SECTION("Test method func2 async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientManyParamInterface->func2Async(0, 0,
+            [&finished, &m_wait](int value)
+            {
+                REQUIRE(value == 0);
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
     }
     SECTION("Test method func3")
     {
@@ -237,6 +271,23 @@ TEST_CASE("Nats  testbed2 ManyParamInterface tests")
         REQUIRE(return_value == 0); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+    SECTION("Test method func3 async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientManyParamInterface->func3Async(0, 0, 0,
+            [&finished, &m_wait](int value)
+            {
+                REQUIRE(value == 0);
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
+    }
     SECTION("Test method func4")
     {
         [[maybe_unused]] auto result = clientManyParamInterface->func4(0, 0, 0, 0);
@@ -253,6 +304,23 @@ TEST_CASE("Nats  testbed2 ManyParamInterface tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == 0); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+    SECTION("Test method func4 async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientManyParamInterface->func4Async(0, 0, 0, 0,
+            [&finished, &m_wait](int value)
+            {
+                REQUIRE(value == 0);
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
     }
 
     serviceManyParamInterface.reset();

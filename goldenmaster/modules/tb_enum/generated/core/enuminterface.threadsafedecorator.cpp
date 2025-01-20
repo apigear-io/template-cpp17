@@ -12,36 +12,36 @@ Enum0Enum EnumInterfaceThreadSafeDecorator::func0(Enum0Enum param0)
     return m_impl->func0(param0);
 }
 
-std::future<Enum0Enum> EnumInterfaceThreadSafeDecorator::func0Async(Enum0Enum param0)
+std::future<Enum0Enum> EnumInterfaceThreadSafeDecorator::func0Async(Enum0Enum param0, std::function<void(Enum0Enum)> callback)
 {
-    return m_impl->func0Async(param0);
+    return m_impl->func0Async(param0, callback);
 }
 Enum1Enum EnumInterfaceThreadSafeDecorator::func1(Enum1Enum param1)
 {
     return m_impl->func1(param1);
 }
 
-std::future<Enum1Enum> EnumInterfaceThreadSafeDecorator::func1Async(Enum1Enum param1)
+std::future<Enum1Enum> EnumInterfaceThreadSafeDecorator::func1Async(Enum1Enum param1, std::function<void(Enum1Enum)> callback)
 {
-    return m_impl->func1Async(param1);
+    return m_impl->func1Async(param1, callback);
 }
 Enum2Enum EnumInterfaceThreadSafeDecorator::func2(Enum2Enum param2)
 {
     return m_impl->func2(param2);
 }
 
-std::future<Enum2Enum> EnumInterfaceThreadSafeDecorator::func2Async(Enum2Enum param2)
+std::future<Enum2Enum> EnumInterfaceThreadSafeDecorator::func2Async(Enum2Enum param2, std::function<void(Enum2Enum)> callback)
 {
-    return m_impl->func2Async(param2);
+    return m_impl->func2Async(param2, callback);
 }
 Enum3Enum EnumInterfaceThreadSafeDecorator::func3(Enum3Enum param3)
 {
     return m_impl->func3(param3);
 }
 
-std::future<Enum3Enum> EnumInterfaceThreadSafeDecorator::func3Async(Enum3Enum param3)
+std::future<Enum3Enum> EnumInterfaceThreadSafeDecorator::func3Async(Enum3Enum param3, std::function<void(Enum3Enum)> callback)
 {
-    return m_impl->func3Async(param3);
+    return m_impl->func3Async(param3, callback);
 }
 void EnumInterfaceThreadSafeDecorator::setProp0(Enum0Enum prop0)
 {

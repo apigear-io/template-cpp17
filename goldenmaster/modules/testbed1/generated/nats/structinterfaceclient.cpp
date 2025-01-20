@@ -238,26 +238,34 @@ StructBool StructInterfaceClient::funcBool(const StructBool& paramBool)
     return value;
 }
 
-std::future<StructBool> StructInterfaceClient::funcBoolAsync(const StructBool& paramBool)
+std::future<StructBool> StructInterfaceClient::funcBoolAsync(const StructBool& paramBool, std::function<void(StructBool)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("testbed1.StructInterface.rpc.funcBool");
 
-    return std::async(std::launch::async, [this,paramBool]()
+    return std::async(std::launch::async, [this, user_callback,paramBool]()
     {
         std::promise<StructBool> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(StructBool());
+                if (user_callback)
+                {
+                    user_callback(StructBool());
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const StructBool value = field.get<StructBool>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({paramBool}).dump(), callback);
@@ -274,26 +282,34 @@ StructBool StructInterfaceClient::funcInt(const StructInt& paramInt)
     return value;
 }
 
-std::future<StructBool> StructInterfaceClient::funcIntAsync(const StructInt& paramInt)
+std::future<StructBool> StructInterfaceClient::funcIntAsync(const StructInt& paramInt, std::function<void(StructBool)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("testbed1.StructInterface.rpc.funcInt");
 
-    return std::async(std::launch::async, [this,paramInt]()
+    return std::async(std::launch::async, [this, user_callback,paramInt]()
     {
         std::promise<StructBool> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(StructBool());
+                if (user_callback)
+                {
+                    user_callback(StructBool());
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const StructBool value = field.get<StructBool>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({paramInt}).dump(), callback);
@@ -310,26 +326,34 @@ StructFloat StructInterfaceClient::funcFloat(const StructFloat& paramFloat)
     return value;
 }
 
-std::future<StructFloat> StructInterfaceClient::funcFloatAsync(const StructFloat& paramFloat)
+std::future<StructFloat> StructInterfaceClient::funcFloatAsync(const StructFloat& paramFloat, std::function<void(StructFloat)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("testbed1.StructInterface.rpc.funcFloat");
 
-    return std::async(std::launch::async, [this,paramFloat]()
+    return std::async(std::launch::async, [this, user_callback,paramFloat]()
     {
         std::promise<StructFloat> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(StructFloat());
+                if (user_callback)
+                {
+                    user_callback(StructFloat());
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const StructFloat value = field.get<StructFloat>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({paramFloat}).dump(), callback);
@@ -346,26 +370,34 @@ StructString StructInterfaceClient::funcString(const StructString& paramString)
     return value;
 }
 
-std::future<StructString> StructInterfaceClient::funcStringAsync(const StructString& paramString)
+std::future<StructString> StructInterfaceClient::funcStringAsync(const StructString& paramString, std::function<void(StructString)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("testbed1.StructInterface.rpc.funcString");
 
-    return std::async(std::launch::async, [this,paramString]()
+    return std::async(std::launch::async, [this, user_callback,paramString]()
     {
         std::promise<StructString> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(StructString());
+                if (user_callback)
+                {
+                    user_callback(StructString());
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const StructString value = field.get<StructString>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({paramString}).dump(), callback);

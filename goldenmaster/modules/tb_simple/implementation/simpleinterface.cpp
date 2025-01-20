@@ -124,12 +124,15 @@ void SimpleInterface::funcNoReturnValue(bool paramBool)
     // do business logic here
 }
 
-std::future<void> SimpleInterface::funcNoReturnValueAsync(bool paramBool)
+std::future<void> SimpleInterface::funcNoReturnValueAsync(bool paramBool, std::function<void(void)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramBool]()
-        {
-            return funcNoReturnValue(paramBool);
+        {funcNoReturnValue(paramBool);
+            if (callback)
+            {
+                callback();
+            }
         }
     );
 }
@@ -141,12 +144,15 @@ bool SimpleInterface::funcBool(bool paramBool)
     return false;
 }
 
-std::future<bool> SimpleInterface::funcBoolAsync(bool paramBool)
+std::future<bool> SimpleInterface::funcBoolAsync(bool paramBool, std::function<void(bool)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramBool]()
-        {
-            return funcBool(paramBool);
+        {auto result = funcBool(paramBool);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }
@@ -158,12 +164,15 @@ int SimpleInterface::funcInt(int paramInt)
     return 0;
 }
 
-std::future<int> SimpleInterface::funcIntAsync(int paramInt)
+std::future<int> SimpleInterface::funcIntAsync(int paramInt, std::function<void(int)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramInt]()
-        {
-            return funcInt(paramInt);
+        {auto result = funcInt(paramInt);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }
@@ -175,12 +184,15 @@ int32_t SimpleInterface::funcInt32(int32_t paramInt32)
     return 0;
 }
 
-std::future<int32_t> SimpleInterface::funcInt32Async(int32_t paramInt32)
+std::future<int32_t> SimpleInterface::funcInt32Async(int32_t paramInt32, std::function<void(int32_t)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramInt32]()
-        {
-            return funcInt32(paramInt32);
+        {auto result = funcInt32(paramInt32);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }
@@ -192,12 +204,15 @@ int64_t SimpleInterface::funcInt64(int64_t paramInt64)
     return 0LL;
 }
 
-std::future<int64_t> SimpleInterface::funcInt64Async(int64_t paramInt64)
+std::future<int64_t> SimpleInterface::funcInt64Async(int64_t paramInt64, std::function<void(int64_t)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramInt64]()
-        {
-            return funcInt64(paramInt64);
+        {auto result = funcInt64(paramInt64);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }
@@ -209,12 +224,15 @@ float SimpleInterface::funcFloat(float paramFloat)
     return 0.0f;
 }
 
-std::future<float> SimpleInterface::funcFloatAsync(float paramFloat)
+std::future<float> SimpleInterface::funcFloatAsync(float paramFloat, std::function<void(float)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramFloat]()
-        {
-            return funcFloat(paramFloat);
+        {auto result = funcFloat(paramFloat);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }
@@ -226,12 +244,15 @@ float SimpleInterface::funcFloat32(float paramFloat32)
     return 0.0f;
 }
 
-std::future<float> SimpleInterface::funcFloat32Async(float paramFloat32)
+std::future<float> SimpleInterface::funcFloat32Async(float paramFloat32, std::function<void(float)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramFloat32]()
-        {
-            return funcFloat32(paramFloat32);
+        {auto result = funcFloat32(paramFloat32);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }
@@ -243,12 +264,15 @@ double SimpleInterface::funcFloat64(double paramFloat)
     return 0.0;
 }
 
-std::future<double> SimpleInterface::funcFloat64Async(double paramFloat)
+std::future<double> SimpleInterface::funcFloat64Async(double paramFloat, std::function<void(double)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramFloat]()
-        {
-            return funcFloat64(paramFloat);
+        {auto result = funcFloat64(paramFloat);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }
@@ -260,12 +284,15 @@ std::string SimpleInterface::funcString(const std::string& paramString)
     return std::string();
 }
 
-std::future<std::string> SimpleInterface::funcStringAsync(const std::string& paramString)
+std::future<std::string> SimpleInterface::funcStringAsync(const std::string& paramString, std::function<void(std::string)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramString]()
-        {
-            return funcString(paramString);
+        {auto result = funcString(paramString);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }

@@ -68,7 +68,7 @@ public:
     /**
     * Remote call of INestedStruct2Interface::func1 on the NestedStruct2Interface service.
     */
-    std::future<NestedStruct1> func1Async(const NestedStruct1& param1) override;
+    std::future<NestedStruct1> func1Async(const NestedStruct1& param1, std::function<void(NestedStruct1)> callback = nullptr) override;
     /**
     * Remote call of INestedStruct2Interface::func2 on the NestedStruct2Interface service.
     * Uses func2Async
@@ -77,7 +77,7 @@ public:
     /**
     * Remote call of INestedStruct2Interface::func2 on the NestedStruct2Interface service.
     */
-    std::future<NestedStruct1> func2Async(const NestedStruct1& param1, const NestedStruct2& param2) override;
+    std::future<NestedStruct1> func2Async(const NestedStruct1& param1, const NestedStruct2& param2, std::function<void(NestedStruct1)> callback = nullptr) override;
 
     /** The publisher to subscribe to. */
     INestedStruct2InterfacePublisher& _getPublisher() const override;

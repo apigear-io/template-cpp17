@@ -151,20 +151,24 @@ void NoSignalsInterfaceClient::funcVoid()
     funcVoidAsync();
 }
 
-std::future<void> NoSignalsInterfaceClient::funcVoidAsync()
+std::future<void> NoSignalsInterfaceClient::funcVoidAsync( std::function<void(void)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("tb.simple.NoSignalsInterface.rpc.funcVoid");
 
-    return std::async(std::launch::async, [this]()
+    return std::async(std::launch::async, [this, user_callback]()
     {
         std::promise<void> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             (void) result;
             resultPromise.set_value();
+            if (user_callback)
+            {
+                user_callback();
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({}).dump(), callback);
@@ -181,26 +185,34 @@ bool NoSignalsInterfaceClient::funcBool(bool paramBool)
     return value;
 }
 
-std::future<bool> NoSignalsInterfaceClient::funcBoolAsync(bool paramBool)
+std::future<bool> NoSignalsInterfaceClient::funcBoolAsync(bool paramBool, std::function<void(bool)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("tb.simple.NoSignalsInterface.rpc.funcBool");
 
-    return std::async(std::launch::async, [this,paramBool]()
+    return std::async(std::launch::async, [this, user_callback,paramBool]()
     {
         std::promise<bool> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(false);
+                if (user_callback)
+                {
+                    user_callback(false);
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const bool value = field.get<bool>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({paramBool}).dump(), callback);

@@ -51,7 +51,7 @@ public:
     * Forwards call to NestedStruct3Interface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<NestedStruct1> func1Async(const NestedStruct1& param1) override;
+    std::future<NestedStruct1> func1Async(const NestedStruct1& param1, std::function<void(NestedStruct1)> callback = nullptr) override;
 
     /** 
     * Forwards call to NestedStruct3Interface implementation.
@@ -62,7 +62,7 @@ public:
     * Forwards call to NestedStruct3Interface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<NestedStruct1> func2Async(const NestedStruct1& param1, const NestedStruct2& param2) override;
+    std::future<NestedStruct1> func2Async(const NestedStruct1& param1, const NestedStruct2& param2, std::function<void(NestedStruct1)> callback = nullptr) override;
 
     /** 
     * Forwards call to NestedStruct3Interface implementation.
@@ -73,7 +73,7 @@ public:
     * Forwards call to NestedStruct3Interface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<NestedStruct1> func3Async(const NestedStruct1& param1, const NestedStruct2& param2, const NestedStruct3& param3) override;
+    std::future<NestedStruct1> func3Async(const NestedStruct1& param1, const NestedStruct2& param2, const NestedStruct3& param3, std::function<void(NestedStruct1)> callback = nullptr) override;
 
     /** Guards and forwards call to NestedStruct3Interface implementation. */
     void setProp1(const NestedStruct1& prop1) override;

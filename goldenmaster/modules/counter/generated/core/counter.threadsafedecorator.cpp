@@ -12,18 +12,18 @@ Eigen::Vector3f CounterThreadSafeDecorator::increment(const Eigen::Vector3f& vec
     return m_impl->increment(vec);
 }
 
-std::future<Eigen::Vector3f> CounterThreadSafeDecorator::incrementAsync(const Eigen::Vector3f& vec)
+std::future<Eigen::Vector3f> CounterThreadSafeDecorator::incrementAsync(const Eigen::Vector3f& vec, std::function<void(Eigen::Vector3f)> callback)
 {
-    return m_impl->incrementAsync(vec);
+    return m_impl->incrementAsync(vec, callback);
 }
 Test::CustomTypes::Vector3D CounterThreadSafeDecorator::decrement(const Test::CustomTypes::Vector3D& vec)
 {
     return m_impl->decrement(vec);
 }
 
-std::future<Test::CustomTypes::Vector3D> CounterThreadSafeDecorator::decrementAsync(const Test::CustomTypes::Vector3D& vec)
+std::future<Test::CustomTypes::Vector3D> CounterThreadSafeDecorator::decrementAsync(const Test::CustomTypes::Vector3D& vec, std::function<void(Test::CustomTypes::Vector3D)> callback)
 {
-    return m_impl->decrementAsync(vec);
+    return m_impl->decrementAsync(vec, callback);
 }
 void CounterThreadSafeDecorator::setVector(const Test::CustomTypes::Vector3D& vector)
 {

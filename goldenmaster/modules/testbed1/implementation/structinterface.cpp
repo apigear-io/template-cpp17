@@ -73,12 +73,15 @@ StructBool StructInterface::funcBool(const StructBool& paramBool)
     return StructBool();
 }
 
-std::future<StructBool> StructInterface::funcBoolAsync(const StructBool& paramBool)
+std::future<StructBool> StructInterface::funcBoolAsync(const StructBool& paramBool, std::function<void(StructBool)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramBool]()
-        {
-            return funcBool(paramBool);
+        {auto result = funcBool(paramBool);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }
@@ -90,12 +93,15 @@ StructBool StructInterface::funcInt(const StructInt& paramInt)
     return StructBool();
 }
 
-std::future<StructBool> StructInterface::funcIntAsync(const StructInt& paramInt)
+std::future<StructBool> StructInterface::funcIntAsync(const StructInt& paramInt, std::function<void(StructBool)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramInt]()
-        {
-            return funcInt(paramInt);
+        {auto result = funcInt(paramInt);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }
@@ -107,12 +113,15 @@ StructFloat StructInterface::funcFloat(const StructFloat& paramFloat)
     return StructFloat();
 }
 
-std::future<StructFloat> StructInterface::funcFloatAsync(const StructFloat& paramFloat)
+std::future<StructFloat> StructInterface::funcFloatAsync(const StructFloat& paramFloat, std::function<void(StructFloat)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramFloat]()
-        {
-            return funcFloat(paramFloat);
+        {auto result = funcFloat(paramFloat);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }
@@ -124,12 +133,15 @@ StructString StructInterface::funcString(const StructString& paramString)
     return StructString();
 }
 
-std::future<StructString> StructInterface::funcStringAsync(const StructString& paramString)
+std::future<StructString> StructInterface::funcStringAsync(const StructString& paramString, std::function<void(StructString)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramString]()
-        {
-            return funcString(paramString);
+        {auto result = funcString(paramString);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }

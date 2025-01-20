@@ -30,16 +30,16 @@ public:
     const std::list<StructString>& getPropString() const override;
     
     StructBool funcBool(const std::list<StructBool>& paramBool) override;
-    std::future<StructBool> funcBoolAsync(const std::list<StructBool>& paramBool) override;
+    std::future<StructBool> funcBoolAsync(const std::list<StructBool>& paramBool, std::function<void(StructBool)> callback = nullptr) override;
         
     StructBool funcInt(const std::list<StructInt>& paramInt) override;
-    std::future<StructBool> funcIntAsync(const std::list<StructInt>& paramInt) override;
+    std::future<StructBool> funcIntAsync(const std::list<StructInt>& paramInt, std::function<void(StructBool)> callback = nullptr) override;
         
     StructBool funcFloat(const std::list<StructFloat>& paramFloat) override;
-    std::future<StructBool> funcFloatAsync(const std::list<StructFloat>& paramFloat) override;
+    std::future<StructBool> funcFloatAsync(const std::list<StructFloat>& paramFloat, std::function<void(StructBool)> callback = nullptr) override;
         
     StructBool funcString(const std::list<StructString>& paramString) override;
-    std::future<StructBool> funcStringAsync(const std::list<StructString>& paramString) override;
+    std::future<StructBool> funcStringAsync(const std::list<StructString>& paramString, std::function<void(StructBool)> callback = nullptr) override;
         
     /**
     * Access to a publisher, use it to subscribe for StructArrayInterface changes and signal emission.

@@ -167,6 +167,11 @@ TEST_CASE("mqtt  tb.names NamEs tests")
         auto resultFuture = clientNamEs->sOME_FUNCTIONAsync(false);
         // The void function only sends request. It does not wait for the actual function on server side to be finished.
     }
+
+    SECTION("Test method SOME_FUNCTION async with callback")
+    {
+        auto resultFuture = clientNamEs->sOME_FUNCTIONAsync(false,[](){/* you can add a callback, but it will be called right after sending the request. It does not wait for the actual function on server side to be finished. */ });
+    }
     SECTION("Test method Some_Function2")
     {
          clientNamEs->some_Function2(false);
@@ -176,6 +181,11 @@ TEST_CASE("mqtt  tb.names NamEs tests")
     {
         auto resultFuture = clientNamEs->some_Function2Async(false);
         // The void function only sends request. It does not wait for the actual function on server side to be finished.
+    }
+
+    SECTION("Test method Some_Function2 async with callback")
+    {
+        auto resultFuture = clientNamEs->some_Function2Async(false,[](){/* you can add a callback, but it will be called right after sending the request. It does not wait for the actual function on server side to be finished. */ });
     }
 
     std::atomic<bool> serviceDisconnected{ false };

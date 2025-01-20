@@ -129,12 +129,12 @@ void Nam_EsClient::sOME_FUNCTION(bool SOME_PARAM)
     sOME_FUNCTIONAsync(SOME_PARAM);
 }
 
-std::future<void> Nam_EsClient::sOME_FUNCTIONAsync(bool SOME_PARAM)
+std::future<void> Nam_EsClient::sOME_FUNCTIONAsync(bool SOME_PARAM, std::function<void(void)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     SOME_PARAM]()
         {
             std::promise<void> resultPromise;
@@ -144,6 +144,10 @@ std::future<void> Nam_EsClient::sOME_FUNCTIONAsync(bool SOME_PARAM)
             m_client->invokeRemote(topic, responseTopic,
                 nlohmann::json::array({SOME_PARAM}).dump(), responseId);
             resultPromise.set_value();
+            if (callback)
+            {
+                callback();
+            }
             return resultPromise.get_future().get();
         }
     );
@@ -157,12 +161,12 @@ void Nam_EsClient::some_Function2(bool Some_Param)
     some_Function2Async(Some_Param);
 }
 
-std::future<void> Nam_EsClient::some_Function2Async(bool Some_Param)
+std::future<void> Nam_EsClient::some_Function2Async(bool Some_Param, std::function<void(void)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     Some_Param]()
         {
             std::promise<void> resultPromise;
@@ -172,6 +176,10 @@ std::future<void> Nam_EsClient::some_Function2Async(bool Some_Param)
             m_client->invokeRemote(topic, responseTopic,
                 nlohmann::json::array({Some_Param}).dump(), responseId);
             resultPromise.set_value();
+            if (callback)
+            {
+                callback();
+            }
             return resultPromise.get_future().get();
         }
     );

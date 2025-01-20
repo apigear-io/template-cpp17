@@ -78,7 +78,7 @@ public:
     /**
     * Remote call of INamEs::SOME_FUNCTION on the Nam_Es service.
     */
-    std::future<void> sOME_FUNCTIONAsync(bool SOME_PARAM) override;
+    std::future<void> sOME_FUNCTIONAsync(bool SOME_PARAM, std::function<void(void)> callback = nullptr) override;
     /**
     * Remote call of INamEs::Some_Function2 on the Nam_Es service.
     * Uses Some_Function2Async
@@ -87,7 +87,7 @@ public:
     /**
     * Remote call of INamEs::Some_Function2 on the Nam_Es service.
     */
-    std::future<void> some_Function2Async(bool Some_Param) override;
+    std::future<void> some_Function2Async(bool Some_Param, std::function<void(void)> callback = nullptr) override;
 
     /** The publisher to subscribe to. */
     INamEsPublisher& _getPublisher() const override;

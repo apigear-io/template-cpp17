@@ -45,7 +45,7 @@ public:
     * Forwards call to VoidInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<void> funcVoidAsync() override;
+    std::future<void> funcVoidAsync( std::function<void(void)> callback = nullptr) override;
 
     /**
     * Access to a publisher, use it to subscribe for VoidInterface changes and signal emission.

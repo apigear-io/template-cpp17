@@ -349,6 +349,11 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
         auto resultFuture = clientSimpleInterface->funcNoReturnValueAsync(false);
         // The void function only sends request. It does not wait for the actual function on server side to be finished.
     }
+
+    SECTION("Test method funcNoReturnValue async with callback")
+    {
+        auto resultFuture = clientSimpleInterface->funcNoReturnValueAsync(false,[](){/* you can add a callback, but it will be called right after sending the request. It does not wait for the actual function on server side to be finished. */ });
+    }
     SECTION("Test method funcBool")
     {
         [[maybe_unused]] auto result =  clientSimpleInterface->funcBool(false);
@@ -365,6 +370,18 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == false); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+
+    SECTION("Test method funcBool async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSimpleInterface->funcBoolAsync(false,[&finished, &m_wait](bool value){ (void) value; finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == false); 
     }
     SECTION("Test method funcInt")
     {
@@ -383,6 +400,18 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
         REQUIRE(return_value == 0); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+
+    SECTION("Test method funcInt async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSimpleInterface->funcIntAsync(0,[&finished, &m_wait](int value){ (void) value; finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == 0); 
+    }
     SECTION("Test method funcInt32")
     {
         [[maybe_unused]] auto result =  clientSimpleInterface->funcInt32(0);
@@ -399,6 +428,18 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == 0); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+
+    SECTION("Test method funcInt32 async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSimpleInterface->funcInt32Async(0,[&finished, &m_wait](int32_t value){ (void) value; finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == 0); 
     }
     SECTION("Test method funcInt64")
     {
@@ -417,6 +458,18 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
         REQUIRE(return_value == 0LL); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+
+    SECTION("Test method funcInt64 async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSimpleInterface->funcInt64Async(0LL,[&finished, &m_wait](int64_t value){ (void) value; finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == 0LL); 
+    }
     SECTION("Test method funcFloat")
     {
         [[maybe_unused]] auto result =  clientSimpleInterface->funcFloat(0.0f);
@@ -433,6 +486,18 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == 0.0f); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+
+    SECTION("Test method funcFloat async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSimpleInterface->funcFloatAsync(0.0f,[&finished, &m_wait](float value){ (void) value; finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == 0.0f); 
     }
     SECTION("Test method funcFloat32")
     {
@@ -451,6 +516,18 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
         REQUIRE(return_value == 0.0f); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+
+    SECTION("Test method funcFloat32 async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSimpleInterface->funcFloat32Async(0.0f,[&finished, &m_wait](float value){ (void) value; finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == 0.0f); 
+    }
     SECTION("Test method funcFloat64")
     {
         [[maybe_unused]] auto result =  clientSimpleInterface->funcFloat64(0.0);
@@ -468,6 +545,18 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
         REQUIRE(return_value == 0.0); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+
+    SECTION("Test method funcFloat64 async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSimpleInterface->funcFloat64Async(0.0,[&finished, &m_wait](double value){ (void) value; finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == 0.0); 
+    }
     SECTION("Test method funcString")
     {
         [[maybe_unused]] auto result =  clientSimpleInterface->funcString(std::string());
@@ -484,6 +573,18 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == std::string()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+
+    SECTION("Test method funcString async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSimpleInterface->funcStringAsync(std::string(),[&finished, &m_wait](std::string value){ (void) value; finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == std::string()); 
     }
 
     std::atomic<bool> serviceDisconnected{ false };

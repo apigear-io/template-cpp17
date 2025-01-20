@@ -12,9 +12,9 @@ Enum1Enum SameEnum1InterfaceThreadSafeDecorator::func1(Enum1Enum param1)
     return m_impl->func1(param1);
 }
 
-std::future<Enum1Enum> SameEnum1InterfaceThreadSafeDecorator::func1Async(Enum1Enum param1)
+std::future<Enum1Enum> SameEnum1InterfaceThreadSafeDecorator::func1Async(Enum1Enum param1, std::function<void(Enum1Enum)> callback)
 {
-    return m_impl->func1Async(param1);
+    return m_impl->func1Async(param1, callback);
 }
 void SameEnum1InterfaceThreadSafeDecorator::setProp1(Enum1Enum prop1)
 {

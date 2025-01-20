@@ -49,7 +49,7 @@ public:
     * Forwards call to NoSignalsInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<void> funcVoidAsync() override;
+    std::future<void> funcVoidAsync( std::function<void(void)> callback = nullptr) override;
 
     /** 
     * Forwards call to NoSignalsInterface implementation.
@@ -60,7 +60,7 @@ public:
     * Forwards call to NoSignalsInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<bool> funcBoolAsync(bool paramBool) override;
+    std::future<bool> funcBoolAsync(bool paramBool, std::function<void(bool)> callback = nullptr) override;
 
     /** Guards and forwards call to NoSignalsInterface implementation. */
     void setPropBool(bool propBool) override;

@@ -117,6 +117,11 @@ TEST_CASE("mqtt  tb.simple NoSignalsInterface tests")
         auto resultFuture = clientNoSignalsInterface->funcVoidAsync();
         // The void function only sends request. It does not wait for the actual function on server side to be finished.
     }
+
+    SECTION("Test method funcVoid async with callback")
+    {
+        auto resultFuture = clientNoSignalsInterface->funcVoidAsync([](){/* you can add a callback, but it will be called right after sending the request. It does not wait for the actual function on server side to be finished. */ });
+    }
     SECTION("Test method funcBool")
     {
         [[maybe_unused]] auto result =  clientNoSignalsInterface->funcBool(false);
@@ -133,6 +138,18 @@ TEST_CASE("mqtt  tb.simple NoSignalsInterface tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == false); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+
+    SECTION("Test method funcBool async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientNoSignalsInterface->funcBoolAsync(false,[&finished, &m_wait](bool value){ (void) value; finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == false); 
     }
 
     std::atomic<bool> serviceDisconnected{ false };

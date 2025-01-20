@@ -73,12 +73,15 @@ StructBool StructArrayInterface::funcBool(const std::list<StructBool>& paramBool
     return StructBool();
 }
 
-std::future<StructBool> StructArrayInterface::funcBoolAsync(const std::list<StructBool>& paramBool)
+std::future<StructBool> StructArrayInterface::funcBoolAsync(const std::list<StructBool>& paramBool, std::function<void(StructBool)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramBool]()
-        {
-            return funcBool(paramBool);
+        {auto result = funcBool(paramBool);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }
@@ -90,12 +93,15 @@ StructBool StructArrayInterface::funcInt(const std::list<StructInt>& paramInt)
     return StructBool();
 }
 
-std::future<StructBool> StructArrayInterface::funcIntAsync(const std::list<StructInt>& paramInt)
+std::future<StructBool> StructArrayInterface::funcIntAsync(const std::list<StructInt>& paramInt, std::function<void(StructBool)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramInt]()
-        {
-            return funcInt(paramInt);
+        {auto result = funcInt(paramInt);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }
@@ -107,12 +113,15 @@ StructBool StructArrayInterface::funcFloat(const std::list<StructFloat>& paramFl
     return StructBool();
 }
 
-std::future<StructBool> StructArrayInterface::funcFloatAsync(const std::list<StructFloat>& paramFloat)
+std::future<StructBool> StructArrayInterface::funcFloatAsync(const std::list<StructFloat>& paramFloat, std::function<void(StructBool)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramFloat]()
-        {
-            return funcFloat(paramFloat);
+        {auto result = funcFloat(paramFloat);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }
@@ -124,12 +133,15 @@ StructBool StructArrayInterface::funcString(const std::list<StructString>& param
     return StructBool();
 }
 
-std::future<StructBool> StructArrayInterface::funcStringAsync(const std::list<StructString>& paramString)
+std::future<StructBool> StructArrayInterface::funcStringAsync(const std::list<StructString>& paramString, std::function<void(StructBool)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramString]()
-        {
-            return funcString(paramString);
+        {auto result = funcString(paramString);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }

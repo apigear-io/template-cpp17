@@ -148,6 +148,18 @@ TEST_CASE("olink  tb.names NamEs tests")
         resultFuture.wait();
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+
+    SECTION("Test method SOME_FUNCTION async with a callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientNamEs->sOME_FUNCTIONAsync(false,[&finished, &m_wait](){finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+         
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        resultFuture.wait();
+        
+    }
     SECTION("Test method Some_Function2")
     {
         clientNamEs->some_Function2(false);
@@ -165,6 +177,17 @@ TEST_CASE("olink  tb.names NamEs tests")
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
 
+    SECTION("Test method Some_Function2 async with a callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientNamEs->some_Function2Async(false,[&finished, &m_wait](){finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+         
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        resultFuture.wait();
+        
+    }
     clientNode->unlinkRemote(clientNamEs->olinkObjectName());
     remote_registry.removeSource(serviceNamEs->olinkObjectName());
     client_registry.removeSink(clientNamEs->olinkObjectName());

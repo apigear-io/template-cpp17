@@ -158,26 +158,34 @@ Enum1Enum SameEnum2InterfaceClient::func1(Enum1Enum param1)
     return value;
 }
 
-std::future<Enum1Enum> SameEnum2InterfaceClient::func1Async(Enum1Enum param1)
+std::future<Enum1Enum> SameEnum2InterfaceClient::func1Async(Enum1Enum param1, std::function<void(Enum1Enum)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("tb.same1.SameEnum2Interface.rpc.func1");
 
-    return std::async(std::launch::async, [this,param1]()
+    return std::async(std::launch::async, [this, user_callback,param1]()
     {
         std::promise<Enum1Enum> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(Enum1Enum::value1);
+                if (user_callback)
+                {
+                    user_callback(Enum1Enum::value1);
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const Enum1Enum value = field.get<Enum1Enum>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({param1}).dump(), callback);
@@ -194,26 +202,34 @@ Enum1Enum SameEnum2InterfaceClient::func2(Enum1Enum param1, Enum2Enum param2)
     return value;
 }
 
-std::future<Enum1Enum> SameEnum2InterfaceClient::func2Async(Enum1Enum param1, Enum2Enum param2)
+std::future<Enum1Enum> SameEnum2InterfaceClient::func2Async(Enum1Enum param1, Enum2Enum param2, std::function<void(Enum1Enum)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("tb.same1.SameEnum2Interface.rpc.func2");
 
-    return std::async(std::launch::async, [this,param1,param2]()
+    return std::async(std::launch::async, [this, user_callback,param1,param2]()
     {
         std::promise<Enum1Enum> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(Enum1Enum::value1);
+                if (user_callback)
+                {
+                    user_callback(Enum1Enum::value1);
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const Enum1Enum value = field.get<Enum1Enum>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({param1, param2}).dump(), callback);

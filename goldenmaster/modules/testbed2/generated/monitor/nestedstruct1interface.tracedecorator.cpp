@@ -24,10 +24,10 @@ NestedStruct1 NestedStruct1InterfaceTraceDecorator::func1(const NestedStruct1& p
     m_tracer->trace_func1(param1);
     return m_impl.func1(param1);
 }
-std::future<NestedStruct1> NestedStruct1InterfaceTraceDecorator::func1Async(const NestedStruct1& param1)
+std::future<NestedStruct1> NestedStruct1InterfaceTraceDecorator::func1Async(const NestedStruct1& param1, std::function<void(NestedStruct1)> callback)
 {
     m_tracer->trace_func1(param1);
-    return m_impl.func1Async(param1);
+    return m_impl.func1Async(param1, callback);
 }
 void NestedStruct1InterfaceTraceDecorator::setProp1(const NestedStruct1& prop1)
 {

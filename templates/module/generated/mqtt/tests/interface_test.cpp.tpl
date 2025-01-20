@@ -232,6 +232,34 @@ TEST_CASE("mqtt  {{.Module.Name}} {{$class}} tests")
         // The void function only sends request. It does not wait for the actual function on server side to be finished.
         {{- end}}
     }
+
+    SECTION("Test method {{.Name}} async with callback")
+    {
+        {{- if (not .Return.IsVoid) }}
+        std::atomic<bool> finished = false;
+        auto resultFuture = client{{$class}}->{{lower1 .Name }}Async(
+    {{- range $idx, $p := .Params -}}
+            {{- if $idx }}, {{end -}}
+            {{ cppDefault $namespacePrefix .}}
+    {{- end -}}{{- if (len .Params) }},{{end -}}
+        [&finished, &m_wait]({{cppType "" .Return}} value){ (void) value; finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        {{ if (eq .Return.KindType "extern") }}//{{ end }}REQUIRE(return_value == {{ cppDefault $namespacePrefix .Return }}); {{ if (eq .Return.KindType "extern") }}// Make sure the comparison is valid for extern type. {{ end }}
+
+        {{- else }}
+        auto resultFuture = client{{$class}}->{{lower1 .Name }}Async(
+    {{- range $idx, $p := .Params -}}
+            {{- if $idx }}, {{end -}}
+            {{ cppDefault $namespacePrefix .}}
+    {{- end -}}{{- if (len .Params) }},{{end -}}
+        [](){/* you can add a callback, but it will be called right after sending the request. It does not wait for the actual function on server side to be finished. */ });
+        {{- end}}
+    }
+
     {{- end }}
 
     std::atomic<bool> serviceDisconnected{ false };

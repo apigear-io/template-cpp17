@@ -227,6 +227,19 @@ TEST_CASE("olink  testbed1 StructArrayInterface tests")
         REQUIRE(return_value == Testbed1::StructBool()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+
+    SECTION("Test method funcBool async with a callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientStructArrayInterface->funcBoolAsync(std::list<Testbed1::StructBool>(),[&finished, &m_wait](StructBool value){ (void) value;finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+         
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == Testbed1::StructBool()); 
+        
+    }
     SECTION("Test method funcInt")
     {
         [[maybe_unused]] auto result = clientStructArrayInterface->funcInt(std::list<Testbed1::StructInt>());
@@ -244,6 +257,19 @@ TEST_CASE("olink  testbed1 StructArrayInterface tests")
         REQUIRE(return_value == Testbed1::StructBool()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+
+    SECTION("Test method funcInt async with a callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientStructArrayInterface->funcIntAsync(std::list<Testbed1::StructInt>(),[&finished, &m_wait](StructBool value){ (void) value;finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+         
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == Testbed1::StructBool()); 
+        
+    }
     SECTION("Test method funcFloat")
     {
         [[maybe_unused]] auto result = clientStructArrayInterface->funcFloat(std::list<Testbed1::StructFloat>());
@@ -260,6 +286,19 @@ TEST_CASE("olink  testbed1 StructArrayInterface tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == Testbed1::StructBool()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+
+    SECTION("Test method funcFloat async with a callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientStructArrayInterface->funcFloatAsync(std::list<Testbed1::StructFloat>(),[&finished, &m_wait](StructBool value){ (void) value;finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+         
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == Testbed1::StructBool()); 
+        
     }
     SECTION("Test method funcString")
     {
@@ -279,6 +318,18 @@ TEST_CASE("olink  testbed1 StructArrayInterface tests")
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
 
+    SECTION("Test method funcString async with a callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientStructArrayInterface->funcStringAsync(std::list<Testbed1::StructString>(),[&finished, &m_wait](StructBool value){ (void) value;finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+         
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == Testbed1::StructBool()); 
+        
+    }
     clientNode->unlinkRemote(clientStructArrayInterface->olinkObjectName());
     remote_registry.removeSource(serviceStructArrayInterface->olinkObjectName());
     client_registry.removeSink(clientStructArrayInterface->olinkObjectName());

@@ -88,7 +88,7 @@ public:
     /**
     * Remote call of IManyParamInterface::func1 on the ManyParamInterface service.
     */
-    std::future<int> func1Async(int param1) override;
+    std::future<int> func1Async(int param1, std::function<void(int)> callback = nullptr) override;
     /**
     * Remote call of IManyParamInterface::func2 on the ManyParamInterface service.
     * Uses func2Async
@@ -97,7 +97,7 @@ public:
     /**
     * Remote call of IManyParamInterface::func2 on the ManyParamInterface service.
     */
-    std::future<int> func2Async(int param1, int param2) override;
+    std::future<int> func2Async(int param1, int param2, std::function<void(int)> callback = nullptr) override;
     /**
     * Remote call of IManyParamInterface::func3 on the ManyParamInterface service.
     * Uses func3Async
@@ -106,7 +106,7 @@ public:
     /**
     * Remote call of IManyParamInterface::func3 on the ManyParamInterface service.
     */
-    std::future<int> func3Async(int param1, int param2, int param3) override;
+    std::future<int> func3Async(int param1, int param2, int param3, std::function<void(int)> callback = nullptr) override;
     /**
     * Remote call of IManyParamInterface::func4 on the ManyParamInterface service.
     * Uses func4Async
@@ -115,7 +115,7 @@ public:
     /**
     * Remote call of IManyParamInterface::func4 on the ManyParamInterface service.
     */
-    std::future<int> func4Async(int param1, int param2, int param3, int param4) override;
+    std::future<int> func4Async(int param1, int param2, int param3, int param4, std::function<void(int)> callback = nullptr) override;
 
     /** The publisher to subscribe to. */
     IManyParamInterfacePublisher& _getPublisher() const override;

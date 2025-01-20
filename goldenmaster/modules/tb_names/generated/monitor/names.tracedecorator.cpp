@@ -24,20 +24,20 @@ void NamEsTraceDecorator::sOME_FUNCTION(bool SOME_PARAM)
     m_tracer->trace_SOME_FUNCTION(SOME_PARAM);
     return m_impl.sOME_FUNCTION(SOME_PARAM);
 }
-std::future<void> NamEsTraceDecorator::sOME_FUNCTIONAsync(bool SOME_PARAM)
+std::future<void> NamEsTraceDecorator::sOME_FUNCTIONAsync(bool SOME_PARAM, std::function<void(void)> callback)
 {
     m_tracer->trace_SOME_FUNCTION(SOME_PARAM);
-    return m_impl.sOME_FUNCTIONAsync(SOME_PARAM);
+    return m_impl.sOME_FUNCTIONAsync(SOME_PARAM, callback);
 }
 void NamEsTraceDecorator::some_Function2(bool Some_Param)
 {
     m_tracer->trace_Some_Function2(Some_Param);
     return m_impl.some_Function2(Some_Param);
 }
-std::future<void> NamEsTraceDecorator::some_Function2Async(bool Some_Param)
+std::future<void> NamEsTraceDecorator::some_Function2Async(bool Some_Param, std::function<void(void)> callback)
 {
     m_tracer->trace_Some_Function2(Some_Param);
-    return m_impl.some_Function2Async(Some_Param);
+    return m_impl.some_Function2Async(Some_Param, callback);
 }
 void NamEsTraceDecorator::setSwitch(bool Switch)
 {

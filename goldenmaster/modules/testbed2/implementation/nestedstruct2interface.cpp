@@ -47,12 +47,15 @@ NestedStruct1 NestedStruct2Interface::func1(const NestedStruct1& param1)
     return NestedStruct1();
 }
 
-std::future<NestedStruct1> NestedStruct2Interface::func1Async(const NestedStruct1& param1)
+std::future<NestedStruct1> NestedStruct2Interface::func1Async(const NestedStruct1& param1, std::function<void(NestedStruct1)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     param1]()
-        {
-            return func1(param1);
+        {auto result = func1(param1);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }
@@ -65,13 +68,16 @@ NestedStruct1 NestedStruct2Interface::func2(const NestedStruct1& param1, const N
     return NestedStruct1();
 }
 
-std::future<NestedStruct1> NestedStruct2Interface::func2Async(const NestedStruct1& param1, const NestedStruct2& param2)
+std::future<NestedStruct1> NestedStruct2Interface::func2Async(const NestedStruct1& param1, const NestedStruct2& param2, std::function<void(NestedStruct1)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     param1,
                     param2]()
-        {
-            return func2(param1, param2);
+        {auto result = func2(param1, param2);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }

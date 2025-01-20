@@ -12,18 +12,18 @@ void NamEsThreadSafeDecorator::sOME_FUNCTION(bool SOME_PARAM)
     return m_impl->sOME_FUNCTION(SOME_PARAM);
 }
 
-std::future<void> NamEsThreadSafeDecorator::sOME_FUNCTIONAsync(bool SOME_PARAM)
+std::future<void> NamEsThreadSafeDecorator::sOME_FUNCTIONAsync(bool SOME_PARAM, std::function<void(void)> callback)
 {
-    return m_impl->sOME_FUNCTIONAsync(SOME_PARAM);
+    return m_impl->sOME_FUNCTIONAsync(SOME_PARAM, callback);
 }
 void NamEsThreadSafeDecorator::some_Function2(bool Some_Param)
 {
     return m_impl->some_Function2(Some_Param);
 }
 
-std::future<void> NamEsThreadSafeDecorator::some_Function2Async(bool Some_Param)
+std::future<void> NamEsThreadSafeDecorator::some_Function2Async(bool Some_Param, std::function<void(void)> callback)
 {
-    return m_impl->some_Function2Async(Some_Param);
+    return m_impl->some_Function2Async(Some_Param, callback);
 }
 void NamEsThreadSafeDecorator::setSwitch(bool Switch)
 {

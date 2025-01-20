@@ -167,6 +167,18 @@ TEST_CASE("mqtt  testbed2 NestedStruct2Interface tests")
         REQUIRE(return_value == Testbed2::NestedStruct1()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+
+    SECTION("Test method func1 async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientNestedStruct2Interface->func1Async(Testbed2::NestedStruct1(),[&finished, &m_wait](NestedStruct1 value){ (void) value; finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == Testbed2::NestedStruct1()); 
+    }
     SECTION("Test method func2")
     {
         [[maybe_unused]] auto result =  clientNestedStruct2Interface->func2(Testbed2::NestedStruct1(), Testbed2::NestedStruct2());
@@ -183,6 +195,18 @@ TEST_CASE("mqtt  testbed2 NestedStruct2Interface tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == Testbed2::NestedStruct1()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+
+    SECTION("Test method func2 async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientNestedStruct2Interface->func2Async(Testbed2::NestedStruct1(), Testbed2::NestedStruct2(),[&finished, &m_wait](NestedStruct1 value){ (void) value; finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == Testbed2::NestedStruct1()); 
     }
 
     std::atomic<bool> serviceDisconnected{ false };

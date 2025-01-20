@@ -88,7 +88,7 @@ public:
     /**
     * Remote call of IStructArrayInterface::funcBool on the StructArrayInterface service.
     */
-    std::future<StructBool> funcBoolAsync(const std::list<StructBool>& paramBool) override;
+    std::future<StructBool> funcBoolAsync(const std::list<StructBool>& paramBool, std::function<void(StructBool)> callback = nullptr) override;
     /**
     * Remote call of IStructArrayInterface::funcInt on the StructArrayInterface service.
     * Uses funcIntAsync
@@ -97,7 +97,7 @@ public:
     /**
     * Remote call of IStructArrayInterface::funcInt on the StructArrayInterface service.
     */
-    std::future<StructBool> funcIntAsync(const std::list<StructInt>& paramInt) override;
+    std::future<StructBool> funcIntAsync(const std::list<StructInt>& paramInt, std::function<void(StructBool)> callback = nullptr) override;
     /**
     * Remote call of IStructArrayInterface::funcFloat on the StructArrayInterface service.
     * Uses funcFloatAsync
@@ -106,7 +106,7 @@ public:
     /**
     * Remote call of IStructArrayInterface::funcFloat on the StructArrayInterface service.
     */
-    std::future<StructBool> funcFloatAsync(const std::list<StructFloat>& paramFloat) override;
+    std::future<StructBool> funcFloatAsync(const std::list<StructFloat>& paramFloat, std::function<void(StructBool)> callback = nullptr) override;
     /**
     * Remote call of IStructArrayInterface::funcString on the StructArrayInterface service.
     * Uses funcStringAsync
@@ -115,7 +115,7 @@ public:
     /**
     * Remote call of IStructArrayInterface::funcString on the StructArrayInterface service.
     */
-    std::future<StructBool> funcStringAsync(const std::list<StructString>& paramString) override;
+    std::future<StructBool> funcStringAsync(const std::list<StructString>& paramString, std::function<void(StructBool)> callback = nullptr) override;
 
     /** The publisher to subscribe to. */
     IStructArrayInterfacePublisher& _getPublisher() const override;

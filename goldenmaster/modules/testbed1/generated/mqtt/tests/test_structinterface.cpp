@@ -236,6 +236,18 @@ TEST_CASE("mqtt  testbed1 StructInterface tests")
         REQUIRE(return_value == Testbed1::StructBool()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+
+    SECTION("Test method funcBool async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientStructInterface->funcBoolAsync(Testbed1::StructBool(),[&finished, &m_wait](StructBool value){ (void) value; finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == Testbed1::StructBool()); 
+    }
     SECTION("Test method funcInt")
     {
         [[maybe_unused]] auto result =  clientStructInterface->funcInt(Testbed1::StructInt());
@@ -252,6 +264,18 @@ TEST_CASE("mqtt  testbed1 StructInterface tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == Testbed1::StructBool()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+
+    SECTION("Test method funcInt async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientStructInterface->funcIntAsync(Testbed1::StructInt(),[&finished, &m_wait](StructBool value){ (void) value; finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == Testbed1::StructBool()); 
     }
     SECTION("Test method funcFloat")
     {
@@ -270,6 +294,18 @@ TEST_CASE("mqtt  testbed1 StructInterface tests")
         REQUIRE(return_value == Testbed1::StructFloat()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+
+    SECTION("Test method funcFloat async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientStructInterface->funcFloatAsync(Testbed1::StructFloat(),[&finished, &m_wait](StructFloat value){ (void) value; finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == Testbed1::StructFloat()); 
+    }
     SECTION("Test method funcString")
     {
         [[maybe_unused]] auto result =  clientStructInterface->funcString(Testbed1::StructString());
@@ -286,6 +322,18 @@ TEST_CASE("mqtt  testbed1 StructInterface tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == Testbed1::StructString()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+
+    SECTION("Test method funcString async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientStructInterface->funcStringAsync(Testbed1::StructString(),[&finished, &m_wait](StructString value){ (void) value; finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == Testbed1::StructString()); 
     }
 
     std::atomic<bool> serviceDisconnected{ false };

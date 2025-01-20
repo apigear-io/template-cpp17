@@ -205,6 +205,19 @@ TEST_CASE("olink  testbed2 ManyParamInterface tests")
         REQUIRE(return_value == 0); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+
+    SECTION("Test method func1 async with a callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientManyParamInterface->func1Async(0,[&finished, &m_wait](int value){ (void) value;finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+         
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == 0); 
+        
+    }
     SECTION("Test method func2")
     {
         [[maybe_unused]] auto result = clientManyParamInterface->func2(0, 0);
@@ -222,6 +235,19 @@ TEST_CASE("olink  testbed2 ManyParamInterface tests")
         REQUIRE(return_value == 0); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+
+    SECTION("Test method func2 async with a callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientManyParamInterface->func2Async(0, 0,[&finished, &m_wait](int value){ (void) value;finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+         
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == 0); 
+        
+    }
     SECTION("Test method func3")
     {
         [[maybe_unused]] auto result = clientManyParamInterface->func3(0, 0, 0);
@@ -238,6 +264,19 @@ TEST_CASE("olink  testbed2 ManyParamInterface tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == 0); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+
+    SECTION("Test method func3 async with a callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientManyParamInterface->func3Async(0, 0, 0,[&finished, &m_wait](int value){ (void) value;finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+         
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == 0); 
+        
     }
     SECTION("Test method func4")
     {
@@ -257,6 +296,18 @@ TEST_CASE("olink  testbed2 ManyParamInterface tests")
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
 
+    SECTION("Test method func4 async with a callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientManyParamInterface->func4Async(0, 0, 0, 0,[&finished, &m_wait](int value){ (void) value;finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+         
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == 0); 
+        
+    }
     clientNode->unlinkRemote(clientManyParamInterface->olinkObjectName());
     remote_registry.removeSource(serviceManyParamInterface->olinkObjectName());
     client_registry.removeSink(clientManyParamInterface->olinkObjectName());

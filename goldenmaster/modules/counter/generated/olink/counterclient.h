@@ -68,7 +68,7 @@ public:
     /**
     * Remote call of ICounter::increment on the Counter service.
     */
-    std::future<Eigen::Vector3f> incrementAsync(const Eigen::Vector3f& vec) override;
+    std::future<Eigen::Vector3f> incrementAsync(const Eigen::Vector3f& vec, std::function<void(Eigen::Vector3f)> callback = nullptr) override;
     /**
     * Remote call of ICounter::decrement on the Counter service.
     * Uses decrementAsync
@@ -77,7 +77,7 @@ public:
     /**
     * Remote call of ICounter::decrement on the Counter service.
     */
-    std::future<Test::CustomTypes::Vector3D> decrementAsync(const Test::CustomTypes::Vector3D& vec) override;
+    std::future<Test::CustomTypes::Vector3D> decrementAsync(const Test::CustomTypes::Vector3D& vec, std::function<void(Test::CustomTypes::Vector3D)> callback = nullptr) override;
 
     /** The publisher to subscribe to. */
     ICounterPublisher& _getPublisher() const override;

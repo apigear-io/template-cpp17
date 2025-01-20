@@ -37,12 +37,12 @@ public:
     /** Traces SOME_FUNCTION and forwards call to Nam_Es implementation. */
     void sOME_FUNCTION(bool SOME_PARAM) override;
     /** Traces SOME_FUNCTION and forwards call to Nam_Es implementation. */
-    std::future<void> sOME_FUNCTIONAsync(bool SOME_PARAM) override;
+    std::future<void> sOME_FUNCTIONAsync(bool SOME_PARAM, std::function<void(void)> callback = nullptr) override;
     
     /** Traces Some_Function2 and forwards call to Nam_Es implementation. */
     void some_Function2(bool Some_Param) override;
     /** Traces Some_Function2 and forwards call to Nam_Es implementation. */
-    std::future<void> some_Function2Async(bool Some_Param) override;
+    std::future<void> some_Function2Async(bool Some_Param, std::function<void(void)> callback = nullptr) override;
     
     /** Forwards call to Nam_Es implementation. */
     void setSwitch(bool Switch) override;

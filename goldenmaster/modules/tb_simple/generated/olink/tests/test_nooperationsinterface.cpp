@@ -115,7 +115,6 @@ TEST_CASE("olink  tb.simple NoOperationsInterface tests")
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigBoolEmitted ]() {return issigBoolEmitted   == true; }));
         lock.unlock();
     }
-
     clientNode->unlinkRemote(clientNoOperationsInterface->olinkObjectName());
     remote_registry.removeSource(serviceNoOperationsInterface->olinkObjectName());
     client_registry.removeSink(clientNoOperationsInterface->olinkObjectName());

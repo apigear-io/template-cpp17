@@ -10,17 +10,69 @@ TEST_CASE("Testing ManyParamInterface", "[ManyParamInterface]"){
         // Do implement test here
         testManyParamInterface->func1(0);
     }
+
+    SECTION("Test operation async func1") {
+        // Do implement test here
+
+        auto future = testManyParamInterface->func1Async(0);
+    }
+
+    SECTION("Test operation async func1 with a callback") {
+        // Do implement test here
+
+        auto future = testManyParamInterface->func1Async(0,[](int value){ (void)value; /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
+    }
     SECTION("Test operation func2") {
         // Do implement test here
         testManyParamInterface->func2(0, 0);
+    }
+
+    SECTION("Test operation async func2") {
+        // Do implement test here
+
+        auto future = testManyParamInterface->func2Async(0, 0);
+    }
+
+    SECTION("Test operation async func2 with a callback") {
+        // Do implement test here
+
+        auto future = testManyParamInterface->func2Async(0, 0,[](int value){ (void)value; /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
     }
     SECTION("Test operation func3") {
         // Do implement test here
         testManyParamInterface->func3(0, 0, 0);
     }
+
+    SECTION("Test operation async func3") {
+        // Do implement test here
+
+        auto future = testManyParamInterface->func3Async(0, 0, 0);
+    }
+
+    SECTION("Test operation async func3 with a callback") {
+        // Do implement test here
+
+        auto future = testManyParamInterface->func3Async(0, 0, 0,[](int value){ (void)value; /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
+    }
     SECTION("Test operation func4") {
         // Do implement test here
         testManyParamInterface->func4(0, 0, 0, 0);
+    }
+
+    SECTION("Test operation async func4") {
+        // Do implement test here
+
+        auto future = testManyParamInterface->func4Async(0, 0, 0, 0);
+    }
+
+    SECTION("Test operation async func4 with a callback") {
+        // Do implement test here
+
+        auto future = testManyParamInterface->func4Async(0, 0, 0, 0,[](int value){ (void)value; /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
     }
     SECTION("Test property prop1") {
         // Do implement test here

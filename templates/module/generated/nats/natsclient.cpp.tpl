@@ -171,30 +171,42 @@ void {{$class}}::handleInit(const std::string& value)
     {{- end }}
 }
 
-std::future<{{$returnType}}> {{$class}}::{{lower1 $operation.Name}}Async({{cppParams "" $operation.Params}})
+std::future<{{$returnType}}> {{$class}}::{{lower1 $operation.Name}}Async({{cppParams "" $operation.Params}}{{- if len ($operation.Params) }},{{end}} std::function<void({{cppReturn "" $operation.Return}})> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("{{$.Module.Name}}.{{$interfaceName}}.rpc.{{$operation}}");
 
-    return std::async(std::launch::async, [this{{- range $operation.Params -}},{{.Name}}{{- end -}}]()
+    return std::async(std::launch::async, [this, user_callback{{- range $operation.Params -}},{{.Name}}{{- end -}}]()
     {
         std::promise<{{$returnType}}> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             {{- if .Return.IsVoid }}
             (void) result;
             resultPromise.set_value();
+            if (user_callback)
+            {
+                user_callback();
+            }
             {{- else }}
             if (result.empty())
             {
                 resultPromise.set_value({{cppDefault "" $operation.Return}});
+                if (user_callback)
+                {
+                    user_callback({{cppDefault "" $operation.Return}});
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const {{$returnType}} value = field.get<{{$returnType}}>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
             {{- end }}
         };
 

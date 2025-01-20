@@ -37,22 +37,22 @@ public:
     /** Traces func1 and forwards call to ManyParamInterface implementation. */
     int func1(int param1) override;
     /** Traces func1 and forwards call to ManyParamInterface implementation. */
-    std::future<int> func1Async(int param1) override;
+    std::future<int> func1Async(int param1, std::function<void(int)> callback = nullptr) override;
     
     /** Traces func2 and forwards call to ManyParamInterface implementation. */
     int func2(int param1, int param2) override;
     /** Traces func2 and forwards call to ManyParamInterface implementation. */
-    std::future<int> func2Async(int param1, int param2) override;
+    std::future<int> func2Async(int param1, int param2, std::function<void(int)> callback = nullptr) override;
     
     /** Traces func3 and forwards call to ManyParamInterface implementation. */
     int func3(int param1, int param2, int param3) override;
     /** Traces func3 and forwards call to ManyParamInterface implementation. */
-    std::future<int> func3Async(int param1, int param2, int param3) override;
+    std::future<int> func3Async(int param1, int param2, int param3, std::function<void(int)> callback = nullptr) override;
     
     /** Traces func4 and forwards call to ManyParamInterface implementation. */
     int func4(int param1, int param2, int param3, int param4) override;
     /** Traces func4 and forwards call to ManyParamInterface implementation. */
-    std::future<int> func4Async(int param1, int param2, int param3, int param4) override;
+    std::future<int> func4Async(int param1, int param2, int param3, int param4, std::function<void(int)> callback = nullptr) override;
     
     /** Forwards call to ManyParamInterface implementation. */
     void setProp1(int prop1) override;

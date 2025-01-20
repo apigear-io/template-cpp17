@@ -32,7 +32,7 @@ public:
     * Asynchronous version of func0(Enum0Enum param0)
     * @return Promise of type Enum0Enum which is set once the function has completed
     */
-    virtual std::future<Enum0Enum> func0Async(Enum0Enum param0) = 0;
+    virtual std::future<Enum0Enum> func0Async(Enum0Enum param0, std::function<void(Enum0Enum)> callback = nullptr) = 0;
 
 
     virtual Enum1Enum func1(Enum1Enum param1) = 0;
@@ -40,7 +40,7 @@ public:
     * Asynchronous version of func1(Enum1Enum param1)
     * @return Promise of type Enum1Enum which is set once the function has completed
     */
-    virtual std::future<Enum1Enum> func1Async(Enum1Enum param1) = 0;
+    virtual std::future<Enum1Enum> func1Async(Enum1Enum param1, std::function<void(Enum1Enum)> callback = nullptr) = 0;
 
 
     virtual Enum2Enum func2(Enum2Enum param2) = 0;
@@ -48,7 +48,7 @@ public:
     * Asynchronous version of func2(Enum2Enum param2)
     * @return Promise of type Enum2Enum which is set once the function has completed
     */
-    virtual std::future<Enum2Enum> func2Async(Enum2Enum param2) = 0;
+    virtual std::future<Enum2Enum> func2Async(Enum2Enum param2, std::function<void(Enum2Enum)> callback = nullptr) = 0;
 
 
     virtual Enum3Enum func3(Enum3Enum param3) = 0;
@@ -56,7 +56,7 @@ public:
     * Asynchronous version of func3(Enum3Enum param3)
     * @return Promise of type Enum3Enum which is set once the function has completed
     */
-    virtual std::future<Enum3Enum> func3Async(Enum3Enum param3) = 0;
+    virtual std::future<Enum3Enum> func3Async(Enum3Enum param3, std::function<void(Enum3Enum)> callback = nullptr) = 0;
 
     /**
     * Sets the value of the prop0 property.

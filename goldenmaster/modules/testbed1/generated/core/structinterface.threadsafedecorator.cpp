@@ -12,36 +12,36 @@ StructBool StructInterfaceThreadSafeDecorator::funcBool(const StructBool& paramB
     return m_impl->funcBool(paramBool);
 }
 
-std::future<StructBool> StructInterfaceThreadSafeDecorator::funcBoolAsync(const StructBool& paramBool)
+std::future<StructBool> StructInterfaceThreadSafeDecorator::funcBoolAsync(const StructBool& paramBool, std::function<void(StructBool)> callback)
 {
-    return m_impl->funcBoolAsync(paramBool);
+    return m_impl->funcBoolAsync(paramBool, callback);
 }
 StructBool StructInterfaceThreadSafeDecorator::funcInt(const StructInt& paramInt)
 {
     return m_impl->funcInt(paramInt);
 }
 
-std::future<StructBool> StructInterfaceThreadSafeDecorator::funcIntAsync(const StructInt& paramInt)
+std::future<StructBool> StructInterfaceThreadSafeDecorator::funcIntAsync(const StructInt& paramInt, std::function<void(StructBool)> callback)
 {
-    return m_impl->funcIntAsync(paramInt);
+    return m_impl->funcIntAsync(paramInt, callback);
 }
 StructFloat StructInterfaceThreadSafeDecorator::funcFloat(const StructFloat& paramFloat)
 {
     return m_impl->funcFloat(paramFloat);
 }
 
-std::future<StructFloat> StructInterfaceThreadSafeDecorator::funcFloatAsync(const StructFloat& paramFloat)
+std::future<StructFloat> StructInterfaceThreadSafeDecorator::funcFloatAsync(const StructFloat& paramFloat, std::function<void(StructFloat)> callback)
 {
-    return m_impl->funcFloatAsync(paramFloat);
+    return m_impl->funcFloatAsync(paramFloat, callback);
 }
 StructString StructInterfaceThreadSafeDecorator::funcString(const StructString& paramString)
 {
     return m_impl->funcString(paramString);
 }
 
-std::future<StructString> StructInterfaceThreadSafeDecorator::funcStringAsync(const StructString& paramString)
+std::future<StructString> StructInterfaceThreadSafeDecorator::funcStringAsync(const StructString& paramString, std::function<void(StructString)> callback)
 {
-    return m_impl->funcStringAsync(paramString);
+    return m_impl->funcStringAsync(paramString, callback);
 }
 void StructInterfaceThreadSafeDecorator::setPropBool(const StructBool& propBool)
 {

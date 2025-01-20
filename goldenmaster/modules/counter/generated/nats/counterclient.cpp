@@ -154,26 +154,34 @@ Eigen::Vector3f CounterClient::increment(const Eigen::Vector3f& vec)
     return value;
 }
 
-std::future<Eigen::Vector3f> CounterClient::incrementAsync(const Eigen::Vector3f& vec)
+std::future<Eigen::Vector3f> CounterClient::incrementAsync(const Eigen::Vector3f& vec, std::function<void(Eigen::Vector3f)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("counter.Counter.rpc.increment");
 
-    return std::async(std::launch::async, [this,vec]()
+    return std::async(std::launch::async, [this, user_callback,vec]()
     {
         std::promise<Eigen::Vector3f> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(Eigen::Vector3f(0,0,0));
+                if (user_callback)
+                {
+                    user_callback(Eigen::Vector3f(0,0,0));
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const Eigen::Vector3f value = field.get<Eigen::Vector3f>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({vec}).dump(), callback);
@@ -190,26 +198,34 @@ Test::CustomTypes::Vector3D CounterClient::decrement(const Test::CustomTypes::Ve
     return value;
 }
 
-std::future<Test::CustomTypes::Vector3D> CounterClient::decrementAsync(const Test::CustomTypes::Vector3D& vec)
+std::future<Test::CustomTypes::Vector3D> CounterClient::decrementAsync(const Test::CustomTypes::Vector3D& vec, std::function<void(Test::CustomTypes::Vector3D)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("counter.Counter.rpc.decrement");
 
-    return std::async(std::launch::async, [this,vec]()
+    return std::async(std::launch::async, [this, user_callback,vec]()
     {
         std::promise<Test::CustomTypes::Vector3D> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(Test::CustomTypes::Vector3D());
+                if (user_callback)
+                {
+                    user_callback(Test::CustomTypes::Vector3D());
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const Test::CustomTypes::Vector3D value = field.get<Test::CustomTypes::Vector3D>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({vec}).dump(), callback);

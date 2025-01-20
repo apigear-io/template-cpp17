@@ -28,9 +28,9 @@ public:
     int getSomePoperty2() const override;
     void setSomePoperty2(int Some_Poperty2) override;
     void sOME_FUNCTION(bool SOME_PARAM) override;
-    std::future<void> sOME_FUNCTIONAsync(bool SOME_PARAM) override;
+    std::future<void> sOME_FUNCTIONAsync(bool SOME_PARAM, std::function<void(void)> callback = nullptr) override;
     void some_Function2(bool Some_Param) override;
-    std::future<void> some_Function2Async(bool Some_Param) override;
+    std::future<void> some_Function2Async(bool Some_Param, std::function<void(void)> callback = nullptr) override;
     INamEsPublisher& _getPublisher() const override;
 private:
     std::shared_ptr<ApiGear::Nats::BaseAdapter> getSharedFromDerrived() override;

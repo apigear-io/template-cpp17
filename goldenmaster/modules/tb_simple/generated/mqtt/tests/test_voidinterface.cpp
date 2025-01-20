@@ -102,6 +102,11 @@ TEST_CASE("mqtt  tb.simple VoidInterface tests")
         // The void function only sends request. It does not wait for the actual function on server side to be finished.
     }
 
+    SECTION("Test method funcVoid async with callback")
+    {
+        auto resultFuture = clientVoidInterface->funcVoidAsync([](){/* you can add a callback, but it will be called right after sending the request. It does not wait for the actual function on server side to be finished. */ });
+    }
+
     std::atomic<bool> serviceDisconnected{ false };
     mqttservice->subscribeToConnectionStatus([&serviceDisconnected, &m_wait](auto boo) {
         if (!boo)

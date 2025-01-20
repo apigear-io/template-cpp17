@@ -61,7 +61,7 @@ public:
     * Forwards call to SimpleInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<void> funcNoReturnValueAsync(bool paramBool) override;
+    std::future<void> funcNoReturnValueAsync(bool paramBool, std::function<void(void)> callback = nullptr) override;
 
     /** 
     * Forwards call to SimpleInterface implementation.
@@ -72,7 +72,7 @@ public:
     * Forwards call to SimpleInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<bool> funcBoolAsync(bool paramBool) override;
+    std::future<bool> funcBoolAsync(bool paramBool, std::function<void(bool)> callback = nullptr) override;
 
     /** 
     * Forwards call to SimpleInterface implementation.
@@ -83,7 +83,7 @@ public:
     * Forwards call to SimpleInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<int> funcIntAsync(int paramInt) override;
+    std::future<int> funcIntAsync(int paramInt, std::function<void(int)> callback = nullptr) override;
 
     /** 
     * Forwards call to SimpleInterface implementation.
@@ -94,7 +94,7 @@ public:
     * Forwards call to SimpleInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<int32_t> funcInt32Async(int32_t paramInt32) override;
+    std::future<int32_t> funcInt32Async(int32_t paramInt32, std::function<void(int32_t)> callback = nullptr) override;
 
     /** 
     * Forwards call to SimpleInterface implementation.
@@ -105,7 +105,7 @@ public:
     * Forwards call to SimpleInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<int64_t> funcInt64Async(int64_t paramInt64) override;
+    std::future<int64_t> funcInt64Async(int64_t paramInt64, std::function<void(int64_t)> callback = nullptr) override;
 
     /** 
     * Forwards call to SimpleInterface implementation.
@@ -116,7 +116,7 @@ public:
     * Forwards call to SimpleInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<float> funcFloatAsync(float paramFloat) override;
+    std::future<float> funcFloatAsync(float paramFloat, std::function<void(float)> callback = nullptr) override;
 
     /** 
     * Forwards call to SimpleInterface implementation.
@@ -127,7 +127,7 @@ public:
     * Forwards call to SimpleInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<float> funcFloat32Async(float paramFloat32) override;
+    std::future<float> funcFloat32Async(float paramFloat32, std::function<void(float)> callback = nullptr) override;
 
     /** 
     * Forwards call to SimpleInterface implementation.
@@ -138,7 +138,7 @@ public:
     * Forwards call to SimpleInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<double> funcFloat64Async(double paramFloat) override;
+    std::future<double> funcFloat64Async(double paramFloat, std::function<void(double)> callback = nullptr) override;
 
     /** 
     * Forwards call to SimpleInterface implementation.
@@ -149,7 +149,7 @@ public:
     * Forwards call to SimpleInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<std::string> funcStringAsync(const std::string& paramString) override;
+    std::future<std::string> funcStringAsync(const std::string& paramString, std::function<void(std::string)> callback = nullptr) override;
 
     /** Guards and forwards call to SimpleInterface implementation. */
     void setPropBool(bool propBool) override;

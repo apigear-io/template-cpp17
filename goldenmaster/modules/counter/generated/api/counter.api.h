@@ -34,7 +34,7 @@ public:
     * Asynchronous version of increment(const Eigen::Vector3f& vec)
     * @return Promise of type Eigen::Vector3f which is set once the function has completed
     */
-    virtual std::future<Eigen::Vector3f> incrementAsync(const Eigen::Vector3f& vec) = 0;
+    virtual std::future<Eigen::Vector3f> incrementAsync(const Eigen::Vector3f& vec, std::function<void(Eigen::Vector3f)> callback = nullptr) = 0;
 
 
     virtual Test::CustomTypes::Vector3D decrement(const Test::CustomTypes::Vector3D& vec) = 0;
@@ -42,7 +42,7 @@ public:
     * Asynchronous version of decrement(const Test::CustomTypes::Vector3D& vec)
     * @return Promise of type Test::CustomTypes::Vector3D which is set once the function has completed
     */
-    virtual std::future<Test::CustomTypes::Vector3D> decrementAsync(const Test::CustomTypes::Vector3D& vec) = 0;
+    virtual std::future<Test::CustomTypes::Vector3D> decrementAsync(const Test::CustomTypes::Vector3D& vec, std::function<void(Test::CustomTypes::Vector3D)> callback = nullptr) = 0;
 
     /**
     * Sets the value of the vector property.

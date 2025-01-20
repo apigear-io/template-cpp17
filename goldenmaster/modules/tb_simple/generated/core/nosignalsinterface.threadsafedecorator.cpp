@@ -12,18 +12,18 @@ void NoSignalsInterfaceThreadSafeDecorator::funcVoid()
     return m_impl->funcVoid();
 }
 
-std::future<void> NoSignalsInterfaceThreadSafeDecorator::funcVoidAsync()
+std::future<void> NoSignalsInterfaceThreadSafeDecorator::funcVoidAsync( std::function<void(void)> callback)
 {
-    return m_impl->funcVoidAsync();
+    return m_impl->funcVoidAsync( callback);
 }
 bool NoSignalsInterfaceThreadSafeDecorator::funcBool(bool paramBool)
 {
     return m_impl->funcBool(paramBool);
 }
 
-std::future<bool> NoSignalsInterfaceThreadSafeDecorator::funcBoolAsync(bool paramBool)
+std::future<bool> NoSignalsInterfaceThreadSafeDecorator::funcBoolAsync(bool paramBool, std::function<void(bool)> callback)
 {
-    return m_impl->funcBoolAsync(paramBool);
+    return m_impl->funcBoolAsync(paramBool, callback);
 }
 void NoSignalsInterfaceThreadSafeDecorator::setPropBool(bool propBool)
 {

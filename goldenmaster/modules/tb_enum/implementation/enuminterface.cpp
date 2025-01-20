@@ -73,12 +73,15 @@ Enum0Enum EnumInterface::func0(Enum0Enum param0)
     return Enum0Enum::value0;
 }
 
-std::future<Enum0Enum> EnumInterface::func0Async(Enum0Enum param0)
+std::future<Enum0Enum> EnumInterface::func0Async(Enum0Enum param0, std::function<void(Enum0Enum)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     param0]()
-        {
-            return func0(param0);
+        {auto result = func0(param0);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }
@@ -90,12 +93,15 @@ Enum1Enum EnumInterface::func1(Enum1Enum param1)
     return Enum1Enum::value1;
 }
 
-std::future<Enum1Enum> EnumInterface::func1Async(Enum1Enum param1)
+std::future<Enum1Enum> EnumInterface::func1Async(Enum1Enum param1, std::function<void(Enum1Enum)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     param1]()
-        {
-            return func1(param1);
+        {auto result = func1(param1);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }
@@ -107,12 +113,15 @@ Enum2Enum EnumInterface::func2(Enum2Enum param2)
     return Enum2Enum::value2;
 }
 
-std::future<Enum2Enum> EnumInterface::func2Async(Enum2Enum param2)
+std::future<Enum2Enum> EnumInterface::func2Async(Enum2Enum param2, std::function<void(Enum2Enum)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     param2]()
-        {
-            return func2(param2);
+        {auto result = func2(param2);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }
@@ -124,12 +133,15 @@ Enum3Enum EnumInterface::func3(Enum3Enum param3)
     return Enum3Enum::value3;
 }
 
-std::future<Enum3Enum> EnumInterface::func3Async(Enum3Enum param3)
+std::future<Enum3Enum> EnumInterface::func3Async(Enum3Enum param3, std::function<void(Enum3Enum)> callback)
 {
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     param3]()
-        {
-            return func3(param3);
+        {auto result = func3(param3);
+            if (callback)
+            {
+                callback(result);
+            }return result;
         }
     );
 }

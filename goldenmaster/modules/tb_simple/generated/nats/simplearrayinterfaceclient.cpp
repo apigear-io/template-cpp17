@@ -424,26 +424,34 @@ std::list<bool> SimpleArrayInterfaceClient::funcBool(const std::list<bool>& para
     return value;
 }
 
-std::future<std::list<bool>> SimpleArrayInterfaceClient::funcBoolAsync(const std::list<bool>& paramBool)
+std::future<std::list<bool>> SimpleArrayInterfaceClient::funcBoolAsync(const std::list<bool>& paramBool, std::function<void(std::list<bool>)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("tb.simple.SimpleArrayInterface.rpc.funcBool");
 
-    return std::async(std::launch::async, [this,paramBool]()
+    return std::async(std::launch::async, [this, user_callback,paramBool]()
     {
         std::promise<std::list<bool>> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(std::list<bool>());
+                if (user_callback)
+                {
+                    user_callback(std::list<bool>());
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const std::list<bool> value = field.get<std::list<bool>>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({paramBool}).dump(), callback);
@@ -460,26 +468,34 @@ std::list<int> SimpleArrayInterfaceClient::funcInt(const std::list<int>& paramIn
     return value;
 }
 
-std::future<std::list<int>> SimpleArrayInterfaceClient::funcIntAsync(const std::list<int>& paramInt)
+std::future<std::list<int>> SimpleArrayInterfaceClient::funcIntAsync(const std::list<int>& paramInt, std::function<void(std::list<int>)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("tb.simple.SimpleArrayInterface.rpc.funcInt");
 
-    return std::async(std::launch::async, [this,paramInt]()
+    return std::async(std::launch::async, [this, user_callback,paramInt]()
     {
         std::promise<std::list<int>> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(std::list<int>());
+                if (user_callback)
+                {
+                    user_callback(std::list<int>());
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const std::list<int> value = field.get<std::list<int>>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({paramInt}).dump(), callback);
@@ -496,26 +512,34 @@ std::list<int32_t> SimpleArrayInterfaceClient::funcInt32(const std::list<int32_t
     return value;
 }
 
-std::future<std::list<int32_t>> SimpleArrayInterfaceClient::funcInt32Async(const std::list<int32_t>& paramInt32)
+std::future<std::list<int32_t>> SimpleArrayInterfaceClient::funcInt32Async(const std::list<int32_t>& paramInt32, std::function<void(std::list<int32_t>)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("tb.simple.SimpleArrayInterface.rpc.funcInt32");
 
-    return std::async(std::launch::async, [this,paramInt32]()
+    return std::async(std::launch::async, [this, user_callback,paramInt32]()
     {
         std::promise<std::list<int32_t>> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(std::list<int32_t>());
+                if (user_callback)
+                {
+                    user_callback(std::list<int32_t>());
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const std::list<int32_t> value = field.get<std::list<int32_t>>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({paramInt32}).dump(), callback);
@@ -532,26 +556,34 @@ std::list<int64_t> SimpleArrayInterfaceClient::funcInt64(const std::list<int64_t
     return value;
 }
 
-std::future<std::list<int64_t>> SimpleArrayInterfaceClient::funcInt64Async(const std::list<int64_t>& paramInt64)
+std::future<std::list<int64_t>> SimpleArrayInterfaceClient::funcInt64Async(const std::list<int64_t>& paramInt64, std::function<void(std::list<int64_t>)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("tb.simple.SimpleArrayInterface.rpc.funcInt64");
 
-    return std::async(std::launch::async, [this,paramInt64]()
+    return std::async(std::launch::async, [this, user_callback,paramInt64]()
     {
         std::promise<std::list<int64_t>> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(std::list<int64_t>());
+                if (user_callback)
+                {
+                    user_callback(std::list<int64_t>());
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const std::list<int64_t> value = field.get<std::list<int64_t>>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({paramInt64}).dump(), callback);
@@ -568,26 +600,34 @@ std::list<float> SimpleArrayInterfaceClient::funcFloat(const std::list<float>& p
     return value;
 }
 
-std::future<std::list<float>> SimpleArrayInterfaceClient::funcFloatAsync(const std::list<float>& paramFloat)
+std::future<std::list<float>> SimpleArrayInterfaceClient::funcFloatAsync(const std::list<float>& paramFloat, std::function<void(std::list<float>)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("tb.simple.SimpleArrayInterface.rpc.funcFloat");
 
-    return std::async(std::launch::async, [this,paramFloat]()
+    return std::async(std::launch::async, [this, user_callback,paramFloat]()
     {
         std::promise<std::list<float>> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(std::list<float>());
+                if (user_callback)
+                {
+                    user_callback(std::list<float>());
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const std::list<float> value = field.get<std::list<float>>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({paramFloat}).dump(), callback);
@@ -604,26 +644,34 @@ std::list<float> SimpleArrayInterfaceClient::funcFloat32(const std::list<float>&
     return value;
 }
 
-std::future<std::list<float>> SimpleArrayInterfaceClient::funcFloat32Async(const std::list<float>& paramFloat32)
+std::future<std::list<float>> SimpleArrayInterfaceClient::funcFloat32Async(const std::list<float>& paramFloat32, std::function<void(std::list<float>)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("tb.simple.SimpleArrayInterface.rpc.funcFloat32");
 
-    return std::async(std::launch::async, [this,paramFloat32]()
+    return std::async(std::launch::async, [this, user_callback,paramFloat32]()
     {
         std::promise<std::list<float>> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(std::list<float>());
+                if (user_callback)
+                {
+                    user_callback(std::list<float>());
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const std::list<float> value = field.get<std::list<float>>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({paramFloat32}).dump(), callback);
@@ -640,26 +688,34 @@ std::list<double> SimpleArrayInterfaceClient::funcFloat64(const std::list<double
     return value;
 }
 
-std::future<std::list<double>> SimpleArrayInterfaceClient::funcFloat64Async(const std::list<double>& paramFloat)
+std::future<std::list<double>> SimpleArrayInterfaceClient::funcFloat64Async(const std::list<double>& paramFloat, std::function<void(std::list<double>)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("tb.simple.SimpleArrayInterface.rpc.funcFloat64");
 
-    return std::async(std::launch::async, [this,paramFloat]()
+    return std::async(std::launch::async, [this, user_callback,paramFloat]()
     {
         std::promise<std::list<double>> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(std::list<double>());
+                if (user_callback)
+                {
+                    user_callback(std::list<double>());
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const std::list<double> value = field.get<std::list<double>>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({paramFloat}).dump(), callback);
@@ -676,26 +732,34 @@ std::list<std::string> SimpleArrayInterfaceClient::funcString(const std::list<st
     return value;
 }
 
-std::future<std::list<std::string>> SimpleArrayInterfaceClient::funcStringAsync(const std::list<std::string>& paramString)
+std::future<std::list<std::string>> SimpleArrayInterfaceClient::funcStringAsync(const std::list<std::string>& paramString, std::function<void(std::list<std::string>)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("tb.simple.SimpleArrayInterface.rpc.funcString");
 
-    return std::async(std::launch::async, [this,paramString]()
+    return std::async(std::launch::async, [this, user_callback,paramString]()
     {
         std::promise<std::list<std::string>> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             if (result.empty())
             {
                 resultPromise.set_value(std::list<std::string>());
+                if (user_callback)
+                {
+                    user_callback(std::list<std::string>());
+                }
                 return;
             }
             nlohmann::json field = nlohmann::json::parse(result);
             const std::list<std::string> value = field.get<std::list<std::string>>();
             resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({paramString}).dump(), callback);

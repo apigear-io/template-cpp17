@@ -24,80 +24,80 @@ std::list<bool> SimpleArrayInterfaceTraceDecorator::funcBool(const std::list<boo
     m_tracer->trace_funcBool(paramBool);
     return m_impl.funcBool(paramBool);
 }
-std::future<std::list<bool>> SimpleArrayInterfaceTraceDecorator::funcBoolAsync(const std::list<bool>& paramBool)
+std::future<std::list<bool>> SimpleArrayInterfaceTraceDecorator::funcBoolAsync(const std::list<bool>& paramBool, std::function<void(std::list<bool>)> callback)
 {
     m_tracer->trace_funcBool(paramBool);
-    return m_impl.funcBoolAsync(paramBool);
+    return m_impl.funcBoolAsync(paramBool, callback);
 }
 std::list<int> SimpleArrayInterfaceTraceDecorator::funcInt(const std::list<int>& paramInt)
 {
     m_tracer->trace_funcInt(paramInt);
     return m_impl.funcInt(paramInt);
 }
-std::future<std::list<int>> SimpleArrayInterfaceTraceDecorator::funcIntAsync(const std::list<int>& paramInt)
+std::future<std::list<int>> SimpleArrayInterfaceTraceDecorator::funcIntAsync(const std::list<int>& paramInt, std::function<void(std::list<int>)> callback)
 {
     m_tracer->trace_funcInt(paramInt);
-    return m_impl.funcIntAsync(paramInt);
+    return m_impl.funcIntAsync(paramInt, callback);
 }
 std::list<int32_t> SimpleArrayInterfaceTraceDecorator::funcInt32(const std::list<int32_t>& paramInt32)
 {
     m_tracer->trace_funcInt32(paramInt32);
     return m_impl.funcInt32(paramInt32);
 }
-std::future<std::list<int32_t>> SimpleArrayInterfaceTraceDecorator::funcInt32Async(const std::list<int32_t>& paramInt32)
+std::future<std::list<int32_t>> SimpleArrayInterfaceTraceDecorator::funcInt32Async(const std::list<int32_t>& paramInt32, std::function<void(std::list<int32_t>)> callback)
 {
     m_tracer->trace_funcInt32(paramInt32);
-    return m_impl.funcInt32Async(paramInt32);
+    return m_impl.funcInt32Async(paramInt32, callback);
 }
 std::list<int64_t> SimpleArrayInterfaceTraceDecorator::funcInt64(const std::list<int64_t>& paramInt64)
 {
     m_tracer->trace_funcInt64(paramInt64);
     return m_impl.funcInt64(paramInt64);
 }
-std::future<std::list<int64_t>> SimpleArrayInterfaceTraceDecorator::funcInt64Async(const std::list<int64_t>& paramInt64)
+std::future<std::list<int64_t>> SimpleArrayInterfaceTraceDecorator::funcInt64Async(const std::list<int64_t>& paramInt64, std::function<void(std::list<int64_t>)> callback)
 {
     m_tracer->trace_funcInt64(paramInt64);
-    return m_impl.funcInt64Async(paramInt64);
+    return m_impl.funcInt64Async(paramInt64, callback);
 }
 std::list<float> SimpleArrayInterfaceTraceDecorator::funcFloat(const std::list<float>& paramFloat)
 {
     m_tracer->trace_funcFloat(paramFloat);
     return m_impl.funcFloat(paramFloat);
 }
-std::future<std::list<float>> SimpleArrayInterfaceTraceDecorator::funcFloatAsync(const std::list<float>& paramFloat)
+std::future<std::list<float>> SimpleArrayInterfaceTraceDecorator::funcFloatAsync(const std::list<float>& paramFloat, std::function<void(std::list<float>)> callback)
 {
     m_tracer->trace_funcFloat(paramFloat);
-    return m_impl.funcFloatAsync(paramFloat);
+    return m_impl.funcFloatAsync(paramFloat, callback);
 }
 std::list<float> SimpleArrayInterfaceTraceDecorator::funcFloat32(const std::list<float>& paramFloat32)
 {
     m_tracer->trace_funcFloat32(paramFloat32);
     return m_impl.funcFloat32(paramFloat32);
 }
-std::future<std::list<float>> SimpleArrayInterfaceTraceDecorator::funcFloat32Async(const std::list<float>& paramFloat32)
+std::future<std::list<float>> SimpleArrayInterfaceTraceDecorator::funcFloat32Async(const std::list<float>& paramFloat32, std::function<void(std::list<float>)> callback)
 {
     m_tracer->trace_funcFloat32(paramFloat32);
-    return m_impl.funcFloat32Async(paramFloat32);
+    return m_impl.funcFloat32Async(paramFloat32, callback);
 }
 std::list<double> SimpleArrayInterfaceTraceDecorator::funcFloat64(const std::list<double>& paramFloat)
 {
     m_tracer->trace_funcFloat64(paramFloat);
     return m_impl.funcFloat64(paramFloat);
 }
-std::future<std::list<double>> SimpleArrayInterfaceTraceDecorator::funcFloat64Async(const std::list<double>& paramFloat)
+std::future<std::list<double>> SimpleArrayInterfaceTraceDecorator::funcFloat64Async(const std::list<double>& paramFloat, std::function<void(std::list<double>)> callback)
 {
     m_tracer->trace_funcFloat64(paramFloat);
-    return m_impl.funcFloat64Async(paramFloat);
+    return m_impl.funcFloat64Async(paramFloat, callback);
 }
 std::list<std::string> SimpleArrayInterfaceTraceDecorator::funcString(const std::list<std::string>& paramString)
 {
     m_tracer->trace_funcString(paramString);
     return m_impl.funcString(paramString);
 }
-std::future<std::list<std::string>> SimpleArrayInterfaceTraceDecorator::funcStringAsync(const std::list<std::string>& paramString)
+std::future<std::list<std::string>> SimpleArrayInterfaceTraceDecorator::funcStringAsync(const std::list<std::string>& paramString, std::function<void(std::list<std::string>)> callback)
 {
     m_tracer->trace_funcString(paramString);
-    return m_impl.funcStringAsync(paramString);
+    return m_impl.funcStringAsync(paramString, callback);
 }
 void SimpleArrayInterfaceTraceDecorator::setPropBool(const std::list<bool>& propBool)
 {

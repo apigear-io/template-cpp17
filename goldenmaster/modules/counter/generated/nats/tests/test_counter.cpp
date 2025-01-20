@@ -84,6 +84,22 @@ TEST_CASE("Nats  counter Counter tests")
         //REQUIRE(return_value == Eigen::Vector3f(0,0,0)); // Make sure the comparison is valid for extern type. 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+    SECTION("Test method increment async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientCounter->incrementAsync(Eigen::Vector3f(0,0,0),
+            [&finished, &m_wait](Eigen::Vector3f value)
+            { (void) value;// Make sure the comparison is valid for extern type.
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
+    }
     SECTION("Test method decrement")
     {
         [[maybe_unused]] auto result = clientCounter->decrement(Test::CustomTypes::Vector3D());
@@ -100,6 +116,23 @@ TEST_CASE("Nats  counter Counter tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == Test::CustomTypes::Vector3D()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+    SECTION("Test method decrement async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientCounter->decrementAsync(Test::CustomTypes::Vector3D(),
+            [&finished, &m_wait](Test::CustomTypes::Vector3D value)
+            {
+                REQUIRE(value == Test::CustomTypes::Vector3D());
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
     }
 
     serviceCounter.reset();

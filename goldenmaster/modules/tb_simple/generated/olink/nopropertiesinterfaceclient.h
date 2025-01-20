@@ -47,7 +47,7 @@ public:
     /**
     * Remote call of INoPropertiesInterface::funcVoid on the NoPropertiesInterface service.
     */
-    std::future<void> funcVoidAsync() override;
+    std::future<void> funcVoidAsync( std::function<void(void)> callback = nullptr) override;
     /**
     * Remote call of INoPropertiesInterface::funcBool on the NoPropertiesInterface service.
     * Uses funcBoolAsync
@@ -56,7 +56,7 @@ public:
     /**
     * Remote call of INoPropertiesInterface::funcBool on the NoPropertiesInterface service.
     */
-    std::future<bool> funcBoolAsync(bool paramBool) override;
+    std::future<bool> funcBoolAsync(bool paramBool, std::function<void(bool)> callback = nullptr) override;
 
     /** The publisher to subscribe to. */
     INoPropertiesInterfacePublisher& _getPublisher() const override;

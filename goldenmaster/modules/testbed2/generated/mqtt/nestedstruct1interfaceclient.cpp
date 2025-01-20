@@ -68,20 +68,24 @@ NestedStruct1 NestedStruct1InterfaceClient::func1(const NestedStruct1& param1)
     return value;
 }
 
-std::future<NestedStruct1> NestedStruct1InterfaceClient::func1Async(const NestedStruct1& param1)
+std::future<NestedStruct1> NestedStruct1InterfaceClient::func1Async(const NestedStruct1& param1, std::function<void(NestedStruct1)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     param1]()
         {
             std::promise<NestedStruct1> resultPromise;
             static const auto topic = std::string("testbed2/NestedStruct1Interface/rpc/func1");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise](ApiGear::MQTT::InvokeReplyArg arg) {
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
                 const NestedStruct1& value = arg.value.get<NestedStruct1>();
                 resultPromise.set_value(value);
+                if (callback)
+                {
+                    callback(value);
+                }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic,

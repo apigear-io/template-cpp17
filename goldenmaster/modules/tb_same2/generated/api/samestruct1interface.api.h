@@ -32,7 +32,7 @@ public:
     * Asynchronous version of func1(const Struct1& param1)
     * @return Promise of type Struct1 which is set once the function has completed
     */
-    virtual std::future<Struct1> func1Async(const Struct1& param1) = 0;
+    virtual std::future<Struct1> func1Async(const Struct1& param1, std::function<void(Struct1)> callback = nullptr) = 0;
 
     /**
     * Sets the value of the prop1 property.

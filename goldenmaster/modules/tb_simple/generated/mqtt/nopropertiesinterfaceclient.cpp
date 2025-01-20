@@ -39,12 +39,12 @@ void NoPropertiesInterfaceClient::funcVoid()
     funcVoidAsync();
 }
 
-std::future<void> NoPropertiesInterfaceClient::funcVoidAsync()
+std::future<void> NoPropertiesInterfaceClient::funcVoidAsync( std::function<void(void)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this]()
+    return std::async(std::launch::async, [this, callback]()
         {
             std::promise<void> resultPromise;
             static const auto topic = std::string("tb.simple/NoPropertiesInterface/rpc/funcVoid");
@@ -53,6 +53,10 @@ std::future<void> NoPropertiesInterfaceClient::funcVoidAsync()
             m_client->invokeRemote(topic, responseTopic,
                 nlohmann::json::array({}).dump(), responseId);
             resultPromise.set_value();
+            if (callback)
+            {
+                callback();
+            }
             return resultPromise.get_future().get();
         }
     );
@@ -67,20 +71,24 @@ bool NoPropertiesInterfaceClient::funcBool(bool paramBool)
     return value;
 }
 
-std::future<bool> NoPropertiesInterfaceClient::funcBoolAsync(bool paramBool)
+std::future<bool> NoPropertiesInterfaceClient::funcBoolAsync(bool paramBool, std::function<void(bool)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramBool]()
         {
             std::promise<bool> resultPromise;
             static const auto topic = std::string("tb.simple/NoPropertiesInterface/rpc/funcBool");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise](ApiGear::MQTT::InvokeReplyArg arg) {
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
                 const bool& value = arg.value.get<bool>();
                 resultPromise.set_value(value);
+                if (callback)
+                {
+                    callback(value);
+                }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic,

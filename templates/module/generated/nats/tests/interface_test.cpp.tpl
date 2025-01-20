@@ -197,6 +197,34 @@ TEST_CASE("Nats  {{.Module.Name}} {{$class}} tests")
         {{- end }}
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+    SECTION("Test method {{.Name}} async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = client{{$class}}->{{lower1 .Name }}Async(
+    {{- range $idx, $p := .Params -}}
+            {{- if $idx }}, {{end -}}
+            {{ cppDefault $namespacePrefix .}}
+    {{- end -}}
+    {{- if (len .Params) }},{{end }}
+            [&finished, &m_wait](
+                {{- if (not .Return.IsVoid) -}}{{cppType "" .Return}} value)
+            { 
+            {{- if (eq .Return.KindType "extern") }} (void) value;// Make sure the comparison is valid for extern type.
+            {{- else }}
+                REQUIRE(value == {{ cppDefault $namespacePrefix .Return }});
+            {{- end}}
+            {{- else -}} )
+            { {{ end }}
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
+    }
     {{- end }}
 
     service{{$class}}.reset();

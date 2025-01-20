@@ -10,17 +10,69 @@ TEST_CASE("Testing StructArrayInterface", "[StructArrayInterface]"){
         // Do implement test here
         testStructArrayInterface->funcBool(std::list<StructBool>());
     }
+
+    SECTION("Test operation async funcBool") {
+        // Do implement test here
+
+        auto future = testStructArrayInterface->funcBoolAsync(std::list<StructBool>());
+    }
+
+    SECTION("Test operation async funcBool with a callback") {
+        // Do implement test here
+
+        auto future = testStructArrayInterface->funcBoolAsync(std::list<StructBool>(),[](StructBool value){ (void)value; /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
+    }
     SECTION("Test operation funcInt") {
         // Do implement test here
         testStructArrayInterface->funcInt(std::list<StructInt>());
+    }
+
+    SECTION("Test operation async funcInt") {
+        // Do implement test here
+
+        auto future = testStructArrayInterface->funcIntAsync(std::list<StructInt>());
+    }
+
+    SECTION("Test operation async funcInt with a callback") {
+        // Do implement test here
+
+        auto future = testStructArrayInterface->funcIntAsync(std::list<StructInt>(),[](StructBool value){ (void)value; /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
     }
     SECTION("Test operation funcFloat") {
         // Do implement test here
         testStructArrayInterface->funcFloat(std::list<StructFloat>());
     }
+
+    SECTION("Test operation async funcFloat") {
+        // Do implement test here
+
+        auto future = testStructArrayInterface->funcFloatAsync(std::list<StructFloat>());
+    }
+
+    SECTION("Test operation async funcFloat with a callback") {
+        // Do implement test here
+
+        auto future = testStructArrayInterface->funcFloatAsync(std::list<StructFloat>(),[](StructBool value){ (void)value; /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
+    }
     SECTION("Test operation funcString") {
         // Do implement test here
         testStructArrayInterface->funcString(std::list<StructString>());
+    }
+
+    SECTION("Test operation async funcString") {
+        // Do implement test here
+
+        auto future = testStructArrayInterface->funcStringAsync(std::list<StructString>());
+    }
+
+    SECTION("Test operation async funcString with a callback") {
+        // Do implement test here
+
+        auto future = testStructArrayInterface->funcStringAsync(std::list<StructString>(),[](StructBool value){ (void)value; /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
     }
     SECTION("Test property propBool") {
         // Do implement test here

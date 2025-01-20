@@ -37,22 +37,22 @@ public:
     /** Traces funcBool and forwards call to StructInterface implementation. */
     StructBool funcBool(const StructBool& paramBool) override;
     /** Traces funcBool and forwards call to StructInterface implementation. */
-    std::future<StructBool> funcBoolAsync(const StructBool& paramBool) override;
+    std::future<StructBool> funcBoolAsync(const StructBool& paramBool, std::function<void(StructBool)> callback = nullptr) override;
     
     /** Traces funcInt and forwards call to StructInterface implementation. */
     StructBool funcInt(const StructInt& paramInt) override;
     /** Traces funcInt and forwards call to StructInterface implementation. */
-    std::future<StructBool> funcIntAsync(const StructInt& paramInt) override;
+    std::future<StructBool> funcIntAsync(const StructInt& paramInt, std::function<void(StructBool)> callback = nullptr) override;
     
     /** Traces funcFloat and forwards call to StructInterface implementation. */
     StructFloat funcFloat(const StructFloat& paramFloat) override;
     /** Traces funcFloat and forwards call to StructInterface implementation. */
-    std::future<StructFloat> funcFloatAsync(const StructFloat& paramFloat) override;
+    std::future<StructFloat> funcFloatAsync(const StructFloat& paramFloat, std::function<void(StructFloat)> callback = nullptr) override;
     
     /** Traces funcString and forwards call to StructInterface implementation. */
     StructString funcString(const StructString& paramString) override;
     /** Traces funcString and forwards call to StructInterface implementation. */
-    std::future<StructString> funcStringAsync(const StructString& paramString) override;
+    std::future<StructString> funcStringAsync(const StructString& paramString, std::function<void(StructString)> callback = nullptr) override;
     
     /** Forwards call to StructInterface implementation. */
     void setPropBool(const StructBool& propBool) override;

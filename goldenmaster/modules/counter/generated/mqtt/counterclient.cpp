@@ -100,20 +100,24 @@ Eigen::Vector3f CounterClient::increment(const Eigen::Vector3f& vec)
     return value;
 }
 
-std::future<Eigen::Vector3f> CounterClient::incrementAsync(const Eigen::Vector3f& vec)
+std::future<Eigen::Vector3f> CounterClient::incrementAsync(const Eigen::Vector3f& vec, std::function<void(Eigen::Vector3f)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     vec]()
         {
             std::promise<Eigen::Vector3f> resultPromise;
             static const auto topic = std::string("counter/Counter/rpc/increment");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise](ApiGear::MQTT::InvokeReplyArg arg) {
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
                 const Eigen::Vector3f& value = arg.value.get<Eigen::Vector3f>();
                 resultPromise.set_value(value);
+                if (callback)
+                {
+                    callback(value);
+                }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic,
@@ -132,20 +136,24 @@ Test::CustomTypes::Vector3D CounterClient::decrement(const Test::CustomTypes::Ve
     return value;
 }
 
-std::future<Test::CustomTypes::Vector3D> CounterClient::decrementAsync(const Test::CustomTypes::Vector3D& vec)
+std::future<Test::CustomTypes::Vector3D> CounterClient::decrementAsync(const Test::CustomTypes::Vector3D& vec, std::function<void(Test::CustomTypes::Vector3D)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     vec]()
         {
             std::promise<Test::CustomTypes::Vector3D> resultPromise;
             static const auto topic = std::string("counter/Counter/rpc/decrement");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise](ApiGear::MQTT::InvokeReplyArg arg) {
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
                 const Test::CustomTypes::Vector3D& value = arg.value.get<Test::CustomTypes::Vector3D>();
                 resultPromise.set_value(value);
+                if (callback)
+                {
+                    callback(value);
+                }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic,

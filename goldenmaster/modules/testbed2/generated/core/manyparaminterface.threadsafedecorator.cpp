@@ -12,36 +12,36 @@ int ManyParamInterfaceThreadSafeDecorator::func1(int param1)
     return m_impl->func1(param1);
 }
 
-std::future<int> ManyParamInterfaceThreadSafeDecorator::func1Async(int param1)
+std::future<int> ManyParamInterfaceThreadSafeDecorator::func1Async(int param1, std::function<void(int)> callback)
 {
-    return m_impl->func1Async(param1);
+    return m_impl->func1Async(param1, callback);
 }
 int ManyParamInterfaceThreadSafeDecorator::func2(int param1, int param2)
 {
     return m_impl->func2(param1, param2);
 }
 
-std::future<int> ManyParamInterfaceThreadSafeDecorator::func2Async(int param1, int param2)
+std::future<int> ManyParamInterfaceThreadSafeDecorator::func2Async(int param1, int param2, std::function<void(int)> callback)
 {
-    return m_impl->func2Async(param1, param2);
+    return m_impl->func2Async(param1, param2, callback);
 }
 int ManyParamInterfaceThreadSafeDecorator::func3(int param1, int param2, int param3)
 {
     return m_impl->func3(param1, param2, param3);
 }
 
-std::future<int> ManyParamInterfaceThreadSafeDecorator::func3Async(int param1, int param2, int param3)
+std::future<int> ManyParamInterfaceThreadSafeDecorator::func3Async(int param1, int param2, int param3, std::function<void(int)> callback)
 {
-    return m_impl->func3Async(param1, param2, param3);
+    return m_impl->func3Async(param1, param2, param3, callback);
 }
 int ManyParamInterfaceThreadSafeDecorator::func4(int param1, int param2, int param3, int param4)
 {
     return m_impl->func4(param1, param2, param3, param4);
 }
 
-std::future<int> ManyParamInterfaceThreadSafeDecorator::func4Async(int param1, int param2, int param3, int param4)
+std::future<int> ManyParamInterfaceThreadSafeDecorator::func4Async(int param1, int param2, int param3, int param4, std::function<void(int)> callback)
 {
-    return m_impl->func4Async(param1, param2, param3, param4);
+    return m_impl->func4Async(param1, param2, param3, param4, callback);
 }
 void ManyParamInterfaceThreadSafeDecorator::setProp1(int prop1)
 {

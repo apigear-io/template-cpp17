@@ -24,20 +24,20 @@ Enum1Enum SameEnum2InterfaceTraceDecorator::func1(Enum1Enum param1)
     m_tracer->trace_func1(param1);
     return m_impl.func1(param1);
 }
-std::future<Enum1Enum> SameEnum2InterfaceTraceDecorator::func1Async(Enum1Enum param1)
+std::future<Enum1Enum> SameEnum2InterfaceTraceDecorator::func1Async(Enum1Enum param1, std::function<void(Enum1Enum)> callback)
 {
     m_tracer->trace_func1(param1);
-    return m_impl.func1Async(param1);
+    return m_impl.func1Async(param1, callback);
 }
 Enum1Enum SameEnum2InterfaceTraceDecorator::func2(Enum1Enum param1, Enum2Enum param2)
 {
     m_tracer->trace_func2(param1, param2);
     return m_impl.func2(param1, param2);
 }
-std::future<Enum1Enum> SameEnum2InterfaceTraceDecorator::func2Async(Enum1Enum param1, Enum2Enum param2)
+std::future<Enum1Enum> SameEnum2InterfaceTraceDecorator::func2Async(Enum1Enum param1, Enum2Enum param2, std::function<void(Enum1Enum)> callback)
 {
     m_tracer->trace_func2(param1, param2);
-    return m_impl.func2Async(param1, param2);
+    return m_impl.func2Async(param1, param2, callback);
 }
 void SameEnum2InterfaceTraceDecorator::setProp1(Enum1Enum prop1)
 {

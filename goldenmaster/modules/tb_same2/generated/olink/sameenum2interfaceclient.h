@@ -68,7 +68,7 @@ public:
     /**
     * Remote call of ISameEnum2Interface::func1 on the SameEnum2Interface service.
     */
-    std::future<Enum1Enum> func1Async(Enum1Enum param1) override;
+    std::future<Enum1Enum> func1Async(Enum1Enum param1, std::function<void(Enum1Enum)> callback = nullptr) override;
     /**
     * Remote call of ISameEnum2Interface::func2 on the SameEnum2Interface service.
     * Uses func2Async
@@ -77,7 +77,7 @@ public:
     /**
     * Remote call of ISameEnum2Interface::func2 on the SameEnum2Interface service.
     */
-    std::future<Enum1Enum> func2Async(Enum1Enum param1, Enum2Enum param2) override;
+    std::future<Enum1Enum> func2Async(Enum1Enum param1, Enum2Enum param2, std::function<void(Enum1Enum)> callback = nullptr) override;
 
     /** The publisher to subscribe to. */
     ISameEnum2InterfacePublisher& _getPublisher() const override;

@@ -37,12 +37,12 @@ void VoidInterfaceClient::funcVoid()
     funcVoidAsync();
 }
 
-std::future<void> VoidInterfaceClient::funcVoidAsync()
+std::future<void> VoidInterfaceClient::funcVoidAsync( std::function<void(void)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this]()
+    return std::async(std::launch::async, [this, callback]()
         {
             std::promise<void> resultPromise;
             static const auto topic = std::string("tb.simple/VoidInterface/rpc/funcVoid");
@@ -51,6 +51,10 @@ std::future<void> VoidInterfaceClient::funcVoidAsync()
             m_client->invokeRemote(topic, responseTopic,
                 nlohmann::json::array({}).dump(), responseId);
             resultPromise.set_value();
+            if (callback)
+            {
+                callback();
+            }
             return resultPromise.get_future().get();
         }
     );

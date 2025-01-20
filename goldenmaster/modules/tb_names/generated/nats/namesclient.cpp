@@ -195,20 +195,24 @@ void Nam_EsClient::sOME_FUNCTION(bool SOME_PARAM)
     sOME_FUNCTIONAsync(SOME_PARAM);
 }
 
-std::future<void> Nam_EsClient::sOME_FUNCTIONAsync(bool SOME_PARAM)
+std::future<void> Nam_EsClient::sOME_FUNCTIONAsync(bool SOME_PARAM, std::function<void(void)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("tb.names.Nam_Es.rpc.SOME_FUNCTION");
 
-    return std::async(std::launch::async, [this,SOME_PARAM]()
+    return std::async(std::launch::async, [this, user_callback,SOME_PARAM]()
     {
         std::promise<void> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             (void) result;
             resultPromise.set_value();
+            if (user_callback)
+            {
+                user_callback();
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({SOME_PARAM}).dump(), callback);
@@ -224,20 +228,24 @@ void Nam_EsClient::some_Function2(bool Some_Param)
     some_Function2Async(Some_Param);
 }
 
-std::future<void> Nam_EsClient::some_Function2Async(bool Some_Param)
+std::future<void> Nam_EsClient::some_Function2Async(bool Some_Param, std::function<void(void)> user_callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
     static const auto topic = std::string("tb.names.Nam_Es.rpc.Some_Function2");
 
-    return std::async(std::launch::async, [this,Some_Param]()
+    return std::async(std::launch::async, [this, user_callback,Some_Param]()
     {
         std::promise<void> resultPromise;
-        auto callback = [&resultPromise](const auto& result)
+        auto callback = [&resultPromise, user_callback](const auto& result)
         {
             (void) result;
             resultPromise.set_value();
+            if (user_callback)
+            {
+                user_callback();
+            }
         };
 
         m_client->request(topic,  nlohmann::json::array({Some_Param}).dump(), callback);

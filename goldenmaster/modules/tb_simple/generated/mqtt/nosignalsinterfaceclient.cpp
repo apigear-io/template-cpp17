@@ -97,12 +97,12 @@ void NoSignalsInterfaceClient::funcVoid()
     funcVoidAsync();
 }
 
-std::future<void> NoSignalsInterfaceClient::funcVoidAsync()
+std::future<void> NoSignalsInterfaceClient::funcVoidAsync( std::function<void(void)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this]()
+    return std::async(std::launch::async, [this, callback]()
         {
             std::promise<void> resultPromise;
             static const auto topic = std::string("tb.simple/NoSignalsInterface/rpc/funcVoid");
@@ -111,6 +111,10 @@ std::future<void> NoSignalsInterfaceClient::funcVoidAsync()
             m_client->invokeRemote(topic, responseTopic,
                 nlohmann::json::array({}).dump(), responseId);
             resultPromise.set_value();
+            if (callback)
+            {
+                callback();
+            }
             return resultPromise.get_future().get();
         }
     );
@@ -125,20 +129,24 @@ bool NoSignalsInterfaceClient::funcBool(bool paramBool)
     return value;
 }
 
-std::future<bool> NoSignalsInterfaceClient::funcBoolAsync(bool paramBool)
+std::future<bool> NoSignalsInterfaceClient::funcBoolAsync(bool paramBool, std::function<void(bool)> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this,
+    return std::async(std::launch::async, [this, callback,
                     paramBool]()
         {
             std::promise<bool> resultPromise;
             static const auto topic = std::string("tb.simple/NoSignalsInterface/rpc/funcBool");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise](ApiGear::MQTT::InvokeReplyArg arg) {
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
                 const bool& value = arg.value.get<bool>();
                 resultPromise.set_value(value);
+                if (callback)
+                {
+                    callback(value);
+                }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic,

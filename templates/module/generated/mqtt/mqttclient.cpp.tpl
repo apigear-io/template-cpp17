@@ -108,12 +108,12 @@ void {{$class}}::set{{Camel $name}}Local(const std::string& args)
     {{- end }}
 }
 
-std::future<{{$returnType}}> {{$class}}::{{lower1 $operation.Name}}Async({{cppParams "" $operation.Params}})
+std::future<{{$returnType}}> {{$class}}::{{lower1 $operation.Name}}Async({{cppParams "" $operation.Params}}{{- if len ($operation.Params) }},{{end}} std::function<void({{cppReturn "" $operation.Return}})> callback)
 {
     if(m_client == nullptr) {
         throw std::runtime_error("Client is not initialized");
     }
-    return std::async(std::launch::async, [this{{- range $operation.Params -}},
+    return std::async(std::launch::async, [this, callback{{- range $operation.Params -}},
                     {{.Name}}
                 {{- end -}}]()
         {
@@ -121,9 +121,13 @@ std::future<{{$returnType}}> {{$class}}::{{lower1 $operation.Name}}Async({{cppPa
             static const auto topic = std::string("{{$.Module.Name}}/{{$interfaceName}}/rpc/{{$operation}}");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
             {{- if not ( .Return.IsVoid) }}
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise](ApiGear::MQTT::InvokeReplyArg arg) {
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
                 const {{$returnType}}& value = arg.value.get<{{$returnType}}>();
                 resultPromise.set_value(value);
+                if (callback)
+                {
+                    callback(value);
+                }
             };
             auto responseId = registerResponseHandler(responseHandler);
             {{- else }}
@@ -133,6 +137,10 @@ std::future<{{$returnType}}> {{$class}}::{{lower1 $operation.Name}}Async({{cppPa
                 nlohmann::json::array({ {{- cppVars $operation.Params -}} }).dump(), responseId);
             {{- if .Return.IsVoid }}
             resultPromise.set_value();
+            if (callback)
+            {
+                callback();
+            }
             {{- end }}
             return resultPromise.get_future().get();
         }

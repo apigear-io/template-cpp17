@@ -129,6 +129,18 @@ TEST_CASE("mqtt  testbed2 NestedStruct1Interface tests")
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
 
+    SECTION("Test method func1 async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientNestedStruct1Interface->func1Async(Testbed2::NestedStruct1(),[&finished, &m_wait](NestedStruct1 value){ (void) value; finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == Testbed2::NestedStruct1()); 
+    }
+
     std::atomic<bool> serviceDisconnected{ false };
     mqttservice->subscribeToConnectionStatus([&serviceDisconnected, &m_wait](auto boo) {
         if (!boo)

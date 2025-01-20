@@ -167,6 +167,18 @@ TEST_CASE("mqtt  tb.same2 SameStruct2Interface tests")
         REQUIRE(return_value == TbSame2::Struct1()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
     }
+
+    SECTION("Test method func1 async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSameStruct2Interface->func1Async(TbSame2::Struct1(),[&finished, &m_wait](Struct1 value){ (void) value; finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == TbSame2::Struct1()); 
+    }
     SECTION("Test method func2")
     {
         [[maybe_unused]] auto result =  clientSameStruct2Interface->func2(TbSame2::Struct1(), TbSame2::Struct2());
@@ -183,6 +195,18 @@ TEST_CASE("mqtt  tb.same2 SameStruct2Interface tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == TbSame2::Struct1()); 
         // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+
+    SECTION("Test method func2 async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSameStruct2Interface->func2Async(TbSame2::Struct1(), TbSame2::Struct2(),[&finished, &m_wait](Struct1 value){ (void) value; finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == TbSame2::Struct1()); 
     }
 
     std::atomic<bool> serviceDisconnected{ false };

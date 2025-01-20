@@ -104,7 +104,7 @@ Eigen::Vector3f CounterClient::increment(const Eigen::Vector3f& vec)
     return incrementAsync(vec).get();
 }
 
-std::future<Eigen::Vector3f> CounterClient::incrementAsync(const Eigen::Vector3f& vec)
+std::future<Eigen::Vector3f> CounterClient::incrementAsync(const Eigen::Vector3f& vec, std::function<void(Eigen::Vector3f)> callback)
 {
     if(!m_node) {
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
@@ -113,9 +113,13 @@ std::future<Eigen::Vector3f> CounterClient::incrementAsync(const Eigen::Vector3f
     std::shared_ptr<std::promise<Eigen::Vector3f>> resultPromise = std::make_shared<std::promise<Eigen::Vector3f>>();
     static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "increment");
     m_node->invokeRemote(operationId,
-        nlohmann::json::array({vec}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+        nlohmann::json::array({vec}), [resultPromise, callback](ApiGear::ObjectLink::InvokeReplyArg arg) {
             const Eigen::Vector3f& value = arg.value.get<Eigen::Vector3f>();
             resultPromise->set_value(value);
+            if (callback)
+            {
+                callback(value);
+            }
         });
     return resultPromise->get_future();
 }
@@ -125,7 +129,7 @@ Test::CustomTypes::Vector3D CounterClient::decrement(const Test::CustomTypes::Ve
     return decrementAsync(vec).get();
 }
 
-std::future<Test::CustomTypes::Vector3D> CounterClient::decrementAsync(const Test::CustomTypes::Vector3D& vec)
+std::future<Test::CustomTypes::Vector3D> CounterClient::decrementAsync(const Test::CustomTypes::Vector3D& vec, std::function<void(Test::CustomTypes::Vector3D)> callback)
 {
     if(!m_node) {
         AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
@@ -134,9 +138,13 @@ std::future<Test::CustomTypes::Vector3D> CounterClient::decrementAsync(const Tes
     std::shared_ptr<std::promise<Test::CustomTypes::Vector3D>> resultPromise = std::make_shared<std::promise<Test::CustomTypes::Vector3D>>();
     static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "decrement");
     m_node->invokeRemote(operationId,
-        nlohmann::json::array({vec}), [resultPromise](ApiGear::ObjectLink::InvokeReplyArg arg) {
+        nlohmann::json::array({vec}), [resultPromise, callback](ApiGear::ObjectLink::InvokeReplyArg arg) {
             const Test::CustomTypes::Vector3D& value = arg.value.get<Test::CustomTypes::Vector3D>();
             resultPromise->set_value(value);
+            if (callback)
+            {
+                callback(value);
+            }
         });
     return resultPromise->get_future();
 }

@@ -53,7 +53,7 @@ public:
     * Forwards call to StructArrayInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<StructBool> funcBoolAsync(const std::list<StructBool>& paramBool) override;
+    std::future<StructBool> funcBoolAsync(const std::list<StructBool>& paramBool, std::function<void(StructBool)> callback = nullptr) override;
 
     /** 
     * Forwards call to StructArrayInterface implementation.
@@ -64,7 +64,7 @@ public:
     * Forwards call to StructArrayInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<StructBool> funcIntAsync(const std::list<StructInt>& paramInt) override;
+    std::future<StructBool> funcIntAsync(const std::list<StructInt>& paramInt, std::function<void(StructBool)> callback = nullptr) override;
 
     /** 
     * Forwards call to StructArrayInterface implementation.
@@ -75,7 +75,7 @@ public:
     * Forwards call to StructArrayInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<StructBool> funcFloatAsync(const std::list<StructFloat>& paramFloat) override;
+    std::future<StructBool> funcFloatAsync(const std::list<StructFloat>& paramFloat, std::function<void(StructBool)> callback = nullptr) override;
 
     /** 
     * Forwards call to StructArrayInterface implementation.
@@ -86,7 +86,7 @@ public:
     * Forwards call to StructArrayInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<StructBool> funcStringAsync(const std::list<StructString>& paramString) override;
+    std::future<StructBool> funcStringAsync(const std::list<StructString>& paramString, std::function<void(StructBool)> callback = nullptr) override;
 
     /** Guards and forwards call to StructArrayInterface implementation. */
     void setPropBool(const std::list<StructBool>& propBool) override;

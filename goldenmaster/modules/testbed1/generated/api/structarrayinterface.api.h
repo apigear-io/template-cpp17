@@ -32,7 +32,7 @@ public:
     * Asynchronous version of funcBool(const std::list<StructBool>& paramBool)
     * @return Promise of type StructBool which is set once the function has completed
     */
-    virtual std::future<StructBool> funcBoolAsync(const std::list<StructBool>& paramBool) = 0;
+    virtual std::future<StructBool> funcBoolAsync(const std::list<StructBool>& paramBool, std::function<void(StructBool)> callback = nullptr) = 0;
 
 
     virtual StructBool funcInt(const std::list<StructInt>& paramInt) = 0;
@@ -40,7 +40,7 @@ public:
     * Asynchronous version of funcInt(const std::list<StructInt>& paramInt)
     * @return Promise of type StructBool which is set once the function has completed
     */
-    virtual std::future<StructBool> funcIntAsync(const std::list<StructInt>& paramInt) = 0;
+    virtual std::future<StructBool> funcIntAsync(const std::list<StructInt>& paramInt, std::function<void(StructBool)> callback = nullptr) = 0;
 
 
     virtual StructBool funcFloat(const std::list<StructFloat>& paramFloat) = 0;
@@ -48,7 +48,7 @@ public:
     * Asynchronous version of funcFloat(const std::list<StructFloat>& paramFloat)
     * @return Promise of type StructBool which is set once the function has completed
     */
-    virtual std::future<StructBool> funcFloatAsync(const std::list<StructFloat>& paramFloat) = 0;
+    virtual std::future<StructBool> funcFloatAsync(const std::list<StructFloat>& paramFloat, std::function<void(StructBool)> callback = nullptr) = 0;
 
 
     virtual StructBool funcString(const std::list<StructString>& paramString) = 0;
@@ -56,7 +56,7 @@ public:
     * Asynchronous version of funcString(const std::list<StructString>& paramString)
     * @return Promise of type StructBool which is set once the function has completed
     */
-    virtual std::future<StructBool> funcStringAsync(const std::list<StructString>& paramString) = 0;
+    virtual std::future<StructBool> funcStringAsync(const std::list<StructString>& paramString, std::function<void(StructBool)> callback = nullptr) = 0;
 
     /**
     * Sets the value of the propBool property.
