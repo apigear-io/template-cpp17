@@ -21,7 +21,7 @@ target_include_directories(nats
     $<INSTALL_INTERFACE:include>
 )
 
-target_link_libraries(nats PRIVATE utilities PUBLIC nlohmann_json::nlohmann_json )
+target_link_libraries(nats PUBLIC utilities nlohmann_json::nlohmann_json )
 if (CONAN_BUILD)
 target_link_libraries(nats PRIVATE ${CONAN_NATS_LIB})
 elseif(MSVC AND CMAKE_BUILD_TYPE STREQUAL "Debug")
