@@ -12,7 +12,7 @@ namespace {{ Camel .Module.Name }} {
 // ********************************************************************
 // Enumeration {{$class}}
 // ********************************************************************
-{{$class}}Enum to{{Camel $class}}Enum(std::uint8_t v, bool *ok)
+{{$class}}Enum to{{upper1 $class}}Enum(std::uint8_t v, bool *ok)
 {
     if (ok != nullptr) {
         *ok = true;
