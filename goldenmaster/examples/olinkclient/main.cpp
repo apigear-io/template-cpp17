@@ -37,6 +37,8 @@
 #include "tb_simple/generated/monitor/nooperationsinterface.tracedecorator.h"
 #include "tb_simple/generated/olink/nosignalsinterfaceclient.h"
 #include "tb_simple/generated/monitor/nosignalsinterface.tracedecorator.h"
+#include "tb_simple/generated/olink/emptyinterfaceclient.h"
+#include "tb_simple/generated/monitor/emptyinterface.tracedecorator.h"
 #include "testbed1/generated/olink/structinterfaceclient.h"
 #include "testbed1/generated/monitor/structinterface.tracedecorator.h"
 #include "testbed1/generated/olink/structarrayinterfaceclient.h"
@@ -145,6 +147,9 @@ int main(){
     auto tbSimpleNoSignalsInterface = std::make_shared<TbSimple::olink::NoSignalsInterfaceClient>();
     clientNetworkEndpoint.connectAndLinkObject(tbSimpleNoSignalsInterface);
     std::unique_ptr<TbSimple::INoSignalsInterface> tbSimpleNoSignalsInterfaceTraced = TbSimple::NoSignalsInterfaceTraceDecorator::connect(*tbSimpleNoSignalsInterface, tracer);
+    auto tbSimpleEmptyInterface = std::make_shared<TbSimple::olink::EmptyInterfaceClient>();
+    clientNetworkEndpoint.connectAndLinkObject(tbSimpleEmptyInterface);
+    std::unique_ptr<TbSimple::IEmptyInterface> tbSimpleEmptyInterfaceTraced = TbSimple::EmptyInterfaceTraceDecorator::connect(*tbSimpleEmptyInterface, tracer);
     auto testbed1StructInterface = std::make_shared<Testbed1::olink::StructInterfaceClient>();
     clientNetworkEndpoint.connectAndLinkObject(testbed1StructInterface);
     std::unique_ptr<Testbed1::IStructInterface> testbed1StructInterfaceTraced = Testbed1::StructInterfaceTraceDecorator::connect(*testbed1StructInterface, tracer);
@@ -190,6 +195,7 @@ int main(){
     clientNetworkEndpoint.disconnectAndUnlink(tbSimpleNoPropertiesInterface->olinkObjectName());
     clientNetworkEndpoint.disconnectAndUnlink(tbSimpleNoOperationsInterface->olinkObjectName());
     clientNetworkEndpoint.disconnectAndUnlink(tbSimpleNoSignalsInterface->olinkObjectName());
+    clientNetworkEndpoint.disconnectAndUnlink(tbSimpleEmptyInterface->olinkObjectName());
     clientNetworkEndpoint.disconnectAndUnlink(testbed1StructInterface->olinkObjectName());
     clientNetworkEndpoint.disconnectAndUnlink(testbed1StructArrayInterface->olinkObjectName());
     clientNetworkEndpoint.disconnectAndUnlink(tbNamesNamEs->olinkObjectName());

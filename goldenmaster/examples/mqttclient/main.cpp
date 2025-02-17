@@ -18,6 +18,7 @@
 #include "tb_simple/generated/mqtt/nopropertiesinterfaceclient.h"
 #include "tb_simple/generated/mqtt/nooperationsinterfaceclient.h"
 #include "tb_simple/generated/mqtt/nosignalsinterfaceclient.h"
+#include "tb_simple/generated/mqtt/emptyinterfaceclient.h"
 #include "testbed1/generated/mqtt/structinterfaceclient.h"
 #include "testbed1/generated/mqtt/structarrayinterfaceclient.h"
 #include "tb_names/generated/mqtt/namesclient.h"
@@ -85,6 +86,7 @@ int main(){
     std::unique_ptr<TbSimple::INoPropertiesInterface> testTbSimpleNoPropertiesInterface = std::make_unique<TbSimple::MQTT::NoPropertiesInterfaceClient>(mqttclient);
     std::unique_ptr<TbSimple::INoOperationsInterface> testTbSimpleNoOperationsInterface = std::make_unique<TbSimple::MQTT::NoOperationsInterfaceClient>(mqttclient);
     std::unique_ptr<TbSimple::INoSignalsInterface> testTbSimpleNoSignalsInterface = std::make_unique<TbSimple::MQTT::NoSignalsInterfaceClient>(mqttclient);
+    std::unique_ptr<TbSimple::IEmptyInterface> testTbSimpleEmptyInterface = std::make_unique<TbSimple::MQTT::EmptyInterfaceClient>(mqttclient);
     std::unique_ptr<Testbed1::IStructInterface> testTestbed1StructInterface = std::make_unique<Testbed1::MQTT::StructInterfaceClient>(mqttclient);
     std::unique_ptr<Testbed1::IStructArrayInterface> testTestbed1StructArrayInterface = std::make_unique<Testbed1::MQTT::StructArrayInterfaceClient>(mqttclient);
     std::unique_ptr<TbNames::INamEs> testTbNamesNamEs = std::make_unique<TbNames::MQTT::Nam_EsClient>(mqttclient);

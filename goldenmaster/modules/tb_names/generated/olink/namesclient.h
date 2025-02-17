@@ -71,6 +71,16 @@ public:
     */
     void setSomePoperty2(int Some_Poperty2) override;
     /**
+    * Property getter
+    * @return Locally stored locally value for EnumProperty.
+    */
+    Enum_With_Under_scoresEnum getEnumProperty() const override;
+    /**
+    * Request setting a property on the Nam_Es service.
+    * @param The value to which set request is send for the EnumProperty.
+    */
+    void setEnumProperty(Enum_With_Under_scoresEnum enum_property) override;
+    /**
     * Remote call of INamEs::SOME_FUNCTION on the Nam_Es service.
     * Uses SOME_FUNCTIONAsync
     */
@@ -154,6 +164,10 @@ private:
     void setSomePoperty2Local(int Some_Poperty2);
     /* Mutex for somePoperty2 property */
     mutable std::shared_timed_mutex m_somePoperty2Mutex;
+    /**  Updates local value for EnumProperty and informs subscriber about the change*/
+    void setEnumPropertyLocal(Enum_With_Under_scoresEnum enum_property);
+    /* Mutex for enumProperty property */
+    mutable std::shared_timed_mutex m_enumPropertyMutex;
 
     /** Local storage for properties values. */
     NamEsData m_data;

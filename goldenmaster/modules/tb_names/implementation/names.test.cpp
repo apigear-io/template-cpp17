@@ -29,4 +29,9 @@ TEST_CASE("Testing NamEs", "[NamEs]"){
         testNamEs->setSomePoperty2(0);
         REQUIRE( testNamEs->getSomePoperty2() == 0 );
     }
+    SECTION("Test property enum_property") {
+        // Do implement test here
+        testNamEs->setEnumProperty(Enum_With_Under_scoresEnum::First_Value);
+        REQUIRE( testNamEs->getEnumProperty() == Enum_With_Under_scoresEnum::First_Value );
+    }
 }

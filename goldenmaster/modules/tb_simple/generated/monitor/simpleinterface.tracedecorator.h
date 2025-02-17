@@ -142,7 +142,7 @@ public:
     /**
     Traces sigFloat32 emission.
     */
-    void onSigFloat32(float paramFloa32) override;
+    void onSigFloat32(float paramFloat32) override;
     /**
     Traces sigFloat64 emission.
     */

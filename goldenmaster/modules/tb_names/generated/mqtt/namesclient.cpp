@@ -34,6 +34,7 @@ std::map<std::string, ApiGear::MQTT::CallbackFunction> Nam_EsClient::createTopic
         { std::string("tb.names/NamEs/prop/Switch"), [this](const std::string& args, const std::string&, const std::string&){ this->setSwitchLocal(args); } },
         { std::string("tb.names/NamEs/prop/SOME_PROPERTY"), [this](const std::string& args, const std::string&, const std::string&){ this->setSomePropertyLocal(args); } },
         { std::string("tb.names/NamEs/prop/Some_Poperty2"), [this](const std::string& args, const std::string&, const std::string&){ this->setSomePoperty2Local(args); } },
+        { std::string("tb.names/NamEs/prop/enum_property"), [this](const std::string& args, const std::string&, const std::string&){ this->setEnumPropertyLocal(args); } },
         { std::string("tb.names/NamEs/sig/SOME_SIGNAL"), [this](const std::string& args, const std::string&, const std::string&){ this->onSomeSignal(args); } },
         { std::string("tb.names/NamEs/sig/Some_Signal2"), [this](const std::string& args, const std::string&, const std::string&){ this->onSomeSignal2(args); } },
         { std::string("tb.names/NamEs/rpc/SOME_FUNCTION/"+clientId+"/result"), [this](const std::string& args, const std::string&, const std::string& correlationData){ this->onInvokeReply(args, correlationData); } },
@@ -140,6 +141,35 @@ void Nam_EsClient::setSomePoperty2Local(const std::string& args)
 int Nam_EsClient::getSomePoperty2() const
 {
     return m_data.m_Some_Poperty2;
+}
+
+void Nam_EsClient::setEnumProperty(Enum_With_Under_scoresEnum enum_property)
+{
+    if(m_client == nullptr) {
+        return;
+    }
+    static const auto topic = std::string("tb.names/NamEs/set/enum_property");
+    m_client->setRemoteProperty(topic, nlohmann::json(enum_property).dump());
+}
+
+void Nam_EsClient::setEnumPropertyLocal(const std::string& args)
+{
+    nlohmann::json fields = nlohmann::json::parse(args);
+    if (fields.empty())
+    {
+        return;
+    }
+
+    Enum_With_Under_scoresEnum enum_property = fields.get<Enum_With_Under_scoresEnum>();
+    if (m_data.m_enum_property != enum_property) {
+        m_data.m_enum_property = enum_property;
+        m_publisher->publishEnumPropertyChanged(enum_property);
+    }
+}
+
+Enum_With_Under_scoresEnum Nam_EsClient::getEnumProperty() const
+{
+    return m_data.m_enum_property;
 }
 
 void Nam_EsClient::sOME_FUNCTION(bool SOME_PARAM)

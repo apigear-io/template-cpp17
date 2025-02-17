@@ -58,6 +58,17 @@ int NamEsThreadSafeDecorator::getSomePoperty2() const
     std::shared_lock<std::shared_timed_mutex> lock(m_somePoperty2Mutex);
     return m_impl->getSomePoperty2();
 }
+void NamEsThreadSafeDecorator::setEnumProperty(Enum_With_Under_scoresEnum enum_property)
+{
+    std::unique_lock<std::shared_timed_mutex> lock(m_enumPropertyMutex);
+    m_impl->setEnumProperty(enum_property);
+}
+
+Enum_With_Under_scoresEnum NamEsThreadSafeDecorator::getEnumProperty() const
+{
+    std::shared_lock<std::shared_timed_mutex> lock(m_enumPropertyMutex);
+    return m_impl->getEnumProperty();
+}
 
 INamEsPublisher& NamEsThreadSafeDecorator::_getPublisher() const
 {

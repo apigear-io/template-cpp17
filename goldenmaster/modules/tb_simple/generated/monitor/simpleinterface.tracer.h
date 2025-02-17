@@ -100,7 +100,7 @@ public:
   * Prepares information about the sigFloat32 call in a nlohmann::json format and puts to a tracer.
   * @param The SimpleInterface object to trace.
   */
-  void trace_sigFloat32(float paramFloa32);
+  void trace_sigFloat32(float paramFloat32);
   /**
   * Prepares information about the sigFloat64 call in a nlohmann::json format and puts to a tracer.
   * @param The SimpleInterface object to trace.

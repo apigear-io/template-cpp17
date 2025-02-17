@@ -21,7 +21,7 @@ public:
     void onSigInt32(int32_t paramInt32) override;
     void onSigInt64(int64_t paramInt64) override;
     void onSigFloat(float paramFloat) override;
-    void onSigFloat32(float paramFloa32) override;
+    void onSigFloat32(float paramFloat32) override;
     void onSigFloat64(double paramFloat64) override;
     void onSigString(const std::string& paramString) override;
 

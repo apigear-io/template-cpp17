@@ -5,6 +5,7 @@
 #include "tb_simple/implementation/nopropertiesinterface.h"
 #include "tb_simple/implementation/nooperationsinterface.h"
 #include "tb_simple/implementation/nosignalsinterface.h"
+#include "tb_simple/implementation/emptyinterface.h"
 
 using namespace Test::TbSimple;
 
@@ -15,6 +16,7 @@ int main(){
     std::unique_ptr<INoPropertiesInterface> testNoPropertiesInterface = std::make_unique<NoPropertiesInterface>();
     std::unique_ptr<INoOperationsInterface> testNoOperationsInterface = std::make_unique<NoOperationsInterface>();
     std::unique_ptr<INoSignalsInterface> testNoSignalsInterface = std::make_unique<NoSignalsInterface>();
+    std::unique_ptr<IEmptyInterface> testEmptyInterface = std::make_unique<EmptyInterface>();
 
     return 0;
 }

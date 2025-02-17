@@ -15,6 +15,8 @@ set (SOURCES_OLINK
     nooperationsinterfaceclient.cpp
     nosignalsinterfaceservice.cpp
     nosignalsinterfaceclient.cpp
+    emptyinterfaceservice.cpp
+    emptyinterfaceclient.cpp
 )
 add_library(tb_simple-olink SHARED ${SOURCES_OLINK})
 add_library(tb_simple::tb_simple-olink ALIAS tb_simple-olink)

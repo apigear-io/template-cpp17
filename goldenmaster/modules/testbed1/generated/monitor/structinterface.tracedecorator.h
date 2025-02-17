@@ -40,9 +40,9 @@ public:
     std::future<StructBool> funcBoolAsync(const StructBool& paramBool) override;
     
     /** Traces funcInt and forwards call to StructInterface implementation. */
-    StructBool funcInt(const StructInt& paramInt) override;
+    StructInt funcInt(const StructInt& paramInt) override;
     /** Traces funcInt and forwards call to StructInterface implementation. */
-    std::future<StructBool> funcIntAsync(const StructInt& paramInt) override;
+    std::future<StructInt> funcIntAsync(const StructInt& paramInt) override;
     
     /** Traces funcFloat and forwards call to StructInterface implementation. */
     StructFloat funcFloat(const StructFloat& paramFloat) override;

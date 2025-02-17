@@ -37,6 +37,8 @@
 #include "tb_simple/generated/mqtt/nooperationsinterfaceservice.h"
 #include "tb_simple/implementation/nosignalsinterface.h"
 #include "tb_simple/generated/mqtt/nosignalsinterfaceservice.h"
+#include "tb_simple/implementation/emptyinterface.h"
+#include "tb_simple/generated/mqtt/emptyinterfaceservice.h"
 #include "testbed1/implementation/structinterface.h"
 #include "testbed1/generated/mqtt/structinterfaceservice.h"
 #include "testbed1/implementation/structarrayinterface.h"
@@ -129,6 +131,8 @@ int main(){
     TbSimple::MQTT::NoOperationsInterfaceService testTbSimpleNoOperationsInterfaceService(testTbSimpleNoOperationsInterface, mqttservice);
     std::shared_ptr<TbSimple::INoSignalsInterface> testTbSimpleNoSignalsInterface = std::make_shared<TbSimple::NoSignalsInterface>();
     TbSimple::MQTT::NoSignalsInterfaceService testTbSimpleNoSignalsInterfaceService(testTbSimpleNoSignalsInterface, mqttservice);
+    std::shared_ptr<TbSimple::IEmptyInterface> testTbSimpleEmptyInterface = std::make_shared<TbSimple::EmptyInterface>();
+    TbSimple::MQTT::EmptyInterfaceService testTbSimpleEmptyInterfaceService(testTbSimpleEmptyInterface, mqttservice);
     std::shared_ptr<Testbed1::IStructInterface> testTestbed1StructInterface = std::make_shared<Testbed1::StructInterface>();
     Testbed1::MQTT::StructInterfaceService testTestbed1StructInterfaceService(testTestbed1StructInterface, mqttservice);
     std::shared_ptr<Testbed1::IStructArrayInterface> testTestbed1StructArrayInterface = std::make_shared<Testbed1::StructArrayInterface>();

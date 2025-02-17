@@ -99,7 +99,7 @@ private:
     /// @param args contains the param(s) of the type(s) float paramFloat
     void onSigFloat(const std::string& args) const;
     /// @brief publishes the value for the signal SigFloat32 coming from the service
-    /// @param args contains the param(s) of the type(s) float paramFloa32
+    /// @param args contains the param(s) of the type(s) float paramFloat32
     void onSigFloat32(const std::string& args) const;
     /// @brief publishes the value for the signal SigFloat64 coming from the service
     /// @param args contains the param(s) of the type(s) double paramFloat64

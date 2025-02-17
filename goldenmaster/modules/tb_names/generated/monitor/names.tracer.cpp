@@ -15,6 +15,7 @@ void Nam_EsTracer::capture_state(INamEs* obj)
     fields_["Switch"] = obj->getSwitch();
     fields_["SOME_PROPERTY"] = obj->getSomeProperty();
     fields_["Some_Poperty2"] = obj->getSomePoperty2();
+    fields_["enum_property"] = obj->getEnumProperty();
     m_tracer.state("tb.names.Nam_Es#_state", fields_);
 }
 

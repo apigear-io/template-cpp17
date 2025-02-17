@@ -40,22 +40,22 @@ nlohmann::json StructArrayInterfaceService::olinkInvoke(const std::string& metho
     const auto& memberMethod = ApiGear::ObjectLink::Name::getMemberName(methodId);
     if(memberMethod == "funcBool") {
         const std::list<StructBool>& paramBool = fcnArgs.at(0);
-        StructBool result = m_StructArrayInterface->funcBool(paramBool);
+        std::list<StructBool> result = m_StructArrayInterface->funcBool(paramBool);
         return result;
     }
     if(memberMethod == "funcInt") {
         const std::list<StructInt>& paramInt = fcnArgs.at(0);
-        StructBool result = m_StructArrayInterface->funcInt(paramInt);
+        std::list<StructInt> result = m_StructArrayInterface->funcInt(paramInt);
         return result;
     }
     if(memberMethod == "funcFloat") {
         const std::list<StructFloat>& paramFloat = fcnArgs.at(0);
-        StructBool result = m_StructArrayInterface->funcFloat(paramFloat);
+        std::list<StructFloat> result = m_StructArrayInterface->funcFloat(paramFloat);
         return result;
     }
     if(memberMethod == "funcString") {
         const std::list<StructString>& paramString = fcnArgs.at(0);
-        StructBool result = m_StructArrayInterface->funcString(paramString);
+        std::list<StructString> result = m_StructArrayInterface->funcString(paramString);
         return result;
     }
     return nlohmann::json();

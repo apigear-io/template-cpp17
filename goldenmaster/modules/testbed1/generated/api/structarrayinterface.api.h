@@ -27,36 +27,36 @@ public:
     virtual ~IStructArrayInterface() = default;
 
 
-    virtual StructBool funcBool(const std::list<StructBool>& paramBool) = 0;
+    virtual std::list<StructBool> funcBool(const std::list<StructBool>& paramBool) = 0;
     /**
     * Asynchronous version of funcBool(const std::list<StructBool>& paramBool)
-    * @return Promise of type StructBool which is set once the function has completed
+    * @return Promise of type std::list<StructBool> which is set once the function has completed
     */
-    virtual std::future<StructBool> funcBoolAsync(const std::list<StructBool>& paramBool) = 0;
+    virtual std::future<std::list<StructBool>> funcBoolAsync(const std::list<StructBool>& paramBool) = 0;
 
 
-    virtual StructBool funcInt(const std::list<StructInt>& paramInt) = 0;
+    virtual std::list<StructInt> funcInt(const std::list<StructInt>& paramInt) = 0;
     /**
     * Asynchronous version of funcInt(const std::list<StructInt>& paramInt)
-    * @return Promise of type StructBool which is set once the function has completed
+    * @return Promise of type std::list<StructInt> which is set once the function has completed
     */
-    virtual std::future<StructBool> funcIntAsync(const std::list<StructInt>& paramInt) = 0;
+    virtual std::future<std::list<StructInt>> funcIntAsync(const std::list<StructInt>& paramInt) = 0;
 
 
-    virtual StructBool funcFloat(const std::list<StructFloat>& paramFloat) = 0;
+    virtual std::list<StructFloat> funcFloat(const std::list<StructFloat>& paramFloat) = 0;
     /**
     * Asynchronous version of funcFloat(const std::list<StructFloat>& paramFloat)
-    * @return Promise of type StructBool which is set once the function has completed
+    * @return Promise of type std::list<StructFloat> which is set once the function has completed
     */
-    virtual std::future<StructBool> funcFloatAsync(const std::list<StructFloat>& paramFloat) = 0;
+    virtual std::future<std::list<StructFloat>> funcFloatAsync(const std::list<StructFloat>& paramFloat) = 0;
 
 
-    virtual StructBool funcString(const std::list<StructString>& paramString) = 0;
+    virtual std::list<StructString> funcString(const std::list<StructString>& paramString) = 0;
     /**
     * Asynchronous version of funcString(const std::list<StructString>& paramString)
-    * @return Promise of type StructBool which is set once the function has completed
+    * @return Promise of type std::list<StructString> which is set once the function has completed
     */
-    virtual std::future<StructBool> funcStringAsync(const std::list<StructString>& paramString) = 0;
+    virtual std::future<std::list<StructString>> funcStringAsync(const std::list<StructString>& paramString) = 0;
 
     /**
     * Sets the value of the propBool property.

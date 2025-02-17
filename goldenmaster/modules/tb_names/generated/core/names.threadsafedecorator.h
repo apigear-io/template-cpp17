@@ -31,6 +31,8 @@ auto someProperty = testNamEs->getSomeProperty();
 testNamEs->setSomeProperty(0);
 auto somePoperty2 = testNamEs->getSomePoperty2();
 testNamEs->setSomePoperty2(0);
+auto enumProperty = testNamEs->getEnumProperty();
+testNamEs->setEnumProperty(Enum_With_Under_scoresEnum::First_Value);
 \endcode
 */
 class TEST_TB_NAMES_EXPORT NamEsThreadSafeDecorator : public INamEs
@@ -79,6 +81,11 @@ public:
     /** Guards and forwards call to Nam_Es implementation. */
     int getSomePoperty2() const override;
 
+    /** Guards and forwards call to Nam_Es implementation. */
+    void setEnumProperty(Enum_With_Under_scoresEnum enum_property) override;
+    /** Guards and forwards call to Nam_Es implementation. */
+    Enum_With_Under_scoresEnum getEnumProperty() const override;
+
     /**
     * Access to a publisher, use it to subscribe for Nam_Es changes and signal emission.
     * This call is thread safe.
@@ -94,6 +101,8 @@ private:
     mutable std::shared_timed_mutex m_somePropertyMutex;
     // Mutex for somePoperty2 property
     mutable std::shared_timed_mutex m_somePoperty2Mutex;
+    // Mutex for enumProperty property
+    mutable std::shared_timed_mutex m_enumPropertyMutex;
 };
 } // namespace TbNames
 } // namespace Test

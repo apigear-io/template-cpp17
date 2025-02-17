@@ -22,14 +22,14 @@ public:
     void setPropFloat(const std::list<StructFloat>& propFloat) override;
     const std::list<StructString>& getPropString() const override;
     void setPropString(const std::list<StructString>& propString) override;
-    StructBool funcBool(const std::list<StructBool>& paramBool) override;
-    std::future<StructBool> funcBoolAsync(const std::list<StructBool>& paramBool) override;
-    StructBool funcInt(const std::list<StructInt>& paramInt) override;
-    std::future<StructBool> funcIntAsync(const std::list<StructInt>& paramInt) override;
-    StructBool funcFloat(const std::list<StructFloat>& paramFloat) override;
-    std::future<StructBool> funcFloatAsync(const std::list<StructFloat>& paramFloat) override;
-    StructBool funcString(const std::list<StructString>& paramString) override;
-    std::future<StructBool> funcStringAsync(const std::list<StructString>& paramString) override;
+    std::list<StructBool> funcBool(const std::list<StructBool>& paramBool) override;
+    std::future<std::list<StructBool>> funcBoolAsync(const std::list<StructBool>& paramBool) override;
+    std::list<StructInt> funcInt(const std::list<StructInt>& paramInt) override;
+    std::future<std::list<StructInt>> funcIntAsync(const std::list<StructInt>& paramInt) override;
+    std::list<StructFloat> funcFloat(const std::list<StructFloat>& paramFloat) override;
+    std::future<std::list<StructFloat>> funcFloatAsync(const std::list<StructFloat>& paramFloat) override;
+    std::list<StructString> funcString(const std::list<StructString>& paramString) override;
+    std::future<std::list<StructString>> funcStringAsync(const std::list<StructString>& paramString) override;
     IStructArrayInterfacePublisher& _getPublisher() const override;
 
     bool isReady() const;

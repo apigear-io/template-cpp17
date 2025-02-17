@@ -204,9 +204,9 @@ void SimpleInterfaceService::onSigFloat(float paramFloat)
         }
     }
 }
-void SimpleInterfaceService::onSigFloat32(float paramFloa32)
+void SimpleInterfaceService::onSigFloat32(float paramFloat32)
 {
-    const nlohmann::json args = { paramFloa32 };
+    const nlohmann::json args = { paramFloat32 };
     static const auto signalId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "sigFloat32");
     static const auto objectId = olinkObjectName();
     for(auto node: m_registry.getNodes(objectId)) {

@@ -20,6 +20,8 @@ public:
     void setSomeProperty(int SOME_PROPERTY) override;
     int getSomePoperty2() const override;
     void setSomePoperty2(int Some_Poperty2) override;
+    Enum_With_Under_scoresEnum getEnumProperty() const override;
+    void setEnumProperty(Enum_With_Under_scoresEnum enum_property) override;
     void sOME_FUNCTION(bool SOME_PARAM) override;
     std::future<void> sOME_FUNCTIONAsync(bool SOME_PARAM) override;
     void some_Function2(bool Some_Param) override;
@@ -44,6 +46,9 @@ private:
     /// @brief sets the value for the property SomePoperty2 coming from the service
     /// @param args contains the param of the type int
     void setSomePoperty2Local(const std::string& args);
+    /// @brief sets the value for the property EnumProperty coming from the service
+    /// @param args contains the param of the type Enum_With_Under_scoresEnum
+    void setEnumPropertyLocal(const std::string& args);
     /// @brief publishes the value for the signal SomeSignal coming from the service
     /// @param args contains the param(s) of the type(s) bool SOME_PARAM
     void onSomeSignal(const std::string& args) const;

@@ -59,6 +59,11 @@ public:
     /** Forwards call to Nam_Es implementation. */
     int getSomePoperty2() const override;
     
+    /** Forwards call to Nam_Es implementation. */
+    void setEnumProperty(Enum_With_Under_scoresEnum enum_property) override;
+    /** Forwards call to Nam_Es implementation. */
+    Enum_With_Under_scoresEnum getEnumProperty() const override;
+    
     /**
     Traces SOME_SIGNAL emission.
     */
@@ -79,6 +84,10 @@ public:
     Traces Some_Poperty2 changed.
     */
     void onSomePoperty2Changed(int Some_Poperty2) override;
+    /**
+    Traces enum_property changed.
+    */
+    void onEnumPropertyChanged(Enum_With_Under_scoresEnum enum_property) override;
 
     /**
     * Access to a publisher, use it to subscribe for Nam_Es changes and signal emission.

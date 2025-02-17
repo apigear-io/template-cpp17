@@ -89,6 +89,10 @@ public:
     * Forwards Some_Poperty2 change through network if the connection is established.
     */
     void onSomePoperty2Changed(int Some_Poperty2) override;
+    /**
+    * Forwards enum_property change through network if the connection is established.
+    */
+    void onEnumPropertyChanged(Enum_With_Under_scoresEnum enum_property) override;
 
 private:
     /**

@@ -23,11 +23,23 @@ public:
     void setExternVector(const Eigen::Vector3f& extern_vector) override;
     const Eigen::Vector3f& getExternVector() const override;
     
+    void setVectorArray(const std::list<Test::CustomTypes::Vector3D>& vectorArray) override;
+    const std::list<Test::CustomTypes::Vector3D>& getVectorArray() const override;
+    
+    void setExternVectorArray(const std::list<Eigen::Vector3f>& extern_vectorArray) override;
+    const std::list<Eigen::Vector3f>& getExternVectorArray() const override;
+    
     Eigen::Vector3f increment(const Eigen::Vector3f& vec) override;
     std::future<Eigen::Vector3f> incrementAsync(const Eigen::Vector3f& vec) override;
         
+    std::list<Eigen::Vector3f> incrementArray(const std::list<Eigen::Vector3f>& vec) override;
+    std::future<std::list<Eigen::Vector3f>> incrementArrayAsync(const std::list<Eigen::Vector3f>& vec) override;
+        
     Test::CustomTypes::Vector3D decrement(const Test::CustomTypes::Vector3D& vec) override;
     std::future<Test::CustomTypes::Vector3D> decrementAsync(const Test::CustomTypes::Vector3D& vec) override;
+        
+    std::list<Test::CustomTypes::Vector3D> decrementArray(const std::list<Test::CustomTypes::Vector3D>& vec) override;
+    std::future<std::list<Test::CustomTypes::Vector3D>> decrementArrayAsync(const std::list<Test::CustomTypes::Vector3D>& vec) override;
         
     /**
     * Access to a publisher, use it to subscribe for Counter changes and signal emission.

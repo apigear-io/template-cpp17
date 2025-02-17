@@ -56,6 +56,9 @@
 #include "tb_simple/implementation/nosignalsinterface.h"
 #include "tb_simple/generated/olink/nosignalsinterfaceservice.h"
 #include "tb_simple/generated/core/nosignalsinterface.threadsafedecorator.h"
+#include "tb_simple/implementation/emptyinterface.h"
+#include "tb_simple/generated/olink/emptyinterfaceservice.h"
+#include "tb_simple/generated/core/emptyinterface.threadsafedecorator.h"
 #include "testbed1/implementation/structinterface.h"
 #include "testbed1/generated/olink/structinterfaceservice.h"
 #include "testbed1/generated/core/structinterface.threadsafedecorator.h"
@@ -186,6 +189,10 @@ int main(){
     auto tbSimpleNoSignalsInterfaceThreadSafe = std::make_shared<TbSimple::NoSignalsInterfaceThreadSafeDecorator>(tbSimpleNoSignalsInterface);
     auto tbSimpleOlinkNoSignalsInterfaceService = std::make_shared<TbSimple::olink::NoSignalsInterfaceService>(tbSimpleNoSignalsInterfaceThreadSafe, registry);
     registry.addSource(tbSimpleOlinkNoSignalsInterfaceService);
+    auto tbSimpleEmptyInterface = std::make_shared<TbSimple::EmptyInterface>();
+    auto tbSimpleEmptyInterfaceThreadSafe = std::make_shared<TbSimple::EmptyInterfaceThreadSafeDecorator>(tbSimpleEmptyInterface);
+    auto tbSimpleOlinkEmptyInterfaceService = std::make_shared<TbSimple::olink::EmptyInterfaceService>(tbSimpleEmptyInterfaceThreadSafe, registry);
+    registry.addSource(tbSimpleOlinkEmptyInterfaceService);
     auto testbed1StructInterface = std::make_shared<Testbed1::StructInterface>();
     auto testbed1StructInterfaceThreadSafe = std::make_shared<Testbed1::StructInterfaceThreadSafeDecorator>(testbed1StructInterface);
     auto testbed1OlinkStructInterfaceService = std::make_shared<Testbed1::olink::StructInterfaceService>(testbed1StructInterfaceThreadSafe, registry);
@@ -237,6 +244,7 @@ int main(){
     registry.removeSource(tbSimpleOlinkNoPropertiesInterfaceService->olinkObjectName());
     registry.removeSource(tbSimpleOlinkNoOperationsInterfaceService->olinkObjectName());
     registry.removeSource(tbSimpleOlinkNoSignalsInterfaceService->olinkObjectName());
+    registry.removeSource(tbSimpleOlinkEmptyInterfaceService->olinkObjectName());
     registry.removeSource(testbed1OlinkStructInterfaceService->olinkObjectName());
     registry.removeSource(testbed1OlinkStructArrayInterfaceService->olinkObjectName());
     registry.removeSource(tbNamesOlinkNamEsService->olinkObjectName());

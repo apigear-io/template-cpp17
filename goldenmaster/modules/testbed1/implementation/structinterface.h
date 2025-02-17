@@ -32,8 +32,8 @@ public:
     StructBool funcBool(const StructBool& paramBool) override;
     std::future<StructBool> funcBoolAsync(const StructBool& paramBool) override;
         
-    StructBool funcInt(const StructInt& paramInt) override;
-    std::future<StructBool> funcIntAsync(const StructInt& paramInt) override;
+    StructInt funcInt(const StructInt& paramInt) override;
+    std::future<StructInt> funcIntAsync(const StructInt& paramInt) override;
         
     StructFloat funcFloat(const StructFloat& paramFloat) override;
     std::future<StructFloat> funcFloatAsync(const StructFloat& paramFloat) override;

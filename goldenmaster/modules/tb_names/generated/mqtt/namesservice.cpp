@@ -33,6 +33,7 @@ std::map<std::string, ApiGear::MQTT::CallbackFunction> Nam_EsService::createTopi
         {std::string("tb.names/Nam_Es/set/Switch"), [this](const std::string& args, const std::string&, const std::string&){ this->onSetSwitch(args); } },
         {std::string("tb.names/Nam_Es/set/SOME_PROPERTY"), [this](const std::string& args, const std::string&, const std::string&){ this->onSetSomeProperty(args); } },
         {std::string("tb.names/Nam_Es/set/Some_Poperty2"), [this](const std::string& args, const std::string&, const std::string&){ this->onSetSomePoperty2(args); } },
+        {std::string("tb.names/Nam_Es/set/enum_property"), [this](const std::string& args, const std::string&, const std::string&){ this->onSetEnumProperty(args); } },
         {std::string("tb.names/Nam_Es/rpc/SOME_FUNCTION"), [this](const std::string& args, const std::string& responseTopic, const std::string& correlationData) { this->onInvokeSomeFunction(args, responseTopic, correlationData); } },
         {std::string("tb.names/Nam_Es/rpc/Some_Function2"), [this](const std::string& args, const std::string& responseTopic, const std::string& correlationData) { this->onInvokeSomeFunction2(args, responseTopic, correlationData); } },
     };
@@ -54,6 +55,7 @@ void Nam_EsService::onConnectionStatusChanged(bool connectionStatus)
     onSwitchChanged(m_impl->getSwitch());
     onSomePropertyChanged(m_impl->getSomeProperty());
     onSomePoperty2Changed(m_impl->getSomePoperty2());
+    onEnumPropertyChanged(m_impl->getEnumProperty());
 }
 void Nam_EsService::onSetSwitch(const std::string& args) const
 {
@@ -87,6 +89,17 @@ void Nam_EsService::onSetSomePoperty2(const std::string& args) const
 
     auto Some_Poperty2 = json_args.get<int>();
     m_impl->setSomePoperty2(Some_Poperty2);
+}
+void Nam_EsService::onSetEnumProperty(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    if (json_args.empty())
+    {
+        return;
+    }
+
+    auto enum_property = json_args.get<Enum_With_Under_scoresEnum>();
+    m_impl->setEnumProperty(enum_property);
 }
 void Nam_EsService::onInvokeSomeFunction(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
@@ -139,5 +152,12 @@ void Nam_EsService::onSomePoperty2Changed(int Some_Poperty2)
     if(m_service != nullptr) {
         static const auto topic = std::string("tb.names/Nam_Es/prop/Some_Poperty2");
         m_service->notifyPropertyChange(topic, nlohmann::json(Some_Poperty2).dump());
+    }
+}
+void Nam_EsService::onEnumPropertyChanged(Enum_With_Under_scoresEnum enum_property)
+{
+    if(m_service != nullptr) {
+        static const auto topic = std::string("tb.names/Nam_Es/prop/enum_property");
+        m_service->notifyPropertyChange(topic, nlohmann::json(enum_property).dump());
     }
 }

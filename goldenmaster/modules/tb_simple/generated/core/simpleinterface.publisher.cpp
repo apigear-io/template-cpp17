@@ -503,14 +503,14 @@ void SimpleInterfacePublisher::unsubscribeFromSigFloat32(long handleId)
     m_sigFloat32Callbacks.erase(handleId);
 }
 
-void SimpleInterfacePublisher::publishSigFloat32(float paramFloa32) const
+void SimpleInterfacePublisher::publishSigFloat32(float paramFloat32) const
 {
     std::shared_lock<std::shared_timed_mutex> allChangesSubscribersLock(m_allChangesSubscribersMutex);
     const auto allChangesSubscribers = m_allChangesSubscribers;
     allChangesSubscribersLock.unlock();
     for(const auto& subscriber: allChangesSubscribers)
     {
-        subscriber.get().onSigFloat32(paramFloa32);
+        subscriber.get().onSigFloat32(paramFloat32);
     }
     std::shared_lock<std::shared_timed_mutex> sigFloat32CallbacksLock(m_sigFloat32CallbacksMutex);
     const auto sigFloat32Callbacks = m_sigFloat32Callbacks;
@@ -519,7 +519,7 @@ void SimpleInterfacePublisher::publishSigFloat32(float paramFloa32) const
     {
         if(callbackEntry.second)
         {
-            callbackEntry.second(paramFloa32);
+            callbackEntry.second(paramFloat32);
         }
     }
 }

@@ -53,6 +53,19 @@ int NamEs::getSomePoperty2() const
     return m_data.m_Some_Poperty2;
 }
 
+void NamEs::setEnumProperty(Enum_With_Under_scoresEnum enum_property)
+{
+    if (m_data.m_enum_property != enum_property) {
+        m_data.m_enum_property = enum_property;
+        m_publisher->publishEnumPropertyChanged(enum_property);
+    }
+}
+
+Enum_With_Under_scoresEnum NamEs::getEnumProperty() const
+{
+    return m_data.m_enum_property;
+}
+
 void NamEs::sOME_FUNCTION(bool SOME_PARAM)
 {
     (void) SOME_PARAM; // suppress the 'Unreferenced Formal Parameter' warning.

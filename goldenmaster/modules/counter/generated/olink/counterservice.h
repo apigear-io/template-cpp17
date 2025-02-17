@@ -70,6 +70,10 @@ public:
     */
     nlohmann::json olinkCollectProperties() override;
     /**
+    * Forwards emitted valueChanged through network if the connection is established.
+    */
+    void onValueChanged(const Test::CustomTypes::Vector3D& vector, const Eigen::Vector3f& extern_vector, const std::list<Test::CustomTypes::Vector3D>& vectorArray, const std::list<Eigen::Vector3f>& extern_vectorArray) override;
+    /**
     * Forwards vector change through network if the connection is established.
     */
     void onVectorChanged(const Test::CustomTypes::Vector3D& vector) override;
@@ -77,6 +81,14 @@ public:
     * Forwards extern_vector change through network if the connection is established.
     */
     void onExternVectorChanged(const Eigen::Vector3f& extern_vector) override;
+    /**
+    * Forwards vectorArray change through network if the connection is established.
+    */
+    void onVectorArrayChanged(const std::list<Test::CustomTypes::Vector3D>& vectorArray) override;
+    /**
+    * Forwards extern_vectorArray change through network if the connection is established.
+    */
+    void onExternVectorArrayChanged(const std::list<Eigen::Vector3f>& extern_vectorArray) override;
 
 private:
     /**

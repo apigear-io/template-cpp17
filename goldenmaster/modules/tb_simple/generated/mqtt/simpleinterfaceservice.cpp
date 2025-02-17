@@ -264,10 +264,10 @@ void SimpleInterfaceService::onSigFloat(float paramFloat)
         m_service->notifySignal(topic, nlohmann::json(args).dump());
     }
 }
-void SimpleInterfaceService::onSigFloat32(float paramFloa32)
+void SimpleInterfaceService::onSigFloat32(float paramFloat32)
 {
     if(m_service != nullptr) {
-        const nlohmann::json& args = { paramFloa32 };
+        const nlohmann::json& args = { paramFloat32 };
         static const auto topic = std::string("tb.simple/SimpleInterface/sig/sigFloat32");
         m_service->notifySignal(topic, nlohmann::json(args).dump());
     }
