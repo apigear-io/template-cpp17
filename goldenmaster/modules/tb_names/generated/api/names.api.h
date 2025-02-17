@@ -70,6 +70,15 @@ public:
     virtual int getSomePoperty2() const = 0;
 
     /**
+    * Sets the value of the enum_property property.
+    */
+    virtual void setEnumProperty(Enum_With_Under_scoresEnum enum_property) = 0;
+    /**
+    * Gets the value of the enum_property property.
+    */
+    virtual Enum_With_Under_scoresEnum getEnumProperty() const = 0;
+
+    /**
     * Access to a publisher, use it to subscribe for Nam_Es changes and signal emission.
     * This function name doesn't follow the convention, because it is added to user defined interface,
     * to avoid potentially name clashes, it has the trailing underscore in the name.
@@ -122,6 +131,12 @@ public:
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
     virtual void onSomePoperty2Changed(int Some_Poperty2) = 0;
+    /**
+    * Called by the INamEsPublisher when enum_property value has changed if subscribed for the enum_property change.
+    *
+    * @warning the subscribed function shall not be blocking and must return immediately!
+    */
+    virtual void onEnumPropertyChanged(Enum_With_Under_scoresEnum enum_property) = 0;
 };
 
 /** Callback for changes of Switch */
@@ -130,6 +145,8 @@ using NamEsSwitchPropertyCb = std::function<void(bool Switch)>;
 using NamEsSomePropertyPropertyCb = std::function<void(int SOME_PROPERTY)>;
 /** Callback for changes of Some_Poperty2 */
 using NamEsSomePoperty2PropertyCb = std::function<void(int Some_Poperty2)>;
+/** Callback for changes of enum_property */
+using NamEsEnumPropertyPropertyCb = std::function<void(Enum_With_Under_scoresEnum enum_property)>;
 /** Callback for SOME_SIGNAL signal triggers */
 using NamEsSomeSignalSignalCb = std::function<void(bool SOME_PARAM)> ;
 /** Callback for Some_Signal2 signal triggers */
@@ -222,6 +239,24 @@ public:
     virtual void unsubscribeFromSomePoperty2Changed(long handleId) = 0;
 
     /**
+    * Use this function to subscribe for enum_property value changes.
+    * If your subscriber uses subscription with INamEsSubscriber interface, you will get two notifications, one for each subscription mechanism.
+    * @param NamEsEnumPropertyPropertyCb callback that will be executed on each change of the property.
+    * Make sure to remove subscription before the callback becomes invalid.
+    * @return subscription token for the subscription removal.
+    *
+    * @warning the subscribed function shall not be blocking and must return immediately!
+    */
+    virtual long subscribeToEnumPropertyChanged(NamEsEnumPropertyPropertyCb callback) = 0;
+    /**
+    * Use this function to unsubscribe from enum_property property changes.
+    * If your subscriber uses subscription with INamEsSubscriber interface, you will be still informed about this change,
+    * as those are two independent subscription mechanisms.
+    * @param subscription token received on subscription.
+    */
+    virtual void unsubscribeFromEnumPropertyChanged(long handleId) = 0;
+
+    /**
     * Use this function to subscribe for SOME_SIGNAL signal changes.
     * @param NamEsSomeSignalSignalCb callback that will be executed on each signal emission.
     * Make sure to remove subscription before the callback becomes invalid.
@@ -269,6 +304,12 @@ public:
     * @param The new value of Some_Poperty2.
     */
     virtual void publishSomePoperty2Changed(int Some_Poperty2) const = 0;
+    /**
+    * Publishes the property changed to all subscribed clients.
+    * Needs to be invoked by the Nam_Es implementation when property enum_property changes.
+    * @param The new value of enum_property.
+    */
+    virtual void publishEnumPropertyChanged(Enum_With_Under_scoresEnum enum_property) const = 0;
     /**
     * Publishes the emitted signal to all subscribed clients.
     * Needs to be invoked by the Nam_Es implementation when SOME_SIGNAL is emitted.

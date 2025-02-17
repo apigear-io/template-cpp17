@@ -26,6 +26,9 @@ public:
     void setSomePoperty2(int Some_Poperty2) override;
     int getSomePoperty2() const override;
     
+    void setEnumProperty(Enum_With_Under_scoresEnum enum_property) override;
+    Enum_With_Under_scoresEnum getEnumProperty() const override;
+    
     void sOME_FUNCTION(bool SOME_PARAM) override;
     std::future<void> sOME_FUNCTIONAsync(bool SOME_PARAM) override;
         

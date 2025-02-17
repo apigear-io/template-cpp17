@@ -61,6 +61,26 @@ public:
     */
     void setExternVector(const Eigen::Vector3f& extern_vector) override;
     /**
+    * Property getter
+    * @return Locally stored locally value for VectorArray.
+    */
+    const std::list<Test::CustomTypes::Vector3D>& getVectorArray() const override;
+    /**
+    * Request setting a property on the Counter service.
+    * @param The value to which set request is send for the VectorArray.
+    */
+    void setVectorArray(const std::list<Test::CustomTypes::Vector3D>& vectorArray) override;
+    /**
+    * Property getter
+    * @return Locally stored locally value for ExternVectorArray.
+    */
+    const std::list<Eigen::Vector3f>& getExternVectorArray() const override;
+    /**
+    * Request setting a property on the Counter service.
+    * @param The value to which set request is send for the ExternVectorArray.
+    */
+    void setExternVectorArray(const std::list<Eigen::Vector3f>& extern_vectorArray) override;
+    /**
     * Remote call of ICounter::increment on the Counter service.
     * Uses incrementAsync
     */
@@ -70,6 +90,15 @@ public:
     */
     std::future<Eigen::Vector3f> incrementAsync(const Eigen::Vector3f& vec) override;
     /**
+    * Remote call of ICounter::incrementArray on the Counter service.
+    * Uses incrementArrayAsync
+    */
+    std::list<Eigen::Vector3f> incrementArray(const std::list<Eigen::Vector3f>& vec) override;
+    /**
+    * Remote call of ICounter::incrementArray on the Counter service.
+    */
+    std::future<std::list<Eigen::Vector3f>> incrementArrayAsync(const std::list<Eigen::Vector3f>& vec) override;
+    /**
     * Remote call of ICounter::decrement on the Counter service.
     * Uses decrementAsync
     */
@@ -78,6 +107,15 @@ public:
     * Remote call of ICounter::decrement on the Counter service.
     */
     std::future<Test::CustomTypes::Vector3D> decrementAsync(const Test::CustomTypes::Vector3D& vec) override;
+    /**
+    * Remote call of ICounter::decrementArray on the Counter service.
+    * Uses decrementArrayAsync
+    */
+    std::list<Test::CustomTypes::Vector3D> decrementArray(const std::list<Test::CustomTypes::Vector3D>& vec) override;
+    /**
+    * Remote call of ICounter::decrementArray on the Counter service.
+    */
+    std::future<std::list<Test::CustomTypes::Vector3D>> decrementArrayAsync(const std::list<Test::CustomTypes::Vector3D>& vec) override;
 
     /** The publisher to subscribe to. */
     ICounterPublisher& _getPublisher() const override;
@@ -140,6 +178,14 @@ private:
     void setExternVectorLocal(const Eigen::Vector3f& extern_vector);
     /* Mutex for externVector property */
     mutable std::shared_timed_mutex m_externVectorMutex;
+    /**  Updates local value for VectorArray and informs subscriber about the change*/
+    void setVectorArrayLocal(const std::list<Test::CustomTypes::Vector3D>& vectorArray);
+    /* Mutex for vectorArray property */
+    mutable std::shared_timed_mutex m_vectorArrayMutex;
+    /**  Updates local value for ExternVectorArray and informs subscriber about the change*/
+    void setExternVectorArrayLocal(const std::list<Eigen::Vector3f>& extern_vectorArray);
+    /* Mutex for externVectorArray property */
+    mutable std::shared_timed_mutex m_externVectorArrayMutex;
 
     /** Local storage for properties values. */
     CounterData m_data;

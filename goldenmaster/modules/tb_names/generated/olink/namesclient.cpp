@@ -30,6 +30,9 @@ void Nam_EsClient::applyState(const nlohmann::json& fields)
     if(fields.contains("Some_Poperty2")) {
         setSomePoperty2Local(fields["Some_Poperty2"].get<int>());
     }
+    if(fields.contains("enum_property")) {
+        setEnumPropertyLocal(fields["enum_property"].get<Enum_With_Under_scoresEnum>());
+    }
 }
 
 void Nam_EsClient::applyProperty(const std::string& propertyName, const nlohmann::json& value)
@@ -42,6 +45,9 @@ void Nam_EsClient::applyProperty(const std::string& propertyName, const nlohmann
     }
     else if ( propertyName == "Some_Poperty2") {
         setSomePoperty2Local(value.get<int>());
+    }
+    else if ( propertyName == "enum_property") {
+        setEnumPropertyLocal(value.get<Enum_With_Under_scoresEnum>());
     }
 }
 
@@ -130,6 +136,35 @@ int Nam_EsClient::getSomePoperty2() const
 {
     std::shared_lock<std::shared_timed_mutex> lock(m_somePoperty2Mutex);
     return m_data.m_Some_Poperty2;
+}
+
+void Nam_EsClient::setEnumProperty(Enum_With_Under_scoresEnum enum_property)
+{
+    if(!m_node) {
+        AG_LOG_WARNING("Attempt to set property but " + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
+        return;
+    }
+    static const auto propertyId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "enum_property");
+    m_node->setRemoteProperty(propertyId, enum_property);
+}
+
+void Nam_EsClient::setEnumPropertyLocal(Enum_With_Under_scoresEnum enum_property)
+{
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_enumPropertyMutex);
+        if (m_data.m_enum_property == enum_property) {
+            return;
+        }
+        m_data.m_enum_property = enum_property;
+    }
+
+    m_publisher->publishEnumPropertyChanged(enum_property);
+}
+
+Enum_With_Under_scoresEnum Nam_EsClient::getEnumProperty() const
+{
+    std::shared_lock<std::shared_timed_mutex> lock(m_enumPropertyMutex);
+    return m_data.m_enum_property;
 }
 
 void Nam_EsClient::sOME_FUNCTION(bool SOME_PARAM)

@@ -15,6 +15,8 @@ struct CounterData
 {
     Test::CustomTypes::Vector3D m_vector {Test::CustomTypes::Vector3D()};
     Eigen::Vector3f m_extern_vector {Eigen::Vector3f(0,0,0)};
+    std::list<Test::CustomTypes::Vector3D> m_vectorArray {std::list<Test::CustomTypes::Vector3D>()};
+    std::list<Eigen::Vector3f> m_extern_vectorArray {std::list<Eigen::Vector3f>()};
 };
 
 }

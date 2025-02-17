@@ -18,6 +18,8 @@ set (SOURCES_CORE_SUPPORT
     nooperationsinterface.threadsafedecorator.cpp
     nosignalsinterface.publisher.cpp
     nosignalsinterface.threadsafedecorator.cpp
+    emptyinterface.publisher.cpp
+    emptyinterface.threadsafedecorator.cpp
 )
 add_library(tb_simple-core SHARED ${SOURCES_CORE_SUPPORT})
 add_library(tb_simple::tb_simple-core ALIAS tb_simple-core)

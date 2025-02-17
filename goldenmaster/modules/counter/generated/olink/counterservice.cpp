@@ -45,9 +45,19 @@ nlohmann::json CounterService::olinkInvoke(const std::string& methodId, const nl
         Eigen::Vector3f result = m_Counter->increment(vec);
         return result;
     }
+    if(memberMethod == "incrementArray") {
+        const std::list<Eigen::Vector3f>& vec = fcnArgs.at(0);
+        std::list<Eigen::Vector3f> result = m_Counter->incrementArray(vec);
+        return result;
+    }
     if(memberMethod == "decrement") {
         const Test::CustomTypes::Vector3D& vec = fcnArgs.at(0);
         Test::CustomTypes::Vector3D result = m_Counter->decrement(vec);
+        return result;
+    }
+    if(memberMethod == "decrementArray") {
+        const std::list<Test::CustomTypes::Vector3D>& vec = fcnArgs.at(0);
+        std::list<Test::CustomTypes::Vector3D> result = m_Counter->decrementArray(vec);
         return result;
     }
     return nlohmann::json();
@@ -63,6 +73,14 @@ void CounterService::olinkSetProperty(const std::string& propertyId, const nlohm
     if(memberProperty == "extern_vector") {
         Eigen::Vector3f extern_vector = value.get<Eigen::Vector3f>();
         m_Counter->setExternVector(extern_vector);
+    }
+    if(memberProperty == "vectorArray") {
+        std::list<Test::CustomTypes::Vector3D> vectorArray = value.get<std::list<Test::CustomTypes::Vector3D>>();
+        m_Counter->setVectorArray(vectorArray);
+    }
+    if(memberProperty == "extern_vectorArray") {
+        std::list<Eigen::Vector3f> extern_vectorArray = value.get<std::list<Eigen::Vector3f>>();
+        m_Counter->setExternVectorArray(extern_vectorArray);
     } 
 }
 
@@ -78,8 +96,22 @@ nlohmann::json CounterService::olinkCollectProperties()
 {
     return nlohmann::json::object({
         { "vector", m_Counter->getVector() },
-        { "extern_vector", m_Counter->getExternVector() }
+        { "extern_vector", m_Counter->getExternVector() },
+        { "vectorArray", m_Counter->getVectorArray() },
+        { "extern_vectorArray", m_Counter->getExternVectorArray() }
     });
+}
+void CounterService::onValueChanged(const Test::CustomTypes::Vector3D& vector, const Eigen::Vector3f& extern_vector, const std::list<Test::CustomTypes::Vector3D>& vectorArray, const std::list<Eigen::Vector3f>& extern_vectorArray)
+{
+    const nlohmann::json args = { vector, extern_vector, vectorArray, extern_vectorArray };
+    static const auto signalId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "valueChanged");
+    static const auto objectId = olinkObjectName();
+    for(auto node: m_registry.getNodes(objectId)) {
+        auto lockedNode = node.lock();
+        if(lockedNode) {
+            lockedNode->notifySignal(signalId, args);
+        }
+    }
 }
 void CounterService::onVectorChanged(const Test::CustomTypes::Vector3D& vector)
 {
@@ -100,6 +132,28 @@ void CounterService::onExternVectorChanged(const Eigen::Vector3f& extern_vector)
         auto lockedNode = node.lock();
         if(lockedNode) {
             lockedNode->notifyPropertyChange(propertyId, extern_vector);
+        }
+    }
+}
+void CounterService::onVectorArrayChanged(const std::list<Test::CustomTypes::Vector3D>& vectorArray)
+{
+    static const auto propertyId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "vectorArray");
+    static const auto objectId = olinkObjectName();
+    for(auto node: m_registry.getNodes(objectId)) {
+        auto lockedNode = node.lock();
+        if(lockedNode) {
+            lockedNode->notifyPropertyChange(propertyId, vectorArray);
+        }
+    }
+}
+void CounterService::onExternVectorArrayChanged(const std::list<Eigen::Vector3f>& extern_vectorArray)
+{
+    static const auto propertyId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "extern_vectorArray");
+    static const auto objectId = olinkObjectName();
+    for(auto node: m_registry.getNodes(objectId)) {
+        auto lockedNode = node.lock();
+        if(lockedNode) {
+            lockedNode->notifyPropertyChange(propertyId, extern_vectorArray);
         }
     }
 }

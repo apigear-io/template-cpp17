@@ -84,38 +84,38 @@ public:
     * Remote call of IStructArrayInterface::funcBool on the StructArrayInterface service.
     * Uses funcBoolAsync
     */
-    StructBool funcBool(const std::list<StructBool>& paramBool) override;
+    std::list<StructBool> funcBool(const std::list<StructBool>& paramBool) override;
     /**
     * Remote call of IStructArrayInterface::funcBool on the StructArrayInterface service.
     */
-    std::future<StructBool> funcBoolAsync(const std::list<StructBool>& paramBool) override;
+    std::future<std::list<StructBool>> funcBoolAsync(const std::list<StructBool>& paramBool) override;
     /**
     * Remote call of IStructArrayInterface::funcInt on the StructArrayInterface service.
     * Uses funcIntAsync
     */
-    StructBool funcInt(const std::list<StructInt>& paramInt) override;
+    std::list<StructInt> funcInt(const std::list<StructInt>& paramInt) override;
     /**
     * Remote call of IStructArrayInterface::funcInt on the StructArrayInterface service.
     */
-    std::future<StructBool> funcIntAsync(const std::list<StructInt>& paramInt) override;
+    std::future<std::list<StructInt>> funcIntAsync(const std::list<StructInt>& paramInt) override;
     /**
     * Remote call of IStructArrayInterface::funcFloat on the StructArrayInterface service.
     * Uses funcFloatAsync
     */
-    StructBool funcFloat(const std::list<StructFloat>& paramFloat) override;
+    std::list<StructFloat> funcFloat(const std::list<StructFloat>& paramFloat) override;
     /**
     * Remote call of IStructArrayInterface::funcFloat on the StructArrayInterface service.
     */
-    std::future<StructBool> funcFloatAsync(const std::list<StructFloat>& paramFloat) override;
+    std::future<std::list<StructFloat>> funcFloatAsync(const std::list<StructFloat>& paramFloat) override;
     /**
     * Remote call of IStructArrayInterface::funcString on the StructArrayInterface service.
     * Uses funcStringAsync
     */
-    StructBool funcString(const std::list<StructString>& paramString) override;
+    std::list<StructString> funcString(const std::list<StructString>& paramString) override;
     /**
     * Remote call of IStructArrayInterface::funcString on the StructArrayInterface service.
     */
-    std::future<StructBool> funcStringAsync(const std::list<StructString>& paramString) override;
+    std::future<std::list<StructString>> funcStringAsync(const std::list<StructString>& paramString) override;
 
     /** The publisher to subscribe to. */
     IStructArrayInterfacePublisher& _getPublisher() const override;

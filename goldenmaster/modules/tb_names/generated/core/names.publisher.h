@@ -60,6 +60,15 @@ public:
     void unsubscribeFromSomePoperty2Changed(long handleId) override;
 
     /**
+    * Implementation of INamEsPublisher::subscribeToEnumPropertyChanged
+    */
+    long subscribeToEnumPropertyChanged(NamEsEnumPropertyPropertyCb callback) override;
+    /**
+    * Implementation of INamEsPublisher::subscribeToEnumPropertyChanged
+    */
+    void unsubscribeFromEnumPropertyChanged(long handleId) override;
+
+    /**
     * Implementation of INamEsPublisher::subscribeToSomeSignal
     */
     long subscribeToSomeSignal(NamEsSomeSignalSignalCb callback) override;
@@ -89,6 +98,10 @@ public:
     * Implementation of INamEsPublisher::publishSomePoperty2Changed
     */
     void publishSomePoperty2Changed(int Some_Poperty2) const override;
+    /**
+    * Implementation of INamEsPublisher::publishEnumPropertyChanged
+    */
+    void publishEnumPropertyChanged(Enum_With_Under_scoresEnum enum_property) const override;
     /**
     * Implementation of INamEsPublisher::publishSomeSignal
     */
@@ -120,6 +133,12 @@ private:
     std::map<long, NamEsSomePoperty2PropertyCb> m_somePoperty2Callbacks;
     // Mutex for m_somePoperty2Callbacks
     mutable std::shared_timed_mutex m_somePoperty2CallbacksMutex;
+    // Next free unique identifier to subscribe for the EnumProperty change.
+    std::atomic<long> m_enumPropertyChangedCallbackNextId {0};
+    // Subscribed callbacks for the EnumProperty change.
+    std::map<long, NamEsEnumPropertyPropertyCb> m_enumPropertyCallbacks;
+    // Mutex for m_enumPropertyCallbacks
+    mutable std::shared_timed_mutex m_enumPropertyCallbacksMutex;
     // Next free unique identifier to subscribe for the SomeSignal emission.
     std::atomic<long> m_someSignalSignalCallbackNextId {0};
     // Subscribed callbacks for the SomeSignal emission.

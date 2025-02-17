@@ -37,6 +37,8 @@
 #include "tb_simple/generated/core/nooperationsinterface.threadsafedecorator.h"
 #include "tb_simple/implementation/nosignalsinterface.h"
 #include "tb_simple/generated/core/nosignalsinterface.threadsafedecorator.h"
+#include "tb_simple/implementation/emptyinterface.h"
+#include "tb_simple/generated/core/emptyinterface.threadsafedecorator.h"
 #include "testbed1/implementation/structinterface.h"
 #include "testbed1/generated/core/structinterface.threadsafedecorator.h"
 #include "testbed1/implementation/structarrayinterface.h"
@@ -357,6 +359,15 @@ void testTbSimpleNoSignalsInterface()
     testNoSignalsInterface->setPropInt(l_propInt);
 }
 
+void testTbSimpleEmptyInterface()
+{
+    using namespace Test::TbSimple;
+
+    std::unique_ptr<IEmptyInterface> testEmptyInterface = std::make_unique<EmptyInterfaceThreadSafeDecorator>(std::make_shared<EmptyInterface>());
+
+    // Thread safe access
+}
+
 void testTestbed1StructInterface()
 {
     using namespace Test::Testbed1;
@@ -415,6 +426,9 @@ void testTbNamesNamEs()
     auto l_somePoperty2 = 0;
     l_somePoperty2 = testNamEs->getSomePoperty2();
     testNamEs->setSomePoperty2(l_somePoperty2);
+    auto l_enumProperty = Enum_With_Under_scoresEnum::First_Value;
+    l_enumProperty = testNamEs->getEnumProperty();
+    testNamEs->setEnumProperty(l_enumProperty);
 }
 
 void testCounterCounter()
@@ -430,6 +444,12 @@ void testCounterCounter()
     auto l_externVector = Eigen::Vector3f(0,0,0);
     l_externVector = testCounter->getExternVector();
     testCounter->setExternVector(l_externVector);
+    auto l_vectorArray = std::list<Test::CustomTypes::Vector3D>();
+    l_vectorArray = testCounter->getVectorArray();
+    testCounter->setVectorArray(l_vectorArray);
+    auto l_externVectorArray = std::list<Eigen::Vector3f>();
+    l_externVectorArray = testCounter->getExternVectorArray();
+    testCounter->setExternVectorArray(l_externVectorArray);
 }
 
 
@@ -453,6 +473,7 @@ int main(){
     testTbSimpleNoPropertiesInterface();
     testTbSimpleNoOperationsInterface();
     testTbSimpleNoSignalsInterface();
+    testTbSimpleEmptyInterface();
     testTestbed1StructInterface();
     testTestbed1StructArrayInterface();
     testTbNamesNamEs();

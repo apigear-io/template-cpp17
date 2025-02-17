@@ -29,12 +29,12 @@ std::future<StructBool> StructInterfaceTraceDecorator::funcBoolAsync(const Struc
     m_tracer->trace_funcBool(paramBool);
     return m_impl.funcBoolAsync(paramBool);
 }
-StructBool StructInterfaceTraceDecorator::funcInt(const StructInt& paramInt)
+StructInt StructInterfaceTraceDecorator::funcInt(const StructInt& paramInt)
 {
     m_tracer->trace_funcInt(paramInt);
     return m_impl.funcInt(paramInt);
 }
-std::future<StructBool> StructInterfaceTraceDecorator::funcIntAsync(const StructInt& paramInt)
+std::future<StructInt> StructInterfaceTraceDecorator::funcIntAsync(const StructInt& paramInt)
 {
     m_tracer->trace_funcInt(paramInt);
     return m_impl.funcIntAsync(paramInt);

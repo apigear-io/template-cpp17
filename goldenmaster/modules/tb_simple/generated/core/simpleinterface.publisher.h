@@ -231,7 +231,7 @@ public:
     /**
     * Implementation of ISimpleInterfacePublisher::publishSigFloat32
     */
-    void publishSigFloat32(float paramFloa32) const override;
+    void publishSigFloat32(float paramFloat32) const override;
     /**
     * Implementation of ISimpleInterfacePublisher::publishSigFloat64
     */

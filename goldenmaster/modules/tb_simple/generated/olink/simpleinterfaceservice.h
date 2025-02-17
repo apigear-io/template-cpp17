@@ -92,7 +92,7 @@ public:
     /**
     * Forwards emitted sigFloat32 through network if the connection is established.
     */
-    void onSigFloat32(float paramFloa32) override;
+    void onSigFloat32(float paramFloat32) override;
     /**
     * Forwards emitted sigFloat64 through network if the connection is established.
     */

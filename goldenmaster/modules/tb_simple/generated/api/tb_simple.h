@@ -7,3 +7,4 @@
 #include "tb_simple/generated/api/nopropertiesinterface.api.h"
 #include "tb_simple/generated/api/nooperationsinterface.api.h"
 #include "tb_simple/generated/api/nosignalsinterface.api.h"
+#include "tb_simple/generated/api/emptyinterface.api.h"

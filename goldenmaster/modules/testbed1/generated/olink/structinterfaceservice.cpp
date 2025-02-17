@@ -45,7 +45,7 @@ nlohmann::json StructInterfaceService::olinkInvoke(const std::string& methodId, 
     }
     if(memberMethod == "funcInt") {
         const StructInt& paramInt = fcnArgs.at(0);
-        StructBool result = m_StructInterface->funcInt(paramInt);
+        StructInt result = m_StructInterface->funcInt(paramInt);
         return result;
     }
     if(memberMethod == "funcFloat") {

@@ -94,9 +94,10 @@ class tb_namesConan(ConanFile):
         # generates a Findtb_names.cmake file in addition to the tb_names-config.cmake
         self.cpp_info.set_property("cmake_find_mode", "both")
         self.cpp_info.components["tb_names-api"].includedirs.append(os.path.join(self.package_folder, "include"))
+        self.cpp_info.components["tb_names-api"].libs = ["tb_names-api"]
         self.cpp_info.components["tb_names-core"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["tb_names-core"].libs = ["tb_names-core"]
-        self.cpp_info.components["tb_names-core"].requires = ["nlohmann_json::nlohmann_json"]
+        self.cpp_info.components["tb_names-core"].requires = ["tb_names-api", "nlohmann_json::nlohmann_json"]
         self.cpp_info.components["tb_names-implementation"].includedirs.append(os.path.join(self.package_folder, "include"))
         self.cpp_info.components["tb_names-implementation"].libs = ["tb_names-implementation"]
         self.cpp_info.components["tb_names-implementation"].requires = ["tb_names-core", "nlohmann_json::nlohmann_json"]

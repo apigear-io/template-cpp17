@@ -13,6 +13,7 @@ set (SOURCES_CORE_IMPL
     nopropertiesinterface.cpp
     nooperationsinterface.cpp
     nosignalsinterface.cpp
+    emptyinterface.cpp
 )
 add_library(tb_simple-implementation SHARED ${SOURCES_CORE_IMPL})
 add_library(tb_simple::tb_simple-implementation ALIAS tb_simple-implementation)
@@ -42,6 +43,7 @@ set (SOURCES_TEST
     nopropertiesinterface.test.cpp
     nooperationsinterface.test.cpp
     nosignalsinterface.test.cpp
+    emptyinterface.test.cpp
 )
 add_executable(test_tb_simple
     ${SOURCES_TEST}

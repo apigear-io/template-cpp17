@@ -35,12 +35,12 @@ public:
     virtual std::future<StructBool> funcBoolAsync(const StructBool& paramBool) = 0;
 
 
-    virtual StructBool funcInt(const StructInt& paramInt) = 0;
+    virtual StructInt funcInt(const StructInt& paramInt) = 0;
     /**
     * Asynchronous version of funcInt(const StructInt& paramInt)
-    * @return Promise of type StructBool which is set once the function has completed
+    * @return Promise of type StructInt which is set once the function has completed
     */
-    virtual std::future<StructBool> funcIntAsync(const StructInt& paramInt) = 0;
+    virtual std::future<StructInt> funcIntAsync(const StructInt& paramInt) = 0;
 
 
     virtual StructFloat funcFloat(const StructFloat& paramFloat) = 0;

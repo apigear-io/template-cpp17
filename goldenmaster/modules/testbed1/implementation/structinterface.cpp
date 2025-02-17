@@ -83,14 +83,14 @@ std::future<StructBool> StructInterface::funcBoolAsync(const StructBool& paramBo
     );
 }
 
-StructBool StructInterface::funcInt(const StructInt& paramInt)
+StructInt StructInterface::funcInt(const StructInt& paramInt)
 {
     (void) paramInt; // suppress the 'Unreferenced Formal Parameter' warning.
     // do business logic here
-    return StructBool();
+    return StructInt();
 }
 
-std::future<StructBool> StructInterface::funcIntAsync(const StructInt& paramInt)
+std::future<StructInt> StructInterface::funcIntAsync(const StructInt& paramInt)
 {
     return std::async(std::launch::async, [this,
                     paramInt]()

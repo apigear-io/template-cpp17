@@ -15,6 +15,8 @@ set (SOURCES_MONITOR
     nooperationsinterface.tracer.cpp
     nosignalsinterface.tracedecorator.cpp
     nosignalsinterface.tracer.cpp
+    emptyinterface.tracedecorator.cpp
+    emptyinterface.tracer.cpp
 )
 add_library(tb_simple-monitor SHARED ${SOURCES_MONITOR})
 add_library(tb_simple::tb_simple-monitor ALIAS tb_simple-monitor)

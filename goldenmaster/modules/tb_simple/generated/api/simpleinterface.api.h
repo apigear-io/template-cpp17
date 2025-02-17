@@ -228,11 +228,11 @@ public:
     virtual void onSigFloat(float paramFloat) = 0;
     /**
     * Called by the ISimpleInterfacePublisher when the SimpleInterface emits sigFloat32, if subscribed for the sigFloat32.
-    * @param paramFloa32 
+    * @param paramFloat32 
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual void onSigFloat32(float paramFloa32) = 0;
+    virtual void onSigFloat32(float paramFloat32) = 0;
     /**
     * Called by the ISimpleInterfacePublisher when the SimpleInterface emits sigFloat64, if subscribed for the sigFloat64.
     * @param paramFloat64 
@@ -324,7 +324,7 @@ using SimpleInterfaceSigInt64SignalCb = std::function<void(int64_t paramInt64)> 
 /** Callback for sigFloat signal triggers */
 using SimpleInterfaceSigFloatSignalCb = std::function<void(float paramFloat)> ;
 /** Callback for sigFloat32 signal triggers */
-using SimpleInterfaceSigFloat32SignalCb = std::function<void(float paramFloa32)> ;
+using SimpleInterfaceSigFloat32SignalCb = std::function<void(float paramFloat32)> ;
 /** Callback for sigFloat64 signal triggers */
 using SimpleInterfaceSigFloat64SignalCb = std::function<void(double paramFloat64)> ;
 /** Callback for sigString signal triggers */
@@ -707,9 +707,9 @@ public:
     /**
     * Publishes the emitted signal to all subscribed clients.
     * Needs to be invoked by the SimpleInterface implementation when sigFloat32 is emitted.
-    * @param paramFloa32 
+    * @param paramFloat32 
     */
-    virtual void publishSigFloat32(float paramFloa32) const = 0;
+    virtual void publishSigFloat32(float paramFloat32) const = 0;
     /**
     * Publishes the emitted signal to all subscribed clients.
     * Needs to be invoked by the SimpleInterface implementation when sigFloat64 is emitted.

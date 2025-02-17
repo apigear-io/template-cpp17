@@ -206,9 +206,9 @@ void SimpleInterfaceTraceDecorator::onSigFloat(float paramFloat)
     m_tracer->trace_sigFloat(paramFloat);
 }
 
-void SimpleInterfaceTraceDecorator::onSigFloat32(float paramFloa32)
+void SimpleInterfaceTraceDecorator::onSigFloat32(float paramFloat32)
 {
-    m_tracer->trace_sigFloat32(paramFloa32);
+    m_tracer->trace_sigFloat32(paramFloat32);
 }
 
 void SimpleInterfaceTraceDecorator::onSigFloat64(double paramFloat64)

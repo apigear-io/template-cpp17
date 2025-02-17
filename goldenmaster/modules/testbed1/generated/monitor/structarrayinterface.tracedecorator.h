@@ -35,24 +35,24 @@ public:
     virtual ~StructArrayInterfaceTraceDecorator();
 
     /** Traces funcBool and forwards call to StructArrayInterface implementation. */
-    StructBool funcBool(const std::list<StructBool>& paramBool) override;
+    std::list<StructBool> funcBool(const std::list<StructBool>& paramBool) override;
     /** Traces funcBool and forwards call to StructArrayInterface implementation. */
-    std::future<StructBool> funcBoolAsync(const std::list<StructBool>& paramBool) override;
+    std::future<std::list<StructBool>> funcBoolAsync(const std::list<StructBool>& paramBool) override;
     
     /** Traces funcInt and forwards call to StructArrayInterface implementation. */
-    StructBool funcInt(const std::list<StructInt>& paramInt) override;
+    std::list<StructInt> funcInt(const std::list<StructInt>& paramInt) override;
     /** Traces funcInt and forwards call to StructArrayInterface implementation. */
-    std::future<StructBool> funcIntAsync(const std::list<StructInt>& paramInt) override;
+    std::future<std::list<StructInt>> funcIntAsync(const std::list<StructInt>& paramInt) override;
     
     /** Traces funcFloat and forwards call to StructArrayInterface implementation. */
-    StructBool funcFloat(const std::list<StructFloat>& paramFloat) override;
+    std::list<StructFloat> funcFloat(const std::list<StructFloat>& paramFloat) override;
     /** Traces funcFloat and forwards call to StructArrayInterface implementation. */
-    std::future<StructBool> funcFloatAsync(const std::list<StructFloat>& paramFloat) override;
+    std::future<std::list<StructFloat>> funcFloatAsync(const std::list<StructFloat>& paramFloat) override;
     
     /** Traces funcString and forwards call to StructArrayInterface implementation. */
-    StructBool funcString(const std::list<StructString>& paramString) override;
+    std::list<StructString> funcString(const std::list<StructString>& paramString) override;
     /** Traces funcString and forwards call to StructArrayInterface implementation. */
-    std::future<StructBool> funcStringAsync(const std::list<StructString>& paramString) override;
+    std::future<std::list<StructString>> funcStringAsync(const std::list<StructString>& paramString) override;
     
     /** Forwards call to StructArrayInterface implementation. */
     void setPropBool(const std::list<StructBool>& propBool) override;

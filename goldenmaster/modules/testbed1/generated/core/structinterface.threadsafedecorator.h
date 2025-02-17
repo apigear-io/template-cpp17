@@ -59,12 +59,12 @@ public:
     * Forwards call to StructInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    StructBool funcInt(const StructInt& paramInt) override;
+    StructInt funcInt(const StructInt& paramInt) override;
     /** 
     * Forwards call to StructInterface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
-    std::future<StructBool> funcIntAsync(const StructInt& paramInt) override;
+    std::future<StructInt> funcIntAsync(const StructInt& paramInt) override;
 
     /** 
     * Forwards call to StructInterface implementation.

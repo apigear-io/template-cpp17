@@ -115,10 +115,10 @@ void SimpleInterfaceTracer::trace_sigFloat(float paramFloat)
     fields_["paramFloat"] = paramFloat;
     m_tracer.signal("tb.simple.SimpleInterface#sigFloat", fields_);
 }
-void SimpleInterfaceTracer::trace_sigFloat32(float paramFloa32)
+void SimpleInterfaceTracer::trace_sigFloat32(float paramFloat32)
 {
     nlohmann::json fields_;
-    fields_["paramFloa32"] = paramFloa32;
+    fields_["paramFloat32"] = paramFloat32;
     m_tracer.signal("tb.simple.SimpleInterface#sigFloat32", fields_);
 }
 void SimpleInterfaceTracer::trace_sigFloat64(double paramFloat64)

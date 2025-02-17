@@ -51,6 +51,33 @@ public:
     void unsubscribeFromExternVectorChanged(long handleId) override;
 
     /**
+    * Implementation of ICounterPublisher::subscribeToVectorArrayChanged
+    */
+    long subscribeToVectorArrayChanged(CounterVectorArrayPropertyCb callback) override;
+    /**
+    * Implementation of ICounterPublisher::subscribeToVectorArrayChanged
+    */
+    void unsubscribeFromVectorArrayChanged(long handleId) override;
+
+    /**
+    * Implementation of ICounterPublisher::subscribeToExternVectorArrayChanged
+    */
+    long subscribeToExternVectorArrayChanged(CounterExternVectorArrayPropertyCb callback) override;
+    /**
+    * Implementation of ICounterPublisher::subscribeToExternVectorArrayChanged
+    */
+    void unsubscribeFromExternVectorArrayChanged(long handleId) override;
+
+    /**
+    * Implementation of ICounterPublisher::subscribeToValueChanged
+    */
+    long subscribeToValueChanged(CounterValueChangedSignalCb callback) override;
+    /**
+    * Implementation of ICounterPublisher::unsubscribeFromValueChanged
+    */
+    void unsubscribeFromValueChanged(long handleId) override;
+
+    /**
     * Implementation of ICounterPublisher::publishVectorChanged
     */
     void publishVectorChanged(const Test::CustomTypes::Vector3D& vector) const override;
@@ -58,6 +85,18 @@ public:
     * Implementation of ICounterPublisher::publishExternVectorChanged
     */
     void publishExternVectorChanged(const Eigen::Vector3f& extern_vector) const override;
+    /**
+    * Implementation of ICounterPublisher::publishVectorArrayChanged
+    */
+    void publishVectorArrayChanged(const std::list<Test::CustomTypes::Vector3D>& vectorArray) const override;
+    /**
+    * Implementation of ICounterPublisher::publishExternVectorArrayChanged
+    */
+    void publishExternVectorArrayChanged(const std::list<Eigen::Vector3f>& extern_vectorArray) const override;
+    /**
+    * Implementation of ICounterPublisher::publishValueChanged
+    */
+    void publishValueChanged(const Test::CustomTypes::Vector3D& vector, const Eigen::Vector3f& extern_vector, const std::list<Test::CustomTypes::Vector3D>& vectorArray, const std::list<Eigen::Vector3f>& extern_vectorArray) const override;
 private:
     // Subscribers informed about any property change or signal emitted in Counter
     std::vector<std::reference_wrapper<ICounterSubscriber>> m_allChangesSubscribers;
@@ -75,6 +114,24 @@ private:
     std::map<long, CounterExternVectorPropertyCb> m_externVectorCallbacks;
     // Mutex for m_externVectorCallbacks
     mutable std::shared_timed_mutex m_externVectorCallbacksMutex;
+    // Next free unique identifier to subscribe for the VectorArray change.
+    std::atomic<long> m_vectorArrayChangedCallbackNextId {0};
+    // Subscribed callbacks for the VectorArray change.
+    std::map<long, CounterVectorArrayPropertyCb> m_vectorArrayCallbacks;
+    // Mutex for m_vectorArrayCallbacks
+    mutable std::shared_timed_mutex m_vectorArrayCallbacksMutex;
+    // Next free unique identifier to subscribe for the ExternVectorArray change.
+    std::atomic<long> m_externVectorArrayChangedCallbackNextId {0};
+    // Subscribed callbacks for the ExternVectorArray change.
+    std::map<long, CounterExternVectorArrayPropertyCb> m_externVectorArrayCallbacks;
+    // Mutex for m_externVectorArrayCallbacks
+    mutable std::shared_timed_mutex m_externVectorArrayCallbacksMutex;
+    // Next free unique identifier to subscribe for the ValueChanged emission.
+    std::atomic<long> m_valueChangedSignalCallbackNextId {0};
+    // Subscribed callbacks for the ValueChanged emission.
+    std::map<long, CounterValueChangedSignalCb > m_valueChangedCallbacks;
+    // Mutex for m_valueChangedSignalCallbackNextId and m_valueChangedCallbacks
+    mutable std::shared_timed_mutex m_valueChangedCallbacksMutex;
 };
 
 } // namespace Counter

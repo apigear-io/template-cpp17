@@ -65,6 +65,10 @@ void Nam_EsService::olinkSetProperty(const std::string& propertyId, const nlohma
     if(memberProperty == "Some_Poperty2") {
         int Some_Poperty2 = value.get<int>();
         m_Nam_Es->setSomePoperty2(Some_Poperty2);
+    }
+    if(memberProperty == "enum_property") {
+        Enum_With_Under_scoresEnum enum_property = value.get<Enum_With_Under_scoresEnum>();
+        m_Nam_Es->setEnumProperty(enum_property);
     } 
 }
 
@@ -81,7 +85,8 @@ nlohmann::json Nam_EsService::olinkCollectProperties()
     return nlohmann::json::object({
         { "Switch", m_Nam_Es->getSwitch() },
         { "SOME_PROPERTY", m_Nam_Es->getSomeProperty() },
-        { "Some_Poperty2", m_Nam_Es->getSomePoperty2() }
+        { "Some_Poperty2", m_Nam_Es->getSomePoperty2() },
+        { "enum_property", m_Nam_Es->getEnumProperty() }
     });
 }
 void Nam_EsService::onSomeSignal(bool SOME_PARAM)
@@ -138,6 +143,17 @@ void Nam_EsService::onSomePoperty2Changed(int Some_Poperty2)
         auto lockedNode = node.lock();
         if(lockedNode) {
             lockedNode->notifyPropertyChange(propertyId, Some_Poperty2);
+        }
+    }
+}
+void Nam_EsService::onEnumPropertyChanged(Enum_With_Under_scoresEnum enum_property)
+{
+    static const auto propertyId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "enum_property");
+    static const auto objectId = olinkObjectName();
+    for(auto node: m_registry.getNodes(objectId)) {
+        auto lockedNode = node.lock();
+        if(lockedNode) {
+            lockedNode->notifyPropertyChange(propertyId, enum_property);
         }
     }
 }

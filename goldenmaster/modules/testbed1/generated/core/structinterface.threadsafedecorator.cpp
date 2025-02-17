@@ -16,12 +16,12 @@ std::future<StructBool> StructInterfaceThreadSafeDecorator::funcBoolAsync(const 
 {
     return m_impl->funcBoolAsync(paramBool);
 }
-StructBool StructInterfaceThreadSafeDecorator::funcInt(const StructInt& paramInt)
+StructInt StructInterfaceThreadSafeDecorator::funcInt(const StructInt& paramInt)
 {
     return m_impl->funcInt(paramInt);
 }
 
-std::future<StructBool> StructInterfaceThreadSafeDecorator::funcIntAsync(const StructInt& paramInt)
+std::future<StructInt> StructInterfaceThreadSafeDecorator::funcIntAsync(const StructInt& paramInt)
 {
     return m_impl->funcIntAsync(paramInt);
 }

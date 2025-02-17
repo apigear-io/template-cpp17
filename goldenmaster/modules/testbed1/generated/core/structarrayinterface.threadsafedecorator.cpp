@@ -7,39 +7,39 @@ StructArrayInterfaceThreadSafeDecorator::StructArrayInterfaceThreadSafeDecorator
     : m_impl(impl)
 {
 }
-StructBool StructArrayInterfaceThreadSafeDecorator::funcBool(const std::list<StructBool>& paramBool)
+std::list<StructBool> StructArrayInterfaceThreadSafeDecorator::funcBool(const std::list<StructBool>& paramBool)
 {
     return m_impl->funcBool(paramBool);
 }
 
-std::future<StructBool> StructArrayInterfaceThreadSafeDecorator::funcBoolAsync(const std::list<StructBool>& paramBool)
+std::future<std::list<StructBool>> StructArrayInterfaceThreadSafeDecorator::funcBoolAsync(const std::list<StructBool>& paramBool)
 {
     return m_impl->funcBoolAsync(paramBool);
 }
-StructBool StructArrayInterfaceThreadSafeDecorator::funcInt(const std::list<StructInt>& paramInt)
+std::list<StructInt> StructArrayInterfaceThreadSafeDecorator::funcInt(const std::list<StructInt>& paramInt)
 {
     return m_impl->funcInt(paramInt);
 }
 
-std::future<StructBool> StructArrayInterfaceThreadSafeDecorator::funcIntAsync(const std::list<StructInt>& paramInt)
+std::future<std::list<StructInt>> StructArrayInterfaceThreadSafeDecorator::funcIntAsync(const std::list<StructInt>& paramInt)
 {
     return m_impl->funcIntAsync(paramInt);
 }
-StructBool StructArrayInterfaceThreadSafeDecorator::funcFloat(const std::list<StructFloat>& paramFloat)
+std::list<StructFloat> StructArrayInterfaceThreadSafeDecorator::funcFloat(const std::list<StructFloat>& paramFloat)
 {
     return m_impl->funcFloat(paramFloat);
 }
 
-std::future<StructBool> StructArrayInterfaceThreadSafeDecorator::funcFloatAsync(const std::list<StructFloat>& paramFloat)
+std::future<std::list<StructFloat>> StructArrayInterfaceThreadSafeDecorator::funcFloatAsync(const std::list<StructFloat>& paramFloat)
 {
     return m_impl->funcFloatAsync(paramFloat);
 }
-StructBool StructArrayInterfaceThreadSafeDecorator::funcString(const std::list<StructString>& paramString)
+std::list<StructString> StructArrayInterfaceThreadSafeDecorator::funcString(const std::list<StructString>& paramString)
 {
     return m_impl->funcString(paramString);
 }
 
-std::future<StructBool> StructArrayInterfaceThreadSafeDecorator::funcStringAsync(const std::list<StructString>& paramString)
+std::future<std::list<StructString>> StructArrayInterfaceThreadSafeDecorator::funcStringAsync(const std::list<StructString>& paramString)
 {
     return m_impl->funcStringAsync(paramString);
 }

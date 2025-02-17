@@ -133,6 +133,41 @@ void NamEsPublisher::publishSomePoperty2Changed(int Some_Poperty2) const
     }
 }
 
+long NamEsPublisher::subscribeToEnumPropertyChanged(NamEsEnumPropertyPropertyCb callback)
+{
+    auto handleId = m_enumPropertyChangedCallbackNextId++;
+    std::unique_lock<std::shared_timed_mutex> lock(m_enumPropertyCallbacksMutex);
+    m_enumPropertyCallbacks[handleId] = callback;
+    return handleId;
+}
+
+void NamEsPublisher::unsubscribeFromEnumPropertyChanged(long handleId)
+{
+    std::unique_lock<std::shared_timed_mutex> lock(m_enumPropertyCallbacksMutex);
+    m_enumPropertyCallbacks.erase(handleId);
+}
+
+void NamEsPublisher::publishEnumPropertyChanged(Enum_With_Under_scoresEnum enum_property) const
+{
+    std::shared_lock<std::shared_timed_mutex> allChangesSubscribersLock(m_allChangesSubscribersMutex);
+    const auto allChangesSubscribers = m_allChangesSubscribers;
+    allChangesSubscribersLock.unlock();
+    for(const auto& subscriber: allChangesSubscribers)
+    {
+        subscriber.get().onEnumPropertyChanged(enum_property);
+    }
+    std::shared_lock<std::shared_timed_mutex> enumPropertyCallbacksLock(m_enumPropertyCallbacksMutex);
+    const auto enumPropertyCallbacks = m_enumPropertyCallbacks;
+    enumPropertyCallbacksLock.unlock();
+    for(const auto& callbackEntry: enumPropertyCallbacks)
+    {
+        if(callbackEntry.second)
+        {
+            callbackEntry.second(enum_property);
+        }
+    }
+}
+
 long NamEsPublisher::subscribeToSomeSignal(NamEsSomeSignalSignalCb callback)
 {
     // this is a short term workaround - we need a better solution for unique handle identifiers

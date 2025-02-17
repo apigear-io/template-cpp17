@@ -37,12 +37,28 @@ public:
     virtual std::future<Eigen::Vector3f> incrementAsync(const Eigen::Vector3f& vec) = 0;
 
 
+    virtual std::list<Eigen::Vector3f> incrementArray(const std::list<Eigen::Vector3f>& vec) = 0;
+    /**
+    * Asynchronous version of incrementArray(const std::list<Eigen::Vector3f>& vec)
+    * @return Promise of type std::list<Eigen::Vector3f> which is set once the function has completed
+    */
+    virtual std::future<std::list<Eigen::Vector3f>> incrementArrayAsync(const std::list<Eigen::Vector3f>& vec) = 0;
+
+
     virtual Test::CustomTypes::Vector3D decrement(const Test::CustomTypes::Vector3D& vec) = 0;
     /**
     * Asynchronous version of decrement(const Test::CustomTypes::Vector3D& vec)
     * @return Promise of type Test::CustomTypes::Vector3D which is set once the function has completed
     */
     virtual std::future<Test::CustomTypes::Vector3D> decrementAsync(const Test::CustomTypes::Vector3D& vec) = 0;
+
+
+    virtual std::list<Test::CustomTypes::Vector3D> decrementArray(const std::list<Test::CustomTypes::Vector3D>& vec) = 0;
+    /**
+    * Asynchronous version of decrementArray(const std::list<Test::CustomTypes::Vector3D>& vec)
+    * @return Promise of type std::list<Test::CustomTypes::Vector3D> which is set once the function has completed
+    */
+    virtual std::future<std::list<Test::CustomTypes::Vector3D>> decrementArrayAsync(const std::list<Test::CustomTypes::Vector3D>& vec) = 0;
 
     /**
     * Sets the value of the vector property.
@@ -61,6 +77,24 @@ public:
     * Gets the value of the extern_vector property.
     */
     virtual const Eigen::Vector3f& getExternVector() const = 0;
+
+    /**
+    * Sets the value of the vectorArray property.
+    */
+    virtual void setVectorArray(const std::list<Test::CustomTypes::Vector3D>& vectorArray) = 0;
+    /**
+    * Gets the value of the vectorArray property.
+    */
+    virtual const std::list<Test::CustomTypes::Vector3D>& getVectorArray() const = 0;
+
+    /**
+    * Sets the value of the extern_vectorArray property.
+    */
+    virtual void setExternVectorArray(const std::list<Eigen::Vector3f>& extern_vectorArray) = 0;
+    /**
+    * Gets the value of the extern_vectorArray property.
+    */
+    virtual const std::list<Eigen::Vector3f>& getExternVectorArray() const = 0;
 
     /**
     * Access to a publisher, use it to subscribe for Counter changes and signal emission.
@@ -84,6 +118,16 @@ class TEST_COUNTER_EXPORT ICounterSubscriber
 public:
     virtual ~ICounterSubscriber() = default;
     /**
+    * Called by the ICounterPublisher when the Counter emits valueChanged, if subscribed for the valueChanged.
+    * @param vector 
+    * @param extern_vector 
+    * @param vectorArray 
+    * @param extern_vectorArray 
+    *
+    * @warning the subscribed function shall not be blocking and must return immediately!
+    */
+    virtual void onValueChanged(const Test::CustomTypes::Vector3D& vector, const Eigen::Vector3f& extern_vector, const std::list<Test::CustomTypes::Vector3D>& vectorArray, const std::list<Eigen::Vector3f>& extern_vectorArray) = 0;
+    /**
     * Called by the ICounterPublisher when vector value has changed if subscribed for the vector change.
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
@@ -95,12 +139,30 @@ public:
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
     virtual void onExternVectorChanged(const Eigen::Vector3f& extern_vector) = 0;
+    /**
+    * Called by the ICounterPublisher when vectorArray value has changed if subscribed for the vectorArray change.
+    *
+    * @warning the subscribed function shall not be blocking and must return immediately!
+    */
+    virtual void onVectorArrayChanged(const std::list<Test::CustomTypes::Vector3D>& vectorArray) = 0;
+    /**
+    * Called by the ICounterPublisher when extern_vectorArray value has changed if subscribed for the extern_vectorArray change.
+    *
+    * @warning the subscribed function shall not be blocking and must return immediately!
+    */
+    virtual void onExternVectorArrayChanged(const std::list<Eigen::Vector3f>& extern_vectorArray) = 0;
 };
 
 /** Callback for changes of vector */
 using CounterVectorPropertyCb = std::function<void(const Test::CustomTypes::Vector3D& vector)>;
 /** Callback for changes of extern_vector */
 using CounterExternVectorPropertyCb = std::function<void(const Eigen::Vector3f& extern_vector)>;
+/** Callback for changes of vectorArray */
+using CounterVectorArrayPropertyCb = std::function<void(const std::list<Test::CustomTypes::Vector3D>& vectorArray)>;
+/** Callback for changes of extern_vectorArray */
+using CounterExternVectorArrayPropertyCb = std::function<void(const std::list<Eigen::Vector3f>& extern_vectorArray)>;
+/** Callback for valueChanged signal triggers */
+using CounterValueChangedSignalCb = std::function<void(const Test::CustomTypes::Vector3D& vector, const Eigen::Vector3f& extern_vector, const std::list<Test::CustomTypes::Vector3D>& vectorArray, const std::list<Eigen::Vector3f>& extern_vectorArray)> ;
 
 
 /**
@@ -171,6 +233,57 @@ public:
     virtual void unsubscribeFromExternVectorChanged(long handleId) = 0;
 
     /**
+    * Use this function to subscribe for vectorArray value changes.
+    * If your subscriber uses subscription with ICounterSubscriber interface, you will get two notifications, one for each subscription mechanism.
+    * @param CounterVectorArrayPropertyCb callback that will be executed on each change of the property.
+    * Make sure to remove subscription before the callback becomes invalid.
+    * @return subscription token for the subscription removal.
+    *
+    * @warning the subscribed function shall not be blocking and must return immediately!
+    */
+    virtual long subscribeToVectorArrayChanged(CounterVectorArrayPropertyCb callback) = 0;
+    /**
+    * Use this function to unsubscribe from vectorArray property changes.
+    * If your subscriber uses subscription with ICounterSubscriber interface, you will be still informed about this change,
+    * as those are two independent subscription mechanisms.
+    * @param subscription token received on subscription.
+    */
+    virtual void unsubscribeFromVectorArrayChanged(long handleId) = 0;
+
+    /**
+    * Use this function to subscribe for extern_vectorArray value changes.
+    * If your subscriber uses subscription with ICounterSubscriber interface, you will get two notifications, one for each subscription mechanism.
+    * @param CounterExternVectorArrayPropertyCb callback that will be executed on each change of the property.
+    * Make sure to remove subscription before the callback becomes invalid.
+    * @return subscription token for the subscription removal.
+    *
+    * @warning the subscribed function shall not be blocking and must return immediately!
+    */
+    virtual long subscribeToExternVectorArrayChanged(CounterExternVectorArrayPropertyCb callback) = 0;
+    /**
+    * Use this function to unsubscribe from extern_vectorArray property changes.
+    * If your subscriber uses subscription with ICounterSubscriber interface, you will be still informed about this change,
+    * as those are two independent subscription mechanisms.
+    * @param subscription token received on subscription.
+    */
+    virtual void unsubscribeFromExternVectorArrayChanged(long handleId) = 0;
+
+    /**
+    * Use this function to subscribe for valueChanged signal changes.
+    * @param CounterValueChangedSignalCb callback that will be executed on each signal emission.
+    * Make sure to remove subscription before the callback becomes invalid.
+    * @return subscription token for the subscription removal.
+    *
+    * @warning the subscribed function shall not be blocking and must return immediately!
+    */
+    virtual long subscribeToValueChanged(CounterValueChangedSignalCb callback) = 0;
+    /**
+    * Use this function to unsubscribe from valueChanged signal changes.
+    * @param subscription token received on subscription.
+    */
+    virtual void unsubscribeFromValueChanged(long handleId) = 0;
+
+    /**
     * Publishes the property changed to all subscribed clients.
     * Needs to be invoked by the Counter implementation when property vector changes.
     * @param The new value of vector.
@@ -182,6 +295,27 @@ public:
     * @param The new value of extern_vector.
     */
     virtual void publishExternVectorChanged(const Eigen::Vector3f& extern_vector) const = 0;
+    /**
+    * Publishes the property changed to all subscribed clients.
+    * Needs to be invoked by the Counter implementation when property vectorArray changes.
+    * @param The new value of vectorArray.
+    */
+    virtual void publishVectorArrayChanged(const std::list<Test::CustomTypes::Vector3D>& vectorArray) const = 0;
+    /**
+    * Publishes the property changed to all subscribed clients.
+    * Needs to be invoked by the Counter implementation when property extern_vectorArray changes.
+    * @param The new value of extern_vectorArray.
+    */
+    virtual void publishExternVectorArrayChanged(const std::list<Eigen::Vector3f>& extern_vectorArray) const = 0;
+    /**
+    * Publishes the emitted signal to all subscribed clients.
+    * Needs to be invoked by the Counter implementation when valueChanged is emitted.
+    * @param vector 
+    * @param extern_vector 
+    * @param vectorArray 
+    * @param extern_vectorArray 
+    */
+    virtual void publishValueChanged(const Test::CustomTypes::Vector3D& vector, const Eigen::Vector3f& extern_vector, const std::list<Test::CustomTypes::Vector3D>& vectorArray, const std::list<Eigen::Vector3f>& extern_vectorArray) const = 0;
 };
 
 

@@ -66,6 +66,15 @@ int NamEsTraceDecorator::getSomePoperty2() const
 {
     return m_impl.getSomePoperty2();
 }
+void NamEsTraceDecorator::setEnumProperty(Enum_With_Under_scoresEnum enum_property)
+{
+    m_impl.setEnumProperty(enum_property);
+}
+
+Enum_With_Under_scoresEnum NamEsTraceDecorator::getEnumProperty() const
+{
+    return m_impl.getEnumProperty();
+}
 void NamEsTraceDecorator::onSomeSignal(bool SOME_PARAM)
 {
     m_tracer->trace_SOME_SIGNAL(SOME_PARAM);
@@ -91,6 +100,12 @@ void NamEsTraceDecorator::onSomePropertyChanged(int SOME_PROPERTY)
 void NamEsTraceDecorator::onSomePoperty2Changed(int Some_Poperty2)
 {
     (void) Some_Poperty2; // suppress the 'Unreferenced Formal Parameter' warning.
+    m_tracer->capture_state(this);
+}
+
+void NamEsTraceDecorator::onEnumPropertyChanged(Enum_With_Under_scoresEnum enum_property)
+{
+    (void) enum_property; // suppress the 'Unreferenced Formal Parameter' warning.
     m_tracer->capture_state(this);
 }
 

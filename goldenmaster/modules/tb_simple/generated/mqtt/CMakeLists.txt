@@ -12,6 +12,8 @@ set (SOURCES_MQTT
     nooperationsinterfaceclient.cpp
     nosignalsinterfaceservice.cpp
     nosignalsinterfaceclient.cpp
+    emptyinterfaceservice.cpp
+    emptyinterfaceclient.cpp
 )
 add_library(tb_simple-mqtt SHARED ${SOURCES_MQTT})
 add_library(tb_simple::tb_simple-mqtt ALIAS tb_simple-mqtt)

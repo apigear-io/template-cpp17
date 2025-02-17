@@ -37,6 +37,10 @@ private:
     /// @brief requests to set the value for the property SomePoperty2 coming from the client
     /// @param fields contains the param of the type int
     void onSetSomePoperty2(const std::string& args) const;
+    void onEnumPropertyChanged(Enum_With_Under_scoresEnum enum_property) override;
+    /// @brief requests to set the value for the property EnumProperty coming from the client
+    /// @param fields contains the param of the type Enum_With_Under_scoresEnum
+    void onSetEnumProperty(const std::string& args) const;
 
     std::shared_ptr<INamEs> m_impl;
     std::shared_ptr<ApiGear::MQTT::Service> m_service;
