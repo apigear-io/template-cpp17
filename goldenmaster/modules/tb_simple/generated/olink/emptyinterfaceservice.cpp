@@ -21,8 +21,9 @@ const std::string interfaceId = "tb.simple.EmptyInterface";
 
 EmptyInterfaceService::EmptyInterfaceService(std::shared_ptr<IEmptyInterface> EmptyInterface, ApiGear::ObjectLink::RemoteRegistry& registry)
     : m_EmptyInterface(EmptyInterface)
-    , m_registry(registry)
 {
+    // if no properties and no signals, the registry is not necessary.
+    (void)registry;
     m_EmptyInterface->_getPublisher().subscribeToAllChanges(*this);
 }
 

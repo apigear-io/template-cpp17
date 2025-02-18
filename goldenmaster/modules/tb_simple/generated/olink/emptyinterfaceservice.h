@@ -75,10 +75,6 @@ private:
     * The EmptyInterface used for object source.
     */
     std::shared_ptr<IEmptyInterface> m_EmptyInterface;
-    /**
-    * A global registry that keeps track of object sources associated with their network layer nodes.
-    */
-    ApiGear::ObjectLink::RemoteRegistry& m_registry;
 };
 } // namespace olink
 } // namespace TbSimple
