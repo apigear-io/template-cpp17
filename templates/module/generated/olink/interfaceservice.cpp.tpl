@@ -29,8 +29,14 @@ const std::string interfaceId = "{{.Module.Name}}.{{$interfaceNameOriginal}}";
 
 {{$class}}::{{$class}}(std::shared_ptr<{{$interfaceClass}}> {{$interfaceNameOriginal}}, ApiGear::ObjectLink::RemoteRegistry& registry)
     : m_{{$interfaceNameOriginal}}({{$interfaceNameOriginal}})
+    {{- if or (len .Interface.Signals) (len .Interface.Properties)  }}
     , m_registry(registry)
 {
+    {{- else }}
+{
+    // if no properties and no signals, the registry is not necessary.
+    (void)registry;
+    {{- end }}
     m_{{$interfaceNameOriginal}}->_getPublisher().subscribeToAllChanges(*this);
 }
 

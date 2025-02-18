@@ -94,10 +94,12 @@ private:
     * The {{$interfaceNameOriginal}} used for object source.
     */
     std::shared_ptr<{{$interfaceClass}}> m_{{$interfaceNameOriginal}};
+    {{- if or (len .Interface.Signals) (len .Interface.Properties)  }}
     /**
     * A global registry that keeps track of object sources associated with their network layer nodes.
     */
     ApiGear::ObjectLink::RemoteRegistry& m_registry;
+    {{- end}}
 };
 } // namespace olink
 } // namespace {{ Camel .Module.Name }}
