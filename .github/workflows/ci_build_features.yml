@@ -71,11 +71,16 @@ jobs:
       - name: Install cnats
         if: ${{ matrix.config.short == 'nats'}}
         run: git clone --branch v3.9.1 --depth 1 https://github.com/nats-io/nats.c.git && cd nats.c && cmake -Bbuild -S . -DNATS_BUILD_LIB_SHARED=OFF -DNATS_BUILD_STREAMING=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DNATS_BUILD_STREAMING=OFF -DNATS_BUILD_WITH_TLS=OFF -DNATS_BUILD_STATIC_EXAMPLES=ON -DNATS_BUILD_EXAMPLES=OFF -DCMAKE_C_FLAGS="-include stddef.h" && sudo cmake --build build/ --target install
-
       - run: go run main.go install
       - name: generate ${{ matrix.config.short }} feature set
         run: bin/apigear g x -f "${{ matrix.config.features }}" -t . -o test -i apigear/test-apis/testbed.simple.module.yaml,apigear/test-apis/testbed.struct.module.yaml
-
+      - name: Start Mosquitto
+        if: ${{ matrix.config.short == 'mqtt'}}
+        uses: namoshek/mosquitto-github-action@v1
+        with:
+          version: '1.6'
+          ports: '1883:1883'
+          container-name: 'mqtt'
       - name: Create Nats Server for ubuntu (only for nats)
         if: ${{ matrix.config.short == 'nats'}}
         uses: onichandame/nats-action@master
@@ -149,7 +154,13 @@ jobs:
       - run: go run main.go install
       - name: generate ${{ matrix.config.short }} feature set
         run: bin/apigear g x -f "${{ matrix.config.features }}" -t . -o test -i apigear/test-apis/testbed.simple.module.yaml,apigear/test-apis/testbed.struct.module.yaml
-
+      - name: Start Mosquitto
+        if: ${{ matrix.config.short == 'mqtt'}}
+        uses: namoshek/mosquitto-github-action@v1
+        with:
+          version: '1.6'
+          ports: '1883:1883'
+          container-name: 'mqtt'
       - name: Create Nats Server for ubuntu (only for nats)
         if: ${{ matrix.config.short == 'nats'}}
         uses: onichandame/nats-action@master
@@ -212,6 +223,13 @@ jobs:
       - run: go run main.go install
       - name: generate ${{ matrix.config.short }} feature set
         run: bin/apigear g x -f "${{ matrix.config.features }}" -t . -o test -i apigear/test-apis/testbed.simple.module.yaml
+      - name: Start Mosquitto
+        if: ${{ matrix.config.short == 'mqtt'}}
+        uses: namoshek/mosquitto-github-action@v1
+        with:
+          version: '1.6'
+          ports: '1883:1883'
+          container-name: 'mqtt'
       - name: Create Nats Server for ubuntu (only for nats)
         if: ${{ matrix.config.short == 'nats'}}
         uses: onichandame/nats-action@master
