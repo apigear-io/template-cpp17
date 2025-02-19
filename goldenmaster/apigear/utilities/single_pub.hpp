@@ -3,6 +3,7 @@
 #include <atomic>
 #include <map>
 #include <shared_mutex>
+#include <mutex>
 
 namespace ApiGear {
 namespace Utilities {
