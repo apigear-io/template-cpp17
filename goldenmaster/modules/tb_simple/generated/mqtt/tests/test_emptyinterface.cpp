@@ -3,6 +3,7 @@
 
 #include <catch2/catch.hpp>
 #include <condition_variable>
+#include <iostream>
 
 
 #include "tb_simple/generated/core/test_struct_helper.h"

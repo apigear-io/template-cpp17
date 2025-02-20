@@ -3,6 +3,7 @@
 
 #include <catch2/catch.hpp>
 #include <condition_variable>
+#include <iostream>
 
 
 #include "tb_same2/generated/core/test_struct_helper.h"
@@ -77,6 +78,7 @@ TEST_CASE("mqtt  tb.same2 SameStruct1Interface tests")
     REQUIRE(is_clientConnected);
     SECTION("Test setting prop1")
     {
+        std::cout<<"SameStruct1Interface Test setting prop1" << std::endl;
         std::atomic<bool> isprop1Changed = false;
         clientSameStruct1Interface->_getPublisher().subscribeToProp1Changed(
         [&isprop1Changed, &m_wait ](auto value){
@@ -94,6 +96,7 @@ TEST_CASE("mqtt  tb.same2 SameStruct1Interface tests")
     }
     SECTION("Test emit sig1")
     {
+        std::cout<<"SameStruct1Interface Test emit sig1" << std::endl;
         std::atomic<bool> issig1Emitted = false;
         auto local_param1_struct = TbSame2::Struct1();
         TbSame2::fillTestStruct1(local_param1_struct);
@@ -113,11 +116,13 @@ TEST_CASE("mqtt  tb.same2 SameStruct1Interface tests")
     }
     SECTION("Test method func1")
     {
+        std::cout<<"SameStruct1Interface Test method func1" << std::endl;
         [[maybe_unused]] auto result =  clientSameStruct1Interface->func1(TbSame2::Struct1());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method func1 async")
     {
+        std::cout<<"SameStruct1Interface Test async method func1" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientSameStruct1Interface->func1Async(TbSame2::Struct1());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});

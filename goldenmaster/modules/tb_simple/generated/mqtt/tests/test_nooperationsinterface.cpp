@@ -3,6 +3,7 @@
 
 #include <catch2/catch.hpp>
 #include <condition_variable>
+#include <iostream>
 
 
 #include "tb_simple/generated/core/test_struct_helper.h"
@@ -77,6 +78,7 @@ TEST_CASE("mqtt  tb.simple NoOperationsInterface tests")
     REQUIRE(is_clientConnected);
     SECTION("Test setting propBool")
     {
+        std::cout<<"NoOperationsInterface Test setting propBool" << std::endl;
         std::atomic<bool> ispropBoolChanged = false;
         clientNoOperationsInterface->_getPublisher().subscribeToPropBoolChanged(
         [&ispropBoolChanged, &m_wait ](auto value){
@@ -93,6 +95,7 @@ TEST_CASE("mqtt  tb.simple NoOperationsInterface tests")
     }
     SECTION("Test setting propInt")
     {
+        std::cout<<"NoOperationsInterface Test setting propInt" << std::endl;
         std::atomic<bool> ispropIntChanged = false;
         clientNoOperationsInterface->_getPublisher().subscribeToPropIntChanged(
         [&ispropIntChanged, &m_wait ](auto value){
@@ -109,6 +112,7 @@ TEST_CASE("mqtt  tb.simple NoOperationsInterface tests")
     }
     SECTION("Test emit sigVoid")
     {
+        std::cout<<"NoOperationsInterface Test emit sigVoid" << std::endl;
         std::atomic<bool> issigVoidEmitted = false;
 
         clientNoOperationsInterface->_getPublisher().subscribeToSigVoid(
@@ -125,6 +129,7 @@ TEST_CASE("mqtt  tb.simple NoOperationsInterface tests")
     }
     SECTION("Test emit sigBool")
     {
+        std::cout<<"NoOperationsInterface Test emit sigBool" << std::endl;
         std::atomic<bool> issigBoolEmitted = false;
 
         clientNoOperationsInterface->_getPublisher().subscribeToSigBool(

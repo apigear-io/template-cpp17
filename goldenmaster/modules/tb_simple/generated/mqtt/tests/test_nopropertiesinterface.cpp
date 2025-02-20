@@ -3,6 +3,7 @@
 
 #include <catch2/catch.hpp>
 #include <condition_variable>
+#include <iostream>
 
 
 #include "tb_simple/generated/core/test_struct_helper.h"
@@ -77,6 +78,7 @@ TEST_CASE("mqtt  tb.simple NoPropertiesInterface tests")
     REQUIRE(is_clientConnected);
     SECTION("Test emit sigVoid")
     {
+        std::cout<<"NoPropertiesInterface Test emit sigVoid" << std::endl;
         std::atomic<bool> issigVoidEmitted = false;
 
         clientNoPropertiesInterface->_getPublisher().subscribeToSigVoid(
@@ -93,6 +95,7 @@ TEST_CASE("mqtt  tb.simple NoPropertiesInterface tests")
     }
     SECTION("Test emit sigBool")
     {
+        std::cout<<"NoPropertiesInterface Test emit sigBool" << std::endl;
         std::atomic<bool> issigBoolEmitted = false;
 
         clientNoPropertiesInterface->_getPublisher().subscribeToSigBool(
@@ -110,21 +113,25 @@ TEST_CASE("mqtt  tb.simple NoPropertiesInterface tests")
     }
     SECTION("Test method funcVoid")
     {
+        std::cout<<"NoPropertiesInterface Test method funcVoid" << std::endl;
          clientNoPropertiesInterface->funcVoid();
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcVoid async")
     {
+        std::cout<<"NoPropertiesInterface Test async method funcVoid" << std::endl;
         auto resultFuture = clientNoPropertiesInterface->funcVoidAsync();
         // The void function only sends request. It does not wait for the actual function on server side to be finished.
     }
     SECTION("Test method funcBool")
     {
+        std::cout<<"NoPropertiesInterface Test method funcBool" << std::endl;
         [[maybe_unused]] auto result =  clientNoPropertiesInterface->funcBool(false);
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcBool async")
     {
+        std::cout<<"NoPropertiesInterface Test async method funcBool" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientNoPropertiesInterface->funcBoolAsync(false);
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});

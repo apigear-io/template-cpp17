@@ -3,6 +3,7 @@
 
 #include <catch2/catch.hpp>
 #include <condition_variable>
+#include <iostream>
 
 
 #include "tb_names/generated/core/test_struct_helper.h"
@@ -77,6 +78,7 @@ TEST_CASE("mqtt  tb.names NamEs tests")
     REQUIRE(is_clientConnected);
     SECTION("Test setting Switch")
     {
+        std::cout<<"Nam_Es Test setting Switch" << std::endl;
         std::atomic<bool> isSwitchChanged = false;
         clientNamEs->_getPublisher().subscribeToSwitchChanged(
         [&isSwitchChanged, &m_wait ](auto value){
@@ -93,6 +95,7 @@ TEST_CASE("mqtt  tb.names NamEs tests")
     }
     SECTION("Test setting SOME_PROPERTY")
     {
+        std::cout<<"Nam_Es Test setting SOME_PROPERTY" << std::endl;
         std::atomic<bool> isSOME_PROPERTYChanged = false;
         clientNamEs->_getPublisher().subscribeToSomePropertyChanged(
         [&isSOME_PROPERTYChanged, &m_wait ](auto value){
@@ -109,6 +112,7 @@ TEST_CASE("mqtt  tb.names NamEs tests")
     }
     SECTION("Test setting Some_Poperty2")
     {
+        std::cout<<"Nam_Es Test setting Some_Poperty2" << std::endl;
         std::atomic<bool> isSome_Poperty2Changed = false;
         clientNamEs->_getPublisher().subscribeToSomePoperty2Changed(
         [&isSome_Poperty2Changed, &m_wait ](auto value){
@@ -125,6 +129,7 @@ TEST_CASE("mqtt  tb.names NamEs tests")
     }
     SECTION("Test setting enum_property")
     {
+        std::cout<<"Nam_Es Test setting enum_property" << std::endl;
         std::atomic<bool> isenum_propertyChanged = false;
         clientNamEs->_getPublisher().subscribeToEnumPropertyChanged(
         [&isenum_propertyChanged, &m_wait ](auto value){
@@ -141,6 +146,7 @@ TEST_CASE("mqtt  tb.names NamEs tests")
     }
     SECTION("Test emit SOME_SIGNAL")
     {
+        std::cout<<"Nam_Es Test emit SOME_SIGNAL" << std::endl;
         std::atomic<bool> isSOME_SIGNALEmitted = false;
 
         clientNamEs->_getPublisher().subscribeToSomeSignal(
@@ -158,6 +164,7 @@ TEST_CASE("mqtt  tb.names NamEs tests")
     }
     SECTION("Test emit Some_Signal2")
     {
+        std::cout<<"Nam_Es Test emit Some_Signal2" << std::endl;
         std::atomic<bool> isSome_Signal2Emitted = false;
 
         clientNamEs->_getPublisher().subscribeToSomeSignal2(
@@ -175,21 +182,25 @@ TEST_CASE("mqtt  tb.names NamEs tests")
     }
     SECTION("Test method SOME_FUNCTION")
     {
+        std::cout<<"Nam_Es Test method SOME_FUNCTION" << std::endl;
          clientNamEs->sOME_FUNCTION(false);
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method SOME_FUNCTION async")
     {
+        std::cout<<"Nam_Es Test async method SOME_FUNCTION" << std::endl;
         auto resultFuture = clientNamEs->sOME_FUNCTIONAsync(false);
         // The void function only sends request. It does not wait for the actual function on server side to be finished.
     }
     SECTION("Test method Some_Function2")
     {
+        std::cout<<"Nam_Es Test method Some_Function2" << std::endl;
          clientNamEs->some_Function2(false);
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method Some_Function2 async")
     {
+        std::cout<<"Nam_Es Test async method Some_Function2" << std::endl;
         auto resultFuture = clientNamEs->some_Function2Async(false);
         // The void function only sends request. It does not wait for the actual function on server side to be finished.
     }

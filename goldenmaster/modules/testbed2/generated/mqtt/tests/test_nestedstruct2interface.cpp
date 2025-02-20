@@ -3,6 +3,7 @@
 
 #include <catch2/catch.hpp>
 #include <condition_variable>
+#include <iostream>
 
 
 #include "testbed2/generated/core/test_struct_helper.h"
@@ -77,6 +78,7 @@ TEST_CASE("mqtt  testbed2 NestedStruct2Interface tests")
     REQUIRE(is_clientConnected);
     SECTION("Test setting prop1")
     {
+        std::cout<<"NestedStruct2Interface Test setting prop1" << std::endl;
         std::atomic<bool> isprop1Changed = false;
         clientNestedStruct2Interface->_getPublisher().subscribeToProp1Changed(
         [&isprop1Changed, &m_wait ](auto value){
@@ -94,6 +96,7 @@ TEST_CASE("mqtt  testbed2 NestedStruct2Interface tests")
     }
     SECTION("Test setting prop2")
     {
+        std::cout<<"NestedStruct2Interface Test setting prop2" << std::endl;
         std::atomic<bool> isprop2Changed = false;
         clientNestedStruct2Interface->_getPublisher().subscribeToProp2Changed(
         [&isprop2Changed, &m_wait ](auto value){
@@ -111,6 +114,7 @@ TEST_CASE("mqtt  testbed2 NestedStruct2Interface tests")
     }
     SECTION("Test emit sig1")
     {
+        std::cout<<"NestedStruct2Interface Test emit sig1" << std::endl;
         std::atomic<bool> issig1Emitted = false;
         auto local_param1_struct = Testbed2::NestedStruct1();
         Testbed2::fillTestNestedStruct1(local_param1_struct);
@@ -130,6 +134,7 @@ TEST_CASE("mqtt  testbed2 NestedStruct2Interface tests")
     }
     SECTION("Test emit sig2")
     {
+        std::cout<<"NestedStruct2Interface Test emit sig2" << std::endl;
         std::atomic<bool> issig2Emitted = false;
         auto local_param1_struct = Testbed2::NestedStruct1();
         Testbed2::fillTestNestedStruct1(local_param1_struct);
@@ -152,11 +157,13 @@ TEST_CASE("mqtt  testbed2 NestedStruct2Interface tests")
     }
     SECTION("Test method func1")
     {
+        std::cout<<"NestedStruct2Interface Test method func1" << std::endl;
         [[maybe_unused]] auto result =  clientNestedStruct2Interface->func1(Testbed2::NestedStruct1());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method func1 async")
     {
+        std::cout<<"NestedStruct2Interface Test async method func1" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientNestedStruct2Interface->func1Async(Testbed2::NestedStruct1());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -169,11 +176,13 @@ TEST_CASE("mqtt  testbed2 NestedStruct2Interface tests")
     }
     SECTION("Test method func2")
     {
+        std::cout<<"NestedStruct2Interface Test method func2" << std::endl;
         [[maybe_unused]] auto result =  clientNestedStruct2Interface->func2(Testbed2::NestedStruct1(), Testbed2::NestedStruct2());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method func2 async")
     {
+        std::cout<<"NestedStruct2Interface Test async method func2" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientNestedStruct2Interface->func2Async(Testbed2::NestedStruct1(), Testbed2::NestedStruct2());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});

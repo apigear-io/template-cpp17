@@ -3,6 +3,7 @@
 
 #include <catch2/catch.hpp>
 #include <condition_variable>
+#include <iostream>
 
 
 #include "testbed2/generated/core/test_struct_helper.h"
@@ -77,6 +78,7 @@ TEST_CASE("mqtt  testbed2 ManyParamInterface tests")
     REQUIRE(is_clientConnected);
     SECTION("Test setting prop1")
     {
+        std::cout<<"ManyParamInterface Test setting prop1" << std::endl;
         std::atomic<bool> isprop1Changed = false;
         clientManyParamInterface->_getPublisher().subscribeToProp1Changed(
         [&isprop1Changed, &m_wait ](auto value){
@@ -93,6 +95,7 @@ TEST_CASE("mqtt  testbed2 ManyParamInterface tests")
     }
     SECTION("Test setting prop2")
     {
+        std::cout<<"ManyParamInterface Test setting prop2" << std::endl;
         std::atomic<bool> isprop2Changed = false;
         clientManyParamInterface->_getPublisher().subscribeToProp2Changed(
         [&isprop2Changed, &m_wait ](auto value){
@@ -109,6 +112,7 @@ TEST_CASE("mqtt  testbed2 ManyParamInterface tests")
     }
     SECTION("Test setting prop3")
     {
+        std::cout<<"ManyParamInterface Test setting prop3" << std::endl;
         std::atomic<bool> isprop3Changed = false;
         clientManyParamInterface->_getPublisher().subscribeToProp3Changed(
         [&isprop3Changed, &m_wait ](auto value){
@@ -125,6 +129,7 @@ TEST_CASE("mqtt  testbed2 ManyParamInterface tests")
     }
     SECTION("Test setting prop4")
     {
+        std::cout<<"ManyParamInterface Test setting prop4" << std::endl;
         std::atomic<bool> isprop4Changed = false;
         clientManyParamInterface->_getPublisher().subscribeToProp4Changed(
         [&isprop4Changed, &m_wait ](auto value){
@@ -141,6 +146,7 @@ TEST_CASE("mqtt  testbed2 ManyParamInterface tests")
     }
     SECTION("Test emit sig1")
     {
+        std::cout<<"ManyParamInterface Test emit sig1" << std::endl;
         std::atomic<bool> issig1Emitted = false;
 
         clientManyParamInterface->_getPublisher().subscribeToSig1(
@@ -158,6 +164,7 @@ TEST_CASE("mqtt  testbed2 ManyParamInterface tests")
     }
     SECTION("Test emit sig2")
     {
+        std::cout<<"ManyParamInterface Test emit sig2" << std::endl;
         std::atomic<bool> issig2Emitted = false;
 
         clientManyParamInterface->_getPublisher().subscribeToSig2(
@@ -176,6 +183,7 @@ TEST_CASE("mqtt  testbed2 ManyParamInterface tests")
     }
     SECTION("Test emit sig3")
     {
+        std::cout<<"ManyParamInterface Test emit sig3" << std::endl;
         std::atomic<bool> issig3Emitted = false;
 
         clientManyParamInterface->_getPublisher().subscribeToSig3(
@@ -195,6 +203,7 @@ TEST_CASE("mqtt  testbed2 ManyParamInterface tests")
     }
     SECTION("Test emit sig4")
     {
+        std::cout<<"ManyParamInterface Test emit sig4" << std::endl;
         std::atomic<bool> issig4Emitted = false;
 
         clientManyParamInterface->_getPublisher().subscribeToSig4(
@@ -215,11 +224,13 @@ TEST_CASE("mqtt  testbed2 ManyParamInterface tests")
     }
     SECTION("Test method func1")
     {
+        std::cout<<"ManyParamInterface Test method func1" << std::endl;
         [[maybe_unused]] auto result =  clientManyParamInterface->func1(0);
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method func1 async")
     {
+        std::cout<<"ManyParamInterface Test async method func1" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientManyParamInterface->func1Async(0);
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -232,11 +243,13 @@ TEST_CASE("mqtt  testbed2 ManyParamInterface tests")
     }
     SECTION("Test method func2")
     {
+        std::cout<<"ManyParamInterface Test method func2" << std::endl;
         [[maybe_unused]] auto result =  clientManyParamInterface->func2(0, 0);
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method func2 async")
     {
+        std::cout<<"ManyParamInterface Test async method func2" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientManyParamInterface->func2Async(0, 0);
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -249,11 +262,13 @@ TEST_CASE("mqtt  testbed2 ManyParamInterface tests")
     }
     SECTION("Test method func3")
     {
+        std::cout<<"ManyParamInterface Test method func3" << std::endl;
         [[maybe_unused]] auto result =  clientManyParamInterface->func3(0, 0, 0);
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method func3 async")
     {
+        std::cout<<"ManyParamInterface Test async method func3" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientManyParamInterface->func3Async(0, 0, 0);
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -266,11 +281,13 @@ TEST_CASE("mqtt  testbed2 ManyParamInterface tests")
     }
     SECTION("Test method func4")
     {
+        std::cout<<"ManyParamInterface Test method func4" << std::endl;
         [[maybe_unused]] auto result =  clientManyParamInterface->func4(0, 0, 0, 0);
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method func4 async")
     {
+        std::cout<<"ManyParamInterface Test async method func4" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientManyParamInterface->func4Async(0, 0, 0, 0);
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});

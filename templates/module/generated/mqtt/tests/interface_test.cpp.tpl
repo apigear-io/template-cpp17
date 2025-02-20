@@ -8,6 +8,7 @@
 
 #include <catch2/catch.hpp>
 #include <condition_variable>
+#include <iostream>
 
 
 #include "{{snake .Module.Name}}/generated/core/test_struct_helper.h"
@@ -99,11 +100,13 @@ TEST_CASE("mqtt  {{.Module.Name}} {{$class}} tests")
     lock.unlock();
     REQUIRE(is_clientConnected);
 
+    {{- $interfaceName := .Interface.Name}}
 
   {{- range .Interface.Properties }}
     {{- if and (not .IsReadOnly) (not (eq .KindType "extern")) }}
     SECTION("Test setting {{.Name}}")
     {
+        std::cout<<"{{$interfaceName}} Test setting {{.Name}}" << std::endl;
         std::atomic<bool> is{{.Name}}Changed = false;
         client{{$class}}->_getPublisher().subscribeTo{{Camel .Name}}Changed(
         [&is{{.Name}}Changed, &m_wait ](auto value){
@@ -140,6 +143,7 @@ TEST_CASE("mqtt  {{.Module.Name}} {{$class}} tests")
     {{- range .Interface.Signals }}
     SECTION("Test emit {{.Name}}")
     {
+        std::cout<<"{{$interfaceName}} Test emit {{.Name}}" << std::endl;
         std::atomic<bool> is{{.Name}}Emitted = false;
 
         {{- range $idx, $p := .Params -}}
@@ -197,6 +201,7 @@ TEST_CASE("mqtt  {{.Module.Name}} {{$class}} tests")
     {{- range .Interface.Operations }}
     SECTION("Test method {{.Name}}")
     {
+        std::cout<<"{{$interfaceName}} Test method {{.Name}}" << std::endl;
         {{ if (not .Return.IsVoid) }}[[maybe_unused]] auto result = {{ end }} client{{$class}}->{{lower1 .Name }}(
     {{- range $idx, $p := .Params -}}
             {{- if $idx }}, {{end -}}
@@ -207,6 +212,7 @@ TEST_CASE("mqtt  {{.Module.Name}} {{$class}} tests")
     }
     SECTION("Test method {{.Name}} async")
     {
+        std::cout<<"{{$interfaceName}} Test async method {{.Name}}" << std::endl;
         {{- if (not .Return.IsVoid) }}
         std::atomic<bool> finished = false;
         auto resultFuture = client{{$class}}->{{lower1 .Name }}Async(

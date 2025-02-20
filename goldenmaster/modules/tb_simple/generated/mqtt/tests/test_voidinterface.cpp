@@ -3,6 +3,7 @@
 
 #include <catch2/catch.hpp>
 #include <condition_variable>
+#include <iostream>
 
 
 #include "tb_simple/generated/core/test_struct_helper.h"
@@ -77,6 +78,7 @@ TEST_CASE("mqtt  tb.simple VoidInterface tests")
     REQUIRE(is_clientConnected);
     SECTION("Test emit sigVoid")
     {
+        std::cout<<"VoidInterface Test emit sigVoid" << std::endl;
         std::atomic<bool> issigVoidEmitted = false;
 
         clientVoidInterface->_getPublisher().subscribeToSigVoid(
@@ -93,11 +95,13 @@ TEST_CASE("mqtt  tb.simple VoidInterface tests")
     }
     SECTION("Test method funcVoid")
     {
+        std::cout<<"VoidInterface Test method funcVoid" << std::endl;
          clientVoidInterface->funcVoid();
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcVoid async")
     {
+        std::cout<<"VoidInterface Test async method funcVoid" << std::endl;
         auto resultFuture = clientVoidInterface->funcVoidAsync();
         // The void function only sends request. It does not wait for the actual function on server side to be finished.
     }
