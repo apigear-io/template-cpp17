@@ -3,6 +3,7 @@
 
 #include <catch2/catch.hpp>
 #include <condition_variable>
+#include <iostream>
 
 
 #include "tb_same1/generated/core/test_struct_helper.h"
@@ -77,6 +78,7 @@ TEST_CASE("mqtt  tb.same1 SameEnum2Interface tests")
     REQUIRE(is_clientConnected);
     SECTION("Test setting prop1")
     {
+        std::cout<<"SameEnum2Interface Test setting prop1" << std::endl;
         std::atomic<bool> isprop1Changed = false;
         clientSameEnum2Interface->_getPublisher().subscribeToProp1Changed(
         [&isprop1Changed, &m_wait ](auto value){
@@ -93,6 +95,7 @@ TEST_CASE("mqtt  tb.same1 SameEnum2Interface tests")
     }
     SECTION("Test setting prop2")
     {
+        std::cout<<"SameEnum2Interface Test setting prop2" << std::endl;
         std::atomic<bool> isprop2Changed = false;
         clientSameEnum2Interface->_getPublisher().subscribeToProp2Changed(
         [&isprop2Changed, &m_wait ](auto value){
@@ -109,6 +112,7 @@ TEST_CASE("mqtt  tb.same1 SameEnum2Interface tests")
     }
     SECTION("Test emit sig1")
     {
+        std::cout<<"SameEnum2Interface Test emit sig1" << std::endl;
         std::atomic<bool> issig1Emitted = false;
 
         clientSameEnum2Interface->_getPublisher().subscribeToSig1(
@@ -119,13 +123,17 @@ TEST_CASE("mqtt  tb.same1 SameEnum2Interface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implSameEnum2Interface->_getPublisher().publishSig1(TbSame1::Enum1Enum::value2);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issig1Emitted ]() {return issig1Emitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed SameEnum2Interface Test emit sig1" << std::endl;
     }
     SECTION("Test emit sig2")
     {
+        std::cout<<"SameEnum2Interface Test emit sig2" << std::endl;
         std::atomic<bool> issig2Emitted = false;
 
         clientSameEnum2Interface->_getPublisher().subscribeToSig2(
@@ -137,18 +145,23 @@ TEST_CASE("mqtt  tb.same1 SameEnum2Interface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implSameEnum2Interface->_getPublisher().publishSig2(TbSame1::Enum1Enum::value2, TbSame1::Enum2Enum::value2);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issig2Emitted ]() {return issig2Emitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed SameEnum2Interface Test emit sig2" << std::endl;
     }
     SECTION("Test method func1")
     {
+        std::cout<<"SameEnum2Interface Test method func1" << std::endl;
         [[maybe_unused]] auto result =  clientSameEnum2Interface->func1(TbSame1::Enum1Enum::value1);
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method func1 async")
     {
+        std::cout<<"SameEnum2Interface Test async method func1" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientSameEnum2Interface->func1Async(TbSame1::Enum1Enum::value1);
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -173,11 +186,13 @@ TEST_CASE("mqtt  tb.same1 SameEnum2Interface tests")
     }
     SECTION("Test method func2")
     {
+        std::cout<<"SameEnum2Interface Test method func2" << std::endl;
         [[maybe_unused]] auto result =  clientSameEnum2Interface->func2(TbSame1::Enum1Enum::value1, TbSame1::Enum2Enum::value1);
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method func2 async")
     {
+        std::cout<<"SameEnum2Interface Test async method func2" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientSameEnum2Interface->func2Async(TbSame1::Enum1Enum::value1, TbSame1::Enum2Enum::value1);
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});

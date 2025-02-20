@@ -3,6 +3,7 @@
 
 #include <catch2/catch.hpp>
 #include <condition_variable>
+#include <iostream>
 
 
 #include "testbed1/generated/core/test_struct_helper.h"
@@ -77,6 +78,7 @@ TEST_CASE("mqtt  testbed1 StructInterface tests")
     REQUIRE(is_clientConnected);
     SECTION("Test setting propBool")
     {
+        std::cout<<"StructInterface Test setting propBool" << std::endl;
         std::atomic<bool> ispropBoolChanged = false;
         clientStructInterface->_getPublisher().subscribeToPropBoolChanged(
         [&ispropBoolChanged, &m_wait ](auto value){
@@ -94,6 +96,7 @@ TEST_CASE("mqtt  testbed1 StructInterface tests")
     }
     SECTION("Test setting propInt")
     {
+        std::cout<<"StructInterface Test setting propInt" << std::endl;
         std::atomic<bool> ispropIntChanged = false;
         clientStructInterface->_getPublisher().subscribeToPropIntChanged(
         [&ispropIntChanged, &m_wait ](auto value){
@@ -111,6 +114,7 @@ TEST_CASE("mqtt  testbed1 StructInterface tests")
     }
     SECTION("Test setting propFloat")
     {
+        std::cout<<"StructInterface Test setting propFloat" << std::endl;
         std::atomic<bool> ispropFloatChanged = false;
         clientStructInterface->_getPublisher().subscribeToPropFloatChanged(
         [&ispropFloatChanged, &m_wait ](auto value){
@@ -128,6 +132,7 @@ TEST_CASE("mqtt  testbed1 StructInterface tests")
     }
     SECTION("Test setting propString")
     {
+        std::cout<<"StructInterface Test setting propString" << std::endl;
         std::atomic<bool> ispropStringChanged = false;
         clientStructInterface->_getPublisher().subscribeToPropStringChanged(
         [&ispropStringChanged, &m_wait ](auto value){
@@ -145,6 +150,7 @@ TEST_CASE("mqtt  testbed1 StructInterface tests")
     }
     SECTION("Test emit sigBool")
     {
+        std::cout<<"StructInterface Test emit sigBool" << std::endl;
         std::atomic<bool> issigBoolEmitted = false;
         auto local_param_bool_struct = Testbed1::StructBool();
         Testbed1::fillTestStructBool(local_param_bool_struct);
@@ -157,13 +163,17 @@ TEST_CASE("mqtt  testbed1 StructInterface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implStructInterface->_getPublisher().publishSigBool(local_param_bool_struct);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigBoolEmitted ]() {return issigBoolEmitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed StructInterface Test emit sigBool" << std::endl;
     }
     SECTION("Test emit sigInt")
     {
+        std::cout<<"StructInterface Test emit sigInt" << std::endl;
         std::atomic<bool> issigIntEmitted = false;
         auto local_param_int_struct = Testbed1::StructInt();
         Testbed1::fillTestStructInt(local_param_int_struct);
@@ -176,13 +186,17 @@ TEST_CASE("mqtt  testbed1 StructInterface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implStructInterface->_getPublisher().publishSigInt(local_param_int_struct);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigIntEmitted ]() {return issigIntEmitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed StructInterface Test emit sigInt" << std::endl;
     }
     SECTION("Test emit sigFloat")
     {
+        std::cout<<"StructInterface Test emit sigFloat" << std::endl;
         std::atomic<bool> issigFloatEmitted = false;
         auto local_param_float_struct = Testbed1::StructFloat();
         Testbed1::fillTestStructFloat(local_param_float_struct);
@@ -195,13 +209,17 @@ TEST_CASE("mqtt  testbed1 StructInterface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implStructInterface->_getPublisher().publishSigFloat(local_param_float_struct);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigFloatEmitted ]() {return issigFloatEmitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed StructInterface Test emit sigFloat" << std::endl;
     }
     SECTION("Test emit sigString")
     {
+        std::cout<<"StructInterface Test emit sigString" << std::endl;
         std::atomic<bool> issigStringEmitted = false;
         auto local_param_string_struct = Testbed1::StructString();
         Testbed1::fillTestStructString(local_param_string_struct);
@@ -214,18 +232,23 @@ TEST_CASE("mqtt  testbed1 StructInterface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implStructInterface->_getPublisher().publishSigString(local_param_string_struct);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigStringEmitted ]() {return issigStringEmitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed StructInterface Test emit sigString" << std::endl;
     }
     SECTION("Test method funcBool")
     {
+        std::cout<<"StructInterface Test method funcBool" << std::endl;
         [[maybe_unused]] auto result =  clientStructInterface->funcBool(Testbed1::StructBool());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcBool async")
     {
+        std::cout<<"StructInterface Test async method funcBool" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientStructInterface->funcBoolAsync(Testbed1::StructBool());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -250,11 +273,13 @@ TEST_CASE("mqtt  testbed1 StructInterface tests")
     }
     SECTION("Test method funcInt")
     {
+        std::cout<<"StructInterface Test method funcInt" << std::endl;
         [[maybe_unused]] auto result =  clientStructInterface->funcInt(Testbed1::StructInt());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcInt async")
     {
+        std::cout<<"StructInterface Test async method funcInt" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientStructInterface->funcIntAsync(Testbed1::StructInt());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -279,11 +304,13 @@ TEST_CASE("mqtt  testbed1 StructInterface tests")
     }
     SECTION("Test method funcFloat")
     {
+        std::cout<<"StructInterface Test method funcFloat" << std::endl;
         [[maybe_unused]] auto result =  clientStructInterface->funcFloat(Testbed1::StructFloat());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcFloat async")
     {
+        std::cout<<"StructInterface Test async method funcFloat" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientStructInterface->funcFloatAsync(Testbed1::StructFloat());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -308,11 +335,13 @@ TEST_CASE("mqtt  testbed1 StructInterface tests")
     }
     SECTION("Test method funcString")
     {
+        std::cout<<"StructInterface Test method funcString" << std::endl;
         [[maybe_unused]] auto result =  clientStructInterface->funcString(Testbed1::StructString());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcString async")
     {
+        std::cout<<"StructInterface Test async method funcString" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientStructInterface->funcStringAsync(Testbed1::StructString());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});

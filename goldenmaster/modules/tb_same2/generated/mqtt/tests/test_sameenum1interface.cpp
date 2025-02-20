@@ -3,6 +3,7 @@
 
 #include <catch2/catch.hpp>
 #include <condition_variable>
+#include <iostream>
 
 
 #include "tb_same2/generated/core/test_struct_helper.h"
@@ -77,6 +78,7 @@ TEST_CASE("mqtt  tb.same2 SameEnum1Interface tests")
     REQUIRE(is_clientConnected);
     SECTION("Test setting prop1")
     {
+        std::cout<<"SameEnum1Interface Test setting prop1" << std::endl;
         std::atomic<bool> isprop1Changed = false;
         clientSameEnum1Interface->_getPublisher().subscribeToProp1Changed(
         [&isprop1Changed, &m_wait ](auto value){
@@ -93,6 +95,7 @@ TEST_CASE("mqtt  tb.same2 SameEnum1Interface tests")
     }
     SECTION("Test emit sig1")
     {
+        std::cout<<"SameEnum1Interface Test emit sig1" << std::endl;
         std::atomic<bool> issig1Emitted = false;
 
         clientSameEnum1Interface->_getPublisher().subscribeToSig1(
@@ -103,18 +106,23 @@ TEST_CASE("mqtt  tb.same2 SameEnum1Interface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implSameEnum1Interface->_getPublisher().publishSig1(TbSame2::Enum1Enum::value2);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issig1Emitted ]() {return issig1Emitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed SameEnum1Interface Test emit sig1" << std::endl;
     }
     SECTION("Test method func1")
     {
+        std::cout<<"SameEnum1Interface Test method func1" << std::endl;
         [[maybe_unused]] auto result =  clientSameEnum1Interface->func1(TbSame2::Enum1Enum::value1);
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method func1 async")
     {
+        std::cout<<"SameEnum1Interface Test async method func1" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientSameEnum1Interface->func1Async(TbSame2::Enum1Enum::value1);
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});

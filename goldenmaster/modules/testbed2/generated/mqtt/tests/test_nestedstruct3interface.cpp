@@ -3,6 +3,7 @@
 
 #include <catch2/catch.hpp>
 #include <condition_variable>
+#include <iostream>
 
 
 #include "testbed2/generated/core/test_struct_helper.h"
@@ -77,6 +78,7 @@ TEST_CASE("mqtt  testbed2 NestedStruct3Interface tests")
     REQUIRE(is_clientConnected);
     SECTION("Test setting prop1")
     {
+        std::cout<<"NestedStruct3Interface Test setting prop1" << std::endl;
         std::atomic<bool> isprop1Changed = false;
         clientNestedStruct3Interface->_getPublisher().subscribeToProp1Changed(
         [&isprop1Changed, &m_wait ](auto value){
@@ -94,6 +96,7 @@ TEST_CASE("mqtt  testbed2 NestedStruct3Interface tests")
     }
     SECTION("Test setting prop2")
     {
+        std::cout<<"NestedStruct3Interface Test setting prop2" << std::endl;
         std::atomic<bool> isprop2Changed = false;
         clientNestedStruct3Interface->_getPublisher().subscribeToProp2Changed(
         [&isprop2Changed, &m_wait ](auto value){
@@ -111,6 +114,7 @@ TEST_CASE("mqtt  testbed2 NestedStruct3Interface tests")
     }
     SECTION("Test setting prop3")
     {
+        std::cout<<"NestedStruct3Interface Test setting prop3" << std::endl;
         std::atomic<bool> isprop3Changed = false;
         clientNestedStruct3Interface->_getPublisher().subscribeToProp3Changed(
         [&isprop3Changed, &m_wait ](auto value){
@@ -128,6 +132,7 @@ TEST_CASE("mqtt  testbed2 NestedStruct3Interface tests")
     }
     SECTION("Test emit sig1")
     {
+        std::cout<<"NestedStruct3Interface Test emit sig1" << std::endl;
         std::atomic<bool> issig1Emitted = false;
         auto local_param1_struct = Testbed2::NestedStruct1();
         Testbed2::fillTestNestedStruct1(local_param1_struct);
@@ -140,13 +145,17 @@ TEST_CASE("mqtt  testbed2 NestedStruct3Interface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implNestedStruct3Interface->_getPublisher().publishSig1(local_param1_struct);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issig1Emitted ]() {return issig1Emitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed NestedStruct3Interface Test emit sig1" << std::endl;
     }
     SECTION("Test emit sig2")
     {
+        std::cout<<"NestedStruct3Interface Test emit sig2" << std::endl;
         std::atomic<bool> issig2Emitted = false;
         auto local_param1_struct = Testbed2::NestedStruct1();
         Testbed2::fillTestNestedStruct1(local_param1_struct);
@@ -162,13 +171,17 @@ TEST_CASE("mqtt  testbed2 NestedStruct3Interface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implNestedStruct3Interface->_getPublisher().publishSig2(local_param1_struct, local_param2_struct);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issig2Emitted ]() {return issig2Emitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed NestedStruct3Interface Test emit sig2" << std::endl;
     }
     SECTION("Test emit sig3")
     {
+        std::cout<<"NestedStruct3Interface Test emit sig3" << std::endl;
         std::atomic<bool> issig3Emitted = false;
         auto local_param1_struct = Testbed2::NestedStruct1();
         Testbed2::fillTestNestedStruct1(local_param1_struct);
@@ -187,18 +200,23 @@ TEST_CASE("mqtt  testbed2 NestedStruct3Interface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implNestedStruct3Interface->_getPublisher().publishSig3(local_param1_struct, local_param2_struct, local_param3_struct);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issig3Emitted ]() {return issig3Emitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed NestedStruct3Interface Test emit sig3" << std::endl;
     }
     SECTION("Test method func1")
     {
+        std::cout<<"NestedStruct3Interface Test method func1" << std::endl;
         [[maybe_unused]] auto result =  clientNestedStruct3Interface->func1(Testbed2::NestedStruct1());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method func1 async")
     {
+        std::cout<<"NestedStruct3Interface Test async method func1" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientNestedStruct3Interface->func1Async(Testbed2::NestedStruct1());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -223,11 +241,13 @@ TEST_CASE("mqtt  testbed2 NestedStruct3Interface tests")
     }
     SECTION("Test method func2")
     {
+        std::cout<<"NestedStruct3Interface Test method func2" << std::endl;
         [[maybe_unused]] auto result =  clientNestedStruct3Interface->func2(Testbed2::NestedStruct1(), Testbed2::NestedStruct2());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method func2 async")
     {
+        std::cout<<"NestedStruct3Interface Test async method func2" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientNestedStruct3Interface->func2Async(Testbed2::NestedStruct1(), Testbed2::NestedStruct2());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -252,11 +272,13 @@ TEST_CASE("mqtt  testbed2 NestedStruct3Interface tests")
     }
     SECTION("Test method func3")
     {
+        std::cout<<"NestedStruct3Interface Test method func3" << std::endl;
         [[maybe_unused]] auto result =  clientNestedStruct3Interface->func3(Testbed2::NestedStruct1(), Testbed2::NestedStruct2(), Testbed2::NestedStruct3());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method func3 async")
     {
+        std::cout<<"NestedStruct3Interface Test async method func3" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientNestedStruct3Interface->func3Async(Testbed2::NestedStruct1(), Testbed2::NestedStruct2(), Testbed2::NestedStruct3());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});

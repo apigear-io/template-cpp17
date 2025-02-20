@@ -3,6 +3,7 @@
 
 #include <catch2/catch.hpp>
 #include <condition_variable>
+#include <iostream>
 
 
 #include "tb_simple/generated/core/test_struct_helper.h"
@@ -77,6 +78,7 @@ TEST_CASE("mqtt  tb.simple NoSignalsInterface tests")
     REQUIRE(is_clientConnected);
     SECTION("Test setting propBool")
     {
+        std::cout<<"NoSignalsInterface Test setting propBool" << std::endl;
         std::atomic<bool> ispropBoolChanged = false;
         clientNoSignalsInterface->_getPublisher().subscribeToPropBoolChanged(
         [&ispropBoolChanged, &m_wait ](auto value){
@@ -93,6 +95,7 @@ TEST_CASE("mqtt  tb.simple NoSignalsInterface tests")
     }
     SECTION("Test setting propInt")
     {
+        std::cout<<"NoSignalsInterface Test setting propInt" << std::endl;
         std::atomic<bool> ispropIntChanged = false;
         clientNoSignalsInterface->_getPublisher().subscribeToPropIntChanged(
         [&ispropIntChanged, &m_wait ](auto value){
@@ -109,11 +112,13 @@ TEST_CASE("mqtt  tb.simple NoSignalsInterface tests")
     }
     SECTION("Test method funcVoid")
     {
+        std::cout<<"NoSignalsInterface Test method funcVoid" << std::endl;
          clientNoSignalsInterface->funcVoid();
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcVoid async")
     {
+        std::cout<<"NoSignalsInterface Test async method funcVoid" << std::endl;
         auto resultFuture = clientNoSignalsInterface->funcVoidAsync();
         // The void function only sends request. It does not wait for the actual function on server side to be finished.
     }
@@ -124,11 +129,13 @@ TEST_CASE("mqtt  tb.simple NoSignalsInterface tests")
     }
     SECTION("Test method funcBool")
     {
+        std::cout<<"NoSignalsInterface Test method funcBool" << std::endl;
         [[maybe_unused]] auto result =  clientNoSignalsInterface->funcBool(false);
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcBool async")
     {
+        std::cout<<"NoSignalsInterface Test async method funcBool" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientNoSignalsInterface->funcBoolAsync(false);
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});

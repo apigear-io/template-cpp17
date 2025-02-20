@@ -3,6 +3,7 @@
 
 #include <catch2/catch.hpp>
 #include <condition_variable>
+#include <iostream>
 
 
 #include "tb_simple/generated/core/test_struct_helper.h"
@@ -77,6 +78,7 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
     REQUIRE(is_clientConnected);
     SECTION("Test setting propBool")
     {
+        std::cout<<"SimpleInterface Test setting propBool" << std::endl;
         std::atomic<bool> ispropBoolChanged = false;
         clientSimpleInterface->_getPublisher().subscribeToPropBoolChanged(
         [&ispropBoolChanged, &m_wait ](auto value){
@@ -93,6 +95,7 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
     }
     SECTION("Test setting propInt")
     {
+        std::cout<<"SimpleInterface Test setting propInt" << std::endl;
         std::atomic<bool> ispropIntChanged = false;
         clientSimpleInterface->_getPublisher().subscribeToPropIntChanged(
         [&ispropIntChanged, &m_wait ](auto value){
@@ -109,6 +112,7 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
     }
     SECTION("Test setting propInt32")
     {
+        std::cout<<"SimpleInterface Test setting propInt32" << std::endl;
         std::atomic<bool> ispropInt32Changed = false;
         clientSimpleInterface->_getPublisher().subscribeToPropInt32Changed(
         [&ispropInt32Changed, &m_wait ](auto value){
@@ -125,6 +129,7 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
     }
     SECTION("Test setting propInt64")
     {
+        std::cout<<"SimpleInterface Test setting propInt64" << std::endl;
         std::atomic<bool> ispropInt64Changed = false;
         clientSimpleInterface->_getPublisher().subscribeToPropInt64Changed(
         [&ispropInt64Changed, &m_wait ](auto value){
@@ -141,6 +146,7 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
     }
     SECTION("Test setting propFloat")
     {
+        std::cout<<"SimpleInterface Test setting propFloat" << std::endl;
         std::atomic<bool> ispropFloatChanged = false;
         clientSimpleInterface->_getPublisher().subscribeToPropFloatChanged(
         [&ispropFloatChanged, &m_wait ](auto value){
@@ -157,6 +163,7 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
     }
     SECTION("Test setting propFloat32")
     {
+        std::cout<<"SimpleInterface Test setting propFloat32" << std::endl;
         std::atomic<bool> ispropFloat32Changed = false;
         clientSimpleInterface->_getPublisher().subscribeToPropFloat32Changed(
         [&ispropFloat32Changed, &m_wait ](auto value){
@@ -173,6 +180,7 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
     }
     SECTION("Test setting propFloat64")
     {
+        std::cout<<"SimpleInterface Test setting propFloat64" << std::endl;
         std::atomic<bool> ispropFloat64Changed = false;
         clientSimpleInterface->_getPublisher().subscribeToPropFloat64Changed(
         [&ispropFloat64Changed, &m_wait ](auto value){
@@ -189,6 +197,7 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
     }
     SECTION("Test setting propString")
     {
+        std::cout<<"SimpleInterface Test setting propString" << std::endl;
         std::atomic<bool> ispropStringChanged = false;
         clientSimpleInterface->_getPublisher().subscribeToPropStringChanged(
         [&ispropStringChanged, &m_wait ](auto value){
@@ -205,6 +214,7 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
     }
     SECTION("Test emit sigBool")
     {
+        std::cout<<"SimpleInterface Test emit sigBool" << std::endl;
         std::atomic<bool> issigBoolEmitted = false;
 
         clientSimpleInterface->_getPublisher().subscribeToSigBool(
@@ -215,13 +225,17 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implSimpleInterface->_getPublisher().publishSigBool(true);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigBoolEmitted ]() {return issigBoolEmitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed SimpleInterface Test emit sigBool" << std::endl;
     }
     SECTION("Test emit sigInt")
     {
+        std::cout<<"SimpleInterface Test emit sigInt" << std::endl;
         std::atomic<bool> issigIntEmitted = false;
 
         clientSimpleInterface->_getPublisher().subscribeToSigInt(
@@ -232,13 +246,17 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implSimpleInterface->_getPublisher().publishSigInt(1);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigIntEmitted ]() {return issigIntEmitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed SimpleInterface Test emit sigInt" << std::endl;
     }
     SECTION("Test emit sigInt32")
     {
+        std::cout<<"SimpleInterface Test emit sigInt32" << std::endl;
         std::atomic<bool> issigInt32Emitted = false;
 
         clientSimpleInterface->_getPublisher().subscribeToSigInt32(
@@ -249,13 +267,17 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implSimpleInterface->_getPublisher().publishSigInt32(1);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigInt32Emitted ]() {return issigInt32Emitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed SimpleInterface Test emit sigInt32" << std::endl;
     }
     SECTION("Test emit sigInt64")
     {
+        std::cout<<"SimpleInterface Test emit sigInt64" << std::endl;
         std::atomic<bool> issigInt64Emitted = false;
 
         clientSimpleInterface->_getPublisher().subscribeToSigInt64(
@@ -266,13 +288,17 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implSimpleInterface->_getPublisher().publishSigInt64(1LL);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigInt64Emitted ]() {return issigInt64Emitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed SimpleInterface Test emit sigInt64" << std::endl;
     }
     SECTION("Test emit sigFloat")
     {
+        std::cout<<"SimpleInterface Test emit sigFloat" << std::endl;
         std::atomic<bool> issigFloatEmitted = false;
 
         clientSimpleInterface->_getPublisher().subscribeToSigFloat(
@@ -283,13 +309,17 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implSimpleInterface->_getPublisher().publishSigFloat(1.1f);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigFloatEmitted ]() {return issigFloatEmitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed SimpleInterface Test emit sigFloat" << std::endl;
     }
     SECTION("Test emit sigFloat32")
     {
+        std::cout<<"SimpleInterface Test emit sigFloat32" << std::endl;
         std::atomic<bool> issigFloat32Emitted = false;
 
         clientSimpleInterface->_getPublisher().subscribeToSigFloat32(
@@ -300,13 +330,17 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implSimpleInterface->_getPublisher().publishSigFloat32(1.1f);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigFloat32Emitted ]() {return issigFloat32Emitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed SimpleInterface Test emit sigFloat32" << std::endl;
     }
     SECTION("Test emit sigFloat64")
     {
+        std::cout<<"SimpleInterface Test emit sigFloat64" << std::endl;
         std::atomic<bool> issigFloat64Emitted = false;
 
         clientSimpleInterface->_getPublisher().subscribeToSigFloat64(
@@ -317,13 +351,17 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implSimpleInterface->_getPublisher().publishSigFloat64(1.1);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigFloat64Emitted ]() {return issigFloat64Emitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed SimpleInterface Test emit sigFloat64" << std::endl;
     }
     SECTION("Test emit sigString")
     {
+        std::cout<<"SimpleInterface Test emit sigString" << std::endl;
         std::atomic<bool> issigStringEmitted = false;
 
         clientSimpleInterface->_getPublisher().subscribeToSigString(
@@ -334,18 +372,23 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implSimpleInterface->_getPublisher().publishSigString(std::string("xyz"));
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigStringEmitted ]() {return issigStringEmitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed SimpleInterface Test emit sigString" << std::endl;
     }
     SECTION("Test method funcNoReturnValue")
     {
+        std::cout<<"SimpleInterface Test method funcNoReturnValue" << std::endl;
          clientSimpleInterface->funcNoReturnValue(false);
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcNoReturnValue async")
     {
+        std::cout<<"SimpleInterface Test async method funcNoReturnValue" << std::endl;
         auto resultFuture = clientSimpleInterface->funcNoReturnValueAsync(false);
         // The void function only sends request. It does not wait for the actual function on server side to be finished.
     }
@@ -356,11 +399,13 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
     }
     SECTION("Test method funcBool")
     {
+        std::cout<<"SimpleInterface Test method funcBool" << std::endl;
         [[maybe_unused]] auto result =  clientSimpleInterface->funcBool(false);
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcBool async")
     {
+        std::cout<<"SimpleInterface Test async method funcBool" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientSimpleInterface->funcBoolAsync(false);
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -385,11 +430,13 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
     }
     SECTION("Test method funcInt")
     {
+        std::cout<<"SimpleInterface Test method funcInt" << std::endl;
         [[maybe_unused]] auto result =  clientSimpleInterface->funcInt(0);
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcInt async")
     {
+        std::cout<<"SimpleInterface Test async method funcInt" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientSimpleInterface->funcIntAsync(0);
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -414,11 +461,13 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
     }
     SECTION("Test method funcInt32")
     {
+        std::cout<<"SimpleInterface Test method funcInt32" << std::endl;
         [[maybe_unused]] auto result =  clientSimpleInterface->funcInt32(0);
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcInt32 async")
     {
+        std::cout<<"SimpleInterface Test async method funcInt32" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientSimpleInterface->funcInt32Async(0);
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -443,11 +492,13 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
     }
     SECTION("Test method funcInt64")
     {
+        std::cout<<"SimpleInterface Test method funcInt64" << std::endl;
         [[maybe_unused]] auto result =  clientSimpleInterface->funcInt64(0LL);
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcInt64 async")
     {
+        std::cout<<"SimpleInterface Test async method funcInt64" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientSimpleInterface->funcInt64Async(0LL);
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -472,11 +523,13 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
     }
     SECTION("Test method funcFloat")
     {
+        std::cout<<"SimpleInterface Test method funcFloat" << std::endl;
         [[maybe_unused]] auto result =  clientSimpleInterface->funcFloat(0.0f);
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcFloat async")
     {
+        std::cout<<"SimpleInterface Test async method funcFloat" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientSimpleInterface->funcFloatAsync(0.0f);
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -501,11 +554,13 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
     }
     SECTION("Test method funcFloat32")
     {
+        std::cout<<"SimpleInterface Test method funcFloat32" << std::endl;
         [[maybe_unused]] auto result =  clientSimpleInterface->funcFloat32(0.0f);
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcFloat32 async")
     {
+        std::cout<<"SimpleInterface Test async method funcFloat32" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientSimpleInterface->funcFloat32Async(0.0f);
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -530,11 +585,13 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
     }
     SECTION("Test method funcFloat64")
     {
+        std::cout<<"SimpleInterface Test method funcFloat64" << std::endl;
         [[maybe_unused]] auto result =  clientSimpleInterface->funcFloat64(0.0);
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcFloat64 async")
     {
+        std::cout<<"SimpleInterface Test async method funcFloat64" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientSimpleInterface->funcFloat64Async(0.0);
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -559,11 +616,13 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
     }
     SECTION("Test method funcString")
     {
+        std::cout<<"SimpleInterface Test method funcString" << std::endl;
         [[maybe_unused]] auto result =  clientSimpleInterface->funcString(std::string());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcString async")
     {
+        std::cout<<"SimpleInterface Test async method funcString" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientSimpleInterface->funcStringAsync(std::string());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});

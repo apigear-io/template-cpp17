@@ -3,6 +3,7 @@
 
 #include <catch2/catch.hpp>
 #include <condition_variable>
+#include <iostream>
 
 
 #include "tb_simple/generated/core/test_struct_helper.h"
@@ -77,6 +78,7 @@ TEST_CASE("mqtt  tb.simple VoidInterface tests")
     REQUIRE(is_clientConnected);
     SECTION("Test emit sigVoid")
     {
+        std::cout<<"VoidInterface Test emit sigVoid" << std::endl;
         std::atomic<bool> issigVoidEmitted = false;
 
         clientVoidInterface->_getPublisher().subscribeToSigVoid(
@@ -86,18 +88,23 @@ TEST_CASE("mqtt  tb.simple VoidInterface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implVoidInterface->_getPublisher().publishSigVoid();
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigVoidEmitted ]() {return issigVoidEmitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed VoidInterface Test emit sigVoid" << std::endl;
     }
     SECTION("Test method funcVoid")
     {
+        std::cout<<"VoidInterface Test method funcVoid" << std::endl;
          clientVoidInterface->funcVoid();
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcVoid async")
     {
+        std::cout<<"VoidInterface Test async method funcVoid" << std::endl;
         auto resultFuture = clientVoidInterface->funcVoidAsync();
         // The void function only sends request. It does not wait for the actual function on server side to be finished.
     }

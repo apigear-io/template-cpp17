@@ -3,6 +3,7 @@
 
 #include <catch2/catch.hpp>
 #include <condition_variable>
+#include <iostream>
 
 
 #include "tb_same2/generated/core/test_struct_helper.h"
@@ -77,6 +78,7 @@ TEST_CASE("mqtt  tb.same2 SameStruct2Interface tests")
     REQUIRE(is_clientConnected);
     SECTION("Test setting prop1")
     {
+        std::cout<<"SameStruct2Interface Test setting prop1" << std::endl;
         std::atomic<bool> isprop1Changed = false;
         clientSameStruct2Interface->_getPublisher().subscribeToProp1Changed(
         [&isprop1Changed, &m_wait ](auto value){
@@ -94,6 +96,7 @@ TEST_CASE("mqtt  tb.same2 SameStruct2Interface tests")
     }
     SECTION("Test setting prop2")
     {
+        std::cout<<"SameStruct2Interface Test setting prop2" << std::endl;
         std::atomic<bool> isprop2Changed = false;
         clientSameStruct2Interface->_getPublisher().subscribeToProp2Changed(
         [&isprop2Changed, &m_wait ](auto value){
@@ -111,6 +114,7 @@ TEST_CASE("mqtt  tb.same2 SameStruct2Interface tests")
     }
     SECTION("Test emit sig1")
     {
+        std::cout<<"SameStruct2Interface Test emit sig1" << std::endl;
         std::atomic<bool> issig1Emitted = false;
         auto local_param1_struct = TbSame2::Struct1();
         TbSame2::fillTestStruct1(local_param1_struct);
@@ -123,13 +127,17 @@ TEST_CASE("mqtt  tb.same2 SameStruct2Interface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implSameStruct2Interface->_getPublisher().publishSig1(local_param1_struct);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issig1Emitted ]() {return issig1Emitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed SameStruct2Interface Test emit sig1" << std::endl;
     }
     SECTION("Test emit sig2")
     {
+        std::cout<<"SameStruct2Interface Test emit sig2" << std::endl;
         std::atomic<bool> issig2Emitted = false;
         auto local_param1_struct = TbSame2::Struct1();
         TbSame2::fillTestStruct1(local_param1_struct);
@@ -145,18 +153,23 @@ TEST_CASE("mqtt  tb.same2 SameStruct2Interface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implSameStruct2Interface->_getPublisher().publishSig2(local_param1_struct, local_param2_struct);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issig2Emitted ]() {return issig2Emitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed SameStruct2Interface Test emit sig2" << std::endl;
     }
     SECTION("Test method func1")
     {
+        std::cout<<"SameStruct2Interface Test method func1" << std::endl;
         [[maybe_unused]] auto result =  clientSameStruct2Interface->func1(TbSame2::Struct1());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method func1 async")
     {
+        std::cout<<"SameStruct2Interface Test async method func1" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientSameStruct2Interface->func1Async(TbSame2::Struct1());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -181,11 +194,13 @@ TEST_CASE("mqtt  tb.same2 SameStruct2Interface tests")
     }
     SECTION("Test method func2")
     {
+        std::cout<<"SameStruct2Interface Test method func2" << std::endl;
         [[maybe_unused]] auto result =  clientSameStruct2Interface->func2(TbSame2::Struct1(), TbSame2::Struct2());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method func2 async")
     {
+        std::cout<<"SameStruct2Interface Test async method func2" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientSameStruct2Interface->func2Async(TbSame2::Struct1(), TbSame2::Struct2());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});

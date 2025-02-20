@@ -3,6 +3,7 @@
 
 #include <catch2/catch.hpp>
 #include <condition_variable>
+#include <iostream>
 
 
 #include "testbed1/generated/core/test_struct_helper.h"
@@ -77,6 +78,7 @@ TEST_CASE("mqtt  testbed1 StructArrayInterface tests")
     REQUIRE(is_clientConnected);
     SECTION("Test setting propBool")
     {
+        std::cout<<"StructArrayInterface Test setting propBool" << std::endl;
         std::atomic<bool> ispropBoolChanged = false;
         clientStructArrayInterface->_getPublisher().subscribeToPropBoolChanged(
         [&ispropBoolChanged, &m_wait ](auto value){
@@ -96,6 +98,7 @@ TEST_CASE("mqtt  testbed1 StructArrayInterface tests")
     }
     SECTION("Test setting propInt")
     {
+        std::cout<<"StructArrayInterface Test setting propInt" << std::endl;
         std::atomic<bool> ispropIntChanged = false;
         clientStructArrayInterface->_getPublisher().subscribeToPropIntChanged(
         [&ispropIntChanged, &m_wait ](auto value){
@@ -115,6 +118,7 @@ TEST_CASE("mqtt  testbed1 StructArrayInterface tests")
     }
     SECTION("Test setting propFloat")
     {
+        std::cout<<"StructArrayInterface Test setting propFloat" << std::endl;
         std::atomic<bool> ispropFloatChanged = false;
         clientStructArrayInterface->_getPublisher().subscribeToPropFloatChanged(
         [&ispropFloatChanged, &m_wait ](auto value){
@@ -134,6 +138,7 @@ TEST_CASE("mqtt  testbed1 StructArrayInterface tests")
     }
     SECTION("Test setting propString")
     {
+        std::cout<<"StructArrayInterface Test setting propString" << std::endl;
         std::atomic<bool> ispropStringChanged = false;
         clientStructArrayInterface->_getPublisher().subscribeToPropStringChanged(
         [&ispropStringChanged, &m_wait ](auto value){
@@ -153,6 +158,7 @@ TEST_CASE("mqtt  testbed1 StructArrayInterface tests")
     }
     SECTION("Test emit sigBool")
     {
+        std::cout<<"StructArrayInterface Test emit sigBool" << std::endl;
         std::atomic<bool> issigBoolEmitted = false;
         auto local_param_bool_array = std::list<Testbed1::StructBool>();
         auto element_paramBool = Testbed1::StructBool();
@@ -167,13 +173,17 @@ TEST_CASE("mqtt  testbed1 StructArrayInterface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implStructArrayInterface->_getPublisher().publishSigBool(local_param_bool_array);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigBoolEmitted ]() {return issigBoolEmitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed StructArrayInterface Test emit sigBool" << std::endl;
     }
     SECTION("Test emit sigInt")
     {
+        std::cout<<"StructArrayInterface Test emit sigInt" << std::endl;
         std::atomic<bool> issigIntEmitted = false;
         auto local_param_int_array = std::list<Testbed1::StructInt>();
         auto element_paramInt = Testbed1::StructInt();
@@ -188,13 +198,17 @@ TEST_CASE("mqtt  testbed1 StructArrayInterface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implStructArrayInterface->_getPublisher().publishSigInt(local_param_int_array);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigIntEmitted ]() {return issigIntEmitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed StructArrayInterface Test emit sigInt" << std::endl;
     }
     SECTION("Test emit sigFloat")
     {
+        std::cout<<"StructArrayInterface Test emit sigFloat" << std::endl;
         std::atomic<bool> issigFloatEmitted = false;
         auto local_param_float_array = std::list<Testbed1::StructFloat>();
         auto element_paramFloat = Testbed1::StructFloat();
@@ -209,13 +223,17 @@ TEST_CASE("mqtt  testbed1 StructArrayInterface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implStructArrayInterface->_getPublisher().publishSigFloat(local_param_float_array);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigFloatEmitted ]() {return issigFloatEmitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed StructArrayInterface Test emit sigFloat" << std::endl;
     }
     SECTION("Test emit sigString")
     {
+        std::cout<<"StructArrayInterface Test emit sigString" << std::endl;
         std::atomic<bool> issigStringEmitted = false;
         auto local_param_string_array = std::list<Testbed1::StructString>();
         auto element_paramString = Testbed1::StructString();
@@ -230,18 +248,23 @@ TEST_CASE("mqtt  testbed1 StructArrayInterface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implStructArrayInterface->_getPublisher().publishSigString(local_param_string_array);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigStringEmitted ]() {return issigStringEmitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed StructArrayInterface Test emit sigString" << std::endl;
     }
     SECTION("Test method funcBool")
     {
+        std::cout<<"StructArrayInterface Test method funcBool" << std::endl;
         [[maybe_unused]] auto result =  clientStructArrayInterface->funcBool(std::list<Testbed1::StructBool>());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcBool async")
     {
+        std::cout<<"StructArrayInterface Test async method funcBool" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientStructArrayInterface->funcBoolAsync(std::list<Testbed1::StructBool>());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -266,11 +289,13 @@ TEST_CASE("mqtt  testbed1 StructArrayInterface tests")
     }
     SECTION("Test method funcInt")
     {
+        std::cout<<"StructArrayInterface Test method funcInt" << std::endl;
         [[maybe_unused]] auto result =  clientStructArrayInterface->funcInt(std::list<Testbed1::StructInt>());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcInt async")
     {
+        std::cout<<"StructArrayInterface Test async method funcInt" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientStructArrayInterface->funcIntAsync(std::list<Testbed1::StructInt>());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -295,11 +320,13 @@ TEST_CASE("mqtt  testbed1 StructArrayInterface tests")
     }
     SECTION("Test method funcFloat")
     {
+        std::cout<<"StructArrayInterface Test method funcFloat" << std::endl;
         [[maybe_unused]] auto result =  clientStructArrayInterface->funcFloat(std::list<Testbed1::StructFloat>());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcFloat async")
     {
+        std::cout<<"StructArrayInterface Test async method funcFloat" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientStructArrayInterface->funcFloatAsync(std::list<Testbed1::StructFloat>());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -324,11 +351,13 @@ TEST_CASE("mqtt  testbed1 StructArrayInterface tests")
     }
     SECTION("Test method funcString")
     {
+        std::cout<<"StructArrayInterface Test method funcString" << std::endl;
         [[maybe_unused]] auto result =  clientStructArrayInterface->funcString(std::list<Testbed1::StructString>());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcString async")
     {
+        std::cout<<"StructArrayInterface Test async method funcString" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientStructArrayInterface->funcStringAsync(std::list<Testbed1::StructString>());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});

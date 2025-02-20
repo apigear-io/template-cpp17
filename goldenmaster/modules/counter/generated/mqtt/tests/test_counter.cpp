@@ -3,6 +3,7 @@
 
 #include <catch2/catch.hpp>
 #include <condition_variable>
+#include <iostream>
 
 
 #include "counter/generated/core/test_struct_helper.h"
@@ -79,6 +80,7 @@ TEST_CASE("mqtt  counter Counter tests")
     REQUIRE(is_clientConnected);
     SECTION("Test setting vector")
     {
+        std::cout<<"Counter Test setting vector" << std::endl;
         std::atomic<bool> isvectorChanged = false;
         clientCounter->_getPublisher().subscribeToVectorChanged(
         [&isvectorChanged, &m_wait ](auto value){
@@ -96,6 +98,7 @@ TEST_CASE("mqtt  counter Counter tests")
     }
     SECTION("Test setting vectorArray")
     {
+        std::cout<<"Counter Test setting vectorArray" << std::endl;
         std::atomic<bool> isvectorArrayChanged = false;
         clientCounter->_getPublisher().subscribeToVectorArrayChanged(
         [&isvectorArrayChanged, &m_wait ](auto value){
@@ -115,6 +118,7 @@ TEST_CASE("mqtt  counter Counter tests")
     }
     SECTION("Test emit valueChanged")
     {
+        std::cout<<"Counter Test emit valueChanged" << std::endl;
         std::atomic<bool> isvalueChangedEmitted = false;
         auto local_vector_struct = Test::CustomTypes::Vector3D();
         CustomTypes::fillTestVector3D(local_vector_struct);
@@ -136,18 +140,23 @@ TEST_CASE("mqtt  counter Counter tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implCounter->_getPublisher().publishValueChanged(local_vector_struct, Eigen::Vector3f(0,0,0), local_vector_array_array, local_extern_vector_array_array);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&isvalueChangedEmitted ]() {return isvalueChangedEmitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed Counter Test emit valueChanged" << std::endl;
     }
     SECTION("Test method increment")
     {
+        std::cout<<"Counter Test method increment" << std::endl;
         [[maybe_unused]] auto result =  clientCounter->increment(Eigen::Vector3f(0,0,0));
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method increment async")
     {
+        std::cout<<"Counter Test async method increment" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientCounter->incrementAsync(Eigen::Vector3f(0,0,0));
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -172,11 +181,13 @@ TEST_CASE("mqtt  counter Counter tests")
     }
     SECTION("Test method incrementArray")
     {
+        std::cout<<"Counter Test method incrementArray" << std::endl;
         [[maybe_unused]] auto result =  clientCounter->incrementArray(std::list<Eigen::Vector3f>());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method incrementArray async")
     {
+        std::cout<<"Counter Test async method incrementArray" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientCounter->incrementArrayAsync(std::list<Eigen::Vector3f>());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -201,11 +212,13 @@ TEST_CASE("mqtt  counter Counter tests")
     }
     SECTION("Test method decrement")
     {
+        std::cout<<"Counter Test method decrement" << std::endl;
         [[maybe_unused]] auto result =  clientCounter->decrement(Test::CustomTypes::Vector3D());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method decrement async")
     {
+        std::cout<<"Counter Test async method decrement" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientCounter->decrementAsync(Test::CustomTypes::Vector3D());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -230,11 +243,13 @@ TEST_CASE("mqtt  counter Counter tests")
     }
     SECTION("Test method decrementArray")
     {
+        std::cout<<"Counter Test method decrementArray" << std::endl;
         [[maybe_unused]] auto result =  clientCounter->decrementArray(std::list<Test::CustomTypes::Vector3D>());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method decrementArray async")
     {
+        std::cout<<"Counter Test async method decrementArray" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientCounter->decrementArrayAsync(std::list<Test::CustomTypes::Vector3D>());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});

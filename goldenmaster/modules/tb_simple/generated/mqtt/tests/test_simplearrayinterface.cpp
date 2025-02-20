@@ -3,6 +3,7 @@
 
 #include <catch2/catch.hpp>
 #include <condition_variable>
+#include <iostream>
 
 
 #include "tb_simple/generated/core/test_struct_helper.h"
@@ -77,6 +78,7 @@ TEST_CASE("mqtt  tb.simple SimpleArrayInterface tests")
     REQUIRE(is_clientConnected);
     SECTION("Test setting propBool")
     {
+        std::cout<<"SimpleArrayInterface Test setting propBool" << std::endl;
         std::atomic<bool> ispropBoolChanged = false;
         clientSimpleArrayInterface->_getPublisher().subscribeToPropBoolChanged(
         [&ispropBoolChanged, &m_wait ](auto value){
@@ -94,6 +96,7 @@ TEST_CASE("mqtt  tb.simple SimpleArrayInterface tests")
     }
     SECTION("Test setting propInt")
     {
+        std::cout<<"SimpleArrayInterface Test setting propInt" << std::endl;
         std::atomic<bool> ispropIntChanged = false;
         clientSimpleArrayInterface->_getPublisher().subscribeToPropIntChanged(
         [&ispropIntChanged, &m_wait ](auto value){
@@ -111,6 +114,7 @@ TEST_CASE("mqtt  tb.simple SimpleArrayInterface tests")
     }
     SECTION("Test setting propInt32")
     {
+        std::cout<<"SimpleArrayInterface Test setting propInt32" << std::endl;
         std::atomic<bool> ispropInt32Changed = false;
         clientSimpleArrayInterface->_getPublisher().subscribeToPropInt32Changed(
         [&ispropInt32Changed, &m_wait ](auto value){
@@ -128,6 +132,7 @@ TEST_CASE("mqtt  tb.simple SimpleArrayInterface tests")
     }
     SECTION("Test setting propInt64")
     {
+        std::cout<<"SimpleArrayInterface Test setting propInt64" << std::endl;
         std::atomic<bool> ispropInt64Changed = false;
         clientSimpleArrayInterface->_getPublisher().subscribeToPropInt64Changed(
         [&ispropInt64Changed, &m_wait ](auto value){
@@ -145,6 +150,7 @@ TEST_CASE("mqtt  tb.simple SimpleArrayInterface tests")
     }
     SECTION("Test setting propFloat")
     {
+        std::cout<<"SimpleArrayInterface Test setting propFloat" << std::endl;
         std::atomic<bool> ispropFloatChanged = false;
         clientSimpleArrayInterface->_getPublisher().subscribeToPropFloatChanged(
         [&ispropFloatChanged, &m_wait ](auto value){
@@ -162,6 +168,7 @@ TEST_CASE("mqtt  tb.simple SimpleArrayInterface tests")
     }
     SECTION("Test setting propFloat32")
     {
+        std::cout<<"SimpleArrayInterface Test setting propFloat32" << std::endl;
         std::atomic<bool> ispropFloat32Changed = false;
         clientSimpleArrayInterface->_getPublisher().subscribeToPropFloat32Changed(
         [&ispropFloat32Changed, &m_wait ](auto value){
@@ -179,6 +186,7 @@ TEST_CASE("mqtt  tb.simple SimpleArrayInterface tests")
     }
     SECTION("Test setting propFloat64")
     {
+        std::cout<<"SimpleArrayInterface Test setting propFloat64" << std::endl;
         std::atomic<bool> ispropFloat64Changed = false;
         clientSimpleArrayInterface->_getPublisher().subscribeToPropFloat64Changed(
         [&ispropFloat64Changed, &m_wait ](auto value){
@@ -196,6 +204,7 @@ TEST_CASE("mqtt  tb.simple SimpleArrayInterface tests")
     }
     SECTION("Test setting propString")
     {
+        std::cout<<"SimpleArrayInterface Test setting propString" << std::endl;
         std::atomic<bool> ispropStringChanged = false;
         clientSimpleArrayInterface->_getPublisher().subscribeToPropStringChanged(
         [&ispropStringChanged, &m_wait ](auto value){
@@ -213,6 +222,7 @@ TEST_CASE("mqtt  tb.simple SimpleArrayInterface tests")
     }
     SECTION("Test emit sigBool")
     {
+        std::cout<<"SimpleArrayInterface Test emit sigBool" << std::endl;
         std::atomic<bool> issigBoolEmitted = false;
         auto local_param_bool_array = std::list<bool>();
         local_param_bool_array.push_back(true);
@@ -225,13 +235,17 @@ TEST_CASE("mqtt  tb.simple SimpleArrayInterface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implSimpleArrayInterface->_getPublisher().publishSigBool(local_param_bool_array);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigBoolEmitted ]() {return issigBoolEmitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed SimpleArrayInterface Test emit sigBool" << std::endl;
     }
     SECTION("Test emit sigInt")
     {
+        std::cout<<"SimpleArrayInterface Test emit sigInt" << std::endl;
         std::atomic<bool> issigIntEmitted = false;
         auto local_param_int_array = std::list<int>();
         local_param_int_array.push_back(1);
@@ -244,13 +258,17 @@ TEST_CASE("mqtt  tb.simple SimpleArrayInterface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implSimpleArrayInterface->_getPublisher().publishSigInt(local_param_int_array);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigIntEmitted ]() {return issigIntEmitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed SimpleArrayInterface Test emit sigInt" << std::endl;
     }
     SECTION("Test emit sigInt32")
     {
+        std::cout<<"SimpleArrayInterface Test emit sigInt32" << std::endl;
         std::atomic<bool> issigInt32Emitted = false;
         auto local_param_int32_array = std::list<int32_t>();
         local_param_int32_array.push_back(1);
@@ -263,13 +281,17 @@ TEST_CASE("mqtt  tb.simple SimpleArrayInterface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implSimpleArrayInterface->_getPublisher().publishSigInt32(local_param_int32_array);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigInt32Emitted ]() {return issigInt32Emitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed SimpleArrayInterface Test emit sigInt32" << std::endl;
     }
     SECTION("Test emit sigInt64")
     {
+        std::cout<<"SimpleArrayInterface Test emit sigInt64" << std::endl;
         std::atomic<bool> issigInt64Emitted = false;
         auto local_param_int64_array = std::list<int64_t>();
         local_param_int64_array.push_back(1LL);
@@ -282,13 +304,17 @@ TEST_CASE("mqtt  tb.simple SimpleArrayInterface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implSimpleArrayInterface->_getPublisher().publishSigInt64(local_param_int64_array);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigInt64Emitted ]() {return issigInt64Emitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed SimpleArrayInterface Test emit sigInt64" << std::endl;
     }
     SECTION("Test emit sigFloat")
     {
+        std::cout<<"SimpleArrayInterface Test emit sigFloat" << std::endl;
         std::atomic<bool> issigFloatEmitted = false;
         auto local_param_float_array = std::list<float>();
         local_param_float_array.push_back(1.1f);
@@ -301,13 +327,17 @@ TEST_CASE("mqtt  tb.simple SimpleArrayInterface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implSimpleArrayInterface->_getPublisher().publishSigFloat(local_param_float_array);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigFloatEmitted ]() {return issigFloatEmitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed SimpleArrayInterface Test emit sigFloat" << std::endl;
     }
     SECTION("Test emit sigFloat32")
     {
+        std::cout<<"SimpleArrayInterface Test emit sigFloat32" << std::endl;
         std::atomic<bool> issigFloat32Emitted = false;
         auto local_param_floa32_array = std::list<float>();
         local_param_floa32_array.push_back(1.1f);
@@ -320,13 +350,17 @@ TEST_CASE("mqtt  tb.simple SimpleArrayInterface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implSimpleArrayInterface->_getPublisher().publishSigFloat32(local_param_floa32_array);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigFloat32Emitted ]() {return issigFloat32Emitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed SimpleArrayInterface Test emit sigFloat32" << std::endl;
     }
     SECTION("Test emit sigFloat64")
     {
+        std::cout<<"SimpleArrayInterface Test emit sigFloat64" << std::endl;
         std::atomic<bool> issigFloat64Emitted = false;
         auto local_param_float64_array = std::list<double>();
         local_param_float64_array.push_back(1.1);
@@ -339,13 +373,17 @@ TEST_CASE("mqtt  tb.simple SimpleArrayInterface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implSimpleArrayInterface->_getPublisher().publishSigFloat64(local_param_float64_array);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigFloat64Emitted ]() {return issigFloat64Emitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed SimpleArrayInterface Test emit sigFloat64" << std::endl;
     }
     SECTION("Test emit sigString")
     {
+        std::cout<<"SimpleArrayInterface Test emit sigString" << std::endl;
         std::atomic<bool> issigStringEmitted = false;
         auto local_param_string_array = std::list<std::string>();
         local_param_string_array.push_back(std::string("xyz"));
@@ -358,18 +396,23 @@ TEST_CASE("mqtt  tb.simple SimpleArrayInterface tests")
             m_wait.notify_all();
         });
 
+         std::cout<<"publishing signal" << std::endl;
          implSimpleArrayInterface->_getPublisher().publishSigString(local_param_string_array);
+        std::cout<<"will wait for the singal" << std::endl;
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigStringEmitted ]() {return issigStringEmitted   == true; }));
         lock.unlock();
+        std::cout<<"TEST ENDED, disconnect will be performed SimpleArrayInterface Test emit sigString" << std::endl;
     }
     SECTION("Test method funcBool")
     {
+        std::cout<<"SimpleArrayInterface Test method funcBool" << std::endl;
         [[maybe_unused]] auto result =  clientSimpleArrayInterface->funcBool(std::list<bool>());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcBool async")
     {
+        std::cout<<"SimpleArrayInterface Test async method funcBool" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientSimpleArrayInterface->funcBoolAsync(std::list<bool>());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -394,11 +437,13 @@ TEST_CASE("mqtt  tb.simple SimpleArrayInterface tests")
     }
     SECTION("Test method funcInt")
     {
+        std::cout<<"SimpleArrayInterface Test method funcInt" << std::endl;
         [[maybe_unused]] auto result =  clientSimpleArrayInterface->funcInt(std::list<int>());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcInt async")
     {
+        std::cout<<"SimpleArrayInterface Test async method funcInt" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientSimpleArrayInterface->funcIntAsync(std::list<int>());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -423,11 +468,13 @@ TEST_CASE("mqtt  tb.simple SimpleArrayInterface tests")
     }
     SECTION("Test method funcInt32")
     {
+        std::cout<<"SimpleArrayInterface Test method funcInt32" << std::endl;
         [[maybe_unused]] auto result =  clientSimpleArrayInterface->funcInt32(std::list<int32_t>());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcInt32 async")
     {
+        std::cout<<"SimpleArrayInterface Test async method funcInt32" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientSimpleArrayInterface->funcInt32Async(std::list<int32_t>());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -452,11 +499,13 @@ TEST_CASE("mqtt  tb.simple SimpleArrayInterface tests")
     }
     SECTION("Test method funcInt64")
     {
+        std::cout<<"SimpleArrayInterface Test method funcInt64" << std::endl;
         [[maybe_unused]] auto result =  clientSimpleArrayInterface->funcInt64(std::list<int64_t>());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcInt64 async")
     {
+        std::cout<<"SimpleArrayInterface Test async method funcInt64" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientSimpleArrayInterface->funcInt64Async(std::list<int64_t>());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -481,11 +530,13 @@ TEST_CASE("mqtt  tb.simple SimpleArrayInterface tests")
     }
     SECTION("Test method funcFloat")
     {
+        std::cout<<"SimpleArrayInterface Test method funcFloat" << std::endl;
         [[maybe_unused]] auto result =  clientSimpleArrayInterface->funcFloat(std::list<float>());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcFloat async")
     {
+        std::cout<<"SimpleArrayInterface Test async method funcFloat" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientSimpleArrayInterface->funcFloatAsync(std::list<float>());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -510,11 +561,13 @@ TEST_CASE("mqtt  tb.simple SimpleArrayInterface tests")
     }
     SECTION("Test method funcFloat32")
     {
+        std::cout<<"SimpleArrayInterface Test method funcFloat32" << std::endl;
         [[maybe_unused]] auto result =  clientSimpleArrayInterface->funcFloat32(std::list<float>());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcFloat32 async")
     {
+        std::cout<<"SimpleArrayInterface Test async method funcFloat32" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientSimpleArrayInterface->funcFloat32Async(std::list<float>());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -539,11 +592,13 @@ TEST_CASE("mqtt  tb.simple SimpleArrayInterface tests")
     }
     SECTION("Test method funcFloat64")
     {
+        std::cout<<"SimpleArrayInterface Test method funcFloat64" << std::endl;
         [[maybe_unused]] auto result =  clientSimpleArrayInterface->funcFloat64(std::list<double>());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcFloat64 async")
     {
+        std::cout<<"SimpleArrayInterface Test async method funcFloat64" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientSimpleArrayInterface->funcFloat64Async(std::list<double>());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
@@ -568,11 +623,13 @@ TEST_CASE("mqtt  tb.simple SimpleArrayInterface tests")
     }
     SECTION("Test method funcString")
     {
+        std::cout<<"SimpleArrayInterface Test method funcString" << std::endl;
         [[maybe_unused]] auto result =  clientSimpleArrayInterface->funcString(std::list<std::string>());
         // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
     }
     SECTION("Test method funcString async")
     {
+        std::cout<<"SimpleArrayInterface Test async method funcString" << std::endl;
         std::atomic<bool> finished = false;
         auto resultFuture = clientSimpleArrayInterface->funcStringAsync(std::list<std::string>());
         auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
