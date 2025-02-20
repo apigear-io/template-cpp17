@@ -16,7 +16,9 @@ find_package(Catch2 REQUIRED)
 set(TEST_{{$MODULE_ID}}_GENERATED_MQTT_SOURCES
     test_main.cpp
 {{- range .Module.Interfaces }}
+{{- if or (or ( len .Properties) ( len .Signals)) ( len .Operations)  }}
     test_{{lower (camel .Name)}}.cpp
+{{- end}}
 {{- end }}
     )
 

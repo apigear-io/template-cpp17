@@ -20,7 +20,6 @@ set(TEST_TB_SIMPLE_GENERATED_MQTT_SOURCES
     test_nopropertiesinterface.cpp
     test_nooperationsinterface.cpp
     test_nosignalsinterface.cpp
-    test_emptyinterface.cpp
     )
 
 
