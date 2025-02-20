@@ -10,6 +10,7 @@
 #include <map>
 #include <functional>
 #include <shared_mutex>
+#include <apigear/utilities/single_pub.hpp>
 
 {{- $interfaceName := Camel .Interface.Name  }}
 {{- $class := printf "I%s" $interfaceName }}
@@ -84,21 +85,16 @@ private:
     mutable std::shared_timed_mutex m_allChangesSubscribersMutex;
 {{- range .Interface.Properties}}
 {{- $property := . }}
-    // Next free unique identifier to subscribe for the {{Camel $property.Name}} change.
-    std::atomic<long> m_{{lower1 (Camel $property.Name)}}ChangedCallbackNextId {0};
-    // Subscribed callbacks for the {{Camel $property.Name}} change.
-    std::map<long, {{$interfaceName}}{{Camel $property.Name}}PropertyCb> m_{{lower1 (Camel $property.Name)}}Callbacks;
-    // Mutex for m_{{lower1 (Camel $property.Name)}}Callbacks
-    mutable std::shared_timed_mutex m_{{lower1 (Camel $property.Name)}}CallbacksMutex;
+    ApiGear::Utilities::SinglePub< {{- cppType "" $property -}}> {{Camel $property.Name}}Publisher;
 {{- end }}
 {{- range .Interface.Signals}}
 {{- $signal := . }}
-    // Next free unique identifier to subscribe for the {{Camel $signal.Name}} emission.
-    std::atomic<long> m_{{lower1 (Camel $signal.Name)}}SignalCallbackNextId {0};
-    // Subscribed callbacks for the {{Camel $signal.Name}} emission.
-    std::map<long, {{$interfaceName}}{{Camel $signal.Name}}SignalCb > m_{{lower1 (Camel $signal.Name)}}Callbacks;
-    // Mutex for m_{{lower1 (Camel $signal.Name)}}SignalCallbackNextId and m_{{lower1 (Camel $signal.Name)}}Callbacks
-    mutable std::shared_timed_mutex m_{{lower1 (Camel $signal.Name)}}CallbacksMutex;
+    ApiGear::Utilities::SinglePub<{{- range $idx, $elem := $signal.Params }}
+        {{- $param := . -}}
+                {{- if $idx }},{{- end -}}
+                {{cppType "" $param}}
+        {{- end -}}> {{Camel $signal.Name}}Publisher;
+
 {{- end }}
 };
 {{- nl}}

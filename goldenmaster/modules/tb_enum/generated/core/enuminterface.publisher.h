@@ -9,6 +9,7 @@
 #include <map>
 #include <functional>
 #include <shared_mutex>
+#include <apigear/utilities/single_pub.hpp>
 
 namespace Test {
 namespace TbEnum {
@@ -141,54 +142,14 @@ private:
     std::vector<std::reference_wrapper<IEnumInterfaceSubscriber>> m_allChangesSubscribers;
     // Mutex for m_allChangesSubscribers
     mutable std::shared_timed_mutex m_allChangesSubscribersMutex;
-    // Next free unique identifier to subscribe for the Prop0 change.
-    std::atomic<long> m_prop0ChangedCallbackNextId {0};
-    // Subscribed callbacks for the Prop0 change.
-    std::map<long, EnumInterfaceProp0PropertyCb> m_prop0Callbacks;
-    // Mutex for m_prop0Callbacks
-    mutable std::shared_timed_mutex m_prop0CallbacksMutex;
-    // Next free unique identifier to subscribe for the Prop1 change.
-    std::atomic<long> m_prop1ChangedCallbackNextId {0};
-    // Subscribed callbacks for the Prop1 change.
-    std::map<long, EnumInterfaceProp1PropertyCb> m_prop1Callbacks;
-    // Mutex for m_prop1Callbacks
-    mutable std::shared_timed_mutex m_prop1CallbacksMutex;
-    // Next free unique identifier to subscribe for the Prop2 change.
-    std::atomic<long> m_prop2ChangedCallbackNextId {0};
-    // Subscribed callbacks for the Prop2 change.
-    std::map<long, EnumInterfaceProp2PropertyCb> m_prop2Callbacks;
-    // Mutex for m_prop2Callbacks
-    mutable std::shared_timed_mutex m_prop2CallbacksMutex;
-    // Next free unique identifier to subscribe for the Prop3 change.
-    std::atomic<long> m_prop3ChangedCallbackNextId {0};
-    // Subscribed callbacks for the Prop3 change.
-    std::map<long, EnumInterfaceProp3PropertyCb> m_prop3Callbacks;
-    // Mutex for m_prop3Callbacks
-    mutable std::shared_timed_mutex m_prop3CallbacksMutex;
-    // Next free unique identifier to subscribe for the Sig0 emission.
-    std::atomic<long> m_sig0SignalCallbackNextId {0};
-    // Subscribed callbacks for the Sig0 emission.
-    std::map<long, EnumInterfaceSig0SignalCb > m_sig0Callbacks;
-    // Mutex for m_sig0SignalCallbackNextId and m_sig0Callbacks
-    mutable std::shared_timed_mutex m_sig0CallbacksMutex;
-    // Next free unique identifier to subscribe for the Sig1 emission.
-    std::atomic<long> m_sig1SignalCallbackNextId {0};
-    // Subscribed callbacks for the Sig1 emission.
-    std::map<long, EnumInterfaceSig1SignalCb > m_sig1Callbacks;
-    // Mutex for m_sig1SignalCallbackNextId and m_sig1Callbacks
-    mutable std::shared_timed_mutex m_sig1CallbacksMutex;
-    // Next free unique identifier to subscribe for the Sig2 emission.
-    std::atomic<long> m_sig2SignalCallbackNextId {0};
-    // Subscribed callbacks for the Sig2 emission.
-    std::map<long, EnumInterfaceSig2SignalCb > m_sig2Callbacks;
-    // Mutex for m_sig2SignalCallbackNextId and m_sig2Callbacks
-    mutable std::shared_timed_mutex m_sig2CallbacksMutex;
-    // Next free unique identifier to subscribe for the Sig3 emission.
-    std::atomic<long> m_sig3SignalCallbackNextId {0};
-    // Subscribed callbacks for the Sig3 emission.
-    std::map<long, EnumInterfaceSig3SignalCb > m_sig3Callbacks;
-    // Mutex for m_sig3SignalCallbackNextId and m_sig3Callbacks
-    mutable std::shared_timed_mutex m_sig3CallbacksMutex;
+    ApiGear::Utilities::SinglePub<Enum0Enum> Prop0Publisher;
+    ApiGear::Utilities::SinglePub<Enum1Enum> Prop1Publisher;
+    ApiGear::Utilities::SinglePub<Enum2Enum> Prop2Publisher;
+    ApiGear::Utilities::SinglePub<Enum3Enum> Prop3Publisher;
+    ApiGear::Utilities::SinglePub<Enum0Enum> Sig0Publisher;
+    ApiGear::Utilities::SinglePub<Enum1Enum> Sig1Publisher;
+    ApiGear::Utilities::SinglePub<Enum2Enum> Sig2Publisher;
+    ApiGear::Utilities::SinglePub<Enum3Enum> Sig3Publisher;
 };
 
 } // namespace TbEnum
