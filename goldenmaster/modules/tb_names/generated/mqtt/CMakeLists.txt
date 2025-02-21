@@ -15,6 +15,7 @@ target_link_libraries(tb_names-mqtt
     tb_names::tb_names-core
     PUBLIC
     apigear::paho-mqtt
+    apigear::utilities
 )
 # ensure maximum compiler support
 if(NOT MSVC)
@@ -37,3 +38,10 @@ install(EXPORT Tb_namesMqttTargets
   DESTINATION ${InstallDir}
   NAMESPACE tb_names::
 )
+
+if(BUILD_TESTING)
+enable_testing()
+if (ENABLE_MQTT_TEST_FOR_NON_LINUX_OS OR ((NOT ${CMAKE_SYSTEM_NAME} MATCHES "Darwin") AND (NOT ${CMAKE_SYSTEM_NAME} MATCHES "Windows")))
+add_subdirectory(tests)
+endif()
+endif()

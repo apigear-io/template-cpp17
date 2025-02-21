@@ -11,21 +11,14 @@ namespace {
 }
 
 NoPropertiesInterfaceClient::NoPropertiesInterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> client)
-    : m_isReady(false)
+    : MqttBaseAdapter(client, createTopicMap(client->getClientId()))
     , m_client(client)
     , m_publisher(std::make_unique<NoPropertiesInterfacePublisher>())
-    , m_topics(createTopicMap(m_client->getClientId()))
 {
-    m_connectionStatusRegistrationID = m_client->subscribeToConnectionStatus([this](bool connectionStatus){ onConnectionStatusChanged(connectionStatus); });
 }
 
 NoPropertiesInterfaceClient::~NoPropertiesInterfaceClient()
 {
-    for (const auto& topic: m_topics)
-    {
-        m_client->unsubscribeTopic(topic. first);
-    }
-    m_client->unsubscribeToConnectionStatus(m_connectionStatusRegistrationID);
 }
 
 std::map<std::string, ApiGear::MQTT::CallbackFunction> NoPropertiesInterfaceClient::createTopicMap(const std::string& clientId)
@@ -37,20 +30,6 @@ std::map<std::string, ApiGear::MQTT::CallbackFunction> NoPropertiesInterfaceClie
         { std::string("tb.simple/NoPropertiesInterface/rpc/funcBool/"+clientId+"/result"), [this](const std::string& args, const std::string&, const std::string& correlationData){ this->onInvokeReply(args, correlationData); } },
     };
 };
-
-void NoPropertiesInterfaceClient::onConnectionStatusChanged(bool connectionStatus)
-{
-    m_isReady = connectionStatus;
-    if(!connectionStatus)
-    {
-        return;
-    }
-
-    for (const auto& topic: m_topics)
-    {
-        m_client->subscribeTopic(topic. first, topic.second);
-    }
-}
 
 void NoPropertiesInterfaceClient::funcVoid()
 {
@@ -70,16 +49,13 @@ std::future<void> NoPropertiesInterfaceClient::funcVoidAsync( std::function<void
             std::promise<void> resultPromise;
             static const auto topic = std::string("tb.simple/NoPropertiesInterface/rpc/funcVoid");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                (void) arg;
-                resultPromise.set_value();
-                if (callback)
-                {
-                    callback();
-                }
-            };
-            auto responseId = registerResponseHandler(responseHandler);
+            auto responseId = 0; //Not used, the service won't respond, no handler is added for response.
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({}).dump(), responseId);
+            resultPromise.set_value();
+            if (callback)
+            {
+                callback();
+            }
             return resultPromise.get_future().get();
         }
     );

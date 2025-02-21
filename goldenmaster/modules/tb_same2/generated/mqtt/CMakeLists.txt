@@ -21,6 +21,7 @@ target_link_libraries(tb_same2-mqtt
     tb_same2::tb_same2-core
     PUBLIC
     apigear::paho-mqtt
+    apigear::utilities
 )
 # ensure maximum compiler support
 if(NOT MSVC)
@@ -43,3 +44,10 @@ install(EXPORT Tb_same2MqttTargets
   DESTINATION ${InstallDir}
   NAMESPACE tb_same2::
 )
+
+if(BUILD_TESTING)
+enable_testing()
+if (ENABLE_MQTT_TEST_FOR_NON_LINUX_OS OR ((NOT ${CMAKE_SYSTEM_NAME} MATCHES "Darwin") AND (NOT ${CMAKE_SYSTEM_NAME} MATCHES "Windows")))
+add_subdirectory(tests)
+endif()
+endif()

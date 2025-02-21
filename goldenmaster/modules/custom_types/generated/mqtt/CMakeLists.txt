@@ -13,6 +13,7 @@ target_link_libraries(custom_types-mqtt
     custom_types::custom_types-core
     PUBLIC
     apigear::paho-mqtt
+    apigear::utilities
 )
 # ensure maximum compiler support
 if(NOT MSVC)
@@ -35,3 +36,10 @@ install(EXPORT Custom_typesMqttTargets
   DESTINATION ${InstallDir}
   NAMESPACE custom_types::
 )
+
+if(BUILD_TESTING)
+enable_testing()
+if (ENABLE_MQTT_TEST_FOR_NON_LINUX_OS OR ((NOT ${CMAKE_SYSTEM_NAME} MATCHES "Darwin") AND (NOT ${CMAKE_SYSTEM_NAME} MATCHES "Windows")))
+add_subdirectory(tests)
+endif()
+endif()

@@ -27,6 +27,7 @@ target_link_libraries(tb_simple-mqtt
     tb_simple::tb_simple-core
     PUBLIC
     apigear::paho-mqtt
+    apigear::utilities
 )
 # ensure maximum compiler support
 if(NOT MSVC)
@@ -49,3 +50,10 @@ install(EXPORT Tb_simpleMqttTargets
   DESTINATION ${InstallDir}
   NAMESPACE tb_simple::
 )
+
+if(BUILD_TESTING)
+enable_testing()
+if (ENABLE_MQTT_TEST_FOR_NON_LINUX_OS OR ((NOT ${CMAKE_SYSTEM_NAME} MATCHES "Darwin") AND (NOT ${CMAKE_SYSTEM_NAME} MATCHES "Windows")))
+add_subdirectory(tests)
+endif()
+endif()
