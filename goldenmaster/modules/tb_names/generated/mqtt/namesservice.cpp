@@ -6,25 +6,20 @@ using namespace Test::TbNames;
 using namespace Test::TbNames::MQTT;
 
 Nam_EsService::Nam_EsService(std::shared_ptr<INamEs> impl, std::shared_ptr<ApiGear::MQTT::Service> service)
-    : m_impl(impl)
+    : MqttBaseAdapter(service, createTopicMap())
+    , m_impl(impl)
     , m_service(service)
-    , m_topics(createTopicMap())
 {
     m_impl->_getPublisher().subscribeToAllChanges(*this);
 
-    m_connectionStatusRegistrationID = m_service->subscribeToConnectionStatus([this](bool connectionStatus){ onConnectionStatusChanged(connectionStatus); });
+    m_connectionStatusId = m_service->subscribeToConnectionStatus([this](bool connectionStatus){ onConnectionStatusChanged(connectionStatus); });
 }
 
 Nam_EsService::~Nam_EsService()
 {
     m_impl->_getPublisher().unsubscribeFromAllChanges(*this);
 
-    m_service->unsubscribeToConnectionStatus(m_connectionStatusRegistrationID);
-
-    for (const auto& topic: m_topics)
-    {
-        m_service->unsubscribeTopic(topic. first);
-    }
+    m_service->unsubscribeToConnectionStatus(m_connectionStatusId);
 }
 
 std::map<std::string, ApiGear::MQTT::CallbackFunction> Nam_EsService::createTopicMap()
@@ -45,12 +40,6 @@ void Nam_EsService::onConnectionStatusChanged(bool connectionStatus)
     {
         return;
     }
-
-    for (const auto& topic: m_topics)
-    {
-        m_service->subscribeTopic(topic. first, topic.second);
-    }
-
     // send current values
     onSwitchChanged(m_impl->getSwitch());
     onSomePropertyChanged(m_impl->getSomeProperty());

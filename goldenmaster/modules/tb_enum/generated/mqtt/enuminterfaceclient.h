@@ -5,11 +5,12 @@
 #include "tb_enum/generated/api/tb_enum.h"
 #include "tb_enum/generated/core/enuminterface.data.h"
 #include "apigear/mqtt/mqttclient.h"
+#include "apigear/mqtt/mqttbaseadapter.h"
 
 namespace Test {
 namespace TbEnum {
 namespace MQTT {
-class TEST_TB_ENUM_EXPORT EnumInterfaceClient : public IEnumInterface
+class TEST_TB_ENUM_EXPORT EnumInterfaceClient : public IEnumInterface, public ApiGear::MQTT::MqttBaseAdapter
 {
 public:
     explicit EnumInterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> client);
@@ -83,11 +84,6 @@ private:
     int registerResponseHandler(ApiGear::MQTT::InvokeReplyFunc handler);
     std::mutex m_responseHandlerMutex;
     std::map<int, ApiGear::MQTT::InvokeReplyFunc> m_responseHandlerMap;
-
-    /// @brief has all the topics of this client and the corresponding function callbacks
-    const std::map<std::string, ApiGear::MQTT::CallbackFunction> m_topics;
-    // id for connection status registration
-    int m_connectionStatusRegistrationID;
 };
 } // namespace MQTT
 } // namespace TbEnum

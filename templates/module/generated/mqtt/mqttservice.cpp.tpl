@@ -14,25 +14,20 @@ using namespace {{ Camel .System.Name }}::{{ Camel .Module.Name }};
 using namespace {{ Camel .System.Name }}::{{ Camel .Module.Name }}::MQTT;
 
 {{$class}}::{{$class}}(std::shared_ptr<{{$interfaceClass}}> impl, std::shared_ptr<ApiGear::MQTT::Service> service)
-    : m_impl(impl)
+    : MqttBaseAdapter(service, createTopicMap())
+    , m_impl(impl)
     , m_service(service)
-    , m_topics(createTopicMap())
 {
     m_impl->_getPublisher().subscribeToAllChanges(*this);
 
-    m_connectionStatusRegistrationID = m_service->subscribeToConnectionStatus([this](bool connectionStatus){ onConnectionStatusChanged(connectionStatus); });
+    m_connectionStatusId = m_service->subscribeToConnectionStatus([this](bool connectionStatus){ onConnectionStatusChanged(connectionStatus); });
 }
 
 {{$class}}::~{{$class}}()
 {
     m_impl->_getPublisher().unsubscribeFromAllChanges(*this);
 
-    m_service->unsubscribeToConnectionStatus(m_connectionStatusRegistrationID);
-
-    for (const auto& topic: m_topics)
-    {
-        m_service->unsubscribeTopic(topic. first);
-    }
+    m_service->unsubscribeToConnectionStatus(m_connectionStatusId);
 }
 
 std::map<std::string, ApiGear::MQTT::CallbackFunction> {{$class}}::createTopicMap()
@@ -57,12 +52,6 @@ void {{$class}}::onConnectionStatusChanged(bool connectionStatus)
     {
         return;
     }
-
-    for (const auto& topic: m_topics)
-    {
-        m_service->subscribeTopic(topic. first, topic.second);
-    }
-
     // send current values
 {{- range .Interface.Properties}}
 {{- $property := . }}

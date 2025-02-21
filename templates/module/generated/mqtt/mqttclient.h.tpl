@@ -12,11 +12,12 @@
 #include "{{snake .Module.Name}}/generated/api/{{snake .Module.Name}}.h"
 #include "{{snake .Module.Name}}/generated/core/{{lower $interfaceName}}.data.h"
 #include "apigear/mqtt/mqttclient.h"
+#include "apigear/mqtt/mqttbaseadapter.h"
 
 namespace {{ Camel .System.Name }} {
 namespace {{ Camel .Module.Name }} {
 namespace MQTT {
-class {{ SNAKE .System.Name  }}_{{ SNAKE .Module.Name  }}_EXPORT {{$class}} : public {{$interfaceClass}}
+class {{ SNAKE .System.Name  }}_{{ SNAKE .Module.Name  }}_EXPORT {{$class}} : public {{$interfaceClass}}, public ApiGear::MQTT::MqttBaseAdapter
 {
 public:
     explicit {{$class}}(std::shared_ptr<ApiGear::MQTT::Client> client);
@@ -83,11 +84,6 @@ private:
     int registerResponseHandler(ApiGear::MQTT::InvokeReplyFunc handler);
     std::mutex m_responseHandlerMutex;
     std::map<int, ApiGear::MQTT::InvokeReplyFunc> m_responseHandlerMap;
-
-    /// @brief has all the topics of this client and the corresponding function callbacks
-    const std::map<std::string, ApiGear::MQTT::CallbackFunction> m_topics;
-    // id for connection status registration
-    int m_connectionStatusRegistrationID;
 };
 } // namespace MQTT
 } // namespace {{ Camel .Module.Name }}

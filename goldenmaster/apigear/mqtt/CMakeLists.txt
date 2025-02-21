@@ -17,6 +17,8 @@ find_package(OpenSSL REQUIRED)
 
 set (SOURCES
   private/mqttcwrapper.cpp
+  mqttbaseclient.cpp
+  mqttbaseadapter.cpp
   mqttclient.cpp
   mqttservice.cpp
 )

@@ -5,11 +5,12 @@
 #include "testbed1/generated/api/testbed1.h"
 #include "testbed1/generated/core/structinterface.data.h"
 #include "apigear/mqtt/mqttclient.h"
+#include "apigear/mqtt/mqttbaseadapter.h"
 
 namespace Test {
 namespace Testbed1 {
 namespace MQTT {
-class TEST_TESTBED1_EXPORT StructInterfaceClient : public IStructInterface
+class TEST_TESTBED1_EXPORT StructInterfaceClient : public IStructInterface, public ApiGear::MQTT::MqttBaseAdapter
 {
 public:
     explicit StructInterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> client);
@@ -83,11 +84,6 @@ private:
     int registerResponseHandler(ApiGear::MQTT::InvokeReplyFunc handler);
     std::mutex m_responseHandlerMutex;
     std::map<int, ApiGear::MQTT::InvokeReplyFunc> m_responseHandlerMap;
-
-    /// @brief has all the topics of this client and the corresponding function callbacks
-    const std::map<std::string, ApiGear::MQTT::CallbackFunction> m_topics;
-    // id for connection status registration
-    int m_connectionStatusRegistrationID;
 };
 } // namespace MQTT
 } // namespace Testbed1

@@ -155,6 +155,11 @@ features:
       documents:
         - source: "module/generated/mqtt/CMakeLists.txt.tpl"
           target: "modules/{{snake .Module.Name}}/generated/mqtt/CMakeLists.txt"
+        - source: "module/generated/mqtt/tests/CMakeLists.txt.tpl"
+          target: "modules/{{snake .Module.Name}}/generated/mqtt/tests/CMakeLists.txt"
+        - source: "module/generated/mqtt/tests/test_main.cpp"
+          target: "modules/{{snake .Module.Name}}/generated/mqtt/tests/test_main.cpp"
+          raw: true
     - match: interface
       prefix: "modules/{{snake .Module.Name}}/generated/mqtt/"
       documents:
@@ -166,6 +171,8 @@ features:
           target: "{{lower (camel .Interface.Name)}}client.h"
         - source: "module/generated/mqtt/mqttclient.cpp.tpl"
           target: "{{lower (camel .Interface.Name)}}client.cpp"
+        - source: "module/generated/mqtt/tests/interface_test.cpp.tpl"
+          target: "tests/test_{{lower (camel .Interface.Name)}}.cpp"
   - name: nats
     requires:
       - api
@@ -343,6 +350,14 @@ features:
         - source: "apigear/mqtt/mqttservice.h"
           raw: true
         - source: "apigear/mqtt/mqttcommon.h"
+          raw: true
+        - source: "apigear/mqtt/mqttbaseclient.cpp"
+          raw: true
+        - source: "apigear/mqtt/mqttbaseclient.h"
+          raw: true
+        - source: "apigear/mqtt/mqttbaseadapter.cpp"
+          raw: true
+        - source: "apigear/mqtt/mqttbaseadapter.h"
           raw: true
   - name: examples
     requires:

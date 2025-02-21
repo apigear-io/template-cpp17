@@ -4,35 +4,12 @@
 using namespace ApiGear::MQTT;
 
 Service::Service(const std::string& clientID)
+    :MqttBaseClient(clientID),
+    m_cwrapper(getCwrapper())
 {
-    m_cwrapper = CWrapper::create(clientID);
 }
 
 Service::~Service() = default;
-
-const std::string& Service::getClientId() const
-{
-    return m_cwrapper->getClientId();
-}
-
-int Service::subscribeToConnectionStatus(OnConnectionStatusChangedCallBackFunction callBack)
-{
-    return m_cwrapper->subscribeToConnectionStatus(callBack);
-}
-
-void Service::unsubscribeToConnectionStatus(int subscriptionID)
-{
-    return m_cwrapper->unsubscribeToConnectionStatus(subscriptionID);
-}
-
-void Service::connectToHost(const std::string& brokerURL)
-{
-    m_cwrapper->connectToHost(brokerURL);
-}
-
-void Service::disconnect() {
-    m_cwrapper->disconnect();
-}
 
 void Service::notifyPropertyChange(const std::string& topic, const std::string& value)
 {
@@ -47,14 +24,4 @@ void Service::notifySignal(const std::string& topic, const std::string& args)
 void Service::notifyInvokeResponse(const std::string& responseTopic, const std::string& value, const std::string& correlationData)
 {
     m_cwrapper->notifyInvokeResponse(responseTopic, value, correlationData);
-}
-
-void Service::subscribeTopic(const std::string& topic, CallbackFunction func)
-{
-    m_cwrapper->subscribeTopic(topic, func);
-}
-
-void Service::unsubscribeTopic(const std::string& topic)
-{
-    m_cwrapper->unsubscribeTopic(topic);
 }
