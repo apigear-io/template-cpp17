@@ -21,6 +21,7 @@ target_link_libraries(tb_same1-mqtt
     tb_same1::tb_same1-core
     PUBLIC
     apigear::paho-mqtt
+    apigear::utilities
 )
 # ensure maximum compiler support
 if(NOT MSVC)

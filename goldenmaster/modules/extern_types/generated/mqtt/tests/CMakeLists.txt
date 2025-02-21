@@ -26,7 +26,6 @@ add_executable(test_extern_types_generated_mqtt ${TEST_EXTERN_TYPES_GENERATED_MQ
 add_test(NAME test_extern_types_generated_mqtt COMMAND $<TARGET_FILE:test_extern_types_generated_mqtt>)
 
 target_link_libraries(test_extern_types_generated_mqtt PRIVATE
-    paho-mqtt
     extern_types-implementation
     extern_types-core
     extern_types-mqtt

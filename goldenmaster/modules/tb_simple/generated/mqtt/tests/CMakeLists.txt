@@ -33,7 +33,6 @@ add_executable(test_tb_simple_generated_mqtt ${TEST_TB_SIMPLE_GENERATED_MQTT_SOU
 add_test(NAME test_tb_simple_generated_mqtt COMMAND $<TARGET_FILE:test_tb_simple_generated_mqtt>)
 
 target_link_libraries(test_tb_simple_generated_mqtt PRIVATE
-    paho-mqtt
     tb_simple-implementation
     tb_simple-core
     tb_simple-mqtt

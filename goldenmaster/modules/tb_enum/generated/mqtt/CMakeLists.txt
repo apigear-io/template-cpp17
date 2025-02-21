@@ -15,6 +15,7 @@ target_link_libraries(tb_enum-mqtt
     tb_enum::tb_enum-core
     PUBLIC
     apigear::paho-mqtt
+    apigear::utilities
 )
 # ensure maximum compiler support
 if(NOT MSVC)

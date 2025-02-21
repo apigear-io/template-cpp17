@@ -28,6 +28,7 @@ target_link_libraries({{$module_id}}-mqtt
 {{- end }}
     PUBLIC
     apigear::paho-mqtt
+    apigear::utilities
 )
 # ensure maximum compiler support
 if(NOT MSVC)
