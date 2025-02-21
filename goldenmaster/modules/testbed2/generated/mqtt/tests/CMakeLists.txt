@@ -30,7 +30,6 @@ add_executable(test_testbed2_generated_mqtt ${TEST_TESTBED2_GENERATED_MQTT_SOURC
 add_test(NAME test_testbed2_generated_mqtt COMMAND $<TARGET_FILE:test_testbed2_generated_mqtt>)
 
 target_link_libraries(test_testbed2_generated_mqtt PRIVATE
-    paho-mqtt
     testbed2-implementation
     testbed2-core
     testbed2-mqtt

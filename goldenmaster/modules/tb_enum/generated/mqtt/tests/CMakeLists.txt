@@ -27,7 +27,6 @@ add_executable(test_tb_enum_generated_mqtt ${TEST_TB_ENUM_GENERATED_MQTT_SOURCES
 add_test(NAME test_tb_enum_generated_mqtt COMMAND $<TARGET_FILE:test_tb_enum_generated_mqtt>)
 
 target_link_libraries(test_tb_enum_generated_mqtt PRIVATE
-    paho-mqtt
     tb_enum-implementation
     tb_enum-core
     tb_enum-mqtt

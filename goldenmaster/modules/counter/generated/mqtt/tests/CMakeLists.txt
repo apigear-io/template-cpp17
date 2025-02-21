@@ -27,7 +27,6 @@ add_executable(test_counter_generated_mqtt ${TEST_COUNTER_GENERATED_MQTT_SOURCES
 add_test(NAME test_counter_generated_mqtt COMMAND $<TARGET_FILE:test_counter_generated_mqtt>)
 
 target_link_libraries(test_counter_generated_mqtt PRIVATE
-    paho-mqtt
     counter-implementation
     counter-core
     counter-mqtt

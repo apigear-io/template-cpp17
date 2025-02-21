@@ -26,7 +26,6 @@ add_executable(test_custom_types_generated_mqtt ${TEST_CUSTOM_TYPES_GENERATED_MQ
 add_test(NAME test_custom_types_generated_mqtt COMMAND $<TARGET_FILE:test_custom_types_generated_mqtt>)
 
 target_link_libraries(test_custom_types_generated_mqtt PRIVATE
-    paho-mqtt
     custom_types-implementation
     custom_types-core
     custom_types-mqtt
