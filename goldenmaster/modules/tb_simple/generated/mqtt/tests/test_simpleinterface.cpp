@@ -28,6 +28,7 @@ using namespace Test::TbSimple;
 
 TEST_CASE("mqtt  tb.simple SimpleInterface tests")
 {
+    std::cout<<"starting set up connection" << std::endl;
     auto mqttservice = std::make_shared<ApiGear::MQTT::Service>("SimpleInterfacetestServer");
     auto mqttclient = std::make_shared<ApiGear::MQTT::Client>("SimpleInterfacetestClient");
 
@@ -61,6 +62,7 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
     m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_serviceConnected]() { return is_serviceConnected == true; });
     lock.unlock();
     REQUIRE(is_serviceConnected);
+    std::cout<<"service connected" << std::endl;
  
     std::atomic<bool> is_clientConnected{ false };
     clientSimpleInterface->_subscribeForIsReady([&is_clientConnected, &m_wait](auto connected)
@@ -76,6 +78,8 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
     m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_clientConnected]() {return is_clientConnected  == true; });
     lock.unlock();
     REQUIRE(is_clientConnected);
+    std::cout<<"client connected" << std::endl;
+  std::cout<<"all set up" << std::endl;
     SECTION("Test setting propBool")
     {
         std::cout<<"SimpleInterface Test setting propBool" << std::endl;
@@ -645,7 +649,7 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == std::string()); 
     }
-
+    std::cout<<"start teardown" << std::endl;
     std::atomic<bool> serviceDisconnected{ false };
     mqttservice->subscribeToConnectionStatus([&serviceDisconnected, &m_wait](auto boo) {
         if (!boo)
@@ -657,13 +661,13 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
         });
 
     mqttservice->disconnect();
-
+    std::cout<<"requested service disconnected" << std::endl;
     lock.lock();
     m_wait.wait_for(lock, std::chrono::milliseconds(timeout),
         [&serviceDisconnected]() { return serviceDisconnected == true; });
     lock.unlock();
     REQUIRE(serviceDisconnected);
-
+    std::cout<<"service disconnected" << std::endl;
     std::atomic<bool> clientDisonnected{ false };
     mqttclient->subscribeToConnectionStatus([&clientDisonnected, &m_wait](auto boo) {
         if (!boo)
@@ -674,15 +678,17 @@ TEST_CASE("mqtt  tb.simple SimpleInterface tests")
         });
 
     mqttclient->disconnect();
-
+    std::cout<<"requested client disconnected" << std::endl;
     lock.lock();
     m_wait.wait_for(lock, std::chrono::milliseconds(timeout),
         [&clientDisonnected]() { return clientDisonnected == true; });
     lock.unlock();
     REQUIRE(clientDisonnected);
+    std::cout<<"client disconnected" << std::endl;
 
     mqttservice.reset();
     mqttclient.reset();
     serviceSimpleInterface.reset();
     clientSimpleInterface.reset();
+    std::cout<<"all ptrs reset, should finish test" << std::endl;
 }

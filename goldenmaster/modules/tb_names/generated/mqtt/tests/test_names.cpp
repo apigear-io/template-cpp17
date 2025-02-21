@@ -28,6 +28,7 @@ using namespace Test::TbNames;
 
 TEST_CASE("mqtt  tb.names NamEs tests")
 {
+    std::cout<<"starting set up connection" << std::endl;
     auto mqttservice = std::make_shared<ApiGear::MQTT::Service>("NamEstestServer");
     auto mqttclient = std::make_shared<ApiGear::MQTT::Client>("NamEstestClient");
 
@@ -61,6 +62,7 @@ TEST_CASE("mqtt  tb.names NamEs tests")
     m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_serviceConnected]() { return is_serviceConnected == true; });
     lock.unlock();
     REQUIRE(is_serviceConnected);
+    std::cout<<"service connected" << std::endl;
  
     std::atomic<bool> is_clientConnected{ false };
     clientNamEs->_subscribeForIsReady([&is_clientConnected, &m_wait](auto connected)
@@ -76,6 +78,8 @@ TEST_CASE("mqtt  tb.names NamEs tests")
     m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_clientConnected]() {return is_clientConnected  == true; });
     lock.unlock();
     REQUIRE(is_clientConnected);
+    std::cout<<"client connected" << std::endl;
+  std::cout<<"all set up" << std::endl;
     SECTION("Test setting Switch")
     {
         std::cout<<"Nam_Es Test setting Switch" << std::endl;
@@ -220,7 +224,7 @@ TEST_CASE("mqtt  tb.names NamEs tests")
     {
         auto resultFuture = clientNamEs->some_Function2Async(false,[](){/* you can add a callback, but it will be called right after sending the request. It does not wait for the actual function on server side to be finished. */ });
     }
-
+    std::cout<<"start teardown" << std::endl;
     std::atomic<bool> serviceDisconnected{ false };
     mqttservice->subscribeToConnectionStatus([&serviceDisconnected, &m_wait](auto boo) {
         if (!boo)
@@ -232,13 +236,13 @@ TEST_CASE("mqtt  tb.names NamEs tests")
         });
 
     mqttservice->disconnect();
-
+    std::cout<<"requested service disconnected" << std::endl;
     lock.lock();
     m_wait.wait_for(lock, std::chrono::milliseconds(timeout),
         [&serviceDisconnected]() { return serviceDisconnected == true; });
     lock.unlock();
     REQUIRE(serviceDisconnected);
-
+    std::cout<<"service disconnected" << std::endl;
     std::atomic<bool> clientDisonnected{ false };
     mqttclient->subscribeToConnectionStatus([&clientDisonnected, &m_wait](auto boo) {
         if (!boo)
@@ -249,15 +253,17 @@ TEST_CASE("mqtt  tb.names NamEs tests")
         });
 
     mqttclient->disconnect();
-
+    std::cout<<"requested client disconnected" << std::endl;
     lock.lock();
     m_wait.wait_for(lock, std::chrono::milliseconds(timeout),
         [&clientDisonnected]() { return clientDisonnected == true; });
     lock.unlock();
     REQUIRE(clientDisonnected);
+    std::cout<<"client disconnected" << std::endl;
 
     mqttservice.reset();
     mqttclient.reset();
     serviceNamEs.reset();
     clientNamEs.reset();
+    std::cout<<"all ptrs reset, should finish test" << std::endl;
 }

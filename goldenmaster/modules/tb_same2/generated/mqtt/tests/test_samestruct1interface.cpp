@@ -28,6 +28,7 @@ using namespace Test::TbSame2;
 
 TEST_CASE("mqtt  tb.same2 SameStruct1Interface tests")
 {
+    std::cout<<"starting set up connection" << std::endl;
     auto mqttservice = std::make_shared<ApiGear::MQTT::Service>("SameStruct1InterfacetestServer");
     auto mqttclient = std::make_shared<ApiGear::MQTT::Client>("SameStruct1InterfacetestClient");
 
@@ -61,6 +62,7 @@ TEST_CASE("mqtt  tb.same2 SameStruct1Interface tests")
     m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_serviceConnected]() { return is_serviceConnected == true; });
     lock.unlock();
     REQUIRE(is_serviceConnected);
+    std::cout<<"service connected" << std::endl;
  
     std::atomic<bool> is_clientConnected{ false };
     clientSameStruct1Interface->_subscribeForIsReady([&is_clientConnected, &m_wait](auto connected)
@@ -76,6 +78,8 @@ TEST_CASE("mqtt  tb.same2 SameStruct1Interface tests")
     m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_clientConnected]() {return is_clientConnected  == true; });
     lock.unlock();
     REQUIRE(is_clientConnected);
+    std::cout<<"client connected" << std::endl;
+  std::cout<<"all set up" << std::endl;
     SECTION("Test setting prop1")
     {
         std::cout<<"SameStruct1Interface Test setting prop1" << std::endl;
@@ -148,7 +152,7 @@ TEST_CASE("mqtt  tb.same2 SameStruct1Interface tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == TbSame2::Struct1()); 
     }
-
+    std::cout<<"start teardown" << std::endl;
     std::atomic<bool> serviceDisconnected{ false };
     mqttservice->subscribeToConnectionStatus([&serviceDisconnected, &m_wait](auto boo) {
         if (!boo)
@@ -160,13 +164,13 @@ TEST_CASE("mqtt  tb.same2 SameStruct1Interface tests")
         });
 
     mqttservice->disconnect();
-
+    std::cout<<"requested service disconnected" << std::endl;
     lock.lock();
     m_wait.wait_for(lock, std::chrono::milliseconds(timeout),
         [&serviceDisconnected]() { return serviceDisconnected == true; });
     lock.unlock();
     REQUIRE(serviceDisconnected);
-
+    std::cout<<"service disconnected" << std::endl;
     std::atomic<bool> clientDisonnected{ false };
     mqttclient->subscribeToConnectionStatus([&clientDisonnected, &m_wait](auto boo) {
         if (!boo)
@@ -177,15 +181,17 @@ TEST_CASE("mqtt  tb.same2 SameStruct1Interface tests")
         });
 
     mqttclient->disconnect();
-
+    std::cout<<"requested client disconnected" << std::endl;
     lock.lock();
     m_wait.wait_for(lock, std::chrono::milliseconds(timeout),
         [&clientDisonnected]() { return clientDisonnected == true; });
     lock.unlock();
     REQUIRE(clientDisonnected);
+    std::cout<<"client disconnected" << std::endl;
 
     mqttservice.reset();
     mqttclient.reset();
     serviceSameStruct1Interface.reset();
     clientSameStruct1Interface.reset();
+    std::cout<<"all ptrs reset, should finish test" << std::endl;
 }

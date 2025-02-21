@@ -30,6 +30,7 @@ using namespace Test::Counter;
 
 TEST_CASE("mqtt  counter Counter tests")
 {
+    std::cout<<"starting set up connection" << std::endl;
     auto mqttservice = std::make_shared<ApiGear::MQTT::Service>("CountertestServer");
     auto mqttclient = std::make_shared<ApiGear::MQTT::Client>("CountertestClient");
 
@@ -63,6 +64,7 @@ TEST_CASE("mqtt  counter Counter tests")
     m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_serviceConnected]() { return is_serviceConnected == true; });
     lock.unlock();
     REQUIRE(is_serviceConnected);
+    std::cout<<"service connected" << std::endl;
  
     std::atomic<bool> is_clientConnected{ false };
     clientCounter->_subscribeForIsReady([&is_clientConnected, &m_wait](auto connected)
@@ -78,6 +80,8 @@ TEST_CASE("mqtt  counter Counter tests")
     m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_clientConnected]() {return is_clientConnected  == true; });
     lock.unlock();
     REQUIRE(is_clientConnected);
+    std::cout<<"client connected" << std::endl;
+  std::cout<<"all set up" << std::endl;
     SECTION("Test setting vector")
     {
         std::cout<<"Counter Test setting vector" << std::endl;
@@ -272,7 +276,7 @@ TEST_CASE("mqtt  counter Counter tests")
         auto return_value = resultFuture.get();
         REQUIRE(return_value == std::list<Test::CustomTypes::Vector3D>()); 
     }
-
+    std::cout<<"start teardown" << std::endl;
     std::atomic<bool> serviceDisconnected{ false };
     mqttservice->subscribeToConnectionStatus([&serviceDisconnected, &m_wait](auto boo) {
         if (!boo)
@@ -284,13 +288,13 @@ TEST_CASE("mqtt  counter Counter tests")
         });
 
     mqttservice->disconnect();
-
+    std::cout<<"requested service disconnected" << std::endl;
     lock.lock();
     m_wait.wait_for(lock, std::chrono::milliseconds(timeout),
         [&serviceDisconnected]() { return serviceDisconnected == true; });
     lock.unlock();
     REQUIRE(serviceDisconnected);
-
+    std::cout<<"service disconnected" << std::endl;
     std::atomic<bool> clientDisonnected{ false };
     mqttclient->subscribeToConnectionStatus([&clientDisonnected, &m_wait](auto boo) {
         if (!boo)
@@ -301,15 +305,17 @@ TEST_CASE("mqtt  counter Counter tests")
         });
 
     mqttclient->disconnect();
-
+    std::cout<<"requested client disconnected" << std::endl;
     lock.lock();
     m_wait.wait_for(lock, std::chrono::milliseconds(timeout),
         [&clientDisonnected]() { return clientDisonnected == true; });
     lock.unlock();
     REQUIRE(clientDisonnected);
+    std::cout<<"client disconnected" << std::endl;
 
     mqttservice.reset();
     mqttclient.reset();
     serviceCounter.reset();
     clientCounter.reset();
+    std::cout<<"all ptrs reset, should finish test" << std::endl;
 }
