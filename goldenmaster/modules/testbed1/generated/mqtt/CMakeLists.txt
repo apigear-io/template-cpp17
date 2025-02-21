@@ -17,6 +17,7 @@ target_link_libraries(testbed1-mqtt
     testbed1::testbed1-core
     PUBLIC
     apigear::paho-mqtt
+    apigear::utilities
 )
 # ensure maximum compiler support
 if(NOT MSVC)

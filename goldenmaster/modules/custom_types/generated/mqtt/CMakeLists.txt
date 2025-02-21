@@ -13,6 +13,7 @@ target_link_libraries(custom_types-mqtt
     custom_types::custom_types-core
     PUBLIC
     apigear::paho-mqtt
+    apigear::utilities
 )
 # ensure maximum compiler support
 if(NOT MSVC)

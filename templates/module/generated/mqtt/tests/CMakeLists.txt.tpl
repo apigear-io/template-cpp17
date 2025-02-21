@@ -30,7 +30,6 @@ add_executable(test_{{$module_id}}_generated_mqtt ${TEST_{{$MODULE_ID}}_GENERATE
 add_test(NAME test_{{$module_id}}_generated_mqtt COMMAND $<TARGET_FILE:test_{{$module_id}}_generated_mqtt>)
 
 target_link_libraries(test_{{$module_id}}_generated_mqtt PRIVATE
-    paho-mqtt
     {{$module_id}}-implementation
     {{$module_id}}-core
     {{$module_id}}-mqtt

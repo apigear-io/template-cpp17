@@ -27,7 +27,6 @@ add_executable(test_tb_names_generated_mqtt ${TEST_TB_NAMES_GENERATED_MQTT_SOURC
 add_test(NAME test_tb_names_generated_mqtt COMMAND $<TARGET_FILE:test_tb_names_generated_mqtt>)
 
 target_link_libraries(test_tb_names_generated_mqtt PRIVATE
-    paho-mqtt
     tb_names-implementation
     tb_names-core
     tb_names-mqtt
