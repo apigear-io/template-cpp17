@@ -10,14 +10,14 @@ echo source root is in $source_root
 # build cmake module
 buildCMakeModule()
 {
-    cmake -B"$2/build_cmake/$1" -DCMAKE_PREFIX_PATH="$2/tmp/" -DCMAKE_CXX_FLAGS="-L/$2/tmp/lib" -DCMAKE_BUILD_RPATH="$2/tmp/lib" -DCMAKE_BUILD_WITH_INSTALL_RPATH=FALSE -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE -DCMAKE_INSTALL_PREFIX="$2/tmp" "-DCMAKE_INSTALL_RPATH=$2/tmp/lib" -DBUILD_TESTING=ON $3 -S"$2/$1" && cmake --build "$2/build_cmake/$1" && cmake --build "$2/build_cmake/$1" --target test && cmake --build "$2/build_cmake/$1" --target install
+    cmake -B"$2/build_cmake/$1" -DCMAKE_CTEST_ARGUMENTS="--output-on-failure" -DCMAKE_PREFIX_PATH="$2/tmp/" -DCMAKE_CXX_FLAGS="-L/$2/tmp/lib" -DCMAKE_BUILD_RPATH="$2/tmp/lib" -DCMAKE_BUILD_WITH_INSTALL_RPATH=FALSE -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE -DCMAKE_INSTALL_PREFIX="$2/tmp" "-DCMAKE_INSTALL_RPATH=$2/tmp/lib" -DBUILD_TESTING=ON $3 -S"$2/$1" && cmake --build "$2/build_cmake/$1" && cmake --build "$2/build_cmake/$1" --target test && cmake --build "$2/build_cmake/$1" --target install
     buildresult=$?
 }
 
 # build cmake binary
 buildCMakeBinary()
 {
-    cmake -B"$2/build_cmake/$1" -DCMAKE_PREFIX_PATH="$2/tmp/" -DCMAKE_CXX_FLAGS="-L/$2/tmp/lib" -DCMAKE_BUILD_RPATH="$2/tmp/lib" -DCMAKE_BUILD_WITH_INSTALL_RPATH=FALSE -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE -DCMAKE_INSTALL_PREFIX="$2/tmp"  "-DCMAKE_INSTALL_RPATH=$2/tmp/lib" $3 -S"$2/$1" && cmake --build "$2/build_cmake/$1" && cmake --build "$2/build_cmake/$1" --target install
+    cmake -B"$2/build_cmake/$1" -DCMAKE_CTEST_ARGUMENTS="--output-on-failure" -DCMAKE_PREFIX_PATH="$2/tmp/" -DCMAKE_CXX_FLAGS="-L/$2/tmp/lib" -DCMAKE_BUILD_RPATH="$2/tmp/lib" -DCMAKE_BUILD_WITH_INSTALL_RPATH=FALSE -DCMAKE_INSTALL_RPATH_USE_LINK_PATH=TRUE -DCMAKE_INSTALL_PREFIX="$2/tmp"  "-DCMAKE_INSTALL_RPATH=$2/tmp/lib" $3 -S"$2/$1" && cmake --build "$2/build_cmake/$1" && cmake --build "$2/build_cmake/$1" --target install
     buildresult=$?
 }
 
