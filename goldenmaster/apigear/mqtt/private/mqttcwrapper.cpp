@@ -338,13 +338,6 @@ void CWrapper::disconnect() {
     disconn_opts.context = new genericContext{getPtr()};
     disconn_opts.timeout = 10;
     MQTTAsync_disconnect(*m_client.get(), &disconn_opts);
-    m_onConnectionStatusChangedCallbacksMutex.lock();
-    auto onConnectionStatusChangedCallbacks(std::move(m_onConnectionStatusChangedCallbacks));
-    m_onConnectionStatusChangedCallbacks.clear();
-    m_onConnectionStatusChangedCallbacksMutex.unlock();
-    for (auto& callback: onConnectionStatusChangedCallbacks){
-        callback.second(false);
-    }
 }
 
 void CWrapper::onConnected()
@@ -391,27 +384,32 @@ void CWrapper::onDisconnected()
         m_synchronizeSubscriptionChanges.notify_one();
         m_mainMQTTThread.join();
     }
+    m_onConnectionStatusChangedCallbacksMutex.lock();
+    auto onConnectionStatusChangedCallbacks(std::move(m_onConnectionStatusChangedCallbacks));
+    m_onConnectionStatusChangedCallbacks.clear();
+    m_onConnectionStatusChangedCallbacksMutex.unlock();
+    for (auto& callback : onConnectionStatusChangedCallbacks) {
+        callback.second(false);
+    }
     std::weak_ptr<CWrapper> weakClient = getPtr();
-    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-    // this function is called from within the MQTTAsync client
-    // therefore the client must be reset in a separate thread afterwards
-    std::thread([this, weakClient, disconnectRequested](){
-        auto client = weakClient.lock();
-        if (!client)
-        {
-            return;
-        }
-        m_client.reset();
+    // reconnect if the connection was not dropped intentionally by us
+    if (!disconnectRequested)
+    {
+        // this function is called from within the MQTTAsync client
+        // therefore the client must be reset in a separate thread afterwards
+        std::thread([this, weakClient]() {
+            auto client = weakClient.lock();
+            if (!client)
+            {
+                return;
+            }
+            m_client.reset();
 
-        // reconnect if the connection was not dropped intentionally by us
-        if(!disconnectRequested)
-        {
             // we need to re-subscribe to all topics on re-connection
             resubscribeAllTopics();
-
             connectToHost(m_serverUrl);
-        }
-    }).detach();
+            }).detach();
+    }
 }
 
 bool CWrapper::isConnected() const
