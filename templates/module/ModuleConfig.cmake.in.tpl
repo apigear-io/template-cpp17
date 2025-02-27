@@ -11,6 +11,7 @@ include(CMakeFindDependencyMacro)
 find_dependency(Threads REQUIRED)
 {{- if $features.core }}
 find_dependency(nlohmann_json REQUIRED)
+find_dependency(apigear COMPONENTS utilities REQUIRED)
 {{- end}}
 {{- if and $features.monitor ( len .Module.Interfaces ) }}
 find_dependency(apigear COMPONENTS poco-tracer REQUIRED)

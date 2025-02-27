@@ -5,6 +5,7 @@ set(CUSTOM_TYPES_VERSION 1.0.0)
 include(CMakeFindDependencyMacro)
 find_dependency(Threads REQUIRED)
 find_dependency(nlohmann_json REQUIRED)
+find_dependency(apigear COMPONENTS utilities REQUIRED)
 
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Custom_typesApiTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Custom_typesCoreTargets.cmake")
