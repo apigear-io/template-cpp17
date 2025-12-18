@@ -8,7 +8,7 @@ import QuickStartCommon from "@site/docs/_quickstart_common.md"
 The Quick-Start guide explains how in a few steps you get from an API definition to a functional c++ example.
 
 Steps one and two are universal for other technologies. In the step two you will choose a concrete _cpp17_ template.
-For more general information about first steps with ApiGear [First Steps](/docs/guide/intro)
+For more general information about first steps with ApiGear [First Steps](/docs/guide/quick-start)
 
 The quick start enables only basic features: the [api](features/api.md) generation and simple [stub](features/stubs.md) implementation.
 For all available features check the [overview](features/features.md).
@@ -56,7 +56,7 @@ Check our "examples" with all features enabled to get more working examples.
 :::
 
 :::note
-For the simulation check [the olink feature](features/olink.md) which provides middle layer on your code side and the [simulation](/docs/advanced/simulation/intro) explained.
+For the simulation check [the olink feature](features/olink.md) which provides middle layer on your code side and the [simulation](/docs/scripting/backends/intro) explained.
 :::
 
 ### Create and run an example
