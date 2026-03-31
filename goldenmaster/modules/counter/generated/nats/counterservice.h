@@ -16,7 +16,7 @@ class TEST_COUNTER_EXPORT CounterService : public ICounterSubscriber, public Api
 protected:
     explicit CounterService(std::shared_ptr<ICounter> impl, std::shared_ptr<ApiGear::Nats::Service> service);
 public:
-    static std::shared_ptr<CounterService> create(std::shared_ptr<ICounter> impl, std::shared_ptr<ApiGear::Nats::Service> service);
+    static std::shared_ptr<CounterService>create(std::shared_ptr<ICounter> impl, std::shared_ptr<ApiGear::Nats::Service> service);
     virtual ~CounterService() override;
     void init();
 

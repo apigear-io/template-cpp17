@@ -16,7 +16,7 @@ class TEST_TB_SIMPLE_EXPORT SimpleInterfaceService : public ISimpleInterfaceSubs
 protected:
     explicit SimpleInterfaceService(std::shared_ptr<ISimpleInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
 public:
-    static std::shared_ptr<SimpleInterfaceService> create(std::shared_ptr<ISimpleInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
+    static std::shared_ptr<SimpleInterfaceService>create(std::shared_ptr<ISimpleInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
     virtual ~SimpleInterfaceService() override;
     void init();
 

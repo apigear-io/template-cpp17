@@ -21,9 +21,6 @@ option(APIGEAR_BUILD_WITH_NATS "Enables the build of the nats backend" OFF)
 option(APIGEAR_FETCH_OLINKCORE "Fetch and build objectlink-core, if not pre-installed" OFF)
 
 if(APIGEAR_FETCH_OLINKCORE)
-if(NOT DEFINED APIGEAR_DEP_OLINK_CORE_VERSION)
-  set(APIGEAR_DEP_OLINK_CORE_VERSION "v0.2.10")
-endif()
 find_package(olink_core QUIET)
 if(NOT olink_core_FOUND)
   # pull olink_core as dependency
@@ -31,7 +28,7 @@ if(NOT olink_core_FOUND)
   include(FetchContent)
   FetchContent_Declare(olink_core
       GIT_REPOSITORY https://github.com/apigear-io/objectlink-core-cpp.git
-      GIT_TAG ${APIGEAR_DEP_OLINK_CORE_VERSION}
+      GIT_TAG v0.2.10
       GIT_SHALLOW TRUE
       EXCLUDE_FROM_ALL FALSE
       OVERRIDE_FIND_PACKAGE

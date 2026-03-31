@@ -16,7 +16,7 @@ class TEST_TB_NAMES_EXPORT Nam_EsService : public INamEsSubscriber, public ApiGe
 protected:
     explicit Nam_EsService(std::shared_ptr<INamEs> impl, std::shared_ptr<ApiGear::Nats::Service> service);
 public:
-    static std::shared_ptr<Nam_EsService> create(std::shared_ptr<INamEs> impl, std::shared_ptr<ApiGear::Nats::Service> service);
+    static std::shared_ptr<Nam_EsService>create(std::shared_ptr<INamEs> impl, std::shared_ptr<ApiGear::Nats::Service> service);
     virtual ~Nam_EsService() override;
     void init();
 

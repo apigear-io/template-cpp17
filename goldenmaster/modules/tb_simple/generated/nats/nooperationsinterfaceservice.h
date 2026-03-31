@@ -16,7 +16,7 @@ class TEST_TB_SIMPLE_EXPORT NoOperationsInterfaceService : public INoOperationsI
 protected:
     explicit NoOperationsInterfaceService(std::shared_ptr<INoOperationsInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
 public:
-    static std::shared_ptr<NoOperationsInterfaceService> create(std::shared_ptr<INoOperationsInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
+    static std::shared_ptr<NoOperationsInterfaceService>create(std::shared_ptr<INoOperationsInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
     virtual ~NoOperationsInterfaceService() override;
     void init();
 

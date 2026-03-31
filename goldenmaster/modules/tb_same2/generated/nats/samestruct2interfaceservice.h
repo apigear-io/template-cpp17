@@ -16,7 +16,7 @@ class TEST_TB_SAME2_EXPORT SameStruct2InterfaceService : public ISameStruct2Inte
 protected:
     explicit SameStruct2InterfaceService(std::shared_ptr<ISameStruct2Interface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
 public:
-    static std::shared_ptr<SameStruct2InterfaceService> create(std::shared_ptr<ISameStruct2Interface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
+    static std::shared_ptr<SameStruct2InterfaceService>create(std::shared_ptr<ISameStruct2Interface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
     virtual ~SameStruct2InterfaceService() override;
     void init();
 

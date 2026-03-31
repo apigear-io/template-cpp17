@@ -16,7 +16,7 @@ class TEST_TB_SIMPLE_EXPORT EmptyInterfaceService : public IEmptyInterfaceSubscr
 protected:
     explicit EmptyInterfaceService(std::shared_ptr<IEmptyInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
 public:
-    static std::shared_ptr<EmptyInterfaceService> create(std::shared_ptr<IEmptyInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
+    static std::shared_ptr<EmptyInterfaceService>create(std::shared_ptr<IEmptyInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
     virtual ~EmptyInterfaceService() override;
     void init();
 
