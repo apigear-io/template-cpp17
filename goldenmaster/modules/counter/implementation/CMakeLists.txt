@@ -19,7 +19,7 @@ target_include_directories(counter-implementation
 target_link_libraries(counter-implementation PUBLIC counter::counter-api PRIVATE counter::counter-core Threads::Threads)
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options(counter-implementation PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
+  target_compile_options(counter-implementation PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden)
 else()
   target_compile_options(counter-implementation PRIVATE /W4 /WX /wd4251)
 endif()
@@ -42,7 +42,7 @@ target_include_directories(test_counter PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options(test_counter PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
+  target_compile_options(test_counter PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden)
 else()
   target_compile_options(test_counter PRIVATE /W4 /WX /wd4251)
 endif()

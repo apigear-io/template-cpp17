@@ -57,12 +57,12 @@ void BaseAdapter::subscribeTopic(const std::string& topic, SimpleOnMessageCallba
 {
     std::weak_ptr<BaseAdapter> weak_adapter = getSharedFromDerrived();
     std::shared_ptr<Base> client = m_client;
-    auto safeOnSubscribed = [weak_adapter, client, this](int64_t id, const std::string& topic, bool is_subscribed)
+    auto safeOnSubscribed = [weak_adapter, client, this](int64_t id, const std::string& subscribedTopic, bool is_subscribed)
         {
             if (!weak_adapter.expired())
             {
                 auto adapter = weak_adapter.lock();
-                onSubscribed(id, topic, is_subscribed);
+                onSubscribed(id, subscribedTopic, is_subscribed);
             }
             else if (is_subscribed)
             {
@@ -79,12 +79,12 @@ void BaseAdapter::subscribeRequest(const std::string& topic, MessageCallbackWith
 {
     std::weak_ptr<BaseAdapter> weak_adapter = getSharedFromDerrived();
     std::shared_ptr<Base> client = m_client;
-    auto safeOnSubscribed = [weak_adapter, client, this](int64_t id, const std::string& topic, bool is_subscribed)
+    auto safeOnSubscribed = [weak_adapter, client, this](int64_t id, const std::string& subscribedTopic, bool is_subscribed)
         {
             if (!weak_adapter.expired())
             {
                 auto adapter = weak_adapter.lock();
-                onSubscribed(id, topic, is_subscribed);
+                onSubscribed(id, subscribedTopic, is_subscribed);
             }
             else if (is_subscribed)
             {

@@ -5,7 +5,9 @@
 #include "tb_enum/generated/api/tb_enum.h"
 #include "tb_enum/generated/core/enuminterface.data.h"
 
+THIRD_PARTY_INCLUDES_START
 #include "olink/iobjectsink.h"
+THIRD_PARTY_INCLUDES_END
 
 #include <future>
 #include <shared_mutex>

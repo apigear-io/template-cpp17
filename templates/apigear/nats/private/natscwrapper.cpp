@@ -319,13 +319,13 @@ int64_t CWrapper::subscribe(const std::string& topic, SimpleOnMessageCallback ca
     std::shared_ptr<natsSubscription> subscription_ptr(tmp, NatsSubscriptionDeleter());
     auto sub_id = natsSubscription_GetID(subscription_ptr.get());
     std::unique_lock<std::mutex> lockSubscription{ m_subscriptionsMutex };
-    m_subscriptions[sub_id] = subscription_ptr;
+    m_subscriptions[static_cast<uint64_t>(sub_id)] = subscription_ptr;
     lockSubscription.unlock();
 
     storedCallback->id = sub_id;
     // This callback removes all resources, the nats library states that after unsubscribe call there might be still message to serve
     // Nats library guarantees that after SetOnCompleteCB there will be no more calls for message handler for this subscription and resources can be safely cleaned up.
-    cleanSubscriptionResourcesContext* cleanCtx= new cleanSubscriptionResourcesContext{ sub_id, shared_from_this(), [this, onSubscriptionClosedCallback](uint64_t id) {onSubscriptionClosedCallback(id), cleanSubscription(id); } };
+    cleanSubscriptionResourcesContext* cleanCtx= new cleanSubscriptionResourcesContext{ sub_id, shared_from_this(), [this, onSubscriptionClosedCallback](uint64_t clean_id) {onSubscriptionClosedCallback(clean_id); cleanSubscription(static_cast<int64_t>(clean_id)); } };
 
     status = natsSubscription_SetOnCompleteCB(subscription_ptr.get(), &removeSubscriptionResources, cleanCtx);
     if (status != NATS_OK) {
@@ -358,13 +358,13 @@ int64_t CWrapper::subscribeWithResponse(const std::string& topic, MessageCallbac
     auto sub_id = natsSubscription_GetID(subscription_ptr.get());
 
     std::unique_lock<std::mutex> lockSubscription{ m_subscriptionsMutex };
-    m_subscriptions[sub_id] = subscription_ptr;
+    m_subscriptions[static_cast<uint64_t>(sub_id)] = subscription_ptr;
     lockSubscription.unlock();
 
     storedCallback->id = sub_id;
     // This callback removes all resources, the nats library states that after unsubscribe call there might be still message to serve
     // Nats library guarantees that after SetOnCompleteCB there will be no more calls for message handler for this subscription and resources can be safely cleaned up.
-    cleanSubscriptionResourcesContext* cleanCtx = new cleanSubscriptionResourcesContext{ sub_id, shared_from_this(), [this, onSubscriptionClosedCallback](uint64_t id) {onSubscriptionClosedCallback(id), cleanSubscription(id); } };
+    cleanSubscriptionResourcesContext* cleanCtx = new cleanSubscriptionResourcesContext{ sub_id, shared_from_this(), [this, onSubscriptionClosedCallback](uint64_t clean_id) {onSubscriptionClosedCallback(clean_id); cleanSubscription(static_cast<int64_t>(clean_id)); } };
 
     status = natsSubscription_SetOnCompleteCB(subscription_ptr.get(), &removeSubscriptionResources, cleanCtx);
     if (status != NATS_OK) {
@@ -380,7 +380,7 @@ void CWrapper::unsubscribe(int64_t id)
 {
     AG_LOG_DEBUG("nats client: unsubscribe " + std::to_string(id));
     std::unique_lock<std::mutex> lock{ m_subscriptionsMutex };
-    auto found = m_subscriptions.find(id);
+    auto found = m_subscriptions.find(static_cast<uint64_t>(id));
     if (found == m_subscriptions.end())
     {
         // May happen if unsubscribe during connection disconnecting, the disconnect request removes the subscriptions.
@@ -397,7 +397,7 @@ void CWrapper::unsubscribe(int64_t id)
 void CWrapper::cleanSubscription(int64_t id)
 {
     std::unique_lock<std::mutex> lockSubscriptions{ m_subscriptionsMutex };
-    auto foundSubscription = m_subscriptions.find(id);
+    auto foundSubscription = m_subscriptions.find(static_cast<uint64_t>(id));
     if (foundSubscription != m_subscriptions.end())
     {
         m_subscriptions.erase(foundSubscription);

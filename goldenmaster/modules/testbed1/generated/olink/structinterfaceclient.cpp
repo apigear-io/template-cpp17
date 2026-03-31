@@ -4,7 +4,9 @@
 #include "testbed1/generated/core/structinterface.publisher.h"
 #include "testbed1/generated/core/testbed1.json.adapter.h"
 
+THIRD_PARTY_INCLUDES_START
 #include "olink/iclientnode.h"
+THIRD_PARTY_INCLUDES_END
 #include "apigear/utilities/logger.h"
 
 using namespace Test::Testbed1;

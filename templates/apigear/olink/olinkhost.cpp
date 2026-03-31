@@ -23,7 +23,14 @@
 */
 
 #include "olinkhost.h"
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
 #include "olink/remoteregistry.h"
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
 #include <iostream>
 #include "private/requesthandlerfactory.h"
 #include "utilities/logger.h"
@@ -31,8 +38,7 @@
 using namespace ApiGear::PocoImpl;
 
 OLinkHost::OLinkHost(ApiGear::ObjectLink::RemoteRegistry& registry, const ApiGear::ObjectLink::WriteLogFunc& logFunc)
-    :  m_registry(registry),
-    m_connectionStorage(registry, logFunc)
+    : m_connectionStorage(registry, logFunc)
 {}
 
 OLinkHost::~OLinkHost()

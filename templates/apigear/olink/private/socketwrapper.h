@@ -114,14 +114,14 @@ private:
     std::unique_ptr<Poco::Net::WebSocket> m_socket;
     /** A mutex for the socket */
     std::timed_mutex m_socketMutex;
-    /** Flag handled between the threads with information that the connection should be closed. */
-    std::atomic<bool> m_disconnectRequested;
-    /** Result of receiveInLoop. Used to wait for end of its work after m_stopConnection is set to true*/
-    std::future<void> m_receivingDone;
     /** A user that will be notified about events defined as ISocketUser API. */
     ISocketUser& m_socketUser;
     /** True if socket should send ping messages. */
     bool m_addPingMessage;
+    /** Flag handled between the threads with information that the connection should be closed. */
+    std::atomic<bool> m_disconnectRequested;
+    /** Result of receiveInLoop. Used to wait for end of its work after m_stopConnection is set to true*/
+    std::future<void> m_receivingDone;
 
     /** The timer used for to process messages. */
     Poco::Util::Timer m_retryTimer;

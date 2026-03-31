@@ -18,7 +18,7 @@ target_include_directories(custom_types-implementation
 target_link_libraries(custom_types-implementation PUBLIC custom_types::custom_types-api PRIVATE custom_types::custom_types-core Threads::Threads)
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options(custom_types-implementation PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
+  target_compile_options(custom_types-implementation PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden)
 else()
   target_compile_options(custom_types-implementation PRIVATE /W4 /WX /wd4251)
 endif()
@@ -40,7 +40,7 @@ target_include_directories(test_custom_types PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
 
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options(test_custom_types PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
+  target_compile_options(test_custom_types PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden)
 else()
   target_compile_options(test_custom_types PRIVATE /W4 /WX /wd4251)
 endif()

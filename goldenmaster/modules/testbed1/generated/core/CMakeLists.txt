@@ -23,7 +23,7 @@ target_include_directories(testbed1-core
 target_link_libraries(testbed1-core PUBLIC apigear::utilities testbed1::testbed1-api nlohmann_json::nlohmann_json)
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options(testbed1-core PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
+  target_compile_options(testbed1-core PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden)
 else()
   target_compile_options(testbed1-core PRIVATE /W4 /WX /wd4251)
 endif()

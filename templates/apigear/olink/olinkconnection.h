@@ -5,7 +5,14 @@
 #include "private/apigear_olink.h"
 #include "private/isocketuser.h"
 
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
 #include "olink/clientnode.h"
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
 
 #include <Poco/URI.h>
 #include <Poco/Util/Timer.h>

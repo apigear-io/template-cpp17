@@ -4,7 +4,9 @@
 #include "tb_same1/generated/core/sameenum1interface.publisher.h"
 #include "tb_same1/generated/core/tb_same1.json.adapter.h"
 
+THIRD_PARTY_INCLUDES_START
 #include "olink/iclientnode.h"
+THIRD_PARTY_INCLUDES_END
 #include "apigear/utilities/logger.h"
 
 using namespace Test::TbSame1;

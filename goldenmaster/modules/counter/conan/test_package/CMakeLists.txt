@@ -17,7 +17,7 @@ target_link_libraries(test_counter counter::counter-implementation)
 add_test(NAME test_counter COMMAND $<TARGET_FILE:test_counter>)
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options(test_counter PRIVATE -Wall -Wextra -Wpedantic -Werror)
+  target_compile_options(test_counter PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror)
 else()
   target_compile_options(test_counter PRIVATE /W4 /WX /wd4251)
 endif()

@@ -5,7 +5,9 @@
 #include "tb_same1/generated/api/tb_same1.h"
 #include "tb_same1/generated/core/sameenum1interface.data.h"
 
+THIRD_PARTY_INCLUDES_START
 #include "olink/iobjectsink.h"
+THIRD_PARTY_INCLUDES_END
 
 #include <future>
 #include <shared_mutex>

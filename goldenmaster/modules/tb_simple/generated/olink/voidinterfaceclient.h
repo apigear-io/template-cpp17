@@ -5,7 +5,9 @@
 #include "tb_simple/generated/api/tb_simple.h"
 #include "tb_simple/generated/core/voidinterface.data.h"
 
+THIRD_PARTY_INCLUDES_START
 #include "olink/iobjectsink.h"
+THIRD_PARTY_INCLUDES_END
 
 #include <future>
 #include <memory>

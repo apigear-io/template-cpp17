@@ -26,7 +26,14 @@
 
 #include "Poco/Net/HTTPServer.h"
 #include "private/connectionstorage.h"
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
 #include "olink/core/types.h"
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
 
 #include <memory>
 
@@ -74,8 +81,6 @@ public:
 private:
     /** A server used for connections.*/
     std::unique_ptr<Poco::Net::HTTPServer> m_webserver;
-    /** A global registry for sources and network endpoints.*/
-    ApiGear::ObjectLink::RemoteRegistry& m_registry;
     /** Storage for connections.*/
     ConnectionStorage m_connectionStorage;
 };

@@ -10,9 +10,16 @@
 
 #include "../olinkhost.h"
 
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
 #include "olink/remoteregistry.h"
 #include "olink/core/types.h"
 #include "olink/core/protocol.h"
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
 
 #include "Poco/Net/WebSocket.h"
 #include "Poco/Net/HTTPRequest.h"

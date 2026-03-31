@@ -4,8 +4,10 @@
 #include "tb_names/generated/olink/namesservice.h"
 #include "tb_names/generated/core/tb_names.json.adapter.h"
 
+THIRD_PARTY_INCLUDES_START
 #include "olink/iremotenode.h"
 #include "olink/remoteregistry.h"
+THIRD_PARTY_INCLUDES_END
 #include "apigear/utilities/logger.h"
 
 #include <iostream>

@@ -4,8 +4,10 @@
 #include "tb_same1/generated/olink/samestruct1interfaceservice.h"
 #include "tb_same1/generated/core/tb_same1.json.adapter.h"
 
+THIRD_PARTY_INCLUDES_START
 #include "olink/iremotenode.h"
 #include "olink/remoteregistry.h"
+THIRD_PARTY_INCLUDES_END
 #include "apigear/utilities/logger.h"
 
 #include <iostream>

@@ -5,8 +5,15 @@
 #include "private/requesthandlerfactory.h"
 #include "private/iconnectionstorage.h"
 
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
 #include "olink/remotenode.h"
 #include "olink/remoteregistry.h"
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
 #include "utilities/logger.h"
 #include "utilities/threadpool.h"
 

@@ -5,7 +5,9 @@
 #include "tb_names/generated/api/tb_names.h"
 #include "tb_names/generated/core/names.data.h"
 
+THIRD_PARTY_INCLUDES_START
 #include "olink/iobjectsink.h"
+THIRD_PARTY_INCLUDES_END
 
 #include <future>
 #include <shared_mutex>

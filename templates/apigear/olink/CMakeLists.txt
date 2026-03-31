@@ -31,6 +31,11 @@ target_include_directories(poco-olink
 
 target_link_libraries(poco-olink PUBLIC olink_core::olink_core apigear::utilities Poco::Net PRIVATE Poco::Util)
 
+if(NOT MSVC)
+  target_compile_options(poco-olink PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden)
+else()
+  target_compile_options(poco-olink PRIVATE /W4 /WX /wd4251)
+endif()
 
 # install binary files
 install(TARGETS poco-olink

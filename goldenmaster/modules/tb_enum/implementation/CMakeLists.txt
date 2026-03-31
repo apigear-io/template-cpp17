@@ -19,7 +19,7 @@ target_include_directories(tb_enum-implementation
 target_link_libraries(tb_enum-implementation PUBLIC tb_enum::tb_enum-api PRIVATE tb_enum::tb_enum-core Threads::Threads)
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options(tb_enum-implementation PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
+  target_compile_options(tb_enum-implementation PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden)
 else()
   target_compile_options(tb_enum-implementation PRIVATE /W4 /WX /wd4251)
 endif()
@@ -42,7 +42,7 @@ target_include_directories(test_tb_enum PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options(test_tb_enum PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
+  target_compile_options(test_tb_enum PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden)
 else()
   target_compile_options(test_tb_enum PRIVATE /W4 /WX /wd4251)
 endif()

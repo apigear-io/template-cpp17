@@ -6,7 +6,9 @@
 #include "custom_types/generated/core/custom_types.json.adapter.h"
 #include "extern_types/generated/core/extern_types.json.adapter.h"
 
+THIRD_PARTY_INCLUDES_START
 #include "olink/iclientnode.h"
+THIRD_PARTY_INCLUDES_END
 #include "apigear/utilities/logger.h"
 
 using namespace Test::Counter;

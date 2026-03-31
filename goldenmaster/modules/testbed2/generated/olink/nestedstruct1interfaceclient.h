@@ -5,7 +5,9 @@
 #include "testbed2/generated/api/testbed2.h"
 #include "testbed2/generated/core/nestedstruct1interface.data.h"
 
+THIRD_PARTY_INCLUDES_START
 #include "olink/iobjectsink.h"
+THIRD_PARTY_INCLUDES_END
 
 #include <future>
 #include <shared_mutex>

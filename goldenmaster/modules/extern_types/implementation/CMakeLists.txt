@@ -18,7 +18,7 @@ target_include_directories(extern_types-implementation
 target_link_libraries(extern_types-implementation PUBLIC extern_types::extern_types-api PRIVATE extern_types::extern_types-core Threads::Threads)
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options(extern_types-implementation PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
+  target_compile_options(extern_types-implementation PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden)
 else()
   target_compile_options(extern_types-implementation PRIVATE /W4 /WX /wd4251)
 endif()
@@ -40,7 +40,7 @@ target_include_directories(test_extern_types PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
 
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options(test_extern_types PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
+  target_compile_options(test_extern_types PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden)
 else()
   target_compile_options(test_extern_types PRIVATE /W4 /WX /wd4251)
 endif()

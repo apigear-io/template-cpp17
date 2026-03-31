@@ -4,8 +4,10 @@
 #include "testbed2/generated/olink/nestedstruct2interfaceservice.h"
 #include "testbed2/generated/core/testbed2.json.adapter.h"
 
+THIRD_PARTY_INCLUDES_START
 #include "olink/iremotenode.h"
 #include "olink/remoteregistry.h"
+THIRD_PARTY_INCLUDES_END
 #include "apigear/utilities/logger.h"
 
 #include <iostream>

@@ -14,7 +14,7 @@ target_include_directories(tb_enum-api
 )
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options(tb_enum-api PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
+  target_compile_options(tb_enum-api PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden)
 else()
   target_compile_options(tb_enum-api PRIVATE /W4 /WX /wd4251)
 endif()

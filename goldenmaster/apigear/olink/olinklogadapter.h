@@ -25,7 +25,14 @@
 #pragma once
 
 #include "private/apigear_olink.h"
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
 #include "olink/core/types.h"
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
 #include "apigear/utilities/logger.h"
 
 namespace ApiGear {

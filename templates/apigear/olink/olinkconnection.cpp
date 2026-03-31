@@ -5,8 +5,15 @@
 #include <Poco/Net/WebSocket.h>
 
 #include "olinkconnection.h"
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
 #include "olink/clientregistry.h"
 #include "olink/iobjectsink.h"
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
 #include "utilities/logger.h"
 #include "utilities/threadpool.h"
 

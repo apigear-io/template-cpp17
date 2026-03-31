@@ -25,7 +25,7 @@ target_include_directories(tb_simple-implementation
 target_link_libraries(tb_simple-implementation PUBLIC tb_simple::tb_simple-api PRIVATE tb_simple::tb_simple-core Threads::Threads)
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options(tb_simple-implementation PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
+  target_compile_options(tb_simple-implementation PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden)
 else()
   target_compile_options(tb_simple-implementation PRIVATE /W4 /WX /wd4251)
 endif()
@@ -54,7 +54,7 @@ target_include_directories(test_tb_simple PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options(test_tb_simple PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
+  target_compile_options(test_tb_simple PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden)
 else()
   target_compile_options(test_tb_simple PRIVATE /W4 /WX /wd4251)
 endif()
