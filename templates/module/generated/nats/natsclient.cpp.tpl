@@ -54,6 +54,10 @@ std::shared_ptr<ApiGear::Nats::BaseAdapter> {{$class}}::getSharedFromDerrived()
 
 void {{$class}}::init()
 {
+    if (m_initialized.exchange(true)) {
+        AG_LOG_WARNING("init() called more than once on " "{{$class}}" ", ignoring");
+        return;
+    }
     BaseAdapter::init([this](){onConnected();});
 }
 

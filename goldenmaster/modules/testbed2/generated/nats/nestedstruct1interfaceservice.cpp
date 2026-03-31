@@ -1,5 +1,6 @@
 #include "testbed2/generated/nats/nestedstruct1interfaceservice.h"
 #include "testbed2/generated/core/testbed2.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::Testbed2;
@@ -22,6 +23,10 @@ NestedStruct1InterfaceService::NestedStruct1InterfaceService(std::shared_ptr<INe
 
 void NestedStruct1InterfaceService::init()
 {
+    if (m_initialized.exchange(true)) {
+        AG_LOG_WARNING("init() called more than once on " "NestedStruct1InterfaceService" ", ignoring");
+        return;
+    }
     BaseAdapter::init([this](){onConnected();});
 }
 

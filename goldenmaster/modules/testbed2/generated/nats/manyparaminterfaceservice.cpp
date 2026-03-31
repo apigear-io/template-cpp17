@@ -1,5 +1,6 @@
 #include "testbed2/generated/nats/manyparaminterfaceservice.h"
 #include "testbed2/generated/core/testbed2.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::Testbed2;
@@ -22,6 +23,10 @@ ManyParamInterfaceService::ManyParamInterfaceService(std::shared_ptr<IManyParamI
 
 void ManyParamInterfaceService::init()
 {
+    if (m_initialized.exchange(true)) {
+        AG_LOG_WARNING("init() called more than once on " "ManyParamInterfaceService" ", ignoring");
+        return;
+    }
     BaseAdapter::init([this](){onConnected();});
 }
 

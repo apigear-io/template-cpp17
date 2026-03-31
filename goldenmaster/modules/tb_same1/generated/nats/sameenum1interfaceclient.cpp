@@ -34,6 +34,10 @@ SameEnum1InterfaceClient::SameEnum1InterfaceClient(std::shared_ptr<ApiGear::Nats
 
 void SameEnum1InterfaceClient::init()
 {
+    if (m_initialized.exchange(true)) {
+        AG_LOG_WARNING("init() called more than once on " "SameEnum1InterfaceClient" ", ignoring");
+        return;
+    }
     BaseAdapter::init([this](){onConnected();});
 }
 

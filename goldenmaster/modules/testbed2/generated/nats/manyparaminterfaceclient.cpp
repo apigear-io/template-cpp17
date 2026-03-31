@@ -34,6 +34,10 @@ ManyParamInterfaceClient::ManyParamInterfaceClient(std::shared_ptr<ApiGear::Nats
 
 void ManyParamInterfaceClient::init()
 {
+    if (m_initialized.exchange(true)) {
+        AG_LOG_WARNING("init() called more than once on " "ManyParamInterfaceClient" ", ignoring");
+        return;
+    }
     BaseAdapter::init([this](){onConnected();});
 }
 

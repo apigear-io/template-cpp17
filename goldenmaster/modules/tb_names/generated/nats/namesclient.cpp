@@ -34,6 +34,10 @@ Nam_EsClient::Nam_EsClient(std::shared_ptr<ApiGear::Nats::Client> client)
 
 void Nam_EsClient::init()
 {
+    if (m_initialized.exchange(true)) {
+        AG_LOG_WARNING("init() called more than once on " "Nam_EsClient" ", ignoring");
+        return;
+    }
     BaseAdapter::init([this](){onConnected();});
 }
 

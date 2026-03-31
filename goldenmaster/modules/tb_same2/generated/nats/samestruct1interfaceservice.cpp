@@ -1,5 +1,6 @@
 #include "tb_same2/generated/nats/samestruct1interfaceservice.h"
 #include "tb_same2/generated/core/tb_same2.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::TbSame2;
@@ -22,6 +23,10 @@ SameStruct1InterfaceService::SameStruct1InterfaceService(std::shared_ptr<ISameSt
 
 void SameStruct1InterfaceService::init()
 {
+    if (m_initialized.exchange(true)) {
+        AG_LOG_WARNING("init() called more than once on " "SameStruct1InterfaceService" ", ignoring");
+        return;
+    }
     BaseAdapter::init([this](){onConnected();});
 }
 

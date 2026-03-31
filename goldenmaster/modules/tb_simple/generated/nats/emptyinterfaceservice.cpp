@@ -1,5 +1,6 @@
 #include "tb_simple/generated/nats/emptyinterfaceservice.h"
 #include "tb_simple/generated/core/tb_simple.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::TbSimple;
@@ -20,6 +21,10 @@ EmptyInterfaceService::EmptyInterfaceService(std::shared_ptr<IEmptyInterface> im
 
 void EmptyInterfaceService::init()
 {
+    if (m_initialized.exchange(true)) {
+        AG_LOG_WARNING("init() called more than once on " "EmptyInterfaceService" ", ignoring");
+        return;
+    }
     BaseAdapter::init([this](){onConnected();});
 }
 

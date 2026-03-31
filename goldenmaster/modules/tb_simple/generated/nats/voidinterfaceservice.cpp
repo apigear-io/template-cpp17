@@ -1,5 +1,6 @@
 #include "tb_simple/generated/nats/voidinterfaceservice.h"
 #include "tb_simple/generated/core/tb_simple.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::TbSimple;
@@ -21,6 +22,10 @@ VoidInterfaceService::VoidInterfaceService(std::shared_ptr<IVoidInterface> impl,
 
 void VoidInterfaceService::init()
 {
+    if (m_initialized.exchange(true)) {
+        AG_LOG_WARNING("init() called more than once on " "VoidInterfaceService" ", ignoring");
+        return;
+    }
     BaseAdapter::init([this](){onConnected();});
 }
 

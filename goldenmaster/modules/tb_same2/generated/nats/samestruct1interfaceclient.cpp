@@ -34,6 +34,10 @@ SameStruct1InterfaceClient::SameStruct1InterfaceClient(std::shared_ptr<ApiGear::
 
 void SameStruct1InterfaceClient::init()
 {
+    if (m_initialized.exchange(true)) {
+        AG_LOG_WARNING("init() called more than once on " "SameStruct1InterfaceClient" ", ignoring");
+        return;
+    }
     BaseAdapter::init([this](){onConnected();});
 }
 

@@ -7,6 +7,7 @@
 #include "apigear/nats/natstypes.h"
 #include "apigear/nats/baseadapter.h"
 
+#include <atomic>
 #include <future>
 #include <unordered_map>
 
@@ -75,6 +76,7 @@ private:
     /** Local storage for properties values. */
     NamEsData m_data;
     int32_t m_requestInitCallId = 0;
+    std::atomic<bool> m_initialized{false};
     std::shared_ptr<ApiGear::Nats::Client> m_client;
     /** The publisher for NamEs */
     std::unique_ptr<INamEsPublisher> m_publisher;

@@ -1,5 +1,6 @@
 #include "tb_enum/generated/nats/enuminterfaceservice.h"
 #include "tb_enum/generated/core/tb_enum.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::TbEnum;
@@ -22,6 +23,10 @@ EnumInterfaceService::EnumInterfaceService(std::shared_ptr<IEnumInterface> impl,
 
 void EnumInterfaceService::init()
 {
+    if (m_initialized.exchange(true)) {
+        AG_LOG_WARNING("init() called more than once on " "EnumInterfaceService" ", ignoring");
+        return;
+    }
     BaseAdapter::init([this](){onConnected();});
 }
 

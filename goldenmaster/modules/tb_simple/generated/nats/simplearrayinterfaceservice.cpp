@@ -1,5 +1,6 @@
 #include "tb_simple/generated/nats/simplearrayinterfaceservice.h"
 #include "tb_simple/generated/core/tb_simple.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::TbSimple;
@@ -22,6 +23,10 @@ SimpleArrayInterfaceService::SimpleArrayInterfaceService(std::shared_ptr<ISimple
 
 void SimpleArrayInterfaceService::init()
 {
+    if (m_initialized.exchange(true)) {
+        AG_LOG_WARNING("init() called more than once on " "SimpleArrayInterfaceService" ", ignoring");
+        return;
+    }
     BaseAdapter::init([this](){onConnected();});
 }
 

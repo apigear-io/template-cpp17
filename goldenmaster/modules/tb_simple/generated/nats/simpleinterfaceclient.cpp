@@ -34,6 +34,10 @@ SimpleInterfaceClient::SimpleInterfaceClient(std::shared_ptr<ApiGear::Nats::Clie
 
 void SimpleInterfaceClient::init()
 {
+    if (m_initialized.exchange(true)) {
+        AG_LOG_WARNING("init() called more than once on " "SimpleInterfaceClient" ", ignoring");
+        return;
+    }
     BaseAdapter::init([this](){onConnected();});
 }
 

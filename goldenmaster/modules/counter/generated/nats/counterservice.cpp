@@ -2,6 +2,7 @@
 #include "counter/generated/core/counter.json.adapter.h"
 #include "custom_types/generated/core/custom_types.json.adapter.h"
 #include "extern_types/generated/core/extern_types.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::Counter;
@@ -24,6 +25,10 @@ CounterService::CounterService(std::shared_ptr<ICounter> impl, std::shared_ptr<A
 
 void CounterService::init()
 {
+    if (m_initialized.exchange(true)) {
+        AG_LOG_WARNING("init() called more than once on " "CounterService" ", ignoring");
+        return;
+    }
     BaseAdapter::init([this](){onConnected();});
 }
 
