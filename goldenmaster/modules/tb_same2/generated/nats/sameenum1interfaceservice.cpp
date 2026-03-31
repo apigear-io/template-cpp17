@@ -1,5 +1,6 @@
 #include "tb_same2/generated/nats/sameenum1interfaceservice.h"
 #include "tb_same2/generated/core/tb_same2.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::TbSame2;
@@ -22,6 +23,10 @@ SameEnum1InterfaceService::SameEnum1InterfaceService(std::shared_ptr<ISameEnum1I
 
 void SameEnum1InterfaceService::init()
 {
+    if (m_initialized.exchange(true)) {
+        AG_LOG_WARNING("init() called more than once on " "SameEnum1InterfaceService" ", ignoring");
+        return;
+    }
     BaseAdapter::init([this](){onConnected();});
 }
 

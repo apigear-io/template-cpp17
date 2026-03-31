@@ -31,6 +31,10 @@ EmptyInterfaceClient::EmptyInterfaceClient(std::shared_ptr<ApiGear::Nats::Client
 
 void EmptyInterfaceClient::init()
 {
+    if (m_initialized.exchange(true)) {
+        AG_LOG_WARNING("init() called more than once on " "EmptyInterfaceClient" ", ignoring");
+        return;
+    }
     BaseAdapter::init([this](){onConnected();});
 }
 

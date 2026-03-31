@@ -33,6 +33,10 @@ NoPropertiesInterfaceClient::NoPropertiesInterfaceClient(std::shared_ptr<ApiGear
 
 void NoPropertiesInterfaceClient::init()
 {
+    if (m_initialized.exchange(true)) {
+        AG_LOG_WARNING("init() called more than once on " "NoPropertiesInterfaceClient" ", ignoring");
+        return;
+    }
     BaseAdapter::init([this](){onConnected();});
 }
 

@@ -7,6 +7,7 @@
 #include "apigear/nats/natstypes.h"
 #include "apigear/nats/baseadapter.h"
 
+#include <atomic>
 #include <future>
 #include <unordered_map>
 
@@ -73,6 +74,7 @@ private:
     /** Local storage for properties values. */
     NestedStruct3InterfaceData m_data;
     int32_t m_requestInitCallId = 0;
+    std::atomic<bool> m_initialized{false};
     std::shared_ptr<ApiGear::Nats::Client> m_client;
     /** The publisher for NestedStruct3Interface */
     std::unique_ptr<INestedStruct3InterfacePublisher> m_publisher;

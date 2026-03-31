@@ -11,6 +11,8 @@
 #include "apigear/nats/natstypes.h"
 #include "apigear/nats/baseadapter.h"
 
+#include <atomic>
+
 namespace {{ Camel .System.Name }} {
 namespace {{ Camel .Module.Name }} {
 namespace Nats {
@@ -53,6 +55,7 @@ private:
     std::shared_ptr<ApiGear::Nats::Service> m_service;
 
     int32_t m_onReadySubscriptionId = 0;
+    std::atomic<bool> m_initialized{false};
 
 };
 } // namespace Nats

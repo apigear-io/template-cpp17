@@ -33,6 +33,10 @@ VoidInterfaceClient::VoidInterfaceClient(std::shared_ptr<ApiGear::Nats::Client> 
 
 void VoidInterfaceClient::init()
 {
+    if (m_initialized.exchange(true)) {
+        AG_LOG_WARNING("init() called more than once on " "VoidInterfaceClient" ", ignoring");
+        return;
+    }
     BaseAdapter::init([this](){onConnected();});
 }
 

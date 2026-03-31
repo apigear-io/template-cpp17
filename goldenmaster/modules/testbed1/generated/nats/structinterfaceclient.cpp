@@ -34,6 +34,10 @@ StructInterfaceClient::StructInterfaceClient(std::shared_ptr<ApiGear::Nats::Clie
 
 void StructInterfaceClient::init()
 {
+    if (m_initialized.exchange(true)) {
+        AG_LOG_WARNING("init() called more than once on " "StructInterfaceClient" ", ignoring");
+        return;
+    }
     BaseAdapter::init([this](){onConnected();});
 }
 

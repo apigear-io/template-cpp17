@@ -7,6 +7,7 @@
 #include "apigear/nats/natstypes.h"
 #include "apigear/nats/baseadapter.h"
 
+#include <atomic>
 #include <future>
 #include <unordered_map>
 
@@ -45,6 +46,7 @@ private:
     /// @param args contains the param(s) of the type(s) bool paramBool
     void onSigBool(const std::string& args) const;
     int32_t m_requestInitCallId = 0;
+    std::atomic<bool> m_initialized{false};
     std::shared_ptr<ApiGear::Nats::Client> m_client;
     /** The publisher for NoPropertiesInterface */
     std::unique_ptr<INoPropertiesInterfacePublisher> m_publisher;

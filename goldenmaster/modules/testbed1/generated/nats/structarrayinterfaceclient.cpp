@@ -34,6 +34,10 @@ StructArrayInterfaceClient::StructArrayInterfaceClient(std::shared_ptr<ApiGear::
 
 void StructArrayInterfaceClient::init()
 {
+    if (m_initialized.exchange(true)) {
+        AG_LOG_WARNING("init() called more than once on " "StructArrayInterfaceClient" ", ignoring");
+        return;
+    }
     BaseAdapter::init([this](){onConnected();});
 }
 

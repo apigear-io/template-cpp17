@@ -1,5 +1,6 @@
 #include "testbed1/generated/nats/structinterfaceservice.h"
 #include "testbed1/generated/core/testbed1.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::Testbed1;
@@ -22,6 +23,10 @@ StructInterfaceService::StructInterfaceService(std::shared_ptr<IStructInterface>
 
 void StructInterfaceService::init()
 {
+    if (m_initialized.exchange(true)) {
+        AG_LOG_WARNING("init() called more than once on " "StructInterfaceService" ", ignoring");
+        return;
+    }
     BaseAdapter::init([this](){onConnected();});
 }
 

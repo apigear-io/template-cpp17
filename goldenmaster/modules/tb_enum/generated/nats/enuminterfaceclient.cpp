@@ -34,6 +34,10 @@ EnumInterfaceClient::EnumInterfaceClient(std::shared_ptr<ApiGear::Nats::Client> 
 
 void EnumInterfaceClient::init()
 {
+    if (m_initialized.exchange(true)) {
+        AG_LOG_WARNING("init() called more than once on " "EnumInterfaceClient" ", ignoring");
+        return;
+    }
     BaseAdapter::init([this](){onConnected();});
 }
 

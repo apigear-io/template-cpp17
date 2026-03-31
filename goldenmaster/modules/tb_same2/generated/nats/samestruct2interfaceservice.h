@@ -6,6 +6,8 @@
 #include "apigear/nats/natstypes.h"
 #include "apigear/nats/baseadapter.h"
 
+#include <atomic>
+
 namespace Test {
 namespace TbSame2 {
 namespace Nats {
@@ -41,6 +43,7 @@ private:
     std::shared_ptr<ApiGear::Nats::Service> m_service;
 
     int32_t m_onReadySubscriptionId = 0;
+    std::atomic<bool> m_initialized{false};
 
 };
 } // namespace Nats

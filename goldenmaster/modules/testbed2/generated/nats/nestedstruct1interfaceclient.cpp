@@ -34,6 +34,10 @@ NestedStruct1InterfaceClient::NestedStruct1InterfaceClient(std::shared_ptr<ApiGe
 
 void NestedStruct1InterfaceClient::init()
 {
+    if (m_initialized.exchange(true)) {
+        AG_LOG_WARNING("init() called more than once on " "NestedStruct1InterfaceClient" ", ignoring");
+        return;
+    }
     BaseAdapter::init([this](){onConnected();});
 }
 

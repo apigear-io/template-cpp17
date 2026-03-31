@@ -7,6 +7,7 @@
 {{- range .Module.Imports }}
 #include "{{snake .Name}}/generated/core/{{snake .Name}}.json.adapter.h"
 {{- end }}
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace {{ Camel .System.Name }}::{{ Camel .Module.Name }};
@@ -42,6 +43,10 @@ constexpr uint32_t expectedSubscriptionsCount = initRespSubscription
 
 void {{$class}}::init()
 {
+    if (m_initialized.exchange(true)) {
+        AG_LOG_WARNING("init() called more than once on " "{{$class}}" ", ignoring");
+        return;
+    }
     BaseAdapter::init([this](){onConnected();});
 }
 

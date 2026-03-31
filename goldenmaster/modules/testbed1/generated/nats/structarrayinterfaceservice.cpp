@@ -1,5 +1,6 @@
 #include "testbed1/generated/nats/structarrayinterfaceservice.h"
 #include "testbed1/generated/core/testbed1.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::Testbed1;
@@ -22,6 +23,10 @@ StructArrayInterfaceService::StructArrayInterfaceService(std::shared_ptr<IStruct
 
 void StructArrayInterfaceService::init()
 {
+    if (m_initialized.exchange(true)) {
+        AG_LOG_WARNING("init() called more than once on " "StructArrayInterfaceService" ", ignoring");
+        return;
+    }
     BaseAdapter::init([this](){onConnected();});
 }
 

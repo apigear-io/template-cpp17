@@ -1,5 +1,6 @@
 #include "tb_simple/generated/nats/nooperationsinterfaceservice.h"
 #include "tb_simple/generated/core/tb_simple.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::TbSimple;
@@ -21,6 +22,10 @@ NoOperationsInterfaceService::NoOperationsInterfaceService(std::shared_ptr<INoOp
 
 void NoOperationsInterfaceService::init()
 {
+    if (m_initialized.exchange(true)) {
+        AG_LOG_WARNING("init() called more than once on " "NoOperationsInterfaceService" ", ignoring");
+        return;
+    }
     BaseAdapter::init([this](){onConnected();});
 }
 

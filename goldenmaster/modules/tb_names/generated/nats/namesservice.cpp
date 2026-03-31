@@ -1,5 +1,6 @@
 #include "tb_names/generated/nats/namesservice.h"
 #include "tb_names/generated/core/tb_names.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::TbNames;
@@ -22,6 +23,10 @@ Nam_EsService::Nam_EsService(std::shared_ptr<INamEs> impl, std::shared_ptr<ApiGe
 
 void Nam_EsService::init()
 {
+    if (m_initialized.exchange(true)) {
+        AG_LOG_WARNING("init() called more than once on " "Nam_EsService" ", ignoring");
+        return;
+    }
     BaseAdapter::init([this](){onConnected();});
 }
 
