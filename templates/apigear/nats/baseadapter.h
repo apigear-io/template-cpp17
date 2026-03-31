@@ -23,8 +23,8 @@ class APIGEAR_NATS_EXPORT BaseAdapter
 public:
     virtual ~BaseAdapter();
 
-    unsigned long _subscribeForIsReady(std::function<void(bool)> sub_function);
-    void _unsubscribeFromIsReady(unsigned long id);
+    uint64_t _subscribeForIsReady(std::function<void(bool)> sub_function);
+    void _unsubscribeFromIsReady(uint64_t id);
     bool _is_ready() const;
 
 protected:

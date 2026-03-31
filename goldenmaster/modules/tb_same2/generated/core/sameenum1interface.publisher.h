@@ -38,20 +38,20 @@ public:
     /**
     * Implementation of ISameEnum1InterfacePublisher::subscribeToProp1Changed
     */
-    long subscribeToProp1Changed(SameEnum1InterfaceProp1PropertyCb callback) override;
+    uint64_t subscribeToProp1Changed(SameEnum1InterfaceProp1PropertyCb callback) override;
     /**
     * Implementation of ISameEnum1InterfacePublisher::subscribeToProp1Changed
     */
-    void unsubscribeFromProp1Changed(long handleId) override;
+    void unsubscribeFromProp1Changed(uint64_t handleId) override;
 
     /**
     * Implementation of ISameEnum1InterfacePublisher::subscribeToSig1
     */
-    long subscribeToSig1(SameEnum1InterfaceSig1SignalCb callback) override;
+    uint64_t subscribeToSig1(SameEnum1InterfaceSig1SignalCb callback) override;
     /**
     * Implementation of ISameEnum1InterfacePublisher::unsubscribeFromSig1
     */
-    void unsubscribeFromSig1(long handleId) override;
+    void unsubscribeFromSig1(uint64_t handleId) override;
 
     /**
     * Implementation of ISameEnum1InterfacePublisher::publishProp1Changed

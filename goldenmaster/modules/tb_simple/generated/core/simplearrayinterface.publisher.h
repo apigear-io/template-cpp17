@@ -38,155 +38,155 @@ public:
     /**
     * Implementation of ISimpleArrayInterfacePublisher::subscribeToPropBoolChanged
     */
-    long subscribeToPropBoolChanged(SimpleArrayInterfacePropBoolPropertyCb callback) override;
+    uint64_t subscribeToPropBoolChanged(SimpleArrayInterfacePropBoolPropertyCb callback) override;
     /**
     * Implementation of ISimpleArrayInterfacePublisher::subscribeToPropBoolChanged
     */
-    void unsubscribeFromPropBoolChanged(long handleId) override;
+    void unsubscribeFromPropBoolChanged(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleArrayInterfacePublisher::subscribeToPropIntChanged
     */
-    long subscribeToPropIntChanged(SimpleArrayInterfacePropIntPropertyCb callback) override;
+    uint64_t subscribeToPropIntChanged(SimpleArrayInterfacePropIntPropertyCb callback) override;
     /**
     * Implementation of ISimpleArrayInterfacePublisher::subscribeToPropIntChanged
     */
-    void unsubscribeFromPropIntChanged(long handleId) override;
+    void unsubscribeFromPropIntChanged(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleArrayInterfacePublisher::subscribeToPropInt32Changed
     */
-    long subscribeToPropInt32Changed(SimpleArrayInterfacePropInt32PropertyCb callback) override;
+    uint64_t subscribeToPropInt32Changed(SimpleArrayInterfacePropInt32PropertyCb callback) override;
     /**
     * Implementation of ISimpleArrayInterfacePublisher::subscribeToPropInt32Changed
     */
-    void unsubscribeFromPropInt32Changed(long handleId) override;
+    void unsubscribeFromPropInt32Changed(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleArrayInterfacePublisher::subscribeToPropInt64Changed
     */
-    long subscribeToPropInt64Changed(SimpleArrayInterfacePropInt64PropertyCb callback) override;
+    uint64_t subscribeToPropInt64Changed(SimpleArrayInterfacePropInt64PropertyCb callback) override;
     /**
     * Implementation of ISimpleArrayInterfacePublisher::subscribeToPropInt64Changed
     */
-    void unsubscribeFromPropInt64Changed(long handleId) override;
+    void unsubscribeFromPropInt64Changed(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleArrayInterfacePublisher::subscribeToPropFloatChanged
     */
-    long subscribeToPropFloatChanged(SimpleArrayInterfacePropFloatPropertyCb callback) override;
+    uint64_t subscribeToPropFloatChanged(SimpleArrayInterfacePropFloatPropertyCb callback) override;
     /**
     * Implementation of ISimpleArrayInterfacePublisher::subscribeToPropFloatChanged
     */
-    void unsubscribeFromPropFloatChanged(long handleId) override;
+    void unsubscribeFromPropFloatChanged(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleArrayInterfacePublisher::subscribeToPropFloat32Changed
     */
-    long subscribeToPropFloat32Changed(SimpleArrayInterfacePropFloat32PropertyCb callback) override;
+    uint64_t subscribeToPropFloat32Changed(SimpleArrayInterfacePropFloat32PropertyCb callback) override;
     /**
     * Implementation of ISimpleArrayInterfacePublisher::subscribeToPropFloat32Changed
     */
-    void unsubscribeFromPropFloat32Changed(long handleId) override;
+    void unsubscribeFromPropFloat32Changed(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleArrayInterfacePublisher::subscribeToPropFloat64Changed
     */
-    long subscribeToPropFloat64Changed(SimpleArrayInterfacePropFloat64PropertyCb callback) override;
+    uint64_t subscribeToPropFloat64Changed(SimpleArrayInterfacePropFloat64PropertyCb callback) override;
     /**
     * Implementation of ISimpleArrayInterfacePublisher::subscribeToPropFloat64Changed
     */
-    void unsubscribeFromPropFloat64Changed(long handleId) override;
+    void unsubscribeFromPropFloat64Changed(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleArrayInterfacePublisher::subscribeToPropStringChanged
     */
-    long subscribeToPropStringChanged(SimpleArrayInterfacePropStringPropertyCb callback) override;
+    uint64_t subscribeToPropStringChanged(SimpleArrayInterfacePropStringPropertyCb callback) override;
     /**
     * Implementation of ISimpleArrayInterfacePublisher::subscribeToPropStringChanged
     */
-    void unsubscribeFromPropStringChanged(long handleId) override;
+    void unsubscribeFromPropStringChanged(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleArrayInterfacePublisher::subscribeToPropReadOnlyStringChanged
     */
-    long subscribeToPropReadOnlyStringChanged(SimpleArrayInterfacePropReadOnlyStringPropertyCb callback) override;
+    uint64_t subscribeToPropReadOnlyStringChanged(SimpleArrayInterfacePropReadOnlyStringPropertyCb callback) override;
     /**
     * Implementation of ISimpleArrayInterfacePublisher::subscribeToPropReadOnlyStringChanged
     */
-    void unsubscribeFromPropReadOnlyStringChanged(long handleId) override;
+    void unsubscribeFromPropReadOnlyStringChanged(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleArrayInterfacePublisher::subscribeToSigBool
     */
-    long subscribeToSigBool(SimpleArrayInterfaceSigBoolSignalCb callback) override;
+    uint64_t subscribeToSigBool(SimpleArrayInterfaceSigBoolSignalCb callback) override;
     /**
     * Implementation of ISimpleArrayInterfacePublisher::unsubscribeFromSigBool
     */
-    void unsubscribeFromSigBool(long handleId) override;
+    void unsubscribeFromSigBool(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleArrayInterfacePublisher::subscribeToSigInt
     */
-    long subscribeToSigInt(SimpleArrayInterfaceSigIntSignalCb callback) override;
+    uint64_t subscribeToSigInt(SimpleArrayInterfaceSigIntSignalCb callback) override;
     /**
     * Implementation of ISimpleArrayInterfacePublisher::unsubscribeFromSigInt
     */
-    void unsubscribeFromSigInt(long handleId) override;
+    void unsubscribeFromSigInt(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleArrayInterfacePublisher::subscribeToSigInt32
     */
-    long subscribeToSigInt32(SimpleArrayInterfaceSigInt32SignalCb callback) override;
+    uint64_t subscribeToSigInt32(SimpleArrayInterfaceSigInt32SignalCb callback) override;
     /**
     * Implementation of ISimpleArrayInterfacePublisher::unsubscribeFromSigInt32
     */
-    void unsubscribeFromSigInt32(long handleId) override;
+    void unsubscribeFromSigInt32(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleArrayInterfacePublisher::subscribeToSigInt64
     */
-    long subscribeToSigInt64(SimpleArrayInterfaceSigInt64SignalCb callback) override;
+    uint64_t subscribeToSigInt64(SimpleArrayInterfaceSigInt64SignalCb callback) override;
     /**
     * Implementation of ISimpleArrayInterfacePublisher::unsubscribeFromSigInt64
     */
-    void unsubscribeFromSigInt64(long handleId) override;
+    void unsubscribeFromSigInt64(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleArrayInterfacePublisher::subscribeToSigFloat
     */
-    long subscribeToSigFloat(SimpleArrayInterfaceSigFloatSignalCb callback) override;
+    uint64_t subscribeToSigFloat(SimpleArrayInterfaceSigFloatSignalCb callback) override;
     /**
     * Implementation of ISimpleArrayInterfacePublisher::unsubscribeFromSigFloat
     */
-    void unsubscribeFromSigFloat(long handleId) override;
+    void unsubscribeFromSigFloat(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleArrayInterfacePublisher::subscribeToSigFloat32
     */
-    long subscribeToSigFloat32(SimpleArrayInterfaceSigFloat32SignalCb callback) override;
+    uint64_t subscribeToSigFloat32(SimpleArrayInterfaceSigFloat32SignalCb callback) override;
     /**
     * Implementation of ISimpleArrayInterfacePublisher::unsubscribeFromSigFloat32
     */
-    void unsubscribeFromSigFloat32(long handleId) override;
+    void unsubscribeFromSigFloat32(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleArrayInterfacePublisher::subscribeToSigFloat64
     */
-    long subscribeToSigFloat64(SimpleArrayInterfaceSigFloat64SignalCb callback) override;
+    uint64_t subscribeToSigFloat64(SimpleArrayInterfaceSigFloat64SignalCb callback) override;
     /**
     * Implementation of ISimpleArrayInterfacePublisher::unsubscribeFromSigFloat64
     */
-    void unsubscribeFromSigFloat64(long handleId) override;
+    void unsubscribeFromSigFloat64(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleArrayInterfacePublisher::subscribeToSigString
     */
-    long subscribeToSigString(SimpleArrayInterfaceSigStringSignalCb callback) override;
+    uint64_t subscribeToSigString(SimpleArrayInterfaceSigStringSignalCb callback) override;
     /**
     * Implementation of ISimpleArrayInterfacePublisher::unsubscribeFromSigString
     */
-    void unsubscribeFromSigString(long handleId) override;
+    void unsubscribeFromSigString(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleArrayInterfacePublisher::publishPropBoolChanged

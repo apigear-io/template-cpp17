@@ -1,6 +1,7 @@
 {{- /* Copyright (c) ApiGear UG 2020 */ -}}
 #pragma once
 
+#include <cstdint>
 #include <future>
 #include "{{snake .Module.Name}}/generated/api/common.h"
 #include "{{snake .Module.Name}}/generated/api/datastructs.api.h"
@@ -192,14 +193,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeTo{{Camel $property.Name}}Changed({{Camel $interface.Name }}{{Camel $property.Name }}PropertyCb callback) = 0;
+    virtual uint64_t subscribeTo{{Camel $property.Name}}Changed({{Camel $interface.Name }}{{Camel $property.Name }}PropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from {{$property.Name}} property changes.
     * If your subscriber uses subscription with {{$sub_class}} interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFrom{{Camel $property.Name }}Changed(long handleId) = 0;
+    virtual void unsubscribeFrom{{Camel $property.Name }}Changed(uint64_t handleId) = 0;
 {{- end -}} {{/* range .Interface.Properties*/}}
 {{- range .Interface.Signals }}
 {{ $signal := . }}
@@ -211,12 +212,12 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeTo{{Camel $signal.Name }}({{Camel $interface.Name }}{{Camel $signal.Name }}SignalCb callback) = 0;
+    virtual uint64_t subscribeTo{{Camel $signal.Name }}({{Camel $interface.Name }}{{Camel $signal.Name }}SignalCb callback) = 0;
     /**
     * Use this function to unsubscribe from {{$signal.Name}} signal changes.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFrom{{Camel $signal.Name }}(long handleId) = 0;
+    virtual void unsubscribeFrom{{Camel $signal.Name }}(uint64_t handleId) = 0;
 {{- end -}} {{/* range .Interface.Signals*/}}
 {{- nl }}
 {{- range .Interface.Properties }}

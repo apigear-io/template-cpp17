@@ -28,12 +28,12 @@ void NoOperationsInterfacePublisher::unsubscribeFromAllChanges(INoOperationsInte
     }
 }
 
-long NoOperationsInterfacePublisher::subscribeToPropBoolChanged(NoOperationsInterfacePropBoolPropertyCb callback)
+uint64_t NoOperationsInterfacePublisher::subscribeToPropBoolChanged(NoOperationsInterfacePropBoolPropertyCb callback)
 {
     return PropBoolPublisher.subscribeForChange(callback);
 }
 
-void NoOperationsInterfacePublisher::unsubscribeFromPropBoolChanged(long handleId)
+void NoOperationsInterfacePublisher::unsubscribeFromPropBoolChanged(uint64_t handleId)
 {
     PropBoolPublisher.unsubscribeFromChange(handleId);
 }
@@ -50,12 +50,12 @@ void NoOperationsInterfacePublisher::publishPropBoolChanged(bool propBool) const
     PropBoolPublisher.publishChange(propBool);
 }
 
-long NoOperationsInterfacePublisher::subscribeToPropIntChanged(NoOperationsInterfacePropIntPropertyCb callback)
+uint64_t NoOperationsInterfacePublisher::subscribeToPropIntChanged(NoOperationsInterfacePropIntPropertyCb callback)
 {
     return PropIntPublisher.subscribeForChange(callback);
 }
 
-void NoOperationsInterfacePublisher::unsubscribeFromPropIntChanged(long handleId)
+void NoOperationsInterfacePublisher::unsubscribeFromPropIntChanged(uint64_t handleId)
 {
     PropIntPublisher.unsubscribeFromChange(handleId);
 }
@@ -72,12 +72,12 @@ void NoOperationsInterfacePublisher::publishPropIntChanged(int propInt) const
     PropIntPublisher.publishChange(propInt);
 }
 
-long NoOperationsInterfacePublisher::subscribeToSigVoid(NoOperationsInterfaceSigVoidSignalCb callback)
+uint64_t NoOperationsInterfacePublisher::subscribeToSigVoid(NoOperationsInterfaceSigVoidSignalCb callback)
 {
     return SigVoidPublisher.subscribeForChange(callback);
 }
 
-void NoOperationsInterfacePublisher::unsubscribeFromSigVoid(long handleId)
+void NoOperationsInterfacePublisher::unsubscribeFromSigVoid(uint64_t handleId)
 {
     SigVoidPublisher.unsubscribeFromChange(handleId);
 }
@@ -94,12 +94,12 @@ void NoOperationsInterfacePublisher::publishSigVoid() const
     SigVoidPublisher.publishChange();
 }
 
-long NoOperationsInterfacePublisher::subscribeToSigBool(NoOperationsInterfaceSigBoolSignalCb callback)
+uint64_t NoOperationsInterfacePublisher::subscribeToSigBool(NoOperationsInterfaceSigBoolSignalCb callback)
 {
     return SigBoolPublisher.subscribeForChange(callback);
 }
 
-void NoOperationsInterfacePublisher::unsubscribeFromSigBool(long handleId)
+void NoOperationsInterfacePublisher::unsubscribeFromSigBool(uint64_t handleId)
 {
     SigBoolPublisher.unsubscribeFromChange(handleId);
 }

@@ -47,11 +47,11 @@ public:
     /**
     * Implementation of {{$pub_interface}}::subscribeTo{{Camel $property.Name}}Changed
     */
-    long subscribeTo{{Camel $property.Name}}Changed({{$interfaceName}}{{Camel $property.Name}}PropertyCb callback) override;
+    uint64_t subscribeTo{{Camel $property.Name}}Changed({{$interfaceName}}{{Camel $property.Name}}PropertyCb callback) override;
     /**
     * Implementation of {{$pub_interface}}::subscribeTo{{Camel $property.Name}}Changed
     */
-    void unsubscribeFrom{{Camel $property.Name}}Changed(long handleId) override;
+    void unsubscribeFrom{{Camel $property.Name}}Changed(uint64_t handleId) override;
 {{- nl}}
 {{- end }}
 {{- range .Interface.Signals}}
@@ -59,11 +59,11 @@ public:
     /**
     * Implementation of {{$pub_interface}}::subscribeTo{{Camel $signal.Name}}
     */
-    long subscribeTo{{Camel $signal.Name}}({{$interfaceName}}{{Camel $signal.Name}}SignalCb callback) override;
+    uint64_t subscribeTo{{Camel $signal.Name}}({{$interfaceName}}{{Camel $signal.Name}}SignalCb callback) override;
     /**
     * Implementation of {{$pub_interface}}::unsubscribeFrom{{Camel $signal.Name}}
     */
-    void unsubscribeFrom{{Camel $signal.Name}}(long handleId) override;
+    void unsubscribeFrom{{Camel $signal.Name}}(uint64_t handleId) override;
 {{- nl}}
 {{- end }}
 {{- range .Interface.Properties}}

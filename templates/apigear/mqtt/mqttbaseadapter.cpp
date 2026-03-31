@@ -124,7 +124,7 @@ void MqttBaseAdapter::onSubscribed(const std::string& topic, bool is_subscribed)
     }
 }
 
-unsigned long MqttBaseAdapter::_subscribeForIsReady(std::function<void(bool)> sub_function)
+uint64_t MqttBaseAdapter::_subscribeForIsReady(std::function<void(bool)> sub_function)
 {
     auto id = _is_readyChanges.subscribeForChange(sub_function);
     if (_is_ready())
@@ -134,12 +134,12 @@ unsigned long MqttBaseAdapter::_subscribeForIsReady(std::function<void(bool)> su
     return id;
 }
 
-void MqttBaseAdapter::_unsubscribeFromIsReady(unsigned long id)
+void MqttBaseAdapter::_unsubscribeFromIsReady(uint64_t id)
 {
     _is_readyChanges.unsubscribeFromChange(id);
 }
 
-unsigned long MqttBaseAdapter::_subscribeForIsUnsubscribed(std::function<void(bool)> sub_function)
+uint64_t MqttBaseAdapter::_subscribeForIsUnsubscribed(std::function<void(bool)> sub_function)
 {
     auto id = _is_unsubscribed.subscribeForChange(sub_function);
     if (_isUnsubscribed())
@@ -149,7 +149,7 @@ unsigned long MqttBaseAdapter::_subscribeForIsUnsubscribed(std::function<void(bo
     return id;
 }
 
-void MqttBaseAdapter::_unsubscribeFromIsUnsubscribed(unsigned long id)
+void MqttBaseAdapter::_unsubscribeFromIsUnsubscribed(uint64_t id)
 {
     _is_unsubscribed.unsubscribeFromChange(id);
 }

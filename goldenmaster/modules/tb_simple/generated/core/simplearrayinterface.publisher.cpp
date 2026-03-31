@@ -28,12 +28,12 @@ void SimpleArrayInterfacePublisher::unsubscribeFromAllChanges(ISimpleArrayInterf
     }
 }
 
-long SimpleArrayInterfacePublisher::subscribeToPropBoolChanged(SimpleArrayInterfacePropBoolPropertyCb callback)
+uint64_t SimpleArrayInterfacePublisher::subscribeToPropBoolChanged(SimpleArrayInterfacePropBoolPropertyCb callback)
 {
     return PropBoolPublisher.subscribeForChange(callback);
 }
 
-void SimpleArrayInterfacePublisher::unsubscribeFromPropBoolChanged(long handleId)
+void SimpleArrayInterfacePublisher::unsubscribeFromPropBoolChanged(uint64_t handleId)
 {
     PropBoolPublisher.unsubscribeFromChange(handleId);
 }
@@ -50,12 +50,12 @@ void SimpleArrayInterfacePublisher::publishPropBoolChanged(const std::list<bool>
     PropBoolPublisher.publishChange(propBool);
 }
 
-long SimpleArrayInterfacePublisher::subscribeToPropIntChanged(SimpleArrayInterfacePropIntPropertyCb callback)
+uint64_t SimpleArrayInterfacePublisher::subscribeToPropIntChanged(SimpleArrayInterfacePropIntPropertyCb callback)
 {
     return PropIntPublisher.subscribeForChange(callback);
 }
 
-void SimpleArrayInterfacePublisher::unsubscribeFromPropIntChanged(long handleId)
+void SimpleArrayInterfacePublisher::unsubscribeFromPropIntChanged(uint64_t handleId)
 {
     PropIntPublisher.unsubscribeFromChange(handleId);
 }
@@ -72,12 +72,12 @@ void SimpleArrayInterfacePublisher::publishPropIntChanged(const std::list<int>& 
     PropIntPublisher.publishChange(propInt);
 }
 
-long SimpleArrayInterfacePublisher::subscribeToPropInt32Changed(SimpleArrayInterfacePropInt32PropertyCb callback)
+uint64_t SimpleArrayInterfacePublisher::subscribeToPropInt32Changed(SimpleArrayInterfacePropInt32PropertyCb callback)
 {
     return PropInt32Publisher.subscribeForChange(callback);
 }
 
-void SimpleArrayInterfacePublisher::unsubscribeFromPropInt32Changed(long handleId)
+void SimpleArrayInterfacePublisher::unsubscribeFromPropInt32Changed(uint64_t handleId)
 {
     PropInt32Publisher.unsubscribeFromChange(handleId);
 }
@@ -94,12 +94,12 @@ void SimpleArrayInterfacePublisher::publishPropInt32Changed(const std::list<int3
     PropInt32Publisher.publishChange(propInt32);
 }
 
-long SimpleArrayInterfacePublisher::subscribeToPropInt64Changed(SimpleArrayInterfacePropInt64PropertyCb callback)
+uint64_t SimpleArrayInterfacePublisher::subscribeToPropInt64Changed(SimpleArrayInterfacePropInt64PropertyCb callback)
 {
     return PropInt64Publisher.subscribeForChange(callback);
 }
 
-void SimpleArrayInterfacePublisher::unsubscribeFromPropInt64Changed(long handleId)
+void SimpleArrayInterfacePublisher::unsubscribeFromPropInt64Changed(uint64_t handleId)
 {
     PropInt64Publisher.unsubscribeFromChange(handleId);
 }
@@ -116,12 +116,12 @@ void SimpleArrayInterfacePublisher::publishPropInt64Changed(const std::list<int6
     PropInt64Publisher.publishChange(propInt64);
 }
 
-long SimpleArrayInterfacePublisher::subscribeToPropFloatChanged(SimpleArrayInterfacePropFloatPropertyCb callback)
+uint64_t SimpleArrayInterfacePublisher::subscribeToPropFloatChanged(SimpleArrayInterfacePropFloatPropertyCb callback)
 {
     return PropFloatPublisher.subscribeForChange(callback);
 }
 
-void SimpleArrayInterfacePublisher::unsubscribeFromPropFloatChanged(long handleId)
+void SimpleArrayInterfacePublisher::unsubscribeFromPropFloatChanged(uint64_t handleId)
 {
     PropFloatPublisher.unsubscribeFromChange(handleId);
 }
@@ -138,12 +138,12 @@ void SimpleArrayInterfacePublisher::publishPropFloatChanged(const std::list<floa
     PropFloatPublisher.publishChange(propFloat);
 }
 
-long SimpleArrayInterfacePublisher::subscribeToPropFloat32Changed(SimpleArrayInterfacePropFloat32PropertyCb callback)
+uint64_t SimpleArrayInterfacePublisher::subscribeToPropFloat32Changed(SimpleArrayInterfacePropFloat32PropertyCb callback)
 {
     return PropFloat32Publisher.subscribeForChange(callback);
 }
 
-void SimpleArrayInterfacePublisher::unsubscribeFromPropFloat32Changed(long handleId)
+void SimpleArrayInterfacePublisher::unsubscribeFromPropFloat32Changed(uint64_t handleId)
 {
     PropFloat32Publisher.unsubscribeFromChange(handleId);
 }
@@ -160,12 +160,12 @@ void SimpleArrayInterfacePublisher::publishPropFloat32Changed(const std::list<fl
     PropFloat32Publisher.publishChange(propFloat32);
 }
 
-long SimpleArrayInterfacePublisher::subscribeToPropFloat64Changed(SimpleArrayInterfacePropFloat64PropertyCb callback)
+uint64_t SimpleArrayInterfacePublisher::subscribeToPropFloat64Changed(SimpleArrayInterfacePropFloat64PropertyCb callback)
 {
     return PropFloat64Publisher.subscribeForChange(callback);
 }
 
-void SimpleArrayInterfacePublisher::unsubscribeFromPropFloat64Changed(long handleId)
+void SimpleArrayInterfacePublisher::unsubscribeFromPropFloat64Changed(uint64_t handleId)
 {
     PropFloat64Publisher.unsubscribeFromChange(handleId);
 }
@@ -182,12 +182,12 @@ void SimpleArrayInterfacePublisher::publishPropFloat64Changed(const std::list<do
     PropFloat64Publisher.publishChange(propFloat64);
 }
 
-long SimpleArrayInterfacePublisher::subscribeToPropStringChanged(SimpleArrayInterfacePropStringPropertyCb callback)
+uint64_t SimpleArrayInterfacePublisher::subscribeToPropStringChanged(SimpleArrayInterfacePropStringPropertyCb callback)
 {
     return PropStringPublisher.subscribeForChange(callback);
 }
 
-void SimpleArrayInterfacePublisher::unsubscribeFromPropStringChanged(long handleId)
+void SimpleArrayInterfacePublisher::unsubscribeFromPropStringChanged(uint64_t handleId)
 {
     PropStringPublisher.unsubscribeFromChange(handleId);
 }
@@ -204,12 +204,12 @@ void SimpleArrayInterfacePublisher::publishPropStringChanged(const std::list<std
     PropStringPublisher.publishChange(propString);
 }
 
-long SimpleArrayInterfacePublisher::subscribeToPropReadOnlyStringChanged(SimpleArrayInterfacePropReadOnlyStringPropertyCb callback)
+uint64_t SimpleArrayInterfacePublisher::subscribeToPropReadOnlyStringChanged(SimpleArrayInterfacePropReadOnlyStringPropertyCb callback)
 {
     return PropReadOnlyStringPublisher.subscribeForChange(callback);
 }
 
-void SimpleArrayInterfacePublisher::unsubscribeFromPropReadOnlyStringChanged(long handleId)
+void SimpleArrayInterfacePublisher::unsubscribeFromPropReadOnlyStringChanged(uint64_t handleId)
 {
     PropReadOnlyStringPublisher.unsubscribeFromChange(handleId);
 }
@@ -226,12 +226,12 @@ void SimpleArrayInterfacePublisher::publishPropReadOnlyStringChanged(const std::
     PropReadOnlyStringPublisher.publishChange(propReadOnlyString);
 }
 
-long SimpleArrayInterfacePublisher::subscribeToSigBool(SimpleArrayInterfaceSigBoolSignalCb callback)
+uint64_t SimpleArrayInterfacePublisher::subscribeToSigBool(SimpleArrayInterfaceSigBoolSignalCb callback)
 {
     return SigBoolPublisher.subscribeForChange(callback);
 }
 
-void SimpleArrayInterfacePublisher::unsubscribeFromSigBool(long handleId)
+void SimpleArrayInterfacePublisher::unsubscribeFromSigBool(uint64_t handleId)
 {
     SigBoolPublisher.unsubscribeFromChange(handleId);
 }
@@ -248,12 +248,12 @@ void SimpleArrayInterfacePublisher::publishSigBool(const std::list<bool>& paramB
     SigBoolPublisher.publishChange(paramBool);
 }
 
-long SimpleArrayInterfacePublisher::subscribeToSigInt(SimpleArrayInterfaceSigIntSignalCb callback)
+uint64_t SimpleArrayInterfacePublisher::subscribeToSigInt(SimpleArrayInterfaceSigIntSignalCb callback)
 {
     return SigIntPublisher.subscribeForChange(callback);
 }
 
-void SimpleArrayInterfacePublisher::unsubscribeFromSigInt(long handleId)
+void SimpleArrayInterfacePublisher::unsubscribeFromSigInt(uint64_t handleId)
 {
     SigIntPublisher.unsubscribeFromChange(handleId);
 }
@@ -270,12 +270,12 @@ void SimpleArrayInterfacePublisher::publishSigInt(const std::list<int>& paramInt
     SigIntPublisher.publishChange(paramInt);
 }
 
-long SimpleArrayInterfacePublisher::subscribeToSigInt32(SimpleArrayInterfaceSigInt32SignalCb callback)
+uint64_t SimpleArrayInterfacePublisher::subscribeToSigInt32(SimpleArrayInterfaceSigInt32SignalCb callback)
 {
     return SigInt32Publisher.subscribeForChange(callback);
 }
 
-void SimpleArrayInterfacePublisher::unsubscribeFromSigInt32(long handleId)
+void SimpleArrayInterfacePublisher::unsubscribeFromSigInt32(uint64_t handleId)
 {
     SigInt32Publisher.unsubscribeFromChange(handleId);
 }
@@ -292,12 +292,12 @@ void SimpleArrayInterfacePublisher::publishSigInt32(const std::list<int32_t>& pa
     SigInt32Publisher.publishChange(paramInt32);
 }
 
-long SimpleArrayInterfacePublisher::subscribeToSigInt64(SimpleArrayInterfaceSigInt64SignalCb callback)
+uint64_t SimpleArrayInterfacePublisher::subscribeToSigInt64(SimpleArrayInterfaceSigInt64SignalCb callback)
 {
     return SigInt64Publisher.subscribeForChange(callback);
 }
 
-void SimpleArrayInterfacePublisher::unsubscribeFromSigInt64(long handleId)
+void SimpleArrayInterfacePublisher::unsubscribeFromSigInt64(uint64_t handleId)
 {
     SigInt64Publisher.unsubscribeFromChange(handleId);
 }
@@ -314,12 +314,12 @@ void SimpleArrayInterfacePublisher::publishSigInt64(const std::list<int64_t>& pa
     SigInt64Publisher.publishChange(paramInt64);
 }
 
-long SimpleArrayInterfacePublisher::subscribeToSigFloat(SimpleArrayInterfaceSigFloatSignalCb callback)
+uint64_t SimpleArrayInterfacePublisher::subscribeToSigFloat(SimpleArrayInterfaceSigFloatSignalCb callback)
 {
     return SigFloatPublisher.subscribeForChange(callback);
 }
 
-void SimpleArrayInterfacePublisher::unsubscribeFromSigFloat(long handleId)
+void SimpleArrayInterfacePublisher::unsubscribeFromSigFloat(uint64_t handleId)
 {
     SigFloatPublisher.unsubscribeFromChange(handleId);
 }
@@ -336,12 +336,12 @@ void SimpleArrayInterfacePublisher::publishSigFloat(const std::list<float>& para
     SigFloatPublisher.publishChange(paramFloat);
 }
 
-long SimpleArrayInterfacePublisher::subscribeToSigFloat32(SimpleArrayInterfaceSigFloat32SignalCb callback)
+uint64_t SimpleArrayInterfacePublisher::subscribeToSigFloat32(SimpleArrayInterfaceSigFloat32SignalCb callback)
 {
     return SigFloat32Publisher.subscribeForChange(callback);
 }
 
-void SimpleArrayInterfacePublisher::unsubscribeFromSigFloat32(long handleId)
+void SimpleArrayInterfacePublisher::unsubscribeFromSigFloat32(uint64_t handleId)
 {
     SigFloat32Publisher.unsubscribeFromChange(handleId);
 }
@@ -358,12 +358,12 @@ void SimpleArrayInterfacePublisher::publishSigFloat32(const std::list<float>& pa
     SigFloat32Publisher.publishChange(paramFloa32);
 }
 
-long SimpleArrayInterfacePublisher::subscribeToSigFloat64(SimpleArrayInterfaceSigFloat64SignalCb callback)
+uint64_t SimpleArrayInterfacePublisher::subscribeToSigFloat64(SimpleArrayInterfaceSigFloat64SignalCb callback)
 {
     return SigFloat64Publisher.subscribeForChange(callback);
 }
 
-void SimpleArrayInterfacePublisher::unsubscribeFromSigFloat64(long handleId)
+void SimpleArrayInterfacePublisher::unsubscribeFromSigFloat64(uint64_t handleId)
 {
     SigFloat64Publisher.unsubscribeFromChange(handleId);
 }
@@ -380,12 +380,12 @@ void SimpleArrayInterfacePublisher::publishSigFloat64(const std::list<double>& p
     SigFloat64Publisher.publishChange(paramFloat64);
 }
 
-long SimpleArrayInterfacePublisher::subscribeToSigString(SimpleArrayInterfaceSigStringSignalCb callback)
+uint64_t SimpleArrayInterfacePublisher::subscribeToSigString(SimpleArrayInterfaceSigStringSignalCb callback)
 {
     return SigStringPublisher.subscribeForChange(callback);
 }
 
-void SimpleArrayInterfacePublisher::unsubscribeFromSigString(long handleId)
+void SimpleArrayInterfacePublisher::unsubscribeFromSigString(uint64_t handleId)
 {
     SigStringPublisher.unsubscribeFromChange(handleId);
 }

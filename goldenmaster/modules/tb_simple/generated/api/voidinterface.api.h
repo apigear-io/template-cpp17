@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <future>
 #include "tb_simple/generated/api/common.h"
 #include "tb_simple/generated/api/datastructs.api.h"
@@ -106,12 +107,12 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToSigVoid(VoidInterfaceSigVoidSignalCb callback) = 0;
+    virtual uint64_t subscribeToSigVoid(VoidInterfaceSigVoidSignalCb callback) = 0;
     /**
     * Use this function to unsubscribe from sigVoid signal changes.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromSigVoid(long handleId) = 0;
+    virtual void unsubscribeFromSigVoid(uint64_t handleId) = 0;
 
     /**
     * Publishes the emitted signal to all subscribed clients.

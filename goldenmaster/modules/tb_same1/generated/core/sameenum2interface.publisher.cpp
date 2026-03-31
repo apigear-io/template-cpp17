@@ -28,12 +28,12 @@ void SameEnum2InterfacePublisher::unsubscribeFromAllChanges(ISameEnum2InterfaceS
     }
 }
 
-long SameEnum2InterfacePublisher::subscribeToProp1Changed(SameEnum2InterfaceProp1PropertyCb callback)
+uint64_t SameEnum2InterfacePublisher::subscribeToProp1Changed(SameEnum2InterfaceProp1PropertyCb callback)
 {
     return Prop1Publisher.subscribeForChange(callback);
 }
 
-void SameEnum2InterfacePublisher::unsubscribeFromProp1Changed(long handleId)
+void SameEnum2InterfacePublisher::unsubscribeFromProp1Changed(uint64_t handleId)
 {
     Prop1Publisher.unsubscribeFromChange(handleId);
 }
@@ -50,12 +50,12 @@ void SameEnum2InterfacePublisher::publishProp1Changed(Enum1Enum prop1) const
     Prop1Publisher.publishChange(prop1);
 }
 
-long SameEnum2InterfacePublisher::subscribeToProp2Changed(SameEnum2InterfaceProp2PropertyCb callback)
+uint64_t SameEnum2InterfacePublisher::subscribeToProp2Changed(SameEnum2InterfaceProp2PropertyCb callback)
 {
     return Prop2Publisher.subscribeForChange(callback);
 }
 
-void SameEnum2InterfacePublisher::unsubscribeFromProp2Changed(long handleId)
+void SameEnum2InterfacePublisher::unsubscribeFromProp2Changed(uint64_t handleId)
 {
     Prop2Publisher.unsubscribeFromChange(handleId);
 }
@@ -72,12 +72,12 @@ void SameEnum2InterfacePublisher::publishProp2Changed(Enum2Enum prop2) const
     Prop2Publisher.publishChange(prop2);
 }
 
-long SameEnum2InterfacePublisher::subscribeToSig1(SameEnum2InterfaceSig1SignalCb callback)
+uint64_t SameEnum2InterfacePublisher::subscribeToSig1(SameEnum2InterfaceSig1SignalCb callback)
 {
     return Sig1Publisher.subscribeForChange(callback);
 }
 
-void SameEnum2InterfacePublisher::unsubscribeFromSig1(long handleId)
+void SameEnum2InterfacePublisher::unsubscribeFromSig1(uint64_t handleId)
 {
     Sig1Publisher.unsubscribeFromChange(handleId);
 }
@@ -94,12 +94,12 @@ void SameEnum2InterfacePublisher::publishSig1(Enum1Enum param1) const
     Sig1Publisher.publishChange(param1);
 }
 
-long SameEnum2InterfacePublisher::subscribeToSig2(SameEnum2InterfaceSig2SignalCb callback)
+uint64_t SameEnum2InterfacePublisher::subscribeToSig2(SameEnum2InterfaceSig2SignalCb callback)
 {
     return Sig2Publisher.subscribeForChange(callback);
 }
 
-void SameEnum2InterfacePublisher::unsubscribeFromSig2(long handleId)
+void SameEnum2InterfacePublisher::unsubscribeFromSig2(uint64_t handleId)
 {
     Sig2Publisher.unsubscribeFromChange(handleId);
 }

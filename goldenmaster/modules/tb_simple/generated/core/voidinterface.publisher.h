@@ -38,11 +38,11 @@ public:
     /**
     * Implementation of IVoidInterfacePublisher::subscribeToSigVoid
     */
-    long subscribeToSigVoid(VoidInterfaceSigVoidSignalCb callback) override;
+    uint64_t subscribeToSigVoid(VoidInterfaceSigVoidSignalCb callback) override;
     /**
     * Implementation of IVoidInterfacePublisher::unsubscribeFromSigVoid
     */
-    void unsubscribeFromSigVoid(long handleId) override;
+    void unsubscribeFromSigVoid(uint64_t handleId) override;
 
     /**
     * Implementation of IVoidInterfacePublisher::publishSigVoid

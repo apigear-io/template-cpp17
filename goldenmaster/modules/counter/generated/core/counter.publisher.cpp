@@ -28,12 +28,12 @@ void CounterPublisher::unsubscribeFromAllChanges(ICounterSubscriber& subscriber)
     }
 }
 
-long CounterPublisher::subscribeToVectorChanged(CounterVectorPropertyCb callback)
+uint64_t CounterPublisher::subscribeToVectorChanged(CounterVectorPropertyCb callback)
 {
     return VectorPublisher.subscribeForChange(callback);
 }
 
-void CounterPublisher::unsubscribeFromVectorChanged(long handleId)
+void CounterPublisher::unsubscribeFromVectorChanged(uint64_t handleId)
 {
     VectorPublisher.unsubscribeFromChange(handleId);
 }
@@ -50,12 +50,12 @@ void CounterPublisher::publishVectorChanged(const Test::CustomTypes::Vector3D& v
     VectorPublisher.publishChange(vector);
 }
 
-long CounterPublisher::subscribeToExternVectorChanged(CounterExternVectorPropertyCb callback)
+uint64_t CounterPublisher::subscribeToExternVectorChanged(CounterExternVectorPropertyCb callback)
 {
     return ExternVectorPublisher.subscribeForChange(callback);
 }
 
-void CounterPublisher::unsubscribeFromExternVectorChanged(long handleId)
+void CounterPublisher::unsubscribeFromExternVectorChanged(uint64_t handleId)
 {
     ExternVectorPublisher.unsubscribeFromChange(handleId);
 }
@@ -72,12 +72,12 @@ void CounterPublisher::publishExternVectorChanged(const Eigen::Vector3f& extern_
     ExternVectorPublisher.publishChange(extern_vector);
 }
 
-long CounterPublisher::subscribeToVectorArrayChanged(CounterVectorArrayPropertyCb callback)
+uint64_t CounterPublisher::subscribeToVectorArrayChanged(CounterVectorArrayPropertyCb callback)
 {
     return VectorArrayPublisher.subscribeForChange(callback);
 }
 
-void CounterPublisher::unsubscribeFromVectorArrayChanged(long handleId)
+void CounterPublisher::unsubscribeFromVectorArrayChanged(uint64_t handleId)
 {
     VectorArrayPublisher.unsubscribeFromChange(handleId);
 }
@@ -94,12 +94,12 @@ void CounterPublisher::publishVectorArrayChanged(const std::list<Test::CustomTyp
     VectorArrayPublisher.publishChange(vectorArray);
 }
 
-long CounterPublisher::subscribeToExternVectorArrayChanged(CounterExternVectorArrayPropertyCb callback)
+uint64_t CounterPublisher::subscribeToExternVectorArrayChanged(CounterExternVectorArrayPropertyCb callback)
 {
     return ExternVectorArrayPublisher.subscribeForChange(callback);
 }
 
-void CounterPublisher::unsubscribeFromExternVectorArrayChanged(long handleId)
+void CounterPublisher::unsubscribeFromExternVectorArrayChanged(uint64_t handleId)
 {
     ExternVectorArrayPublisher.unsubscribeFromChange(handleId);
 }
@@ -116,12 +116,12 @@ void CounterPublisher::publishExternVectorArrayChanged(const std::list<Eigen::Ve
     ExternVectorArrayPublisher.publishChange(extern_vectorArray);
 }
 
-long CounterPublisher::subscribeToValueChanged(CounterValueChangedSignalCb callback)
+uint64_t CounterPublisher::subscribeToValueChanged(CounterValueChangedSignalCb callback)
 {
     return ValueChangedPublisher.subscribeForChange(callback);
 }
 
-void CounterPublisher::unsubscribeFromValueChanged(long handleId)
+void CounterPublisher::unsubscribeFromValueChanged(uint64_t handleId)
 {
     ValueChangedPublisher.unsubscribeFromChange(handleId);
 }

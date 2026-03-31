@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <future>
 #include "tb_names/generated/api/common.h"
 #include "tb_names/generated/api/datastructs.api.h"
@@ -193,14 +194,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToSwitchChanged(NamEsSwitchPropertyCb callback) = 0;
+    virtual uint64_t subscribeToSwitchChanged(NamEsSwitchPropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from Switch property changes.
     * If your subscriber uses subscription with INamEsSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromSwitchChanged(long handleId) = 0;
+    virtual void unsubscribeFromSwitchChanged(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for SOME_PROPERTY value changes.
@@ -211,14 +212,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToSomePropertyChanged(NamEsSomePropertyPropertyCb callback) = 0;
+    virtual uint64_t subscribeToSomePropertyChanged(NamEsSomePropertyPropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from SOME_PROPERTY property changes.
     * If your subscriber uses subscription with INamEsSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromSomePropertyChanged(long handleId) = 0;
+    virtual void unsubscribeFromSomePropertyChanged(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for Some_Poperty2 value changes.
@@ -229,14 +230,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToSomePoperty2Changed(NamEsSomePoperty2PropertyCb callback) = 0;
+    virtual uint64_t subscribeToSomePoperty2Changed(NamEsSomePoperty2PropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from Some_Poperty2 property changes.
     * If your subscriber uses subscription with INamEsSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromSomePoperty2Changed(long handleId) = 0;
+    virtual void unsubscribeFromSomePoperty2Changed(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for enum_property value changes.
@@ -247,14 +248,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToEnumPropertyChanged(NamEsEnumPropertyPropertyCb callback) = 0;
+    virtual uint64_t subscribeToEnumPropertyChanged(NamEsEnumPropertyPropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from enum_property property changes.
     * If your subscriber uses subscription with INamEsSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromEnumPropertyChanged(long handleId) = 0;
+    virtual void unsubscribeFromEnumPropertyChanged(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for SOME_SIGNAL signal changes.
@@ -264,12 +265,12 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToSomeSignal(NamEsSomeSignalSignalCb callback) = 0;
+    virtual uint64_t subscribeToSomeSignal(NamEsSomeSignalSignalCb callback) = 0;
     /**
     * Use this function to unsubscribe from SOME_SIGNAL signal changes.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromSomeSignal(long handleId) = 0;
+    virtual void unsubscribeFromSomeSignal(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for Some_Signal2 signal changes.
@@ -279,12 +280,12 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToSomeSignal2(NamEsSomeSignal2SignalCb callback) = 0;
+    virtual uint64_t subscribeToSomeSignal2(NamEsSomeSignal2SignalCb callback) = 0;
     /**
     * Use this function to unsubscribe from Some_Signal2 signal changes.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromSomeSignal2(long handleId) = 0;
+    virtual void unsubscribeFromSomeSignal2(uint64_t handleId) = 0;
 
     /**
     * Publishes the property changed to all subscribed clients.

@@ -38,74 +38,74 @@ public:
     /**
     * Implementation of IManyParamInterfacePublisher::subscribeToProp1Changed
     */
-    long subscribeToProp1Changed(ManyParamInterfaceProp1PropertyCb callback) override;
+    uint64_t subscribeToProp1Changed(ManyParamInterfaceProp1PropertyCb callback) override;
     /**
     * Implementation of IManyParamInterfacePublisher::subscribeToProp1Changed
     */
-    void unsubscribeFromProp1Changed(long handleId) override;
+    void unsubscribeFromProp1Changed(uint64_t handleId) override;
 
     /**
     * Implementation of IManyParamInterfacePublisher::subscribeToProp2Changed
     */
-    long subscribeToProp2Changed(ManyParamInterfaceProp2PropertyCb callback) override;
+    uint64_t subscribeToProp2Changed(ManyParamInterfaceProp2PropertyCb callback) override;
     /**
     * Implementation of IManyParamInterfacePublisher::subscribeToProp2Changed
     */
-    void unsubscribeFromProp2Changed(long handleId) override;
+    void unsubscribeFromProp2Changed(uint64_t handleId) override;
 
     /**
     * Implementation of IManyParamInterfacePublisher::subscribeToProp3Changed
     */
-    long subscribeToProp3Changed(ManyParamInterfaceProp3PropertyCb callback) override;
+    uint64_t subscribeToProp3Changed(ManyParamInterfaceProp3PropertyCb callback) override;
     /**
     * Implementation of IManyParamInterfacePublisher::subscribeToProp3Changed
     */
-    void unsubscribeFromProp3Changed(long handleId) override;
+    void unsubscribeFromProp3Changed(uint64_t handleId) override;
 
     /**
     * Implementation of IManyParamInterfacePublisher::subscribeToProp4Changed
     */
-    long subscribeToProp4Changed(ManyParamInterfaceProp4PropertyCb callback) override;
+    uint64_t subscribeToProp4Changed(ManyParamInterfaceProp4PropertyCb callback) override;
     /**
     * Implementation of IManyParamInterfacePublisher::subscribeToProp4Changed
     */
-    void unsubscribeFromProp4Changed(long handleId) override;
+    void unsubscribeFromProp4Changed(uint64_t handleId) override;
 
     /**
     * Implementation of IManyParamInterfacePublisher::subscribeToSig1
     */
-    long subscribeToSig1(ManyParamInterfaceSig1SignalCb callback) override;
+    uint64_t subscribeToSig1(ManyParamInterfaceSig1SignalCb callback) override;
     /**
     * Implementation of IManyParamInterfacePublisher::unsubscribeFromSig1
     */
-    void unsubscribeFromSig1(long handleId) override;
+    void unsubscribeFromSig1(uint64_t handleId) override;
 
     /**
     * Implementation of IManyParamInterfacePublisher::subscribeToSig2
     */
-    long subscribeToSig2(ManyParamInterfaceSig2SignalCb callback) override;
+    uint64_t subscribeToSig2(ManyParamInterfaceSig2SignalCb callback) override;
     /**
     * Implementation of IManyParamInterfacePublisher::unsubscribeFromSig2
     */
-    void unsubscribeFromSig2(long handleId) override;
+    void unsubscribeFromSig2(uint64_t handleId) override;
 
     /**
     * Implementation of IManyParamInterfacePublisher::subscribeToSig3
     */
-    long subscribeToSig3(ManyParamInterfaceSig3SignalCb callback) override;
+    uint64_t subscribeToSig3(ManyParamInterfaceSig3SignalCb callback) override;
     /**
     * Implementation of IManyParamInterfacePublisher::unsubscribeFromSig3
     */
-    void unsubscribeFromSig3(long handleId) override;
+    void unsubscribeFromSig3(uint64_t handleId) override;
 
     /**
     * Implementation of IManyParamInterfacePublisher::subscribeToSig4
     */
-    long subscribeToSig4(ManyParamInterfaceSig4SignalCb callback) override;
+    uint64_t subscribeToSig4(ManyParamInterfaceSig4SignalCb callback) override;
     /**
     * Implementation of IManyParamInterfacePublisher::unsubscribeFromSig4
     */
-    void unsubscribeFromSig4(long handleId) override;
+    void unsubscribeFromSig4(uint64_t handleId) override;
 
     /**
     * Implementation of IManyParamInterfacePublisher::publishProp1Changed

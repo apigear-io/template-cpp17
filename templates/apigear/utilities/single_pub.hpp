@@ -1,9 +1,11 @@
 #pragma once
 
 #include <atomic>
+#include <cstdint>
+#include <functional>
 #include <map>
-#include <shared_mutex>
 #include <mutex>
+#include <shared_mutex>
 
 namespace ApiGear {
 namespace Utilities {
@@ -12,15 +14,14 @@ template<typename... Arguments>
 class SinglePub
 {
 public:
-    unsigned long subscribeForChange(std::function<void(Arguments...)> callback)
+    uint64_t subscribeForChange(std::function<void(Arguments...)> callback)
     {
-        // this is a short term workaround - we need a better solution for unique handle identifiers
         auto handleId = m_nextId++;
         std::unique_lock<std::shared_timed_mutex> lock(m_callbacksMutex);
         m_callbacks[handleId] = callback;
         return handleId;
     }
-    void unsubscribeFromChange(unsigned long handleId)
+    void unsubscribeFromChange(uint64_t handleId)
     {
         std::unique_lock<std::shared_timed_mutex> lock(m_callbacksMutex);
         m_callbacks.erase(handleId);
@@ -39,8 +40,8 @@ public:
         }
     }
 private:
-    std::atomic<unsigned long> m_nextId{ 0 };
-    std::map<unsigned long, std::function<void(Arguments...)> > m_callbacks;
+    std::atomic<uint64_t> m_nextId{ 0 };
+    std::map<uint64_t, std::function<void(Arguments...)> > m_callbacks;
     mutable std::shared_timed_mutex m_callbacksMutex;
 
 };

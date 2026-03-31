@@ -28,12 +28,12 @@ void EnumInterfacePublisher::unsubscribeFromAllChanges(IEnumInterfaceSubscriber&
     }
 }
 
-long EnumInterfacePublisher::subscribeToProp0Changed(EnumInterfaceProp0PropertyCb callback)
+uint64_t EnumInterfacePublisher::subscribeToProp0Changed(EnumInterfaceProp0PropertyCb callback)
 {
     return Prop0Publisher.subscribeForChange(callback);
 }
 
-void EnumInterfacePublisher::unsubscribeFromProp0Changed(long handleId)
+void EnumInterfacePublisher::unsubscribeFromProp0Changed(uint64_t handleId)
 {
     Prop0Publisher.unsubscribeFromChange(handleId);
 }
@@ -50,12 +50,12 @@ void EnumInterfacePublisher::publishProp0Changed(Enum0Enum prop0) const
     Prop0Publisher.publishChange(prop0);
 }
 
-long EnumInterfacePublisher::subscribeToProp1Changed(EnumInterfaceProp1PropertyCb callback)
+uint64_t EnumInterfacePublisher::subscribeToProp1Changed(EnumInterfaceProp1PropertyCb callback)
 {
     return Prop1Publisher.subscribeForChange(callback);
 }
 
-void EnumInterfacePublisher::unsubscribeFromProp1Changed(long handleId)
+void EnumInterfacePublisher::unsubscribeFromProp1Changed(uint64_t handleId)
 {
     Prop1Publisher.unsubscribeFromChange(handleId);
 }
@@ -72,12 +72,12 @@ void EnumInterfacePublisher::publishProp1Changed(Enum1Enum prop1) const
     Prop1Publisher.publishChange(prop1);
 }
 
-long EnumInterfacePublisher::subscribeToProp2Changed(EnumInterfaceProp2PropertyCb callback)
+uint64_t EnumInterfacePublisher::subscribeToProp2Changed(EnumInterfaceProp2PropertyCb callback)
 {
     return Prop2Publisher.subscribeForChange(callback);
 }
 
-void EnumInterfacePublisher::unsubscribeFromProp2Changed(long handleId)
+void EnumInterfacePublisher::unsubscribeFromProp2Changed(uint64_t handleId)
 {
     Prop2Publisher.unsubscribeFromChange(handleId);
 }
@@ -94,12 +94,12 @@ void EnumInterfacePublisher::publishProp2Changed(Enum2Enum prop2) const
     Prop2Publisher.publishChange(prop2);
 }
 
-long EnumInterfacePublisher::subscribeToProp3Changed(EnumInterfaceProp3PropertyCb callback)
+uint64_t EnumInterfacePublisher::subscribeToProp3Changed(EnumInterfaceProp3PropertyCb callback)
 {
     return Prop3Publisher.subscribeForChange(callback);
 }
 
-void EnumInterfacePublisher::unsubscribeFromProp3Changed(long handleId)
+void EnumInterfacePublisher::unsubscribeFromProp3Changed(uint64_t handleId)
 {
     Prop3Publisher.unsubscribeFromChange(handleId);
 }
@@ -116,12 +116,12 @@ void EnumInterfacePublisher::publishProp3Changed(Enum3Enum prop3) const
     Prop3Publisher.publishChange(prop3);
 }
 
-long EnumInterfacePublisher::subscribeToSig0(EnumInterfaceSig0SignalCb callback)
+uint64_t EnumInterfacePublisher::subscribeToSig0(EnumInterfaceSig0SignalCb callback)
 {
     return Sig0Publisher.subscribeForChange(callback);
 }
 
-void EnumInterfacePublisher::unsubscribeFromSig0(long handleId)
+void EnumInterfacePublisher::unsubscribeFromSig0(uint64_t handleId)
 {
     Sig0Publisher.unsubscribeFromChange(handleId);
 }
@@ -138,12 +138,12 @@ void EnumInterfacePublisher::publishSig0(Enum0Enum param0) const
     Sig0Publisher.publishChange(param0);
 }
 
-long EnumInterfacePublisher::subscribeToSig1(EnumInterfaceSig1SignalCb callback)
+uint64_t EnumInterfacePublisher::subscribeToSig1(EnumInterfaceSig1SignalCb callback)
 {
     return Sig1Publisher.subscribeForChange(callback);
 }
 
-void EnumInterfacePublisher::unsubscribeFromSig1(long handleId)
+void EnumInterfacePublisher::unsubscribeFromSig1(uint64_t handleId)
 {
     Sig1Publisher.unsubscribeFromChange(handleId);
 }
@@ -160,12 +160,12 @@ void EnumInterfacePublisher::publishSig1(Enum1Enum param1) const
     Sig1Publisher.publishChange(param1);
 }
 
-long EnumInterfacePublisher::subscribeToSig2(EnumInterfaceSig2SignalCb callback)
+uint64_t EnumInterfacePublisher::subscribeToSig2(EnumInterfaceSig2SignalCb callback)
 {
     return Sig2Publisher.subscribeForChange(callback);
 }
 
-void EnumInterfacePublisher::unsubscribeFromSig2(long handleId)
+void EnumInterfacePublisher::unsubscribeFromSig2(uint64_t handleId)
 {
     Sig2Publisher.unsubscribeFromChange(handleId);
 }
@@ -182,12 +182,12 @@ void EnumInterfacePublisher::publishSig2(Enum2Enum param2) const
     Sig2Publisher.publishChange(param2);
 }
 
-long EnumInterfacePublisher::subscribeToSig3(EnumInterfaceSig3SignalCb callback)
+uint64_t EnumInterfacePublisher::subscribeToSig3(EnumInterfaceSig3SignalCb callback)
 {
     return Sig3Publisher.subscribeForChange(callback);
 }
 
-void EnumInterfacePublisher::unsubscribeFromSig3(long handleId)
+void EnumInterfacePublisher::unsubscribeFromSig3(uint64_t handleId)
 {
     Sig3Publisher.unsubscribeFromChange(handleId);
 }

@@ -38,38 +38,38 @@ public:
     /**
     * Implementation of INestedStruct2InterfacePublisher::subscribeToProp1Changed
     */
-    long subscribeToProp1Changed(NestedStruct2InterfaceProp1PropertyCb callback) override;
+    uint64_t subscribeToProp1Changed(NestedStruct2InterfaceProp1PropertyCb callback) override;
     /**
     * Implementation of INestedStruct2InterfacePublisher::subscribeToProp1Changed
     */
-    void unsubscribeFromProp1Changed(long handleId) override;
+    void unsubscribeFromProp1Changed(uint64_t handleId) override;
 
     /**
     * Implementation of INestedStruct2InterfacePublisher::subscribeToProp2Changed
     */
-    long subscribeToProp2Changed(NestedStruct2InterfaceProp2PropertyCb callback) override;
+    uint64_t subscribeToProp2Changed(NestedStruct2InterfaceProp2PropertyCb callback) override;
     /**
     * Implementation of INestedStruct2InterfacePublisher::subscribeToProp2Changed
     */
-    void unsubscribeFromProp2Changed(long handleId) override;
+    void unsubscribeFromProp2Changed(uint64_t handleId) override;
 
     /**
     * Implementation of INestedStruct2InterfacePublisher::subscribeToSig1
     */
-    long subscribeToSig1(NestedStruct2InterfaceSig1SignalCb callback) override;
+    uint64_t subscribeToSig1(NestedStruct2InterfaceSig1SignalCb callback) override;
     /**
     * Implementation of INestedStruct2InterfacePublisher::unsubscribeFromSig1
     */
-    void unsubscribeFromSig1(long handleId) override;
+    void unsubscribeFromSig1(uint64_t handleId) override;
 
     /**
     * Implementation of INestedStruct2InterfacePublisher::subscribeToSig2
     */
-    long subscribeToSig2(NestedStruct2InterfaceSig2SignalCb callback) override;
+    uint64_t subscribeToSig2(NestedStruct2InterfaceSig2SignalCb callback) override;
     /**
     * Implementation of INestedStruct2InterfacePublisher::unsubscribeFromSig2
     */
-    void unsubscribeFromSig2(long handleId) override;
+    void unsubscribeFromSig2(uint64_t handleId) override;
 
     /**
     * Implementation of INestedStruct2InterfacePublisher::publishProp1Changed

@@ -57,7 +57,7 @@ private:
     void onSigBool(const std::string& args) const;
     /** Local storage for properties values. */
     NoOperationsInterfaceData m_data;
-    int32_t m_requestInitCallId = 0;
+    uint64_t m_requestInitCallId = 0;
     std::atomic<bool> m_initialized{false};
     std::shared_ptr<ApiGear::Nats::Client> m_client;
     /** The publisher for NoOperationsInterface */

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <future>
 #include "tb_same2/generated/api/common.h"
 #include "tb_same2/generated/api/datastructs.api.h"
@@ -125,14 +126,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToProp1Changed(SameStruct1InterfaceProp1PropertyCb callback) = 0;
+    virtual uint64_t subscribeToProp1Changed(SameStruct1InterfaceProp1PropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from prop1 property changes.
     * If your subscriber uses subscription with ISameStruct1InterfaceSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromProp1Changed(long handleId) = 0;
+    virtual void unsubscribeFromProp1Changed(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for sig1 signal changes.
@@ -142,12 +143,12 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToSig1(SameStruct1InterfaceSig1SignalCb callback) = 0;
+    virtual uint64_t subscribeToSig1(SameStruct1InterfaceSig1SignalCb callback) = 0;
     /**
     * Use this function to unsubscribe from sig1 signal changes.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromSig1(long handleId) = 0;
+    virtual void unsubscribeFromSig1(uint64_t handleId) = 0;
 
     /**
     * Publishes the property changed to all subscribed clients.

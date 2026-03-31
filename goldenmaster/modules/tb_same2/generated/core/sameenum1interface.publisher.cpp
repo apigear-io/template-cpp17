@@ -28,12 +28,12 @@ void SameEnum1InterfacePublisher::unsubscribeFromAllChanges(ISameEnum1InterfaceS
     }
 }
 
-long SameEnum1InterfacePublisher::subscribeToProp1Changed(SameEnum1InterfaceProp1PropertyCb callback)
+uint64_t SameEnum1InterfacePublisher::subscribeToProp1Changed(SameEnum1InterfaceProp1PropertyCb callback)
 {
     return Prop1Publisher.subscribeForChange(callback);
 }
 
-void SameEnum1InterfacePublisher::unsubscribeFromProp1Changed(long handleId)
+void SameEnum1InterfacePublisher::unsubscribeFromProp1Changed(uint64_t handleId)
 {
     Prop1Publisher.unsubscribeFromChange(handleId);
 }
@@ -50,12 +50,12 @@ void SameEnum1InterfacePublisher::publishProp1Changed(Enum1Enum prop1) const
     Prop1Publisher.publishChange(prop1);
 }
 
-long SameEnum1InterfacePublisher::subscribeToSig1(SameEnum1InterfaceSig1SignalCb callback)
+uint64_t SameEnum1InterfacePublisher::subscribeToSig1(SameEnum1InterfaceSig1SignalCb callback)
 {
     return Sig1Publisher.subscribeForChange(callback);
 }
 
-void SameEnum1InterfacePublisher::unsubscribeFromSig1(long handleId)
+void SameEnum1InterfacePublisher::unsubscribeFromSig1(uint64_t handleId)
 {
     Sig1Publisher.unsubscribeFromChange(handleId);
 }

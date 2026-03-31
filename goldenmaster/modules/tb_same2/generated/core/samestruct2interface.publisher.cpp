@@ -28,12 +28,12 @@ void SameStruct2InterfacePublisher::unsubscribeFromAllChanges(ISameStruct2Interf
     }
 }
 
-long SameStruct2InterfacePublisher::subscribeToProp1Changed(SameStruct2InterfaceProp1PropertyCb callback)
+uint64_t SameStruct2InterfacePublisher::subscribeToProp1Changed(SameStruct2InterfaceProp1PropertyCb callback)
 {
     return Prop1Publisher.subscribeForChange(callback);
 }
 
-void SameStruct2InterfacePublisher::unsubscribeFromProp1Changed(long handleId)
+void SameStruct2InterfacePublisher::unsubscribeFromProp1Changed(uint64_t handleId)
 {
     Prop1Publisher.unsubscribeFromChange(handleId);
 }
@@ -50,12 +50,12 @@ void SameStruct2InterfacePublisher::publishProp1Changed(const Struct2& prop1) co
     Prop1Publisher.publishChange(prop1);
 }
 
-long SameStruct2InterfacePublisher::subscribeToProp2Changed(SameStruct2InterfaceProp2PropertyCb callback)
+uint64_t SameStruct2InterfacePublisher::subscribeToProp2Changed(SameStruct2InterfaceProp2PropertyCb callback)
 {
     return Prop2Publisher.subscribeForChange(callback);
 }
 
-void SameStruct2InterfacePublisher::unsubscribeFromProp2Changed(long handleId)
+void SameStruct2InterfacePublisher::unsubscribeFromProp2Changed(uint64_t handleId)
 {
     Prop2Publisher.unsubscribeFromChange(handleId);
 }
@@ -72,12 +72,12 @@ void SameStruct2InterfacePublisher::publishProp2Changed(const Struct2& prop2) co
     Prop2Publisher.publishChange(prop2);
 }
 
-long SameStruct2InterfacePublisher::subscribeToSig1(SameStruct2InterfaceSig1SignalCb callback)
+uint64_t SameStruct2InterfacePublisher::subscribeToSig1(SameStruct2InterfaceSig1SignalCb callback)
 {
     return Sig1Publisher.subscribeForChange(callback);
 }
 
-void SameStruct2InterfacePublisher::unsubscribeFromSig1(long handleId)
+void SameStruct2InterfacePublisher::unsubscribeFromSig1(uint64_t handleId)
 {
     Sig1Publisher.unsubscribeFromChange(handleId);
 }
@@ -94,12 +94,12 @@ void SameStruct2InterfacePublisher::publishSig1(const Struct1& param1) const
     Sig1Publisher.publishChange(param1);
 }
 
-long SameStruct2InterfacePublisher::subscribeToSig2(SameStruct2InterfaceSig2SignalCb callback)
+uint64_t SameStruct2InterfacePublisher::subscribeToSig2(SameStruct2InterfaceSig2SignalCb callback)
 {
     return Sig2Publisher.subscribeForChange(callback);
 }
 
-void SameStruct2InterfacePublisher::unsubscribeFromSig2(long handleId)
+void SameStruct2InterfacePublisher::unsubscribeFromSig2(uint64_t handleId)
 {
     Sig2Publisher.unsubscribeFromChange(handleId);
 }

@@ -38,38 +38,38 @@ public:
     /**
     * Implementation of ISameStruct2InterfacePublisher::subscribeToProp1Changed
     */
-    long subscribeToProp1Changed(SameStruct2InterfaceProp1PropertyCb callback) override;
+    uint64_t subscribeToProp1Changed(SameStruct2InterfaceProp1PropertyCb callback) override;
     /**
     * Implementation of ISameStruct2InterfacePublisher::subscribeToProp1Changed
     */
-    void unsubscribeFromProp1Changed(long handleId) override;
+    void unsubscribeFromProp1Changed(uint64_t handleId) override;
 
     /**
     * Implementation of ISameStruct2InterfacePublisher::subscribeToProp2Changed
     */
-    long subscribeToProp2Changed(SameStruct2InterfaceProp2PropertyCb callback) override;
+    uint64_t subscribeToProp2Changed(SameStruct2InterfaceProp2PropertyCb callback) override;
     /**
     * Implementation of ISameStruct2InterfacePublisher::subscribeToProp2Changed
     */
-    void unsubscribeFromProp2Changed(long handleId) override;
+    void unsubscribeFromProp2Changed(uint64_t handleId) override;
 
     /**
     * Implementation of ISameStruct2InterfacePublisher::subscribeToSig1
     */
-    long subscribeToSig1(SameStruct2InterfaceSig1SignalCb callback) override;
+    uint64_t subscribeToSig1(SameStruct2InterfaceSig1SignalCb callback) override;
     /**
     * Implementation of ISameStruct2InterfacePublisher::unsubscribeFromSig1
     */
-    void unsubscribeFromSig1(long handleId) override;
+    void unsubscribeFromSig1(uint64_t handleId) override;
 
     /**
     * Implementation of ISameStruct2InterfacePublisher::subscribeToSig2
     */
-    long subscribeToSig2(SameStruct2InterfaceSig2SignalCb callback) override;
+    uint64_t subscribeToSig2(SameStruct2InterfaceSig2SignalCb callback) override;
     /**
     * Implementation of ISameStruct2InterfacePublisher::unsubscribeFromSig2
     */
-    void unsubscribeFromSig2(long handleId) override;
+    void unsubscribeFromSig2(uint64_t handleId) override;
 
     /**
     * Implementation of ISameStruct2InterfacePublisher::publishProp1Changed

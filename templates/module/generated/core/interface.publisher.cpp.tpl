@@ -35,12 +35,12 @@ void {{$pub_class}}::unsubscribeFromAllChanges({{$sub_class}}& subscriber)
 {{- range .Interface.Properties}}
 {{- $property := . }}
 {{- $camelProperty := Camel .Name }}
-long {{$pub_class}}::subscribeTo{{$camelProperty}}Changed({{$interfaceName}}{{$camelProperty}}PropertyCb callback)
+uint64_t {{$pub_class}}::subscribeTo{{$camelProperty}}Changed({{$interfaceName}}{{$camelProperty}}PropertyCb callback)
 {
     return {{Camel $property.Name}}Publisher.subscribeForChange(callback);
 }
 {{- nl }}
-void {{$pub_class}}::unsubscribeFrom{{$camelProperty}}Changed(long handleId)
+void {{$pub_class}}::unsubscribeFrom{{$camelProperty}}Changed(uint64_t handleId)
 {
     {{Camel $property.Name}}Publisher.unsubscribeFromChange(handleId);
 }
@@ -63,12 +63,12 @@ void {{$pub_class}}::publish{{$camelProperty}}Changed({{cppParam "" $property}})
 {{- range .Interface.Signals}}
 {{- $signal := . }}
 {{- $camelSignal := Camel .Name }}
-long {{$pub_class}}::subscribeTo{{$camelSignal}}({{$interfaceName}}{{$camelSignal}}SignalCb callback)
+uint64_t {{$pub_class}}::subscribeTo{{$camelSignal}}({{$interfaceName}}{{$camelSignal}}SignalCb callback)
 {
     return {{Camel $signal.Name}}Publisher.subscribeForChange(callback);
 }
 {{- nl }}
-void {{$pub_class}}::unsubscribeFrom{{$camelSignal}}(long handleId)
+void {{$pub_class}}::unsubscribeFrom{{$camelSignal}}(uint64_t handleId)
 {
     {{Camel $signal.Name}}Publisher.unsubscribeFromChange(handleId);
 }

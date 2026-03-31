@@ -28,12 +28,12 @@ void NoPropertiesInterfacePublisher::unsubscribeFromAllChanges(INoPropertiesInte
     }
 }
 
-long NoPropertiesInterfacePublisher::subscribeToSigVoid(NoPropertiesInterfaceSigVoidSignalCb callback)
+uint64_t NoPropertiesInterfacePublisher::subscribeToSigVoid(NoPropertiesInterfaceSigVoidSignalCb callback)
 {
     return SigVoidPublisher.subscribeForChange(callback);
 }
 
-void NoPropertiesInterfacePublisher::unsubscribeFromSigVoid(long handleId)
+void NoPropertiesInterfacePublisher::unsubscribeFromSigVoid(uint64_t handleId)
 {
     SigVoidPublisher.unsubscribeFromChange(handleId);
 }
@@ -50,12 +50,12 @@ void NoPropertiesInterfacePublisher::publishSigVoid() const
     SigVoidPublisher.publishChange();
 }
 
-long NoPropertiesInterfacePublisher::subscribeToSigBool(NoPropertiesInterfaceSigBoolSignalCb callback)
+uint64_t NoPropertiesInterfacePublisher::subscribeToSigBool(NoPropertiesInterfaceSigBoolSignalCb callback)
 {
     return SigBoolPublisher.subscribeForChange(callback);
 }
 
-void NoPropertiesInterfacePublisher::unsubscribeFromSigBool(long handleId)
+void NoPropertiesInterfacePublisher::unsubscribeFromSigBool(uint64_t handleId)
 {
     SigBoolPublisher.unsubscribeFromChange(handleId);
 }

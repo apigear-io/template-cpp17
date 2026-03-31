@@ -38,20 +38,20 @@ public:
     /**
     * Implementation of INoSignalsInterfacePublisher::subscribeToPropBoolChanged
     */
-    long subscribeToPropBoolChanged(NoSignalsInterfacePropBoolPropertyCb callback) override;
+    uint64_t subscribeToPropBoolChanged(NoSignalsInterfacePropBoolPropertyCb callback) override;
     /**
     * Implementation of INoSignalsInterfacePublisher::subscribeToPropBoolChanged
     */
-    void unsubscribeFromPropBoolChanged(long handleId) override;
+    void unsubscribeFromPropBoolChanged(uint64_t handleId) override;
 
     /**
     * Implementation of INoSignalsInterfacePublisher::subscribeToPropIntChanged
     */
-    long subscribeToPropIntChanged(NoSignalsInterfacePropIntPropertyCb callback) override;
+    uint64_t subscribeToPropIntChanged(NoSignalsInterfacePropIntPropertyCb callback) override;
     /**
     * Implementation of INoSignalsInterfacePublisher::subscribeToPropIntChanged
     */
-    void unsubscribeFromPropIntChanged(long handleId) override;
+    void unsubscribeFromPropIntChanged(uint64_t handleId) override;
 
     /**
     * Implementation of INoSignalsInterfacePublisher::publishPropBoolChanged

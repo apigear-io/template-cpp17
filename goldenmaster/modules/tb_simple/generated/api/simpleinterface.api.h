@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <future>
 #include "tb_simple/generated/api/common.h"
 #include "tb_simple/generated/api/datastructs.api.h"
@@ -371,14 +372,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToPropBoolChanged(SimpleInterfacePropBoolPropertyCb callback) = 0;
+    virtual uint64_t subscribeToPropBoolChanged(SimpleInterfacePropBoolPropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from propBool property changes.
     * If your subscriber uses subscription with ISimpleInterfaceSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromPropBoolChanged(long handleId) = 0;
+    virtual void unsubscribeFromPropBoolChanged(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for propInt value changes.
@@ -389,14 +390,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToPropIntChanged(SimpleInterfacePropIntPropertyCb callback) = 0;
+    virtual uint64_t subscribeToPropIntChanged(SimpleInterfacePropIntPropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from propInt property changes.
     * If your subscriber uses subscription with ISimpleInterfaceSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromPropIntChanged(long handleId) = 0;
+    virtual void unsubscribeFromPropIntChanged(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for propInt32 value changes.
@@ -407,14 +408,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToPropInt32Changed(SimpleInterfacePropInt32PropertyCb callback) = 0;
+    virtual uint64_t subscribeToPropInt32Changed(SimpleInterfacePropInt32PropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from propInt32 property changes.
     * If your subscriber uses subscription with ISimpleInterfaceSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromPropInt32Changed(long handleId) = 0;
+    virtual void unsubscribeFromPropInt32Changed(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for propInt64 value changes.
@@ -425,14 +426,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToPropInt64Changed(SimpleInterfacePropInt64PropertyCb callback) = 0;
+    virtual uint64_t subscribeToPropInt64Changed(SimpleInterfacePropInt64PropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from propInt64 property changes.
     * If your subscriber uses subscription with ISimpleInterfaceSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromPropInt64Changed(long handleId) = 0;
+    virtual void unsubscribeFromPropInt64Changed(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for propFloat value changes.
@@ -443,14 +444,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToPropFloatChanged(SimpleInterfacePropFloatPropertyCb callback) = 0;
+    virtual uint64_t subscribeToPropFloatChanged(SimpleInterfacePropFloatPropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from propFloat property changes.
     * If your subscriber uses subscription with ISimpleInterfaceSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromPropFloatChanged(long handleId) = 0;
+    virtual void unsubscribeFromPropFloatChanged(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for propFloat32 value changes.
@@ -461,14 +462,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToPropFloat32Changed(SimpleInterfacePropFloat32PropertyCb callback) = 0;
+    virtual uint64_t subscribeToPropFloat32Changed(SimpleInterfacePropFloat32PropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from propFloat32 property changes.
     * If your subscriber uses subscription with ISimpleInterfaceSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromPropFloat32Changed(long handleId) = 0;
+    virtual void unsubscribeFromPropFloat32Changed(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for propFloat64 value changes.
@@ -479,14 +480,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToPropFloat64Changed(SimpleInterfacePropFloat64PropertyCb callback) = 0;
+    virtual uint64_t subscribeToPropFloat64Changed(SimpleInterfacePropFloat64PropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from propFloat64 property changes.
     * If your subscriber uses subscription with ISimpleInterfaceSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromPropFloat64Changed(long handleId) = 0;
+    virtual void unsubscribeFromPropFloat64Changed(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for propString value changes.
@@ -497,14 +498,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToPropStringChanged(SimpleInterfacePropStringPropertyCb callback) = 0;
+    virtual uint64_t subscribeToPropStringChanged(SimpleInterfacePropStringPropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from propString property changes.
     * If your subscriber uses subscription with ISimpleInterfaceSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromPropStringChanged(long handleId) = 0;
+    virtual void unsubscribeFromPropStringChanged(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for sigBool signal changes.
@@ -514,12 +515,12 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToSigBool(SimpleInterfaceSigBoolSignalCb callback) = 0;
+    virtual uint64_t subscribeToSigBool(SimpleInterfaceSigBoolSignalCb callback) = 0;
     /**
     * Use this function to unsubscribe from sigBool signal changes.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromSigBool(long handleId) = 0;
+    virtual void unsubscribeFromSigBool(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for sigInt signal changes.
@@ -529,12 +530,12 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToSigInt(SimpleInterfaceSigIntSignalCb callback) = 0;
+    virtual uint64_t subscribeToSigInt(SimpleInterfaceSigIntSignalCb callback) = 0;
     /**
     * Use this function to unsubscribe from sigInt signal changes.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromSigInt(long handleId) = 0;
+    virtual void unsubscribeFromSigInt(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for sigInt32 signal changes.
@@ -544,12 +545,12 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToSigInt32(SimpleInterfaceSigInt32SignalCb callback) = 0;
+    virtual uint64_t subscribeToSigInt32(SimpleInterfaceSigInt32SignalCb callback) = 0;
     /**
     * Use this function to unsubscribe from sigInt32 signal changes.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromSigInt32(long handleId) = 0;
+    virtual void unsubscribeFromSigInt32(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for sigInt64 signal changes.
@@ -559,12 +560,12 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToSigInt64(SimpleInterfaceSigInt64SignalCb callback) = 0;
+    virtual uint64_t subscribeToSigInt64(SimpleInterfaceSigInt64SignalCb callback) = 0;
     /**
     * Use this function to unsubscribe from sigInt64 signal changes.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromSigInt64(long handleId) = 0;
+    virtual void unsubscribeFromSigInt64(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for sigFloat signal changes.
@@ -574,12 +575,12 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToSigFloat(SimpleInterfaceSigFloatSignalCb callback) = 0;
+    virtual uint64_t subscribeToSigFloat(SimpleInterfaceSigFloatSignalCb callback) = 0;
     /**
     * Use this function to unsubscribe from sigFloat signal changes.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromSigFloat(long handleId) = 0;
+    virtual void unsubscribeFromSigFloat(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for sigFloat32 signal changes.
@@ -589,12 +590,12 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToSigFloat32(SimpleInterfaceSigFloat32SignalCb callback) = 0;
+    virtual uint64_t subscribeToSigFloat32(SimpleInterfaceSigFloat32SignalCb callback) = 0;
     /**
     * Use this function to unsubscribe from sigFloat32 signal changes.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromSigFloat32(long handleId) = 0;
+    virtual void unsubscribeFromSigFloat32(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for sigFloat64 signal changes.
@@ -604,12 +605,12 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToSigFloat64(SimpleInterfaceSigFloat64SignalCb callback) = 0;
+    virtual uint64_t subscribeToSigFloat64(SimpleInterfaceSigFloat64SignalCb callback) = 0;
     /**
     * Use this function to unsubscribe from sigFloat64 signal changes.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromSigFloat64(long handleId) = 0;
+    virtual void unsubscribeFromSigFloat64(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for sigString signal changes.
@@ -619,12 +620,12 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToSigString(SimpleInterfaceSigStringSignalCb callback) = 0;
+    virtual uint64_t subscribeToSigString(SimpleInterfaceSigStringSignalCb callback) = 0;
     /**
     * Use this function to unsubscribe from sigString signal changes.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromSigString(long handleId) = 0;
+    virtual void unsubscribeFromSigString(uint64_t handleId) = 0;
 
     /**
     * Publishes the property changed to all subscribed clients.

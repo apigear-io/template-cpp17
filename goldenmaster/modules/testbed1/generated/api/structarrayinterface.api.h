@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <future>
 #include "testbed1/generated/api/common.h"
 #include "testbed1/generated/api/datastructs.api.h"
@@ -227,14 +228,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToPropBoolChanged(StructArrayInterfacePropBoolPropertyCb callback) = 0;
+    virtual uint64_t subscribeToPropBoolChanged(StructArrayInterfacePropBoolPropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from propBool property changes.
     * If your subscriber uses subscription with IStructArrayInterfaceSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromPropBoolChanged(long handleId) = 0;
+    virtual void unsubscribeFromPropBoolChanged(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for propInt value changes.
@@ -245,14 +246,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToPropIntChanged(StructArrayInterfacePropIntPropertyCb callback) = 0;
+    virtual uint64_t subscribeToPropIntChanged(StructArrayInterfacePropIntPropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from propInt property changes.
     * If your subscriber uses subscription with IStructArrayInterfaceSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromPropIntChanged(long handleId) = 0;
+    virtual void unsubscribeFromPropIntChanged(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for propFloat value changes.
@@ -263,14 +264,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToPropFloatChanged(StructArrayInterfacePropFloatPropertyCb callback) = 0;
+    virtual uint64_t subscribeToPropFloatChanged(StructArrayInterfacePropFloatPropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from propFloat property changes.
     * If your subscriber uses subscription with IStructArrayInterfaceSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromPropFloatChanged(long handleId) = 0;
+    virtual void unsubscribeFromPropFloatChanged(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for propString value changes.
@@ -281,14 +282,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToPropStringChanged(StructArrayInterfacePropStringPropertyCb callback) = 0;
+    virtual uint64_t subscribeToPropStringChanged(StructArrayInterfacePropStringPropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from propString property changes.
     * If your subscriber uses subscription with IStructArrayInterfaceSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromPropStringChanged(long handleId) = 0;
+    virtual void unsubscribeFromPropStringChanged(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for sigBool signal changes.
@@ -298,12 +299,12 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToSigBool(StructArrayInterfaceSigBoolSignalCb callback) = 0;
+    virtual uint64_t subscribeToSigBool(StructArrayInterfaceSigBoolSignalCb callback) = 0;
     /**
     * Use this function to unsubscribe from sigBool signal changes.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromSigBool(long handleId) = 0;
+    virtual void unsubscribeFromSigBool(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for sigInt signal changes.
@@ -313,12 +314,12 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToSigInt(StructArrayInterfaceSigIntSignalCb callback) = 0;
+    virtual uint64_t subscribeToSigInt(StructArrayInterfaceSigIntSignalCb callback) = 0;
     /**
     * Use this function to unsubscribe from sigInt signal changes.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromSigInt(long handleId) = 0;
+    virtual void unsubscribeFromSigInt(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for sigFloat signal changes.
@@ -328,12 +329,12 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToSigFloat(StructArrayInterfaceSigFloatSignalCb callback) = 0;
+    virtual uint64_t subscribeToSigFloat(StructArrayInterfaceSigFloatSignalCb callback) = 0;
     /**
     * Use this function to unsubscribe from sigFloat signal changes.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromSigFloat(long handleId) = 0;
+    virtual void unsubscribeFromSigFloat(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for sigString signal changes.
@@ -343,12 +344,12 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToSigString(StructArrayInterfaceSigStringSignalCb callback) = 0;
+    virtual uint64_t subscribeToSigString(StructArrayInterfaceSigStringSignalCb callback) = 0;
     /**
     * Use this function to unsubscribe from sigString signal changes.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromSigString(long handleId) = 0;
+    virtual void unsubscribeFromSigString(uint64_t handleId) = 0;
 
     /**
     * Publishes the property changed to all subscribed clients.

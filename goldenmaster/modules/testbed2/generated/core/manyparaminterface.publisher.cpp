@@ -28,12 +28,12 @@ void ManyParamInterfacePublisher::unsubscribeFromAllChanges(IManyParamInterfaceS
     }
 }
 
-long ManyParamInterfacePublisher::subscribeToProp1Changed(ManyParamInterfaceProp1PropertyCb callback)
+uint64_t ManyParamInterfacePublisher::subscribeToProp1Changed(ManyParamInterfaceProp1PropertyCb callback)
 {
     return Prop1Publisher.subscribeForChange(callback);
 }
 
-void ManyParamInterfacePublisher::unsubscribeFromProp1Changed(long handleId)
+void ManyParamInterfacePublisher::unsubscribeFromProp1Changed(uint64_t handleId)
 {
     Prop1Publisher.unsubscribeFromChange(handleId);
 }
@@ -50,12 +50,12 @@ void ManyParamInterfacePublisher::publishProp1Changed(int prop1) const
     Prop1Publisher.publishChange(prop1);
 }
 
-long ManyParamInterfacePublisher::subscribeToProp2Changed(ManyParamInterfaceProp2PropertyCb callback)
+uint64_t ManyParamInterfacePublisher::subscribeToProp2Changed(ManyParamInterfaceProp2PropertyCb callback)
 {
     return Prop2Publisher.subscribeForChange(callback);
 }
 
-void ManyParamInterfacePublisher::unsubscribeFromProp2Changed(long handleId)
+void ManyParamInterfacePublisher::unsubscribeFromProp2Changed(uint64_t handleId)
 {
     Prop2Publisher.unsubscribeFromChange(handleId);
 }
@@ -72,12 +72,12 @@ void ManyParamInterfacePublisher::publishProp2Changed(int prop2) const
     Prop2Publisher.publishChange(prop2);
 }
 
-long ManyParamInterfacePublisher::subscribeToProp3Changed(ManyParamInterfaceProp3PropertyCb callback)
+uint64_t ManyParamInterfacePublisher::subscribeToProp3Changed(ManyParamInterfaceProp3PropertyCb callback)
 {
     return Prop3Publisher.subscribeForChange(callback);
 }
 
-void ManyParamInterfacePublisher::unsubscribeFromProp3Changed(long handleId)
+void ManyParamInterfacePublisher::unsubscribeFromProp3Changed(uint64_t handleId)
 {
     Prop3Publisher.unsubscribeFromChange(handleId);
 }
@@ -94,12 +94,12 @@ void ManyParamInterfacePublisher::publishProp3Changed(int prop3) const
     Prop3Publisher.publishChange(prop3);
 }
 
-long ManyParamInterfacePublisher::subscribeToProp4Changed(ManyParamInterfaceProp4PropertyCb callback)
+uint64_t ManyParamInterfacePublisher::subscribeToProp4Changed(ManyParamInterfaceProp4PropertyCb callback)
 {
     return Prop4Publisher.subscribeForChange(callback);
 }
 
-void ManyParamInterfacePublisher::unsubscribeFromProp4Changed(long handleId)
+void ManyParamInterfacePublisher::unsubscribeFromProp4Changed(uint64_t handleId)
 {
     Prop4Publisher.unsubscribeFromChange(handleId);
 }
@@ -116,12 +116,12 @@ void ManyParamInterfacePublisher::publishProp4Changed(int prop4) const
     Prop4Publisher.publishChange(prop4);
 }
 
-long ManyParamInterfacePublisher::subscribeToSig1(ManyParamInterfaceSig1SignalCb callback)
+uint64_t ManyParamInterfacePublisher::subscribeToSig1(ManyParamInterfaceSig1SignalCb callback)
 {
     return Sig1Publisher.subscribeForChange(callback);
 }
 
-void ManyParamInterfacePublisher::unsubscribeFromSig1(long handleId)
+void ManyParamInterfacePublisher::unsubscribeFromSig1(uint64_t handleId)
 {
     Sig1Publisher.unsubscribeFromChange(handleId);
 }
@@ -138,12 +138,12 @@ void ManyParamInterfacePublisher::publishSig1(int param1) const
     Sig1Publisher.publishChange(param1);
 }
 
-long ManyParamInterfacePublisher::subscribeToSig2(ManyParamInterfaceSig2SignalCb callback)
+uint64_t ManyParamInterfacePublisher::subscribeToSig2(ManyParamInterfaceSig2SignalCb callback)
 {
     return Sig2Publisher.subscribeForChange(callback);
 }
 
-void ManyParamInterfacePublisher::unsubscribeFromSig2(long handleId)
+void ManyParamInterfacePublisher::unsubscribeFromSig2(uint64_t handleId)
 {
     Sig2Publisher.unsubscribeFromChange(handleId);
 }
@@ -160,12 +160,12 @@ void ManyParamInterfacePublisher::publishSig2(int param1, int param2) const
     Sig2Publisher.publishChange(param1, param2);
 }
 
-long ManyParamInterfacePublisher::subscribeToSig3(ManyParamInterfaceSig3SignalCb callback)
+uint64_t ManyParamInterfacePublisher::subscribeToSig3(ManyParamInterfaceSig3SignalCb callback)
 {
     return Sig3Publisher.subscribeForChange(callback);
 }
 
-void ManyParamInterfacePublisher::unsubscribeFromSig3(long handleId)
+void ManyParamInterfacePublisher::unsubscribeFromSig3(uint64_t handleId)
 {
     Sig3Publisher.unsubscribeFromChange(handleId);
 }
@@ -182,12 +182,12 @@ void ManyParamInterfacePublisher::publishSig3(int param1, int param2, int param3
     Sig3Publisher.publishChange(param1, param2, param3);
 }
 
-long ManyParamInterfacePublisher::subscribeToSig4(ManyParamInterfaceSig4SignalCb callback)
+uint64_t ManyParamInterfacePublisher::subscribeToSig4(ManyParamInterfaceSig4SignalCb callback)
 {
     return Sig4Publisher.subscribeForChange(callback);
 }
 
-void ManyParamInterfacePublisher::unsubscribeFromSig4(long handleId)
+void ManyParamInterfacePublisher::unsubscribeFromSig4(uint64_t handleId)
 {
     Sig4Publisher.unsubscribeFromChange(handleId);
 }

@@ -28,12 +28,12 @@ void VoidInterfacePublisher::unsubscribeFromAllChanges(IVoidInterfaceSubscriber&
     }
 }
 
-long VoidInterfacePublisher::subscribeToSigVoid(VoidInterfaceSigVoidSignalCb callback)
+uint64_t VoidInterfacePublisher::subscribeToSigVoid(VoidInterfaceSigVoidSignalCb callback)
 {
     return SigVoidPublisher.subscribeForChange(callback);
 }
 
-void VoidInterfacePublisher::unsubscribeFromSigVoid(long handleId)
+void VoidInterfacePublisher::unsubscribeFromSigVoid(uint64_t handleId)
 {
     SigVoidPublisher.unsubscribeFromChange(handleId);
 }
