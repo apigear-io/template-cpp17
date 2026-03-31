@@ -16,7 +16,7 @@ class TEST_TB_SIMPLE_EXPORT NoPropertiesInterfaceService : public INoPropertiesI
 protected:
     explicit NoPropertiesInterfaceService(std::shared_ptr<INoPropertiesInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
 public:
-    static std::shared_ptr<NoPropertiesInterfaceService>create(std::shared_ptr<INoPropertiesInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
+    static std::shared_ptr<NoPropertiesInterfaceService> create(std::shared_ptr<INoPropertiesInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
     virtual ~NoPropertiesInterfaceService() override;
     void init();
 

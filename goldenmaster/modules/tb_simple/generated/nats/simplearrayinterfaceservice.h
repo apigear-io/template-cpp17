@@ -16,7 +16,7 @@ class TEST_TB_SIMPLE_EXPORT SimpleArrayInterfaceService : public ISimpleArrayInt
 protected:
     explicit SimpleArrayInterfaceService(std::shared_ptr<ISimpleArrayInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
 public:
-    static std::shared_ptr<SimpleArrayInterfaceService>create(std::shared_ptr<ISimpleArrayInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
+    static std::shared_ptr<SimpleArrayInterfaceService> create(std::shared_ptr<ISimpleArrayInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
     virtual ~SimpleArrayInterfaceService() override;
     void init();
 
