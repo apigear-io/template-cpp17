@@ -16,7 +16,7 @@ class TEST_TB_SIMPLE_EXPORT VoidInterfaceService : public IVoidInterfaceSubscrib
 protected:
     explicit VoidInterfaceService(std::shared_ptr<IVoidInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
 public:
-    static std::shared_ptr<VoidInterfaceService>create(std::shared_ptr<IVoidInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
+    static std::shared_ptr<VoidInterfaceService> create(std::shared_ptr<IVoidInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
     virtual ~VoidInterfaceService() override;
     void init();
 

@@ -16,7 +16,7 @@ class TEST_TESTBED1_EXPORT StructInterfaceService : public IStructInterfaceSubsc
 protected:
     explicit StructInterfaceService(std::shared_ptr<IStructInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
 public:
-    static std::shared_ptr<StructInterfaceService>create(std::shared_ptr<IStructInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
+    static std::shared_ptr<StructInterfaceService> create(std::shared_ptr<IStructInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
     virtual ~StructInterfaceService() override;
     void init();
 

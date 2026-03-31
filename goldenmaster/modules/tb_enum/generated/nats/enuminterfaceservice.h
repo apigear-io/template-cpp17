@@ -16,7 +16,7 @@ class TEST_TB_ENUM_EXPORT EnumInterfaceService : public IEnumInterfaceSubscriber
 protected:
     explicit EnumInterfaceService(std::shared_ptr<IEnumInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
 public:
-    static std::shared_ptr<EnumInterfaceService>create(std::shared_ptr<IEnumInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
+    static std::shared_ptr<EnumInterfaceService> create(std::shared_ptr<IEnumInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
     virtual ~EnumInterfaceService() override;
     void init();
 

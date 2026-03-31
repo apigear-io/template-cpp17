@@ -16,7 +16,7 @@ class TEST_TESTBED1_EXPORT StructArrayInterfaceService : public IStructArrayInte
 protected:
     explicit StructArrayInterfaceService(std::shared_ptr<IStructArrayInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
 public:
-    static std::shared_ptr<StructArrayInterfaceService>create(std::shared_ptr<IStructArrayInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
+    static std::shared_ptr<StructArrayInterfaceService> create(std::shared_ptr<IStructArrayInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
     virtual ~StructArrayInterfaceService() override;
     void init();
 

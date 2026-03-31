@@ -16,7 +16,7 @@ class TEST_TB_SIMPLE_EXPORT NoSignalsInterfaceService : public INoSignalsInterfa
 protected:
     explicit NoSignalsInterfaceService(std::shared_ptr<INoSignalsInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
 public:
-    static std::shared_ptr<NoSignalsInterfaceService>create(std::shared_ptr<INoSignalsInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
+    static std::shared_ptr<NoSignalsInterfaceService> create(std::shared_ptr<INoSignalsInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
     virtual ~NoSignalsInterfaceService() override;
     void init();
 
