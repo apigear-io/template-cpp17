@@ -28,12 +28,12 @@ void NestedStruct2InterfacePublisher::unsubscribeFromAllChanges(INestedStruct2In
     }
 }
 
-long NestedStruct2InterfacePublisher::subscribeToProp1Changed(NestedStruct2InterfaceProp1PropertyCb callback)
+uint64_t NestedStruct2InterfacePublisher::subscribeToProp1Changed(NestedStruct2InterfaceProp1PropertyCb callback)
 {
     return Prop1Publisher.subscribeForChange(callback);
 }
 
-void NestedStruct2InterfacePublisher::unsubscribeFromProp1Changed(long handleId)
+void NestedStruct2InterfacePublisher::unsubscribeFromProp1Changed(uint64_t handleId)
 {
     Prop1Publisher.unsubscribeFromChange(handleId);
 }
@@ -50,12 +50,12 @@ void NestedStruct2InterfacePublisher::publishProp1Changed(const NestedStruct1& p
     Prop1Publisher.publishChange(prop1);
 }
 
-long NestedStruct2InterfacePublisher::subscribeToProp2Changed(NestedStruct2InterfaceProp2PropertyCb callback)
+uint64_t NestedStruct2InterfacePublisher::subscribeToProp2Changed(NestedStruct2InterfaceProp2PropertyCb callback)
 {
     return Prop2Publisher.subscribeForChange(callback);
 }
 
-void NestedStruct2InterfacePublisher::unsubscribeFromProp2Changed(long handleId)
+void NestedStruct2InterfacePublisher::unsubscribeFromProp2Changed(uint64_t handleId)
 {
     Prop2Publisher.unsubscribeFromChange(handleId);
 }
@@ -72,12 +72,12 @@ void NestedStruct2InterfacePublisher::publishProp2Changed(const NestedStruct2& p
     Prop2Publisher.publishChange(prop2);
 }
 
-long NestedStruct2InterfacePublisher::subscribeToSig1(NestedStruct2InterfaceSig1SignalCb callback)
+uint64_t NestedStruct2InterfacePublisher::subscribeToSig1(NestedStruct2InterfaceSig1SignalCb callback)
 {
     return Sig1Publisher.subscribeForChange(callback);
 }
 
-void NestedStruct2InterfacePublisher::unsubscribeFromSig1(long handleId)
+void NestedStruct2InterfacePublisher::unsubscribeFromSig1(uint64_t handleId)
 {
     Sig1Publisher.unsubscribeFromChange(handleId);
 }
@@ -94,12 +94,12 @@ void NestedStruct2InterfacePublisher::publishSig1(const NestedStruct1& param1) c
     Sig1Publisher.publishChange(param1);
 }
 
-long NestedStruct2InterfacePublisher::subscribeToSig2(NestedStruct2InterfaceSig2SignalCb callback)
+uint64_t NestedStruct2InterfacePublisher::subscribeToSig2(NestedStruct2InterfaceSig2SignalCb callback)
 {
     return Sig2Publisher.subscribeForChange(callback);
 }
 
-void NestedStruct2InterfacePublisher::unsubscribeFromSig2(long handleId)
+void NestedStruct2InterfacePublisher::unsubscribeFromSig2(uint64_t handleId)
 {
     Sig2Publisher.unsubscribeFromChange(handleId);
 }

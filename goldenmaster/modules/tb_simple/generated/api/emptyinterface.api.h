@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <future>
 #include "tb_simple/generated/api/common.h"
 #include "tb_simple/generated/api/datastructs.api.h"

@@ -28,12 +28,12 @@ void StructInterfacePublisher::unsubscribeFromAllChanges(IStructInterfaceSubscri
     }
 }
 
-long StructInterfacePublisher::subscribeToPropBoolChanged(StructInterfacePropBoolPropertyCb callback)
+uint64_t StructInterfacePublisher::subscribeToPropBoolChanged(StructInterfacePropBoolPropertyCb callback)
 {
     return PropBoolPublisher.subscribeForChange(callback);
 }
 
-void StructInterfacePublisher::unsubscribeFromPropBoolChanged(long handleId)
+void StructInterfacePublisher::unsubscribeFromPropBoolChanged(uint64_t handleId)
 {
     PropBoolPublisher.unsubscribeFromChange(handleId);
 }
@@ -50,12 +50,12 @@ void StructInterfacePublisher::publishPropBoolChanged(const StructBool& propBool
     PropBoolPublisher.publishChange(propBool);
 }
 
-long StructInterfacePublisher::subscribeToPropIntChanged(StructInterfacePropIntPropertyCb callback)
+uint64_t StructInterfacePublisher::subscribeToPropIntChanged(StructInterfacePropIntPropertyCb callback)
 {
     return PropIntPublisher.subscribeForChange(callback);
 }
 
-void StructInterfacePublisher::unsubscribeFromPropIntChanged(long handleId)
+void StructInterfacePublisher::unsubscribeFromPropIntChanged(uint64_t handleId)
 {
     PropIntPublisher.unsubscribeFromChange(handleId);
 }
@@ -72,12 +72,12 @@ void StructInterfacePublisher::publishPropIntChanged(const StructInt& propInt) c
     PropIntPublisher.publishChange(propInt);
 }
 
-long StructInterfacePublisher::subscribeToPropFloatChanged(StructInterfacePropFloatPropertyCb callback)
+uint64_t StructInterfacePublisher::subscribeToPropFloatChanged(StructInterfacePropFloatPropertyCb callback)
 {
     return PropFloatPublisher.subscribeForChange(callback);
 }
 
-void StructInterfacePublisher::unsubscribeFromPropFloatChanged(long handleId)
+void StructInterfacePublisher::unsubscribeFromPropFloatChanged(uint64_t handleId)
 {
     PropFloatPublisher.unsubscribeFromChange(handleId);
 }
@@ -94,12 +94,12 @@ void StructInterfacePublisher::publishPropFloatChanged(const StructFloat& propFl
     PropFloatPublisher.publishChange(propFloat);
 }
 
-long StructInterfacePublisher::subscribeToPropStringChanged(StructInterfacePropStringPropertyCb callback)
+uint64_t StructInterfacePublisher::subscribeToPropStringChanged(StructInterfacePropStringPropertyCb callback)
 {
     return PropStringPublisher.subscribeForChange(callback);
 }
 
-void StructInterfacePublisher::unsubscribeFromPropStringChanged(long handleId)
+void StructInterfacePublisher::unsubscribeFromPropStringChanged(uint64_t handleId)
 {
     PropStringPublisher.unsubscribeFromChange(handleId);
 }
@@ -116,12 +116,12 @@ void StructInterfacePublisher::publishPropStringChanged(const StructString& prop
     PropStringPublisher.publishChange(propString);
 }
 
-long StructInterfacePublisher::subscribeToSigBool(StructInterfaceSigBoolSignalCb callback)
+uint64_t StructInterfacePublisher::subscribeToSigBool(StructInterfaceSigBoolSignalCb callback)
 {
     return SigBoolPublisher.subscribeForChange(callback);
 }
 
-void StructInterfacePublisher::unsubscribeFromSigBool(long handleId)
+void StructInterfacePublisher::unsubscribeFromSigBool(uint64_t handleId)
 {
     SigBoolPublisher.unsubscribeFromChange(handleId);
 }
@@ -138,12 +138,12 @@ void StructInterfacePublisher::publishSigBool(const StructBool& paramBool) const
     SigBoolPublisher.publishChange(paramBool);
 }
 
-long StructInterfacePublisher::subscribeToSigInt(StructInterfaceSigIntSignalCb callback)
+uint64_t StructInterfacePublisher::subscribeToSigInt(StructInterfaceSigIntSignalCb callback)
 {
     return SigIntPublisher.subscribeForChange(callback);
 }
 
-void StructInterfacePublisher::unsubscribeFromSigInt(long handleId)
+void StructInterfacePublisher::unsubscribeFromSigInt(uint64_t handleId)
 {
     SigIntPublisher.unsubscribeFromChange(handleId);
 }
@@ -160,12 +160,12 @@ void StructInterfacePublisher::publishSigInt(const StructInt& paramInt) const
     SigIntPublisher.publishChange(paramInt);
 }
 
-long StructInterfacePublisher::subscribeToSigFloat(StructInterfaceSigFloatSignalCb callback)
+uint64_t StructInterfacePublisher::subscribeToSigFloat(StructInterfaceSigFloatSignalCb callback)
 {
     return SigFloatPublisher.subscribeForChange(callback);
 }
 
-void StructInterfacePublisher::unsubscribeFromSigFloat(long handleId)
+void StructInterfacePublisher::unsubscribeFromSigFloat(uint64_t handleId)
 {
     SigFloatPublisher.unsubscribeFromChange(handleId);
 }
@@ -182,12 +182,12 @@ void StructInterfacePublisher::publishSigFloat(const StructFloat& paramFloat) co
     SigFloatPublisher.publishChange(paramFloat);
 }
 
-long StructInterfacePublisher::subscribeToSigString(StructInterfaceSigStringSignalCb callback)
+uint64_t StructInterfacePublisher::subscribeToSigString(StructInterfaceSigStringSignalCb callback)
 {
     return SigStringPublisher.subscribeForChange(callback);
 }
 
-void StructInterfacePublisher::unsubscribeFromSigString(long handleId)
+void StructInterfacePublisher::unsubscribeFromSigString(uint64_t handleId)
 {
     SigStringPublisher.unsubscribeFromChange(handleId);
 }

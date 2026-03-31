@@ -28,12 +28,12 @@ void NamEsPublisher::unsubscribeFromAllChanges(INamEsSubscriber& subscriber)
     }
 }
 
-long NamEsPublisher::subscribeToSwitchChanged(NamEsSwitchPropertyCb callback)
+uint64_t NamEsPublisher::subscribeToSwitchChanged(NamEsSwitchPropertyCb callback)
 {
     return SwitchPublisher.subscribeForChange(callback);
 }
 
-void NamEsPublisher::unsubscribeFromSwitchChanged(long handleId)
+void NamEsPublisher::unsubscribeFromSwitchChanged(uint64_t handleId)
 {
     SwitchPublisher.unsubscribeFromChange(handleId);
 }
@@ -50,12 +50,12 @@ void NamEsPublisher::publishSwitchChanged(bool Switch) const
     SwitchPublisher.publishChange(Switch);
 }
 
-long NamEsPublisher::subscribeToSomePropertyChanged(NamEsSomePropertyPropertyCb callback)
+uint64_t NamEsPublisher::subscribeToSomePropertyChanged(NamEsSomePropertyPropertyCb callback)
 {
     return SomePropertyPublisher.subscribeForChange(callback);
 }
 
-void NamEsPublisher::unsubscribeFromSomePropertyChanged(long handleId)
+void NamEsPublisher::unsubscribeFromSomePropertyChanged(uint64_t handleId)
 {
     SomePropertyPublisher.unsubscribeFromChange(handleId);
 }
@@ -72,12 +72,12 @@ void NamEsPublisher::publishSomePropertyChanged(int SOME_PROPERTY) const
     SomePropertyPublisher.publishChange(SOME_PROPERTY);
 }
 
-long NamEsPublisher::subscribeToSomePoperty2Changed(NamEsSomePoperty2PropertyCb callback)
+uint64_t NamEsPublisher::subscribeToSomePoperty2Changed(NamEsSomePoperty2PropertyCb callback)
 {
     return SomePoperty2Publisher.subscribeForChange(callback);
 }
 
-void NamEsPublisher::unsubscribeFromSomePoperty2Changed(long handleId)
+void NamEsPublisher::unsubscribeFromSomePoperty2Changed(uint64_t handleId)
 {
     SomePoperty2Publisher.unsubscribeFromChange(handleId);
 }
@@ -94,12 +94,12 @@ void NamEsPublisher::publishSomePoperty2Changed(int Some_Poperty2) const
     SomePoperty2Publisher.publishChange(Some_Poperty2);
 }
 
-long NamEsPublisher::subscribeToEnumPropertyChanged(NamEsEnumPropertyPropertyCb callback)
+uint64_t NamEsPublisher::subscribeToEnumPropertyChanged(NamEsEnumPropertyPropertyCb callback)
 {
     return EnumPropertyPublisher.subscribeForChange(callback);
 }
 
-void NamEsPublisher::unsubscribeFromEnumPropertyChanged(long handleId)
+void NamEsPublisher::unsubscribeFromEnumPropertyChanged(uint64_t handleId)
 {
     EnumPropertyPublisher.unsubscribeFromChange(handleId);
 }
@@ -116,12 +116,12 @@ void NamEsPublisher::publishEnumPropertyChanged(Enum_With_Under_scoresEnum enum_
     EnumPropertyPublisher.publishChange(enum_property);
 }
 
-long NamEsPublisher::subscribeToSomeSignal(NamEsSomeSignalSignalCb callback)
+uint64_t NamEsPublisher::subscribeToSomeSignal(NamEsSomeSignalSignalCb callback)
 {
     return SomeSignalPublisher.subscribeForChange(callback);
 }
 
-void NamEsPublisher::unsubscribeFromSomeSignal(long handleId)
+void NamEsPublisher::unsubscribeFromSomeSignal(uint64_t handleId)
 {
     SomeSignalPublisher.unsubscribeFromChange(handleId);
 }
@@ -138,12 +138,12 @@ void NamEsPublisher::publishSomeSignal(bool SOME_PARAM) const
     SomeSignalPublisher.publishChange(SOME_PARAM);
 }
 
-long NamEsPublisher::subscribeToSomeSignal2(NamEsSomeSignal2SignalCb callback)
+uint64_t NamEsPublisher::subscribeToSomeSignal2(NamEsSomeSignal2SignalCb callback)
 {
     return SomeSignal2Publisher.subscribeForChange(callback);
 }
 
-void NamEsPublisher::unsubscribeFromSomeSignal2(long handleId)
+void NamEsPublisher::unsubscribeFromSomeSignal2(uint64_t handleId)
 {
     SomeSignal2Publisher.unsubscribeFromChange(handleId);
 }

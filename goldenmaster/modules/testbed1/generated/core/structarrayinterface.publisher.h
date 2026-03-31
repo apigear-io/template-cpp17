@@ -38,74 +38,74 @@ public:
     /**
     * Implementation of IStructArrayInterfacePublisher::subscribeToPropBoolChanged
     */
-    long subscribeToPropBoolChanged(StructArrayInterfacePropBoolPropertyCb callback) override;
+    uint64_t subscribeToPropBoolChanged(StructArrayInterfacePropBoolPropertyCb callback) override;
     /**
     * Implementation of IStructArrayInterfacePublisher::subscribeToPropBoolChanged
     */
-    void unsubscribeFromPropBoolChanged(long handleId) override;
+    void unsubscribeFromPropBoolChanged(uint64_t handleId) override;
 
     /**
     * Implementation of IStructArrayInterfacePublisher::subscribeToPropIntChanged
     */
-    long subscribeToPropIntChanged(StructArrayInterfacePropIntPropertyCb callback) override;
+    uint64_t subscribeToPropIntChanged(StructArrayInterfacePropIntPropertyCb callback) override;
     /**
     * Implementation of IStructArrayInterfacePublisher::subscribeToPropIntChanged
     */
-    void unsubscribeFromPropIntChanged(long handleId) override;
+    void unsubscribeFromPropIntChanged(uint64_t handleId) override;
 
     /**
     * Implementation of IStructArrayInterfacePublisher::subscribeToPropFloatChanged
     */
-    long subscribeToPropFloatChanged(StructArrayInterfacePropFloatPropertyCb callback) override;
+    uint64_t subscribeToPropFloatChanged(StructArrayInterfacePropFloatPropertyCb callback) override;
     /**
     * Implementation of IStructArrayInterfacePublisher::subscribeToPropFloatChanged
     */
-    void unsubscribeFromPropFloatChanged(long handleId) override;
+    void unsubscribeFromPropFloatChanged(uint64_t handleId) override;
 
     /**
     * Implementation of IStructArrayInterfacePublisher::subscribeToPropStringChanged
     */
-    long subscribeToPropStringChanged(StructArrayInterfacePropStringPropertyCb callback) override;
+    uint64_t subscribeToPropStringChanged(StructArrayInterfacePropStringPropertyCb callback) override;
     /**
     * Implementation of IStructArrayInterfacePublisher::subscribeToPropStringChanged
     */
-    void unsubscribeFromPropStringChanged(long handleId) override;
+    void unsubscribeFromPropStringChanged(uint64_t handleId) override;
 
     /**
     * Implementation of IStructArrayInterfacePublisher::subscribeToSigBool
     */
-    long subscribeToSigBool(StructArrayInterfaceSigBoolSignalCb callback) override;
+    uint64_t subscribeToSigBool(StructArrayInterfaceSigBoolSignalCb callback) override;
     /**
     * Implementation of IStructArrayInterfacePublisher::unsubscribeFromSigBool
     */
-    void unsubscribeFromSigBool(long handleId) override;
+    void unsubscribeFromSigBool(uint64_t handleId) override;
 
     /**
     * Implementation of IStructArrayInterfacePublisher::subscribeToSigInt
     */
-    long subscribeToSigInt(StructArrayInterfaceSigIntSignalCb callback) override;
+    uint64_t subscribeToSigInt(StructArrayInterfaceSigIntSignalCb callback) override;
     /**
     * Implementation of IStructArrayInterfacePublisher::unsubscribeFromSigInt
     */
-    void unsubscribeFromSigInt(long handleId) override;
+    void unsubscribeFromSigInt(uint64_t handleId) override;
 
     /**
     * Implementation of IStructArrayInterfacePublisher::subscribeToSigFloat
     */
-    long subscribeToSigFloat(StructArrayInterfaceSigFloatSignalCb callback) override;
+    uint64_t subscribeToSigFloat(StructArrayInterfaceSigFloatSignalCb callback) override;
     /**
     * Implementation of IStructArrayInterfacePublisher::unsubscribeFromSigFloat
     */
-    void unsubscribeFromSigFloat(long handleId) override;
+    void unsubscribeFromSigFloat(uint64_t handleId) override;
 
     /**
     * Implementation of IStructArrayInterfacePublisher::subscribeToSigString
     */
-    long subscribeToSigString(StructArrayInterfaceSigStringSignalCb callback) override;
+    uint64_t subscribeToSigString(StructArrayInterfaceSigStringSignalCb callback) override;
     /**
     * Implementation of IStructArrayInterfacePublisher::unsubscribeFromSigString
     */
-    void unsubscribeFromSigString(long handleId) override;
+    void unsubscribeFromSigString(uint64_t handleId) override;
 
     /**
     * Implementation of IStructArrayInterfacePublisher::publishPropBoolChanged

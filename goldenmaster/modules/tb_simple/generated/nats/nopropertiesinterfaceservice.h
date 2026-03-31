@@ -34,7 +34,7 @@ private:
     std::shared_ptr<INoPropertiesInterface> m_impl;
     std::shared_ptr<ApiGear::Nats::Service> m_service;
 
-    int32_t m_onReadySubscriptionId = 0;
+    uint64_t m_onReadySubscriptionId = 0;
     std::atomic<bool> m_initialized{false};
 
 };

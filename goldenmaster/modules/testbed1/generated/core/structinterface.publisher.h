@@ -38,74 +38,74 @@ public:
     /**
     * Implementation of IStructInterfacePublisher::subscribeToPropBoolChanged
     */
-    long subscribeToPropBoolChanged(StructInterfacePropBoolPropertyCb callback) override;
+    uint64_t subscribeToPropBoolChanged(StructInterfacePropBoolPropertyCb callback) override;
     /**
     * Implementation of IStructInterfacePublisher::subscribeToPropBoolChanged
     */
-    void unsubscribeFromPropBoolChanged(long handleId) override;
+    void unsubscribeFromPropBoolChanged(uint64_t handleId) override;
 
     /**
     * Implementation of IStructInterfacePublisher::subscribeToPropIntChanged
     */
-    long subscribeToPropIntChanged(StructInterfacePropIntPropertyCb callback) override;
+    uint64_t subscribeToPropIntChanged(StructInterfacePropIntPropertyCb callback) override;
     /**
     * Implementation of IStructInterfacePublisher::subscribeToPropIntChanged
     */
-    void unsubscribeFromPropIntChanged(long handleId) override;
+    void unsubscribeFromPropIntChanged(uint64_t handleId) override;
 
     /**
     * Implementation of IStructInterfacePublisher::subscribeToPropFloatChanged
     */
-    long subscribeToPropFloatChanged(StructInterfacePropFloatPropertyCb callback) override;
+    uint64_t subscribeToPropFloatChanged(StructInterfacePropFloatPropertyCb callback) override;
     /**
     * Implementation of IStructInterfacePublisher::subscribeToPropFloatChanged
     */
-    void unsubscribeFromPropFloatChanged(long handleId) override;
+    void unsubscribeFromPropFloatChanged(uint64_t handleId) override;
 
     /**
     * Implementation of IStructInterfacePublisher::subscribeToPropStringChanged
     */
-    long subscribeToPropStringChanged(StructInterfacePropStringPropertyCb callback) override;
+    uint64_t subscribeToPropStringChanged(StructInterfacePropStringPropertyCb callback) override;
     /**
     * Implementation of IStructInterfacePublisher::subscribeToPropStringChanged
     */
-    void unsubscribeFromPropStringChanged(long handleId) override;
+    void unsubscribeFromPropStringChanged(uint64_t handleId) override;
 
     /**
     * Implementation of IStructInterfacePublisher::subscribeToSigBool
     */
-    long subscribeToSigBool(StructInterfaceSigBoolSignalCb callback) override;
+    uint64_t subscribeToSigBool(StructInterfaceSigBoolSignalCb callback) override;
     /**
     * Implementation of IStructInterfacePublisher::unsubscribeFromSigBool
     */
-    void unsubscribeFromSigBool(long handleId) override;
+    void unsubscribeFromSigBool(uint64_t handleId) override;
 
     /**
     * Implementation of IStructInterfacePublisher::subscribeToSigInt
     */
-    long subscribeToSigInt(StructInterfaceSigIntSignalCb callback) override;
+    uint64_t subscribeToSigInt(StructInterfaceSigIntSignalCb callback) override;
     /**
     * Implementation of IStructInterfacePublisher::unsubscribeFromSigInt
     */
-    void unsubscribeFromSigInt(long handleId) override;
+    void unsubscribeFromSigInt(uint64_t handleId) override;
 
     /**
     * Implementation of IStructInterfacePublisher::subscribeToSigFloat
     */
-    long subscribeToSigFloat(StructInterfaceSigFloatSignalCb callback) override;
+    uint64_t subscribeToSigFloat(StructInterfaceSigFloatSignalCb callback) override;
     /**
     * Implementation of IStructInterfacePublisher::unsubscribeFromSigFloat
     */
-    void unsubscribeFromSigFloat(long handleId) override;
+    void unsubscribeFromSigFloat(uint64_t handleId) override;
 
     /**
     * Implementation of IStructInterfacePublisher::subscribeToSigString
     */
-    long subscribeToSigString(StructInterfaceSigStringSignalCb callback) override;
+    uint64_t subscribeToSigString(StructInterfaceSigStringSignalCb callback) override;
     /**
     * Implementation of IStructInterfacePublisher::unsubscribeFromSigString
     */
-    void unsubscribeFromSigString(long handleId) override;
+    void unsubscribeFromSigString(uint64_t handleId) override;
 
     /**
     * Implementation of IStructInterfacePublisher::publishPropBoolChanged

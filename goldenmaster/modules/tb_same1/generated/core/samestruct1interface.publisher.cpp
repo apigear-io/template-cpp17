@@ -28,12 +28,12 @@ void SameStruct1InterfacePublisher::unsubscribeFromAllChanges(ISameStruct1Interf
     }
 }
 
-long SameStruct1InterfacePublisher::subscribeToProp1Changed(SameStruct1InterfaceProp1PropertyCb callback)
+uint64_t SameStruct1InterfacePublisher::subscribeToProp1Changed(SameStruct1InterfaceProp1PropertyCb callback)
 {
     return Prop1Publisher.subscribeForChange(callback);
 }
 
-void SameStruct1InterfacePublisher::unsubscribeFromProp1Changed(long handleId)
+void SameStruct1InterfacePublisher::unsubscribeFromProp1Changed(uint64_t handleId)
 {
     Prop1Publisher.unsubscribeFromChange(handleId);
 }
@@ -50,12 +50,12 @@ void SameStruct1InterfacePublisher::publishProp1Changed(const Struct1& prop1) co
     Prop1Publisher.publishChange(prop1);
 }
 
-long SameStruct1InterfacePublisher::subscribeToSig1(SameStruct1InterfaceSig1SignalCb callback)
+uint64_t SameStruct1InterfacePublisher::subscribeToSig1(SameStruct1InterfaceSig1SignalCb callback)
 {
     return Sig1Publisher.subscribeForChange(callback);
 }
 
-void SameStruct1InterfacePublisher::unsubscribeFromSig1(long handleId)
+void SameStruct1InterfacePublisher::unsubscribeFromSig1(uint64_t handleId)
 {
     Sig1Publisher.unsubscribeFromChange(handleId);
 }

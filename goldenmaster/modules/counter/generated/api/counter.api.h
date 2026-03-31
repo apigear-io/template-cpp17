@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <future>
 #include "counter/generated/api/common.h"
 #include "counter/generated/api/datastructs.api.h"
@@ -205,14 +206,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToVectorChanged(CounterVectorPropertyCb callback) = 0;
+    virtual uint64_t subscribeToVectorChanged(CounterVectorPropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from vector property changes.
     * If your subscriber uses subscription with ICounterSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromVectorChanged(long handleId) = 0;
+    virtual void unsubscribeFromVectorChanged(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for extern_vector value changes.
@@ -223,14 +224,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToExternVectorChanged(CounterExternVectorPropertyCb callback) = 0;
+    virtual uint64_t subscribeToExternVectorChanged(CounterExternVectorPropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from extern_vector property changes.
     * If your subscriber uses subscription with ICounterSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromExternVectorChanged(long handleId) = 0;
+    virtual void unsubscribeFromExternVectorChanged(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for vectorArray value changes.
@@ -241,14 +242,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToVectorArrayChanged(CounterVectorArrayPropertyCb callback) = 0;
+    virtual uint64_t subscribeToVectorArrayChanged(CounterVectorArrayPropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from vectorArray property changes.
     * If your subscriber uses subscription with ICounterSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromVectorArrayChanged(long handleId) = 0;
+    virtual void unsubscribeFromVectorArrayChanged(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for extern_vectorArray value changes.
@@ -259,14 +260,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToExternVectorArrayChanged(CounterExternVectorArrayPropertyCb callback) = 0;
+    virtual uint64_t subscribeToExternVectorArrayChanged(CounterExternVectorArrayPropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from extern_vectorArray property changes.
     * If your subscriber uses subscription with ICounterSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromExternVectorArrayChanged(long handleId) = 0;
+    virtual void unsubscribeFromExternVectorArrayChanged(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for valueChanged signal changes.
@@ -276,12 +277,12 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToValueChanged(CounterValueChangedSignalCb callback) = 0;
+    virtual uint64_t subscribeToValueChanged(CounterValueChangedSignalCb callback) = 0;
     /**
     * Use this function to unsubscribe from valueChanged signal changes.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromValueChanged(long handleId) = 0;
+    virtual void unsubscribeFromValueChanged(uint64_t handleId) = 0;
 
     /**
     * Publishes the property changed to all subscribed clients.

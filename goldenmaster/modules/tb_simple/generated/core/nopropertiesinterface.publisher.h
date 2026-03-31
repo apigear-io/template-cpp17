@@ -38,20 +38,20 @@ public:
     /**
     * Implementation of INoPropertiesInterfacePublisher::subscribeToSigVoid
     */
-    long subscribeToSigVoid(NoPropertiesInterfaceSigVoidSignalCb callback) override;
+    uint64_t subscribeToSigVoid(NoPropertiesInterfaceSigVoidSignalCb callback) override;
     /**
     * Implementation of INoPropertiesInterfacePublisher::unsubscribeFromSigVoid
     */
-    void unsubscribeFromSigVoid(long handleId) override;
+    void unsubscribeFromSigVoid(uint64_t handleId) override;
 
     /**
     * Implementation of INoPropertiesInterfacePublisher::subscribeToSigBool
     */
-    long subscribeToSigBool(NoPropertiesInterfaceSigBoolSignalCb callback) override;
+    uint64_t subscribeToSigBool(NoPropertiesInterfaceSigBoolSignalCb callback) override;
     /**
     * Implementation of INoPropertiesInterfacePublisher::unsubscribeFromSigBool
     */
-    void unsubscribeFromSigBool(long handleId) override;
+    void unsubscribeFromSigBool(uint64_t handleId) override;
 
     /**
     * Implementation of INoPropertiesInterfacePublisher::publishSigVoid

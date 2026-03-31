@@ -25,11 +25,11 @@ public:
     explicit MqttBaseAdapter(std::shared_ptr<MqttBaseClient> client, const std::map<std::string, CallbackFunction> topics);
     virtual ~MqttBaseAdapter();
 
-    unsigned long _subscribeForIsReady(std::function<void(bool)> sub_function);
-    void _unsubscribeFromIsReady(unsigned long id);
+    uint64_t _subscribeForIsReady(std::function<void(bool)> sub_function);
+    void _unsubscribeFromIsReady(uint64_t id);
     bool _is_ready() const;
-    unsigned long _subscribeForIsUnsubscribed(std::function<void(bool)> sub_function);
-    void _unsubscribeFromIsUnsubscribed(unsigned long id);
+    uint64_t _subscribeForIsUnsubscribed(std::function<void(bool)> sub_function);
+    void _unsubscribeFromIsUnsubscribed(uint64_t id);
     bool _isUnsubscribed() const;
 
 private:

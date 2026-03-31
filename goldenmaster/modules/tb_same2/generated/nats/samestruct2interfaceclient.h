@@ -61,7 +61,7 @@ private:
     void onSig2(const std::string& args) const;
     /** Local storage for properties values. */
     SameStruct2InterfaceData m_data;
-    int32_t m_requestInitCallId = 0;
+    uint64_t m_requestInitCallId = 0;
     std::atomic<bool> m_initialized{false};
     std::shared_ptr<ApiGear::Nats::Client> m_client;
     /** The publisher for SameStruct2Interface */

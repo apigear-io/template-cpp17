@@ -28,12 +28,12 @@ void NoSignalsInterfacePublisher::unsubscribeFromAllChanges(INoSignalsInterfaceS
     }
 }
 
-long NoSignalsInterfacePublisher::subscribeToPropBoolChanged(NoSignalsInterfacePropBoolPropertyCb callback)
+uint64_t NoSignalsInterfacePublisher::subscribeToPropBoolChanged(NoSignalsInterfacePropBoolPropertyCb callback)
 {
     return PropBoolPublisher.subscribeForChange(callback);
 }
 
-void NoSignalsInterfacePublisher::unsubscribeFromPropBoolChanged(long handleId)
+void NoSignalsInterfacePublisher::unsubscribeFromPropBoolChanged(uint64_t handleId)
 {
     PropBoolPublisher.unsubscribeFromChange(handleId);
 }
@@ -50,12 +50,12 @@ void NoSignalsInterfacePublisher::publishPropBoolChanged(bool propBool) const
     PropBoolPublisher.publishChange(propBool);
 }
 
-long NoSignalsInterfacePublisher::subscribeToPropIntChanged(NoSignalsInterfacePropIntPropertyCb callback)
+uint64_t NoSignalsInterfacePublisher::subscribeToPropIntChanged(NoSignalsInterfacePropIntPropertyCb callback)
 {
     return PropIntPublisher.subscribeForChange(callback);
 }
 
-void NoSignalsInterfacePublisher::unsubscribeFromPropIntChanged(long handleId)
+void NoSignalsInterfacePublisher::unsubscribeFromPropIntChanged(uint64_t handleId)
 {
     PropIntPublisher.unsubscribeFromChange(handleId);
 }

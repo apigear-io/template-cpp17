@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <future>
 #include "tb_simple/generated/api/common.h"
 #include "tb_simple/generated/api/datastructs.api.h"
@@ -141,14 +142,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToPropBoolChanged(NoSignalsInterfacePropBoolPropertyCb callback) = 0;
+    virtual uint64_t subscribeToPropBoolChanged(NoSignalsInterfacePropBoolPropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from propBool property changes.
     * If your subscriber uses subscription with INoSignalsInterfaceSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromPropBoolChanged(long handleId) = 0;
+    virtual void unsubscribeFromPropBoolChanged(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for propInt value changes.
@@ -159,14 +160,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToPropIntChanged(NoSignalsInterfacePropIntPropertyCb callback) = 0;
+    virtual uint64_t subscribeToPropIntChanged(NoSignalsInterfacePropIntPropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from propInt property changes.
     * If your subscriber uses subscription with INoSignalsInterfaceSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromPropIntChanged(long handleId) = 0;
+    virtual void unsubscribeFromPropIntChanged(uint64_t handleId) = 0;
 
     /**
     * Publishes the property changed to all subscribed clients.

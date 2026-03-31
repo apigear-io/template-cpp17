@@ -38,74 +38,74 @@ public:
     /**
     * Implementation of IEnumInterfacePublisher::subscribeToProp0Changed
     */
-    long subscribeToProp0Changed(EnumInterfaceProp0PropertyCb callback) override;
+    uint64_t subscribeToProp0Changed(EnumInterfaceProp0PropertyCb callback) override;
     /**
     * Implementation of IEnumInterfacePublisher::subscribeToProp0Changed
     */
-    void unsubscribeFromProp0Changed(long handleId) override;
+    void unsubscribeFromProp0Changed(uint64_t handleId) override;
 
     /**
     * Implementation of IEnumInterfacePublisher::subscribeToProp1Changed
     */
-    long subscribeToProp1Changed(EnumInterfaceProp1PropertyCb callback) override;
+    uint64_t subscribeToProp1Changed(EnumInterfaceProp1PropertyCb callback) override;
     /**
     * Implementation of IEnumInterfacePublisher::subscribeToProp1Changed
     */
-    void unsubscribeFromProp1Changed(long handleId) override;
+    void unsubscribeFromProp1Changed(uint64_t handleId) override;
 
     /**
     * Implementation of IEnumInterfacePublisher::subscribeToProp2Changed
     */
-    long subscribeToProp2Changed(EnumInterfaceProp2PropertyCb callback) override;
+    uint64_t subscribeToProp2Changed(EnumInterfaceProp2PropertyCb callback) override;
     /**
     * Implementation of IEnumInterfacePublisher::subscribeToProp2Changed
     */
-    void unsubscribeFromProp2Changed(long handleId) override;
+    void unsubscribeFromProp2Changed(uint64_t handleId) override;
 
     /**
     * Implementation of IEnumInterfacePublisher::subscribeToProp3Changed
     */
-    long subscribeToProp3Changed(EnumInterfaceProp3PropertyCb callback) override;
+    uint64_t subscribeToProp3Changed(EnumInterfaceProp3PropertyCb callback) override;
     /**
     * Implementation of IEnumInterfacePublisher::subscribeToProp3Changed
     */
-    void unsubscribeFromProp3Changed(long handleId) override;
+    void unsubscribeFromProp3Changed(uint64_t handleId) override;
 
     /**
     * Implementation of IEnumInterfacePublisher::subscribeToSig0
     */
-    long subscribeToSig0(EnumInterfaceSig0SignalCb callback) override;
+    uint64_t subscribeToSig0(EnumInterfaceSig0SignalCb callback) override;
     /**
     * Implementation of IEnumInterfacePublisher::unsubscribeFromSig0
     */
-    void unsubscribeFromSig0(long handleId) override;
+    void unsubscribeFromSig0(uint64_t handleId) override;
 
     /**
     * Implementation of IEnumInterfacePublisher::subscribeToSig1
     */
-    long subscribeToSig1(EnumInterfaceSig1SignalCb callback) override;
+    uint64_t subscribeToSig1(EnumInterfaceSig1SignalCb callback) override;
     /**
     * Implementation of IEnumInterfacePublisher::unsubscribeFromSig1
     */
-    void unsubscribeFromSig1(long handleId) override;
+    void unsubscribeFromSig1(uint64_t handleId) override;
 
     /**
     * Implementation of IEnumInterfacePublisher::subscribeToSig2
     */
-    long subscribeToSig2(EnumInterfaceSig2SignalCb callback) override;
+    uint64_t subscribeToSig2(EnumInterfaceSig2SignalCb callback) override;
     /**
     * Implementation of IEnumInterfacePublisher::unsubscribeFromSig2
     */
-    void unsubscribeFromSig2(long handleId) override;
+    void unsubscribeFromSig2(uint64_t handleId) override;
 
     /**
     * Implementation of IEnumInterfacePublisher::subscribeToSig3
     */
-    long subscribeToSig3(EnumInterfaceSig3SignalCb callback) override;
+    uint64_t subscribeToSig3(EnumInterfaceSig3SignalCb callback) override;
     /**
     * Implementation of IEnumInterfacePublisher::unsubscribeFromSig3
     */
-    void unsubscribeFromSig3(long handleId) override;
+    void unsubscribeFromSig3(uint64_t handleId) override;
 
     /**
     * Implementation of IEnumInterfacePublisher::publishProp0Changed

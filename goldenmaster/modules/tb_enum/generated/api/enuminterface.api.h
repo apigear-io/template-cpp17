@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <future>
 #include "tb_enum/generated/api/common.h"
 #include "tb_enum/generated/api/datastructs.api.h"
@@ -227,14 +228,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToProp0Changed(EnumInterfaceProp0PropertyCb callback) = 0;
+    virtual uint64_t subscribeToProp0Changed(EnumInterfaceProp0PropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from prop0 property changes.
     * If your subscriber uses subscription with IEnumInterfaceSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromProp0Changed(long handleId) = 0;
+    virtual void unsubscribeFromProp0Changed(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for prop1 value changes.
@@ -245,14 +246,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToProp1Changed(EnumInterfaceProp1PropertyCb callback) = 0;
+    virtual uint64_t subscribeToProp1Changed(EnumInterfaceProp1PropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from prop1 property changes.
     * If your subscriber uses subscription with IEnumInterfaceSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromProp1Changed(long handleId) = 0;
+    virtual void unsubscribeFromProp1Changed(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for prop2 value changes.
@@ -263,14 +264,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToProp2Changed(EnumInterfaceProp2PropertyCb callback) = 0;
+    virtual uint64_t subscribeToProp2Changed(EnumInterfaceProp2PropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from prop2 property changes.
     * If your subscriber uses subscription with IEnumInterfaceSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromProp2Changed(long handleId) = 0;
+    virtual void unsubscribeFromProp2Changed(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for prop3 value changes.
@@ -281,14 +282,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToProp3Changed(EnumInterfaceProp3PropertyCb callback) = 0;
+    virtual uint64_t subscribeToProp3Changed(EnumInterfaceProp3PropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from prop3 property changes.
     * If your subscriber uses subscription with IEnumInterfaceSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromProp3Changed(long handleId) = 0;
+    virtual void unsubscribeFromProp3Changed(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for sig0 signal changes.
@@ -298,12 +299,12 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToSig0(EnumInterfaceSig0SignalCb callback) = 0;
+    virtual uint64_t subscribeToSig0(EnumInterfaceSig0SignalCb callback) = 0;
     /**
     * Use this function to unsubscribe from sig0 signal changes.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromSig0(long handleId) = 0;
+    virtual void unsubscribeFromSig0(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for sig1 signal changes.
@@ -313,12 +314,12 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToSig1(EnumInterfaceSig1SignalCb callback) = 0;
+    virtual uint64_t subscribeToSig1(EnumInterfaceSig1SignalCb callback) = 0;
     /**
     * Use this function to unsubscribe from sig1 signal changes.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromSig1(long handleId) = 0;
+    virtual void unsubscribeFromSig1(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for sig2 signal changes.
@@ -328,12 +329,12 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToSig2(EnumInterfaceSig2SignalCb callback) = 0;
+    virtual uint64_t subscribeToSig2(EnumInterfaceSig2SignalCb callback) = 0;
     /**
     * Use this function to unsubscribe from sig2 signal changes.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromSig2(long handleId) = 0;
+    virtual void unsubscribeFromSig2(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for sig3 signal changes.
@@ -343,12 +344,12 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToSig3(EnumInterfaceSig3SignalCb callback) = 0;
+    virtual uint64_t subscribeToSig3(EnumInterfaceSig3SignalCb callback) = 0;
     /**
     * Use this function to unsubscribe from sig3 signal changes.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromSig3(long handleId) = 0;
+    virtual void unsubscribeFromSig3(uint64_t handleId) = 0;
 
     /**
     * Publishes the property changed to all subscribed clients.

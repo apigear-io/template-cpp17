@@ -167,12 +167,12 @@ void BaseAdapter::onSubscribed(int64_t id, const std::string& topic, bool is_sub
     }
 }
 
-unsigned long BaseAdapter::_subscribeForIsReady(std::function<void(bool)> sub_function)
+uint64_t BaseAdapter::_subscribeForIsReady(std::function<void(bool)> sub_function)
 {
     return _is_readyChanges.subscribeForChange(sub_function);
 }
 
-void BaseAdapter::_unsubscribeFromIsReady(unsigned long id)
+void BaseAdapter::_unsubscribeFromIsReady(uint64_t id)
 {
     _is_readyChanges.unsubscribeFromChange(id);
 }

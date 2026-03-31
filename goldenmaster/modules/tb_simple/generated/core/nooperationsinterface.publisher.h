@@ -38,38 +38,38 @@ public:
     /**
     * Implementation of INoOperationsInterfacePublisher::subscribeToPropBoolChanged
     */
-    long subscribeToPropBoolChanged(NoOperationsInterfacePropBoolPropertyCb callback) override;
+    uint64_t subscribeToPropBoolChanged(NoOperationsInterfacePropBoolPropertyCb callback) override;
     /**
     * Implementation of INoOperationsInterfacePublisher::subscribeToPropBoolChanged
     */
-    void unsubscribeFromPropBoolChanged(long handleId) override;
+    void unsubscribeFromPropBoolChanged(uint64_t handleId) override;
 
     /**
     * Implementation of INoOperationsInterfacePublisher::subscribeToPropIntChanged
     */
-    long subscribeToPropIntChanged(NoOperationsInterfacePropIntPropertyCb callback) override;
+    uint64_t subscribeToPropIntChanged(NoOperationsInterfacePropIntPropertyCb callback) override;
     /**
     * Implementation of INoOperationsInterfacePublisher::subscribeToPropIntChanged
     */
-    void unsubscribeFromPropIntChanged(long handleId) override;
+    void unsubscribeFromPropIntChanged(uint64_t handleId) override;
 
     /**
     * Implementation of INoOperationsInterfacePublisher::subscribeToSigVoid
     */
-    long subscribeToSigVoid(NoOperationsInterfaceSigVoidSignalCb callback) override;
+    uint64_t subscribeToSigVoid(NoOperationsInterfaceSigVoidSignalCb callback) override;
     /**
     * Implementation of INoOperationsInterfacePublisher::unsubscribeFromSigVoid
     */
-    void unsubscribeFromSigVoid(long handleId) override;
+    void unsubscribeFromSigVoid(uint64_t handleId) override;
 
     /**
     * Implementation of INoOperationsInterfacePublisher::subscribeToSigBool
     */
-    long subscribeToSigBool(NoOperationsInterfaceSigBoolSignalCb callback) override;
+    uint64_t subscribeToSigBool(NoOperationsInterfaceSigBoolSignalCb callback) override;
     /**
     * Implementation of INoOperationsInterfacePublisher::unsubscribeFromSigBool
     */
-    void unsubscribeFromSigBool(long handleId) override;
+    void unsubscribeFromSigBool(uint64_t handleId) override;
 
     /**
     * Implementation of INoOperationsInterfacePublisher::publishPropBoolChanged

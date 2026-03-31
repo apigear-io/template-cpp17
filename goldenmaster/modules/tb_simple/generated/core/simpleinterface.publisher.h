@@ -38,146 +38,146 @@ public:
     /**
     * Implementation of ISimpleInterfacePublisher::subscribeToPropBoolChanged
     */
-    long subscribeToPropBoolChanged(SimpleInterfacePropBoolPropertyCb callback) override;
+    uint64_t subscribeToPropBoolChanged(SimpleInterfacePropBoolPropertyCb callback) override;
     /**
     * Implementation of ISimpleInterfacePublisher::subscribeToPropBoolChanged
     */
-    void unsubscribeFromPropBoolChanged(long handleId) override;
+    void unsubscribeFromPropBoolChanged(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleInterfacePublisher::subscribeToPropIntChanged
     */
-    long subscribeToPropIntChanged(SimpleInterfacePropIntPropertyCb callback) override;
+    uint64_t subscribeToPropIntChanged(SimpleInterfacePropIntPropertyCb callback) override;
     /**
     * Implementation of ISimpleInterfacePublisher::subscribeToPropIntChanged
     */
-    void unsubscribeFromPropIntChanged(long handleId) override;
+    void unsubscribeFromPropIntChanged(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleInterfacePublisher::subscribeToPropInt32Changed
     */
-    long subscribeToPropInt32Changed(SimpleInterfacePropInt32PropertyCb callback) override;
+    uint64_t subscribeToPropInt32Changed(SimpleInterfacePropInt32PropertyCb callback) override;
     /**
     * Implementation of ISimpleInterfacePublisher::subscribeToPropInt32Changed
     */
-    void unsubscribeFromPropInt32Changed(long handleId) override;
+    void unsubscribeFromPropInt32Changed(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleInterfacePublisher::subscribeToPropInt64Changed
     */
-    long subscribeToPropInt64Changed(SimpleInterfacePropInt64PropertyCb callback) override;
+    uint64_t subscribeToPropInt64Changed(SimpleInterfacePropInt64PropertyCb callback) override;
     /**
     * Implementation of ISimpleInterfacePublisher::subscribeToPropInt64Changed
     */
-    void unsubscribeFromPropInt64Changed(long handleId) override;
+    void unsubscribeFromPropInt64Changed(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleInterfacePublisher::subscribeToPropFloatChanged
     */
-    long subscribeToPropFloatChanged(SimpleInterfacePropFloatPropertyCb callback) override;
+    uint64_t subscribeToPropFloatChanged(SimpleInterfacePropFloatPropertyCb callback) override;
     /**
     * Implementation of ISimpleInterfacePublisher::subscribeToPropFloatChanged
     */
-    void unsubscribeFromPropFloatChanged(long handleId) override;
+    void unsubscribeFromPropFloatChanged(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleInterfacePublisher::subscribeToPropFloat32Changed
     */
-    long subscribeToPropFloat32Changed(SimpleInterfacePropFloat32PropertyCb callback) override;
+    uint64_t subscribeToPropFloat32Changed(SimpleInterfacePropFloat32PropertyCb callback) override;
     /**
     * Implementation of ISimpleInterfacePublisher::subscribeToPropFloat32Changed
     */
-    void unsubscribeFromPropFloat32Changed(long handleId) override;
+    void unsubscribeFromPropFloat32Changed(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleInterfacePublisher::subscribeToPropFloat64Changed
     */
-    long subscribeToPropFloat64Changed(SimpleInterfacePropFloat64PropertyCb callback) override;
+    uint64_t subscribeToPropFloat64Changed(SimpleInterfacePropFloat64PropertyCb callback) override;
     /**
     * Implementation of ISimpleInterfacePublisher::subscribeToPropFloat64Changed
     */
-    void unsubscribeFromPropFloat64Changed(long handleId) override;
+    void unsubscribeFromPropFloat64Changed(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleInterfacePublisher::subscribeToPropStringChanged
     */
-    long subscribeToPropStringChanged(SimpleInterfacePropStringPropertyCb callback) override;
+    uint64_t subscribeToPropStringChanged(SimpleInterfacePropStringPropertyCb callback) override;
     /**
     * Implementation of ISimpleInterfacePublisher::subscribeToPropStringChanged
     */
-    void unsubscribeFromPropStringChanged(long handleId) override;
+    void unsubscribeFromPropStringChanged(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleInterfacePublisher::subscribeToSigBool
     */
-    long subscribeToSigBool(SimpleInterfaceSigBoolSignalCb callback) override;
+    uint64_t subscribeToSigBool(SimpleInterfaceSigBoolSignalCb callback) override;
     /**
     * Implementation of ISimpleInterfacePublisher::unsubscribeFromSigBool
     */
-    void unsubscribeFromSigBool(long handleId) override;
+    void unsubscribeFromSigBool(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleInterfacePublisher::subscribeToSigInt
     */
-    long subscribeToSigInt(SimpleInterfaceSigIntSignalCb callback) override;
+    uint64_t subscribeToSigInt(SimpleInterfaceSigIntSignalCb callback) override;
     /**
     * Implementation of ISimpleInterfacePublisher::unsubscribeFromSigInt
     */
-    void unsubscribeFromSigInt(long handleId) override;
+    void unsubscribeFromSigInt(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleInterfacePublisher::subscribeToSigInt32
     */
-    long subscribeToSigInt32(SimpleInterfaceSigInt32SignalCb callback) override;
+    uint64_t subscribeToSigInt32(SimpleInterfaceSigInt32SignalCb callback) override;
     /**
     * Implementation of ISimpleInterfacePublisher::unsubscribeFromSigInt32
     */
-    void unsubscribeFromSigInt32(long handleId) override;
+    void unsubscribeFromSigInt32(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleInterfacePublisher::subscribeToSigInt64
     */
-    long subscribeToSigInt64(SimpleInterfaceSigInt64SignalCb callback) override;
+    uint64_t subscribeToSigInt64(SimpleInterfaceSigInt64SignalCb callback) override;
     /**
     * Implementation of ISimpleInterfacePublisher::unsubscribeFromSigInt64
     */
-    void unsubscribeFromSigInt64(long handleId) override;
+    void unsubscribeFromSigInt64(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleInterfacePublisher::subscribeToSigFloat
     */
-    long subscribeToSigFloat(SimpleInterfaceSigFloatSignalCb callback) override;
+    uint64_t subscribeToSigFloat(SimpleInterfaceSigFloatSignalCb callback) override;
     /**
     * Implementation of ISimpleInterfacePublisher::unsubscribeFromSigFloat
     */
-    void unsubscribeFromSigFloat(long handleId) override;
+    void unsubscribeFromSigFloat(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleInterfacePublisher::subscribeToSigFloat32
     */
-    long subscribeToSigFloat32(SimpleInterfaceSigFloat32SignalCb callback) override;
+    uint64_t subscribeToSigFloat32(SimpleInterfaceSigFloat32SignalCb callback) override;
     /**
     * Implementation of ISimpleInterfacePublisher::unsubscribeFromSigFloat32
     */
-    void unsubscribeFromSigFloat32(long handleId) override;
+    void unsubscribeFromSigFloat32(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleInterfacePublisher::subscribeToSigFloat64
     */
-    long subscribeToSigFloat64(SimpleInterfaceSigFloat64SignalCb callback) override;
+    uint64_t subscribeToSigFloat64(SimpleInterfaceSigFloat64SignalCb callback) override;
     /**
     * Implementation of ISimpleInterfacePublisher::unsubscribeFromSigFloat64
     */
-    void unsubscribeFromSigFloat64(long handleId) override;
+    void unsubscribeFromSigFloat64(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleInterfacePublisher::subscribeToSigString
     */
-    long subscribeToSigString(SimpleInterfaceSigStringSignalCb callback) override;
+    uint64_t subscribeToSigString(SimpleInterfaceSigStringSignalCb callback) override;
     /**
     * Implementation of ISimpleInterfacePublisher::unsubscribeFromSigString
     */
-    void unsubscribeFromSigString(long handleId) override;
+    void unsubscribeFromSigString(uint64_t handleId) override;
 
     /**
     * Implementation of ISimpleInterfacePublisher::publishPropBoolChanged

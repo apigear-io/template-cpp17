@@ -28,12 +28,12 @@ void SimpleInterfacePublisher::unsubscribeFromAllChanges(ISimpleInterfaceSubscri
     }
 }
 
-long SimpleInterfacePublisher::subscribeToPropBoolChanged(SimpleInterfacePropBoolPropertyCb callback)
+uint64_t SimpleInterfacePublisher::subscribeToPropBoolChanged(SimpleInterfacePropBoolPropertyCb callback)
 {
     return PropBoolPublisher.subscribeForChange(callback);
 }
 
-void SimpleInterfacePublisher::unsubscribeFromPropBoolChanged(long handleId)
+void SimpleInterfacePublisher::unsubscribeFromPropBoolChanged(uint64_t handleId)
 {
     PropBoolPublisher.unsubscribeFromChange(handleId);
 }
@@ -50,12 +50,12 @@ void SimpleInterfacePublisher::publishPropBoolChanged(bool propBool) const
     PropBoolPublisher.publishChange(propBool);
 }
 
-long SimpleInterfacePublisher::subscribeToPropIntChanged(SimpleInterfacePropIntPropertyCb callback)
+uint64_t SimpleInterfacePublisher::subscribeToPropIntChanged(SimpleInterfacePropIntPropertyCb callback)
 {
     return PropIntPublisher.subscribeForChange(callback);
 }
 
-void SimpleInterfacePublisher::unsubscribeFromPropIntChanged(long handleId)
+void SimpleInterfacePublisher::unsubscribeFromPropIntChanged(uint64_t handleId)
 {
     PropIntPublisher.unsubscribeFromChange(handleId);
 }
@@ -72,12 +72,12 @@ void SimpleInterfacePublisher::publishPropIntChanged(int propInt) const
     PropIntPublisher.publishChange(propInt);
 }
 
-long SimpleInterfacePublisher::subscribeToPropInt32Changed(SimpleInterfacePropInt32PropertyCb callback)
+uint64_t SimpleInterfacePublisher::subscribeToPropInt32Changed(SimpleInterfacePropInt32PropertyCb callback)
 {
     return PropInt32Publisher.subscribeForChange(callback);
 }
 
-void SimpleInterfacePublisher::unsubscribeFromPropInt32Changed(long handleId)
+void SimpleInterfacePublisher::unsubscribeFromPropInt32Changed(uint64_t handleId)
 {
     PropInt32Publisher.unsubscribeFromChange(handleId);
 }
@@ -94,12 +94,12 @@ void SimpleInterfacePublisher::publishPropInt32Changed(int32_t propInt32) const
     PropInt32Publisher.publishChange(propInt32);
 }
 
-long SimpleInterfacePublisher::subscribeToPropInt64Changed(SimpleInterfacePropInt64PropertyCb callback)
+uint64_t SimpleInterfacePublisher::subscribeToPropInt64Changed(SimpleInterfacePropInt64PropertyCb callback)
 {
     return PropInt64Publisher.subscribeForChange(callback);
 }
 
-void SimpleInterfacePublisher::unsubscribeFromPropInt64Changed(long handleId)
+void SimpleInterfacePublisher::unsubscribeFromPropInt64Changed(uint64_t handleId)
 {
     PropInt64Publisher.unsubscribeFromChange(handleId);
 }
@@ -116,12 +116,12 @@ void SimpleInterfacePublisher::publishPropInt64Changed(int64_t propInt64) const
     PropInt64Publisher.publishChange(propInt64);
 }
 
-long SimpleInterfacePublisher::subscribeToPropFloatChanged(SimpleInterfacePropFloatPropertyCb callback)
+uint64_t SimpleInterfacePublisher::subscribeToPropFloatChanged(SimpleInterfacePropFloatPropertyCb callback)
 {
     return PropFloatPublisher.subscribeForChange(callback);
 }
 
-void SimpleInterfacePublisher::unsubscribeFromPropFloatChanged(long handleId)
+void SimpleInterfacePublisher::unsubscribeFromPropFloatChanged(uint64_t handleId)
 {
     PropFloatPublisher.unsubscribeFromChange(handleId);
 }
@@ -138,12 +138,12 @@ void SimpleInterfacePublisher::publishPropFloatChanged(float propFloat) const
     PropFloatPublisher.publishChange(propFloat);
 }
 
-long SimpleInterfacePublisher::subscribeToPropFloat32Changed(SimpleInterfacePropFloat32PropertyCb callback)
+uint64_t SimpleInterfacePublisher::subscribeToPropFloat32Changed(SimpleInterfacePropFloat32PropertyCb callback)
 {
     return PropFloat32Publisher.subscribeForChange(callback);
 }
 
-void SimpleInterfacePublisher::unsubscribeFromPropFloat32Changed(long handleId)
+void SimpleInterfacePublisher::unsubscribeFromPropFloat32Changed(uint64_t handleId)
 {
     PropFloat32Publisher.unsubscribeFromChange(handleId);
 }
@@ -160,12 +160,12 @@ void SimpleInterfacePublisher::publishPropFloat32Changed(float propFloat32) cons
     PropFloat32Publisher.publishChange(propFloat32);
 }
 
-long SimpleInterfacePublisher::subscribeToPropFloat64Changed(SimpleInterfacePropFloat64PropertyCb callback)
+uint64_t SimpleInterfacePublisher::subscribeToPropFloat64Changed(SimpleInterfacePropFloat64PropertyCb callback)
 {
     return PropFloat64Publisher.subscribeForChange(callback);
 }
 
-void SimpleInterfacePublisher::unsubscribeFromPropFloat64Changed(long handleId)
+void SimpleInterfacePublisher::unsubscribeFromPropFloat64Changed(uint64_t handleId)
 {
     PropFloat64Publisher.unsubscribeFromChange(handleId);
 }
@@ -182,12 +182,12 @@ void SimpleInterfacePublisher::publishPropFloat64Changed(double propFloat64) con
     PropFloat64Publisher.publishChange(propFloat64);
 }
 
-long SimpleInterfacePublisher::subscribeToPropStringChanged(SimpleInterfacePropStringPropertyCb callback)
+uint64_t SimpleInterfacePublisher::subscribeToPropStringChanged(SimpleInterfacePropStringPropertyCb callback)
 {
     return PropStringPublisher.subscribeForChange(callback);
 }
 
-void SimpleInterfacePublisher::unsubscribeFromPropStringChanged(long handleId)
+void SimpleInterfacePublisher::unsubscribeFromPropStringChanged(uint64_t handleId)
 {
     PropStringPublisher.unsubscribeFromChange(handleId);
 }
@@ -204,12 +204,12 @@ void SimpleInterfacePublisher::publishPropStringChanged(const std::string& propS
     PropStringPublisher.publishChange(propString);
 }
 
-long SimpleInterfacePublisher::subscribeToSigBool(SimpleInterfaceSigBoolSignalCb callback)
+uint64_t SimpleInterfacePublisher::subscribeToSigBool(SimpleInterfaceSigBoolSignalCb callback)
 {
     return SigBoolPublisher.subscribeForChange(callback);
 }
 
-void SimpleInterfacePublisher::unsubscribeFromSigBool(long handleId)
+void SimpleInterfacePublisher::unsubscribeFromSigBool(uint64_t handleId)
 {
     SigBoolPublisher.unsubscribeFromChange(handleId);
 }
@@ -226,12 +226,12 @@ void SimpleInterfacePublisher::publishSigBool(bool paramBool) const
     SigBoolPublisher.publishChange(paramBool);
 }
 
-long SimpleInterfacePublisher::subscribeToSigInt(SimpleInterfaceSigIntSignalCb callback)
+uint64_t SimpleInterfacePublisher::subscribeToSigInt(SimpleInterfaceSigIntSignalCb callback)
 {
     return SigIntPublisher.subscribeForChange(callback);
 }
 
-void SimpleInterfacePublisher::unsubscribeFromSigInt(long handleId)
+void SimpleInterfacePublisher::unsubscribeFromSigInt(uint64_t handleId)
 {
     SigIntPublisher.unsubscribeFromChange(handleId);
 }
@@ -248,12 +248,12 @@ void SimpleInterfacePublisher::publishSigInt(int paramInt) const
     SigIntPublisher.publishChange(paramInt);
 }
 
-long SimpleInterfacePublisher::subscribeToSigInt32(SimpleInterfaceSigInt32SignalCb callback)
+uint64_t SimpleInterfacePublisher::subscribeToSigInt32(SimpleInterfaceSigInt32SignalCb callback)
 {
     return SigInt32Publisher.subscribeForChange(callback);
 }
 
-void SimpleInterfacePublisher::unsubscribeFromSigInt32(long handleId)
+void SimpleInterfacePublisher::unsubscribeFromSigInt32(uint64_t handleId)
 {
     SigInt32Publisher.unsubscribeFromChange(handleId);
 }
@@ -270,12 +270,12 @@ void SimpleInterfacePublisher::publishSigInt32(int32_t paramInt32) const
     SigInt32Publisher.publishChange(paramInt32);
 }
 
-long SimpleInterfacePublisher::subscribeToSigInt64(SimpleInterfaceSigInt64SignalCb callback)
+uint64_t SimpleInterfacePublisher::subscribeToSigInt64(SimpleInterfaceSigInt64SignalCb callback)
 {
     return SigInt64Publisher.subscribeForChange(callback);
 }
 
-void SimpleInterfacePublisher::unsubscribeFromSigInt64(long handleId)
+void SimpleInterfacePublisher::unsubscribeFromSigInt64(uint64_t handleId)
 {
     SigInt64Publisher.unsubscribeFromChange(handleId);
 }
@@ -292,12 +292,12 @@ void SimpleInterfacePublisher::publishSigInt64(int64_t paramInt64) const
     SigInt64Publisher.publishChange(paramInt64);
 }
 
-long SimpleInterfacePublisher::subscribeToSigFloat(SimpleInterfaceSigFloatSignalCb callback)
+uint64_t SimpleInterfacePublisher::subscribeToSigFloat(SimpleInterfaceSigFloatSignalCb callback)
 {
     return SigFloatPublisher.subscribeForChange(callback);
 }
 
-void SimpleInterfacePublisher::unsubscribeFromSigFloat(long handleId)
+void SimpleInterfacePublisher::unsubscribeFromSigFloat(uint64_t handleId)
 {
     SigFloatPublisher.unsubscribeFromChange(handleId);
 }
@@ -314,12 +314,12 @@ void SimpleInterfacePublisher::publishSigFloat(float paramFloat) const
     SigFloatPublisher.publishChange(paramFloat);
 }
 
-long SimpleInterfacePublisher::subscribeToSigFloat32(SimpleInterfaceSigFloat32SignalCb callback)
+uint64_t SimpleInterfacePublisher::subscribeToSigFloat32(SimpleInterfaceSigFloat32SignalCb callback)
 {
     return SigFloat32Publisher.subscribeForChange(callback);
 }
 
-void SimpleInterfacePublisher::unsubscribeFromSigFloat32(long handleId)
+void SimpleInterfacePublisher::unsubscribeFromSigFloat32(uint64_t handleId)
 {
     SigFloat32Publisher.unsubscribeFromChange(handleId);
 }
@@ -336,12 +336,12 @@ void SimpleInterfacePublisher::publishSigFloat32(float paramFloat32) const
     SigFloat32Publisher.publishChange(paramFloat32);
 }
 
-long SimpleInterfacePublisher::subscribeToSigFloat64(SimpleInterfaceSigFloat64SignalCb callback)
+uint64_t SimpleInterfacePublisher::subscribeToSigFloat64(SimpleInterfaceSigFloat64SignalCb callback)
 {
     return SigFloat64Publisher.subscribeForChange(callback);
 }
 
-void SimpleInterfacePublisher::unsubscribeFromSigFloat64(long handleId)
+void SimpleInterfacePublisher::unsubscribeFromSigFloat64(uint64_t handleId)
 {
     SigFloat64Publisher.unsubscribeFromChange(handleId);
 }
@@ -358,12 +358,12 @@ void SimpleInterfacePublisher::publishSigFloat64(double paramFloat64) const
     SigFloat64Publisher.publishChange(paramFloat64);
 }
 
-long SimpleInterfacePublisher::subscribeToSigString(SimpleInterfaceSigStringSignalCb callback)
+uint64_t SimpleInterfacePublisher::subscribeToSigString(SimpleInterfaceSigStringSignalCb callback)
 {
     return SigStringPublisher.subscribeForChange(callback);
 }
 
-void SimpleInterfacePublisher::unsubscribeFromSigString(long handleId)
+void SimpleInterfacePublisher::unsubscribeFromSigString(uint64_t handleId)
 {
     SigStringPublisher.unsubscribeFromChange(handleId);
 }

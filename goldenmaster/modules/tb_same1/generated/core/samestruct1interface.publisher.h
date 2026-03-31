@@ -38,20 +38,20 @@ public:
     /**
     * Implementation of ISameStruct1InterfacePublisher::subscribeToProp1Changed
     */
-    long subscribeToProp1Changed(SameStruct1InterfaceProp1PropertyCb callback) override;
+    uint64_t subscribeToProp1Changed(SameStruct1InterfaceProp1PropertyCb callback) override;
     /**
     * Implementation of ISameStruct1InterfacePublisher::subscribeToProp1Changed
     */
-    void unsubscribeFromProp1Changed(long handleId) override;
+    void unsubscribeFromProp1Changed(uint64_t handleId) override;
 
     /**
     * Implementation of ISameStruct1InterfacePublisher::subscribeToSig1
     */
-    long subscribeToSig1(SameStruct1InterfaceSig1SignalCb callback) override;
+    uint64_t subscribeToSig1(SameStruct1InterfaceSig1SignalCb callback) override;
     /**
     * Implementation of ISameStruct1InterfacePublisher::unsubscribeFromSig1
     */
-    void unsubscribeFromSig1(long handleId) override;
+    void unsubscribeFromSig1(uint64_t handleId) override;
 
     /**
     * Implementation of ISameStruct1InterfacePublisher::publishProp1Changed

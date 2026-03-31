@@ -38,47 +38,47 @@ public:
     /**
     * Implementation of ICounterPublisher::subscribeToVectorChanged
     */
-    long subscribeToVectorChanged(CounterVectorPropertyCb callback) override;
+    uint64_t subscribeToVectorChanged(CounterVectorPropertyCb callback) override;
     /**
     * Implementation of ICounterPublisher::subscribeToVectorChanged
     */
-    void unsubscribeFromVectorChanged(long handleId) override;
+    void unsubscribeFromVectorChanged(uint64_t handleId) override;
 
     /**
     * Implementation of ICounterPublisher::subscribeToExternVectorChanged
     */
-    long subscribeToExternVectorChanged(CounterExternVectorPropertyCb callback) override;
+    uint64_t subscribeToExternVectorChanged(CounterExternVectorPropertyCb callback) override;
     /**
     * Implementation of ICounterPublisher::subscribeToExternVectorChanged
     */
-    void unsubscribeFromExternVectorChanged(long handleId) override;
+    void unsubscribeFromExternVectorChanged(uint64_t handleId) override;
 
     /**
     * Implementation of ICounterPublisher::subscribeToVectorArrayChanged
     */
-    long subscribeToVectorArrayChanged(CounterVectorArrayPropertyCb callback) override;
+    uint64_t subscribeToVectorArrayChanged(CounterVectorArrayPropertyCb callback) override;
     /**
     * Implementation of ICounterPublisher::subscribeToVectorArrayChanged
     */
-    void unsubscribeFromVectorArrayChanged(long handleId) override;
+    void unsubscribeFromVectorArrayChanged(uint64_t handleId) override;
 
     /**
     * Implementation of ICounterPublisher::subscribeToExternVectorArrayChanged
     */
-    long subscribeToExternVectorArrayChanged(CounterExternVectorArrayPropertyCb callback) override;
+    uint64_t subscribeToExternVectorArrayChanged(CounterExternVectorArrayPropertyCb callback) override;
     /**
     * Implementation of ICounterPublisher::subscribeToExternVectorArrayChanged
     */
-    void unsubscribeFromExternVectorArrayChanged(long handleId) override;
+    void unsubscribeFromExternVectorArrayChanged(uint64_t handleId) override;
 
     /**
     * Implementation of ICounterPublisher::subscribeToValueChanged
     */
-    long subscribeToValueChanged(CounterValueChangedSignalCb callback) override;
+    uint64_t subscribeToValueChanged(CounterValueChangedSignalCb callback) override;
     /**
     * Implementation of ICounterPublisher::unsubscribeFromValueChanged
     */
-    void unsubscribeFromValueChanged(long handleId) override;
+    void unsubscribeFromValueChanged(uint64_t handleId) override;
 
     /**
     * Implementation of ICounterPublisher::publishVectorChanged

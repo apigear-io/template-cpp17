@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <future>
 #include "tb_simple/generated/api/common.h"
 #include "tb_simple/generated/api/datastructs.api.h"
@@ -142,14 +143,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToPropBoolChanged(NoOperationsInterfacePropBoolPropertyCb callback) = 0;
+    virtual uint64_t subscribeToPropBoolChanged(NoOperationsInterfacePropBoolPropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from propBool property changes.
     * If your subscriber uses subscription with INoOperationsInterfaceSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromPropBoolChanged(long handleId) = 0;
+    virtual void unsubscribeFromPropBoolChanged(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for propInt value changes.
@@ -160,14 +161,14 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToPropIntChanged(NoOperationsInterfacePropIntPropertyCb callback) = 0;
+    virtual uint64_t subscribeToPropIntChanged(NoOperationsInterfacePropIntPropertyCb callback) = 0;
     /**
     * Use this function to unsubscribe from propInt property changes.
     * If your subscriber uses subscription with INoOperationsInterfaceSubscriber interface, you will be still informed about this change,
     * as those are two independent subscription mechanisms.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromPropIntChanged(long handleId) = 0;
+    virtual void unsubscribeFromPropIntChanged(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for sigVoid signal changes.
@@ -177,12 +178,12 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToSigVoid(NoOperationsInterfaceSigVoidSignalCb callback) = 0;
+    virtual uint64_t subscribeToSigVoid(NoOperationsInterfaceSigVoidSignalCb callback) = 0;
     /**
     * Use this function to unsubscribe from sigVoid signal changes.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromSigVoid(long handleId) = 0;
+    virtual void unsubscribeFromSigVoid(uint64_t handleId) = 0;
 
     /**
     * Use this function to subscribe for sigBool signal changes.
@@ -192,12 +193,12 @@ public:
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
-    virtual long subscribeToSigBool(NoOperationsInterfaceSigBoolSignalCb callback) = 0;
+    virtual uint64_t subscribeToSigBool(NoOperationsInterfaceSigBoolSignalCb callback) = 0;
     /**
     * Use this function to unsubscribe from sigBool signal changes.
     * @param subscription token received on subscription.
     */
-    virtual void unsubscribeFromSigBool(long handleId) = 0;
+    virtual void unsubscribeFromSigBool(uint64_t handleId) = 0;
 
     /**
     * Publishes the property changed to all subscribed clients.

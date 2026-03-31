@@ -38,56 +38,56 @@ public:
     /**
     * Implementation of INamEsPublisher::subscribeToSwitchChanged
     */
-    long subscribeToSwitchChanged(NamEsSwitchPropertyCb callback) override;
+    uint64_t subscribeToSwitchChanged(NamEsSwitchPropertyCb callback) override;
     /**
     * Implementation of INamEsPublisher::subscribeToSwitchChanged
     */
-    void unsubscribeFromSwitchChanged(long handleId) override;
+    void unsubscribeFromSwitchChanged(uint64_t handleId) override;
 
     /**
     * Implementation of INamEsPublisher::subscribeToSomePropertyChanged
     */
-    long subscribeToSomePropertyChanged(NamEsSomePropertyPropertyCb callback) override;
+    uint64_t subscribeToSomePropertyChanged(NamEsSomePropertyPropertyCb callback) override;
     /**
     * Implementation of INamEsPublisher::subscribeToSomePropertyChanged
     */
-    void unsubscribeFromSomePropertyChanged(long handleId) override;
+    void unsubscribeFromSomePropertyChanged(uint64_t handleId) override;
 
     /**
     * Implementation of INamEsPublisher::subscribeToSomePoperty2Changed
     */
-    long subscribeToSomePoperty2Changed(NamEsSomePoperty2PropertyCb callback) override;
+    uint64_t subscribeToSomePoperty2Changed(NamEsSomePoperty2PropertyCb callback) override;
     /**
     * Implementation of INamEsPublisher::subscribeToSomePoperty2Changed
     */
-    void unsubscribeFromSomePoperty2Changed(long handleId) override;
+    void unsubscribeFromSomePoperty2Changed(uint64_t handleId) override;
 
     /**
     * Implementation of INamEsPublisher::subscribeToEnumPropertyChanged
     */
-    long subscribeToEnumPropertyChanged(NamEsEnumPropertyPropertyCb callback) override;
+    uint64_t subscribeToEnumPropertyChanged(NamEsEnumPropertyPropertyCb callback) override;
     /**
     * Implementation of INamEsPublisher::subscribeToEnumPropertyChanged
     */
-    void unsubscribeFromEnumPropertyChanged(long handleId) override;
+    void unsubscribeFromEnumPropertyChanged(uint64_t handleId) override;
 
     /**
     * Implementation of INamEsPublisher::subscribeToSomeSignal
     */
-    long subscribeToSomeSignal(NamEsSomeSignalSignalCb callback) override;
+    uint64_t subscribeToSomeSignal(NamEsSomeSignalSignalCb callback) override;
     /**
     * Implementation of INamEsPublisher::unsubscribeFromSomeSignal
     */
-    void unsubscribeFromSomeSignal(long handleId) override;
+    void unsubscribeFromSomeSignal(uint64_t handleId) override;
 
     /**
     * Implementation of INamEsPublisher::subscribeToSomeSignal2
     */
-    long subscribeToSomeSignal2(NamEsSomeSignal2SignalCb callback) override;
+    uint64_t subscribeToSomeSignal2(NamEsSomeSignal2SignalCb callback) override;
     /**
     * Implementation of INamEsPublisher::unsubscribeFromSomeSignal2
     */
-    void unsubscribeFromSomeSignal2(long handleId) override;
+    void unsubscribeFromSomeSignal2(uint64_t handleId) override;
 
     /**
     * Implementation of INamEsPublisher::publishSwitchChanged
