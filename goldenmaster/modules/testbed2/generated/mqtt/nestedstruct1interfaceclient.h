@@ -17,12 +17,16 @@ namespace MQTT {
  * Subscription management inside the publisher is thread safe, but the callbacks themselves
  * execute without additional locking. Operation calls are not additionally synchronized —
  * callers are responsible for thread safety of concurrent operation invocations.
+ * Property storage is not guarded by a mutex; wrap with NestedStruct1InterfaceThreadSafeDecorator
+ * for concurrent access from multiple threads.
  */
 class TEST_TESTBED2_EXPORT NestedStruct1InterfaceClient : public INestedStruct1Interface, public ApiGear::MQTT::MqttBaseAdapter
 {
 public:
     explicit NestedStruct1InterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> client);
     static std::shared_ptr<NestedStruct1InterfaceClient> create(std::shared_ptr<ApiGear::MQTT::Client> client);
+    /// Convenience factory. Unlike the NATS adapter, no post-construction init() is needed
+    /// because MqttBaseAdapter subscribes topics eagerly in the constructor.
     virtual ~NestedStruct1InterfaceClient() override;
     const NestedStruct1& getProp1() const override;
     void setProp1(const NestedStruct1& prop1) override;

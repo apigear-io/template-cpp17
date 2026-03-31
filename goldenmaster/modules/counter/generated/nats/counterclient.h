@@ -21,6 +21,8 @@ namespace Nats {
  * Subscription management inside the publisher is thread safe, but the callbacks themselves
  * execute without additional locking. Operation calls are not additionally synchronized —
  * callers are responsible for thread safety of concurrent operation invocations.
+ * Property storage is not guarded by a mutex; wrap with CounterThreadSafeDecorator
+ * for concurrent access from multiple threads.
  */
 class TEST_COUNTER_EXPORT CounterClient : public ICounter, public ApiGear::Nats::BaseAdapter,  public std::enable_shared_from_this<CounterClient>
 {

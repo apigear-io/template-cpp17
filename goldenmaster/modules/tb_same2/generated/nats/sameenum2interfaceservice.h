@@ -16,7 +16,7 @@ class TEST_TB_SAME2_EXPORT SameEnum2InterfaceService : public ISameEnum2Interfac
 protected:
     explicit SameEnum2InterfaceService(std::shared_ptr<ISameEnum2Interface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
 public:
-    static std::shared_ptr<SameEnum2InterfaceService>create(std::shared_ptr<ISameEnum2Interface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
+    static std::shared_ptr<SameEnum2InterfaceService> create(std::shared_ptr<ISameEnum2Interface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
     virtual ~SameEnum2InterfaceService() override;
     void init();
 

@@ -17,12 +17,16 @@ namespace MQTT {
  * Subscription management inside the publisher is thread safe, but the callbacks themselves
  * execute without additional locking. Operation calls are not additionally synchronized —
  * callers are responsible for thread safety of concurrent operation invocations.
+ * Property storage is not guarded by a mutex; wrap with SameEnum1InterfaceThreadSafeDecorator
+ * for concurrent access from multiple threads.
  */
 class TEST_TB_SAME2_EXPORT SameEnum1InterfaceClient : public ISameEnum1Interface, public ApiGear::MQTT::MqttBaseAdapter
 {
 public:
     explicit SameEnum1InterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> client);
     static std::shared_ptr<SameEnum1InterfaceClient> create(std::shared_ptr<ApiGear::MQTT::Client> client);
+    /// Convenience factory. Unlike the NATS adapter, no post-construction init() is needed
+    /// because MqttBaseAdapter subscribes topics eagerly in the constructor.
     virtual ~SameEnum1InterfaceClient() override;
     Enum1Enum getProp1() const override;
     void setProp1(Enum1Enum prop1) override;

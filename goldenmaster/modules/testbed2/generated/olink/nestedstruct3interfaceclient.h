@@ -28,8 +28,12 @@ namespace olink {
 * see https://github.com/apigear-io/objectlink-core-cpp.git for olink client node - abstraction over the network.
 * see Apigear::ObjectLink::OLinkConnection for Olink Client Handler implementation.
 *     It provides a network implementation and tools to connect NestedStruct3InterfaceClient to it.
-* Use on client side to request changes of the NestedStruct3Interface on the server side 
+* Use on client side to request changes of the NestedStruct3Interface on the server side
 * and to subscribe for the NestedStruct3Interface changes.
+*
+* @note Threading: property-change and signal callbacks arrive on the OLink network thread.
+* Properties are individually guarded by shared_timed_mutex (concurrent reads allowed,
+* exclusive writes). Operation calls are not synchronized by this adapter.
 */
 class TEST_TESTBED2_EXPORT NestedStruct3InterfaceClient : public INestedStruct3Interface,
     public ApiGear::ObjectLink::IObjectSink

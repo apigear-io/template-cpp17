@@ -17,12 +17,16 @@ namespace MQTT {
  * Subscription management inside the publisher is thread safe, but the callbacks themselves
  * execute without additional locking. Operation calls are not additionally synchronized —
  * callers are responsible for thread safety of concurrent operation invocations.
+ * Property storage is not guarded by a mutex; wrap with StructArrayInterfaceThreadSafeDecorator
+ * for concurrent access from multiple threads.
  */
 class TEST_TESTBED1_EXPORT StructArrayInterfaceClient : public IStructArrayInterface, public ApiGear::MQTT::MqttBaseAdapter
 {
 public:
     explicit StructArrayInterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> client);
     static std::shared_ptr<StructArrayInterfaceClient> create(std::shared_ptr<ApiGear::MQTT::Client> client);
+    /// Convenience factory. Unlike the NATS adapter, no post-construction init() is needed
+    /// because MqttBaseAdapter subscribes topics eagerly in the constructor.
     virtual ~StructArrayInterfaceClient() override;
     const std::list<StructBool>& getPropBool() const override;
     void setPropBool(const std::list<StructBool>& propBool) override;

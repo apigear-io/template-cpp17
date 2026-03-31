@@ -16,7 +16,7 @@ class TEST_TESTBED2_EXPORT NestedStruct1InterfaceService : public INestedStruct1
 protected:
     explicit NestedStruct1InterfaceService(std::shared_ptr<INestedStruct1Interface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
 public:
-    static std::shared_ptr<NestedStruct1InterfaceService>create(std::shared_ptr<INestedStruct1Interface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
+    static std::shared_ptr<NestedStruct1InterfaceService> create(std::shared_ptr<INestedStruct1Interface> impl, std::shared_ptr<ApiGear::Nats::Service> service);
     virtual ~NestedStruct1InterfaceService() override;
     void init();
 
