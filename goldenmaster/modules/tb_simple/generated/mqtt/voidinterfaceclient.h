@@ -17,12 +17,16 @@ namespace MQTT {
  * Subscription management inside the publisher is thread safe, but the callbacks themselves
  * execute without additional locking. Operation calls are not additionally synchronized —
  * callers are responsible for thread safety of concurrent operation invocations.
+ * Property storage is not guarded by a mutex; wrap with VoidInterfaceThreadSafeDecorator
+ * for concurrent access from multiple threads.
  */
 class TEST_TB_SIMPLE_EXPORT VoidInterfaceClient : public IVoidInterface, public ApiGear::MQTT::MqttBaseAdapter
 {
 public:
     explicit VoidInterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> client);
     static std::shared_ptr<VoidInterfaceClient> create(std::shared_ptr<ApiGear::MQTT::Client> client);
+    /// Convenience factory. Unlike the NATS adapter, no post-construction init() is needed
+    /// because MqttBaseAdapter subscribes topics eagerly in the constructor.
     virtual ~VoidInterfaceClient() override;
     void funcVoid() override;
     std::future<void> funcVoidAsync( std::function<void(void)> callback = nullptr) override;

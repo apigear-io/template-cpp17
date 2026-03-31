@@ -17,12 +17,16 @@ namespace MQTT {
  * Subscription management inside the publisher is thread safe, but the callbacks themselves
  * execute without additional locking. Operation calls are not additionally synchronized —
  * callers are responsible for thread safety of concurrent operation invocations.
+ * Property storage is not guarded by a mutex; wrap with CounterThreadSafeDecorator
+ * for concurrent access from multiple threads.
  */
 class TEST_COUNTER_EXPORT CounterClient : public ICounter, public ApiGear::MQTT::MqttBaseAdapter
 {
 public:
     explicit CounterClient(std::shared_ptr<ApiGear::MQTT::Client> client);
     static std::shared_ptr<CounterClient> create(std::shared_ptr<ApiGear::MQTT::Client> client);
+    /// Convenience factory. Unlike the NATS adapter, no post-construction init() is needed
+    /// because MqttBaseAdapter subscribes topics eagerly in the constructor.
     virtual ~CounterClient() override;
     const Test::CustomTypes::Vector3D& getVector() const override;
     void setVector(const Test::CustomTypes::Vector3D& vector) override;
