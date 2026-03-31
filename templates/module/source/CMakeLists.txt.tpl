@@ -25,7 +25,7 @@ target_include_directories({{$module_id}}-implementation
 target_link_libraries({{$module_id}}-implementation PUBLIC {{$module_id}}::{{$module_id}}-api PRIVATE {{$module_id}}::{{$module_id}}-core Threads::Threads)
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options({{$module_id}}-implementation PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
+  target_compile_options({{$module_id}}-implementation PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden)
 else()
   target_compile_options({{$module_id}}-implementation PRIVATE /W4 /WX /wd4251)
 endif()
@@ -51,7 +51,7 @@ target_include_directories(test_{{$module_id}} PRIVATE ${CMAKE_CURRENT_SOURCE_DI
 
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options(test_{{$module_id}} PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
+  target_compile_options(test_{{$module_id}} PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden)
 else()
   target_compile_options(test_{{$module_id}} PRIVATE /W4 /WX /wd4251)
 endif()

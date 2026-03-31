@@ -15,7 +15,6 @@
   #endif
 #endif
 
-{{- if len .Module.Externs }}
 
 #ifndef THIRD_PARTY_INCLUDES_START
   #if defined __clang__ || defined __GNUC__
@@ -43,4 +42,3 @@
       __pragma(warning(pop))  /* Pops the last warning state from the stack */
   #endif
 #endif
-{{- end }}

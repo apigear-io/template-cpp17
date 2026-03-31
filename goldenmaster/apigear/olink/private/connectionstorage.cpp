@@ -1,7 +1,14 @@
 #include "connectionstorage.h"
 #include "olinkremote.h"
 
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+#endif
 #include "olink/remoteregistry.h"
+#if defined(__GNUC__) || defined(__clang__)
+#pragma GCC diagnostic pop
+#endif
 #include <Poco/Util/TimerTaskAdapter.h>
 #include <chrono>
 #include <memory>
@@ -21,7 +28,6 @@ ConnectionStorage::ConnectionStorage(ApiGear::ObjectLink::RemoteRegistry& regist
 
 void ConnectionStorage::notifyConnectionClosed()
 {
-	Poco::Util::TimerTask::Ptr m_removeConnectionTask;
 	std::unique_lock<std::mutex> lock(m_taskMutex);
 	if (m_removeConnectionTask){
 		m_removeConnectionTask->cancel();

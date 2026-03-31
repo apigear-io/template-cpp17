@@ -16,7 +16,7 @@ add_executable(test_extern_types
 add_test(NAME test_extern_types COMMAND $<TARGET_FILE:test_extern_types>)
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options(test_extern_types PRIVATE -Wall -Wextra -Wpedantic -Werror)
+  target_compile_options(test_extern_types PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror)
 else()
   target_compile_options(test_extern_types PRIVATE /W4 /WX /wd4251)
 endif()

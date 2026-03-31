@@ -22,7 +22,7 @@ target_include_directories(tb_same1-implementation
 target_link_libraries(tb_same1-implementation PUBLIC tb_same1::tb_same1-api PRIVATE tb_same1::tb_same1-core Threads::Threads)
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options(tb_same1-implementation PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
+  target_compile_options(tb_same1-implementation PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden)
 else()
   target_compile_options(tb_same1-implementation PRIVATE /W4 /WX /wd4251)
 endif()
@@ -48,7 +48,7 @@ target_include_directories(test_tb_same1 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options(test_tb_same1 PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
+  target_compile_options(test_tb_same1 PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden)
 else()
   target_compile_options(test_tb_same1 PRIVATE /W4 /WX /wd4251)
 endif()

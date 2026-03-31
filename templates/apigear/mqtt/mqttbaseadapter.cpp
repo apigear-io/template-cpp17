@@ -51,7 +51,7 @@ void MqttBaseAdapter::subscribeTopic(const std::string& topic, CallbackFunction 
 {
     if (!isAlreadyAdded(topic))
     {
-        m_client->subscribeTopic(topic, callback, [this](const std::string& topic, bool is_subscribed) { onSubscribed(topic, is_subscribed); });
+        m_client->subscribeTopic(topic, callback, [this](const std::string& subscribedTopic, bool is_subscribed) { onSubscribed(subscribedTopic, is_subscribed); });
     }
 }
 

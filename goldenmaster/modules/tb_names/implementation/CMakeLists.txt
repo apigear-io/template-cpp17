@@ -19,7 +19,7 @@ target_include_directories(tb_names-implementation
 target_link_libraries(tb_names-implementation PUBLIC tb_names::tb_names-api PRIVATE tb_names::tb_names-core Threads::Threads)
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options(tb_names-implementation PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
+  target_compile_options(tb_names-implementation PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden)
 else()
   target_compile_options(tb_names-implementation PRIVATE /W4 /WX /wd4251)
 endif()
@@ -42,7 +42,7 @@ target_include_directories(test_tb_names PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options(test_tb_names PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
+  target_compile_options(test_tb_names PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden)
 else()
   target_compile_options(test_tb_names PRIVATE /W4 /WX /wd4251)
 endif()

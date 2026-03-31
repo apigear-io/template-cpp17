@@ -3,7 +3,9 @@
 
 #include "{{snake .Module.Name}}/generated/api/{{snake .Module.Name}}.h"
 #include "{{snake .Module.Name}}/generated/api/common.h"
+THIRD_PARTY_INCLUDES_START
 #include "olink/iobjectsource.h"
+THIRD_PARTY_INCLUDES_END
 {{ $class := printf "%sService" .Interface.Name  }}
 {{ $interfaceNameOriginal := .Interface.Name  }}
 {{ $interfaceName := Camel .Interface.Name  }}

@@ -33,7 +33,7 @@ target_link_libraries(nats PRIVATE debug cnats::nats_staticd optimized cnats::na
 endif()
 
 if(NOT MSVC)
-  target_compile_options(nats PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden -Wno-unknown-pragmas)
+  target_compile_options(nats PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden -Wno-unknown-pragmas)
 else()
   target_compile_options(nats PRIVATE /W4 /WX /wd4251)
 endif()

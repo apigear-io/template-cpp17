@@ -4,7 +4,9 @@
 #include "tb_names/generated/core/names.publisher.h"
 #include "tb_names/generated/core/tb_names.json.adapter.h"
 
+THIRD_PARTY_INCLUDES_START
 #include "olink/iclientnode.h"
+THIRD_PARTY_INCLUDES_END
 #include "apigear/utilities/logger.h"
 
 using namespace Test::TbNames;

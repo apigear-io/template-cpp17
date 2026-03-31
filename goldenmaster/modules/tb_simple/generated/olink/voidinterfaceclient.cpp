@@ -4,7 +4,9 @@
 #include "tb_simple/generated/core/voidinterface.publisher.h"
 #include "tb_simple/generated/core/tb_simple.json.adapter.h"
 
+THIRD_PARTY_INCLUDES_START
 #include "olink/iclientnode.h"
+THIRD_PARTY_INCLUDES_END
 #include "apigear/utilities/logger.h"
 
 using namespace Test::TbSimple;

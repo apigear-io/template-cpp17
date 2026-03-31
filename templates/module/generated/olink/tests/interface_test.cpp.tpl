@@ -26,10 +26,12 @@
 #include {{ .}}
 {{- end }}
 
+THIRD_PARTY_INCLUDES_START
 #include "olink/clientregistry.h"
 #include "olink/clientnode.h"
 #include "olink/remotenode.h"
 #include "olink/remoteregistry.h"
+THIRD_PARTY_INCLUDES_END
 
 {{- define "get_namespace"}}
         {{- $module_prefix:= printf "%s" (Camel .Module.Name) }}

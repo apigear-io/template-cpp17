@@ -15,7 +15,9 @@
 #include "{{snake .Name}}/generated/core/{{snake .Name}}.json.adapter.h"
 {{- end }}
 
+THIRD_PARTY_INCLUDES_START
 #include "olink/iclientnode.h"
+THIRD_PARTY_INCLUDES_END
 #include "apigear/utilities/logger.h"
 
 using namespace {{ Camel .System.Name }}::{{ Camel .Module.Name }};

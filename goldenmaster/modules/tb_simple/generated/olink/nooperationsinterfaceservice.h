@@ -3,7 +3,9 @@
 
 #include "tb_simple/generated/api/tb_simple.h"
 #include "tb_simple/generated/api/common.h"
+THIRD_PARTY_INCLUDES_START
 #include "olink/iobjectsource.h"
+THIRD_PARTY_INCLUDES_END
 
 
 namespace ApiGear {

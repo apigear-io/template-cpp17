@@ -5,7 +5,9 @@
 #include "testbed1/generated/api/testbed1.h"
 #include "testbed1/generated/core/structarrayinterface.data.h"
 
+THIRD_PARTY_INCLUDES_START
 #include "olink/iobjectsink.h"
+THIRD_PARTY_INCLUDES_END
 
 #include <future>
 #include <shared_mutex>

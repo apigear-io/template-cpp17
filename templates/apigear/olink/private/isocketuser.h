@@ -12,6 +12,7 @@ namespace PocoImpl {
 class ISocketUser
 {
 public:
+    virtual ~ISocketUser() = default;
     /**
     * Handler for raw message received.
     */

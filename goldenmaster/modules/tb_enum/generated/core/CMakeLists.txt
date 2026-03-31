@@ -21,7 +21,7 @@ target_include_directories(tb_enum-core
 target_link_libraries(tb_enum-core PUBLIC apigear::utilities tb_enum::tb_enum-api nlohmann_json::nlohmann_json)
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options(tb_enum-core PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
+  target_compile_options(tb_enum-core PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden)
 else()
   target_compile_options(tb_enum-core PRIVATE /W4 /WX /wd4251)
 endif()

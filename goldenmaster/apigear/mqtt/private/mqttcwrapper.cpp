@@ -104,19 +104,19 @@ void onDisconnected(void* context, MQTTAsync_successData5* /*response*/)
 int OnMessageArrived(void *context, char *topicName, int topicLen, MQTTAsync_message *message)
 {
     Message mqtt_message {};
-    mqtt_message.topic = std::string(topicName, topicLen);
-    mqtt_message.content.assign(static_cast<char*>(message->payload), message->payloadlen);
+    mqtt_message.topic = std::string(topicName, static_cast<size_t>(topicLen));
+    mqtt_message.content.assign(static_cast<char*>(message->payload), static_cast<size_t>(message->payloadlen));
 
     if(MQTTProperties_hasProperty(&(message->properties), MQTTPROPERTY_CODE_RESPONSE_TOPIC))
     {
         MQTTProperty* responseTopicProperty = MQTTProperties_getProperty(&(message->properties), MQTTPROPERTY_CODE_RESPONSE_TOPIC);
-        mqtt_message.responseTopic = std::string(responseTopicProperty->value.data.data, responseTopicProperty->value.data.len);
+        mqtt_message.responseTopic = std::string(responseTopicProperty->value.data.data, static_cast<size_t>(responseTopicProperty->value.data.len));
     }
 
     if(MQTTProperties_hasProperty(&(message->properties), MQTTPROPERTY_CODE_CORRELATION_DATA))
     {
         MQTTProperty* correlationDataProperty = MQTTProperties_getProperty(&(message->properties), MQTTPROPERTY_CODE_CORRELATION_DATA);
-        mqtt_message.correlationData.assign(correlationDataProperty->value.data.data, correlationDataProperty->value.data.len);
+        mqtt_message.correlationData.assign(correlationDataProperty->value.data.data, static_cast<size_t>(correlationDataProperty->value.data.len));
     }
 
     MQTTAsync_freeMessage(&message);

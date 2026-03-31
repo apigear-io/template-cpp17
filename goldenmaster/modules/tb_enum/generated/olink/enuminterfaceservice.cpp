@@ -4,8 +4,10 @@
 #include "tb_enum/generated/olink/enuminterfaceservice.h"
 #include "tb_enum/generated/core/tb_enum.json.adapter.h"
 
+THIRD_PARTY_INCLUDES_START
 #include "olink/iremotenode.h"
 #include "olink/remoteregistry.h"
+THIRD_PARTY_INCLUDES_END
 #include "apigear/utilities/logger.h"
 
 #include <iostream>

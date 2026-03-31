@@ -27,7 +27,7 @@ target_include_directories(tb_same2-core
 target_link_libraries(tb_same2-core PUBLIC apigear::utilities tb_same2::tb_same2-api nlohmann_json::nlohmann_json)
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options(tb_same2-core PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
+  target_compile_options(tb_same2-core PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden)
 else()
   target_compile_options(tb_same2-core PRIVATE /W4 /WX /wd4251)
 endif()

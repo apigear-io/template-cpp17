@@ -17,7 +17,7 @@ target_link_libraries(test_testbed1 testbed1::testbed1-implementation)
 add_test(NAME test_testbed1 COMMAND $<TARGET_FILE:test_testbed1>)
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options(test_testbed1 PRIVATE -Wall -Wextra -Wpedantic -Werror)
+  target_compile_options(test_testbed1 PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror)
 else()
   target_compile_options(test_testbed1 PRIVATE /W4 /WX /wd4251)
 endif()

@@ -28,7 +28,7 @@ target_include_directories({{$module_id}}-core
 target_link_libraries({{$module_id}}-core PUBLIC{{ if len .Module.Interfaces  }} apigear::utilities{{ end }} {{$module_id}}::{{$module_id}}-api nlohmann_json::nlohmann_json)
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options({{$module_id}}-core PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
+  target_compile_options({{$module_id}}-core PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden)
 else()
   target_compile_options({{$module_id}}-core PRIVATE /W4 /WX /wd4251)
 endif()

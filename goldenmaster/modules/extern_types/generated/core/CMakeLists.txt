@@ -18,7 +18,7 @@ target_include_directories(extern_types-core
 target_link_libraries(extern_types-core PUBLIC extern_types::extern_types-api nlohmann_json::nlohmann_json)
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options(extern_types-core PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
+  target_compile_options(extern_types-core PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden)
 else()
   target_compile_options(extern_types-core PRIVATE /W4 /WX /wd4251)
 endif()

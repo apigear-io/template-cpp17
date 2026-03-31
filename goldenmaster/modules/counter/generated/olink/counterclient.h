@@ -5,7 +5,9 @@
 #include "counter/generated/api/counter.h"
 #include "counter/generated/core/counter.data.h"
 
+THIRD_PARTY_INCLUDES_START
 #include "olink/iobjectsink.h"
+THIRD_PARTY_INCLUDES_END
 
 #include <future>
 #include <shared_mutex>

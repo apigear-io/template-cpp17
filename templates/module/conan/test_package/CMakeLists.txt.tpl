@@ -20,7 +20,7 @@ target_link_libraries(test_{{$module_id}} {{$module_id}}::{{$module_id}}-impleme
 add_test(NAME test_{{$module_id}} COMMAND $<TARGET_FILE:test_{{$module_id}}>)
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options(test_{{$module_id}} PRIVATE -Wall -Wextra -Wpedantic -Werror)
+  target_compile_options(test_{{$module_id}} PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror)
 else()
   target_compile_options(test_{{$module_id}} PRIVATE /W4 /WX /wd4251)
 endif()

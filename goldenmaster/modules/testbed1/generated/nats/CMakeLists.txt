@@ -20,7 +20,7 @@ target_link_libraries(testbed1-nats
 )
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options(testbed1-nats PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
+  target_compile_options(testbed1-nats PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden)
 else()
   target_compile_options(testbed1-nats PRIVATE /W4 /WX /wd4251)
 endif()

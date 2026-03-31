@@ -20,7 +20,7 @@ target_include_directories(testbed1-implementation
 target_link_libraries(testbed1-implementation PUBLIC testbed1::testbed1-api PRIVATE testbed1::testbed1-core Threads::Threads)
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options(testbed1-implementation PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
+  target_compile_options(testbed1-implementation PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden)
 else()
   target_compile_options(testbed1-implementation PRIVATE /W4 /WX /wd4251)
 endif()
@@ -44,7 +44,7 @@ target_include_directories(test_testbed1 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options(test_testbed1 PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
+  target_compile_options(test_testbed1 PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden)
 else()
   target_compile_options(test_testbed1 PRIVATE /W4 /WX /wd4251)
 endif()

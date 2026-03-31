@@ -3,7 +3,9 @@
 
 #include "testbed2/generated/api/testbed2.h"
 #include "testbed2/generated/api/common.h"
+THIRD_PARTY_INCLUDES_START
 #include "olink/iobjectsource.h"
+THIRD_PARTY_INCLUDES_END
 
 
 namespace ApiGear {

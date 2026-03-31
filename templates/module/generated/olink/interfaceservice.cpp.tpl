@@ -12,8 +12,10 @@
 #include "{{snake .Name}}/generated/core/{{snake .Name}}.json.adapter.h"
 {{- end }}
 
+THIRD_PARTY_INCLUDES_START
 #include "olink/iremotenode.h"
 #include "olink/remoteregistry.h"
+THIRD_PARTY_INCLUDES_END
 #include "apigear/utilities/logger.h"
 
 #include <iostream>

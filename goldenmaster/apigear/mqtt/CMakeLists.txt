@@ -35,7 +35,7 @@ target_include_directories(paho-mqtt
 target_link_libraries(paho-mqtt PRIVATE ${MQTT_LIB} utilities PUBLIC nlohmann_json::nlohmann_json)
 
 if(NOT MSVC)
-  target_compile_options(paho-mqtt PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden -Wno-unknown-pragmas)
+  target_compile_options(paho-mqtt PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden -Wno-unknown-pragmas)
 else()
   target_compile_options(paho-mqtt PRIVATE /W4 /WX /wd4251)
 endif()

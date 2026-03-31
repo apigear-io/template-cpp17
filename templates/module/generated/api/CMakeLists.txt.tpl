@@ -30,7 +30,7 @@ target_include_directories({{$module_id}}-api
 )
 # ensure maximum compiler support
 if(NOT MSVC)
-  target_compile_options({{$module_id}}-api PRIVATE -Wall -Wextra -Wpedantic -Werror -fvisibility=hidden)
+  target_compile_options({{$module_id}}-api PRIVATE -Wall -Wextra -Wpedantic -Wconversion -Wsign-conversion -Wnon-virtual-dtor -Woverloaded-virtual -Wcast-align -Werror -fvisibility=hidden)
 else()
   target_compile_options({{$module_id}}-api PRIVATE /W4 /WX /wd4251)
 endif()

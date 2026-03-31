@@ -11,10 +11,12 @@
 #include "tb_simple/generated/olink/voidinterfaceservice.h"
 
 
+THIRD_PARTY_INCLUDES_START
 #include "olink/clientregistry.h"
 #include "olink/clientnode.h"
 #include "olink/remotenode.h"
 #include "olink/remoteregistry.h"
+THIRD_PARTY_INCLUDES_END
 
 // Those tests do not use network connection.
 // They are set in a way the client writes data straight into read function of server and vice versa.

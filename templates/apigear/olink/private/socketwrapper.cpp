@@ -47,7 +47,7 @@ void SocketWrapper::startReceiving()
                 std::unique_lock<std::timed_mutex> lock(m_socketMutex);
                 auto frameSize = m_socket->receiveFrame(pocobuffer, flags);
                 lock.unlock();
-                auto messagePayload = std::string(pocobuffer.begin(), frameSize);
+                auto messagePayload = std::string(pocobuffer.begin(), static_cast<size_t>(frameSize));
                 auto frameOpCode = flags & Poco::Net::WebSocket::FRAME_OP_BITMASK;
                 if (frameOpCode == Poco::Net::WebSocket::FRAME_OP_PING){
                     writeMessage(messagePayload, Poco::Net::WebSocket::FRAME_OP_PONG);

@@ -4,8 +4,10 @@
 #include "tb_simple/generated/olink/voidinterfaceservice.h"
 #include "tb_simple/generated/core/tb_simple.json.adapter.h"
 
+THIRD_PARTY_INCLUDES_START
 #include "olink/iremotenode.h"
 #include "olink/remoteregistry.h"
+THIRD_PARTY_INCLUDES_END
 #include "apigear/utilities/logger.h"
 
 #include <iostream>
