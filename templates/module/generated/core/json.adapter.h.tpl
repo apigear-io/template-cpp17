@@ -70,7 +70,7 @@ namespace nlohmann {
             (void) j;
             // Do deserialization here, e.g.
             //return {j.template get<int>()};
-            return {{$ext.Default}};
+            return {{ if $ext.Default }}{{$ext.Default}}{{ else }}{}{{ end }};
         }
 
         static void to_json(json& j, {{ $namespace }}{{$class}} t) {
