@@ -97,6 +97,7 @@ private:
     std::list<std::shared_ptr<SimpleCallbackWrapper>> m_simpleCallbacks;
     std::list<std::shared_ptr<MessageCallbackWithResultWrapper>> m_requestCallbacks;
     std::unique_ptr<natsConnection, NatsConnectionDeleter> m_connection;
+    mutable std::mutex m_connectionMutex;
 
     // Container that does not reallocate.
     std::unordered_map<uint64_t, std::shared_ptr<natsSubscription>> m_subscriptions;

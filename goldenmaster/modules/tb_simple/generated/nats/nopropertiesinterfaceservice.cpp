@@ -26,7 +26,12 @@ void NoPropertiesInterfaceService::init()
         AG_LOG_WARNING("init() called more than once on " "NoPropertiesInterfaceService" ", ignoring");
         return;
     }
-    BaseAdapter::init([this](){onConnected();});
+    std::weak_ptr<NoPropertiesInterfaceService> weak_self = shared_from_this();
+    BaseAdapter::init([weak_self](){
+        if (auto self = weak_self.lock()) {
+            self->onConnected();
+        }
+    });
 }
 
 std::shared_ptr<NoPropertiesInterfaceService> NoPropertiesInterfaceService::create(std::shared_ptr<INoPropertiesInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service)

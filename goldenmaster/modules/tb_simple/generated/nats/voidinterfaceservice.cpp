@@ -26,7 +26,12 @@ void VoidInterfaceService::init()
         AG_LOG_WARNING("init() called more than once on " "VoidInterfaceService" ", ignoring");
         return;
     }
-    BaseAdapter::init([this](){onConnected();});
+    std::weak_ptr<VoidInterfaceService> weak_self = shared_from_this();
+    BaseAdapter::init([weak_self](){
+        if (auto self = weak_self.lock()) {
+            self->onConnected();
+        }
+    });
 }
 
 std::shared_ptr<VoidInterfaceService> VoidInterfaceService::create(std::shared_ptr<IVoidInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service)

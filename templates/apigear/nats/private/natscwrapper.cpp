@@ -208,7 +208,10 @@ void CWrapper::connect(const std::string& address, std::function<void(void)> con
     }
     natsConnection* connection = NULL;
     status = natsConnection_Connect(&connection, opts.get());
-    m_connection.reset(connection);
+    {
+        std::lock_guard<std::mutex> lock(m_connectionMutex);
+        m_connection.reset(connection);
+    }
     if (status != NATS_OK) {
         auto log = "Failed to connect. Check your connection. Status " + std::to_string(static_cast<int>(status));
         AG_LOG_ERROR(log);
@@ -219,12 +222,14 @@ void CWrapper::connect(const std::string& address, std::function<void(void)> con
 uint64_t CWrapper::getId() const
 {
     uint64_t cid = 0;
+    std::lock_guard<std::mutex> lock(m_connectionMutex);
     if (m_connection)
     {
         auto status = natsConnection_GetClientID(m_connection.get(), &cid);
-        if (status == NATS_OK)
+        if (status != NATS_OK)
         {
             auto log = "Failed to get the id for client. Status " + std::to_string(static_cast<int>(status));
+            AG_LOG_ERROR(log);
         }
     }
     return cid;
@@ -233,6 +238,7 @@ uint64_t CWrapper::getId() const
 
 void CWrapper::disconnect()
 {
+    std::lock_guard<std::mutex> lock(m_connectionMutex);
     if (!m_connection)
     {
         return;
@@ -245,6 +251,7 @@ void CWrapper::disconnect()
 
 ConnectionStatus CWrapper::getStatus()
 {
+    std::lock_guard<std::mutex> lock(m_connectionMutex);
     if (!m_connection)
     {
         return ConnectionStatus::disconnected;
@@ -325,14 +332,18 @@ int64_t CWrapper::subscribe(const std::string& topic, SimpleOnMessageCallback ca
     storedCallback->id = sub_id;
     // This callback removes all resources, the nats library states that after unsubscribe call there might be still message to serve
     // Nats library guarantees that after SetOnCompleteCB there will be no more calls for message handler for this subscription and resources can be safely cleaned up.
-    cleanSubscriptionResourcesContext* cleanCtx= new cleanSubscriptionResourcesContext{ sub_id, shared_from_this(), [this, onSubscriptionClosedCallback](uint64_t clean_id) {onSubscriptionClosedCallback(clean_id); cleanSubscription(static_cast<int64_t>(clean_id)); } };
+    auto cleanCtx = std::make_unique<cleanSubscriptionResourcesContext>(cleanSubscriptionResourcesContext{ sub_id, shared_from_this(), [this, onSubscriptionClosedCallback](uint64_t clean_id) {onSubscriptionClosedCallback(clean_id); cleanSubscription(static_cast<int64_t>(clean_id)); } });
 
-    status = natsSubscription_SetOnCompleteCB(subscription_ptr.get(), &removeSubscriptionResources, cleanCtx);
+    status = natsSubscription_SetOnCompleteCB(subscription_ptr.get(), &removeSubscriptionResources, cleanCtx.get());
     if (status != NATS_OK) {
-        delete cleanCtx;
         AG_LOG_WARNING("Failed to add subscription clean up callback " + topic +" id " + std::to_string(sub_id));
         AG_LOG_WARNING("Please restart the client to clean up resources.");
-    };
+    }
+    else
+    {
+        // C API took ownership via the callback; release so unique_ptr won't delete it.
+        cleanCtx.release();
+    }
     return sub_id;
 }
 
@@ -364,14 +375,18 @@ int64_t CWrapper::subscribeWithResponse(const std::string& topic, MessageCallbac
     storedCallback->id = sub_id;
     // This callback removes all resources, the nats library states that after unsubscribe call there might be still message to serve
     // Nats library guarantees that after SetOnCompleteCB there will be no more calls for message handler for this subscription and resources can be safely cleaned up.
-    cleanSubscriptionResourcesContext* cleanCtx = new cleanSubscriptionResourcesContext{ sub_id, shared_from_this(), [this, onSubscriptionClosedCallback](uint64_t clean_id) {onSubscriptionClosedCallback(clean_id); cleanSubscription(static_cast<int64_t>(clean_id)); } };
+    auto cleanCtx = std::make_unique<cleanSubscriptionResourcesContext>(cleanSubscriptionResourcesContext{ sub_id, shared_from_this(), [this, onSubscriptionClosedCallback](uint64_t clean_id) {onSubscriptionClosedCallback(clean_id); cleanSubscription(static_cast<int64_t>(clean_id)); } });
 
-    status = natsSubscription_SetOnCompleteCB(subscription_ptr.get(), &removeSubscriptionResources, cleanCtx);
+    status = natsSubscription_SetOnCompleteCB(subscription_ptr.get(), &removeSubscriptionResources, cleanCtx.get());
     if (status != NATS_OK) {
-        delete cleanCtx;
         AG_LOG_WARNING("Failed to add subscription clean up callback " + topic + " id " + std::to_string(sub_id));
         AG_LOG_WARNING("Please restart the client to clean up resources.");
-    };
+    }
+    else
+    {
+        // C API took ownership via the callback; release so unique_ptr won't delete it.
+        cleanCtx.release();
+    }
     return sub_id;
 }
 

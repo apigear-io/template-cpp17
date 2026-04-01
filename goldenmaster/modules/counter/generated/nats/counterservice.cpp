@@ -29,7 +29,12 @@ void CounterService::init()
         AG_LOG_WARNING("init() called more than once on " "CounterService" ", ignoring");
         return;
     }
-    BaseAdapter::init([this](){onConnected();});
+    std::weak_ptr<CounterService> weak_self = shared_from_this();
+    BaseAdapter::init([weak_self](){
+        if (auto self = weak_self.lock()) {
+            self->onConnected();
+        }
+    });
 }
 
 std::shared_ptr<CounterService> CounterService::create(std::shared_ptr<ICounter> impl, std::shared_ptr<ApiGear::Nats::Service> service)

@@ -27,7 +27,12 @@ void SimpleArrayInterfaceService::init()
         AG_LOG_WARNING("init() called more than once on " "SimpleArrayInterfaceService" ", ignoring");
         return;
     }
-    BaseAdapter::init([this](){onConnected();});
+    std::weak_ptr<SimpleArrayInterfaceService> weak_self = shared_from_this();
+    BaseAdapter::init([weak_self](){
+        if (auto self = weak_self.lock()) {
+            self->onConnected();
+        }
+    });
 }
 
 std::shared_ptr<SimpleArrayInterfaceService> SimpleArrayInterfaceService::create(std::shared_ptr<ISimpleArrayInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service)

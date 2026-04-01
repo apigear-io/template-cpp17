@@ -27,7 +27,12 @@ void NoSignalsInterfaceService::init()
         AG_LOG_WARNING("init() called more than once on " "NoSignalsInterfaceService" ", ignoring");
         return;
     }
-    BaseAdapter::init([this](){onConnected();});
+    std::weak_ptr<NoSignalsInterfaceService> weak_self = shared_from_this();
+    BaseAdapter::init([weak_self](){
+        if (auto self = weak_self.lock()) {
+            self->onConnected();
+        }
+    });
 }
 
 std::shared_ptr<NoSignalsInterfaceService> NoSignalsInterfaceService::create(std::shared_ptr<INoSignalsInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
