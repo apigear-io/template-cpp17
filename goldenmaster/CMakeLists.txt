@@ -24,6 +24,11 @@ endif(BUILD_TESTING)
 if(TEST_FETCH_DEPS)
 include(FetchContent)
 
+set(APIGEAR_DEP_CATCH2_VERSION        "v2.13.8")  # TODO: upgrade to v3.x
+set(APIGEAR_DEP_TROMPELOEIL_VERSION   "v46")
+set(APIGEAR_DEP_NLOHMANN_JSON_VERSION "v3.11.3")
+set(APIGEAR_DEP_OLINK_CORE_VERSION    "v0.2.10")
+
 if(BUILD_TESTING)
 find_package(Catch2 QUIET)
 if (NOT Catch2_Found)
@@ -31,7 +36,7 @@ if (NOT Catch2_Found)
   FetchContent_Declare(
       Catch2
       GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-      GIT_TAG        v2.13.8
+      GIT_TAG        ${APIGEAR_DEP_CATCH2_VERSION}
       GIT_SHALLOW    TRUE
       OVERRIDE_FIND_PACKAGE)
   FetchContent_MakeAvailable(Catch2)
@@ -43,7 +48,7 @@ if(NOT trompeloeil_Found)
   FetchContent_Declare(
       trompeloeil
       GIT_REPOSITORY https://github.com/rollbear/trompeloeil.git
-      GIT_TAG        v46
+      GIT_TAG        ${APIGEAR_DEP_TROMPELOEIL_VERSION}
       OVERRIDE_FIND_PACKAGE
       )
   FetchContent_MakeAvailable(trompeloeil)
@@ -57,7 +62,7 @@ if(NOT nlohmann_json_FOUND)
   include(FetchContent)
   set(JSON_Install ON)
   FetchContent_Declare(nlohmann_json
-  URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
+  URL https://github.com/nlohmann/json/releases/download/${APIGEAR_DEP_NLOHMANN_JSON_VERSION}/json.tar.xz
   OVERRIDE_FIND_PACKAGE)
   FetchContent_MakeAvailable(nlohmann_json)
 endif()
@@ -68,7 +73,7 @@ if(NOT olink_core_FOUND)
   message(STATUS "olink_core NOT FOUND, fetching the git repository")
   FetchContent_Declare(olink_core
       GIT_REPOSITORY https://github.com/apigear-io/objectlink-core-cpp.git
-      GIT_TAG v0.2.10
+      GIT_TAG ${APIGEAR_DEP_OLINK_CORE_VERSION}
       GIT_SHALLOW TRUE
       EXCLUDE_FROM_ALL FALSE
       OVERRIDE_FIND_PACKAGE
