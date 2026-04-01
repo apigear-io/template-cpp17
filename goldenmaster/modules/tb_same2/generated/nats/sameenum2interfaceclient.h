@@ -13,6 +13,14 @@
 namespace Test {
 namespace TbSame2 {
 namespace Nats {
+/**
+ * @brief NATS adapter for SameEnum2Interface.
+ *
+ * @note Threading: property-change and signal callbacks arrive on the NATS transport thread.
+ * Subscription management inside the publisher is thread safe, but the callbacks themselves
+ * execute without additional locking. Operation calls are not additionally synchronized —
+ * callers are responsible for thread safety of concurrent operation invocations.
+ */
 class TEST_TB_SAME2_EXPORT SameEnum2InterfaceClient : public ISameEnum2Interface, public ApiGear::Nats::BaseAdapter,  public std::enable_shared_from_this<SameEnum2InterfaceClient>
 {
 protected:

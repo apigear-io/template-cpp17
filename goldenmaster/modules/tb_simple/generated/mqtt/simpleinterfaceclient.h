@@ -10,6 +10,14 @@
 namespace Test {
 namespace TbSimple {
 namespace MQTT {
+/**
+ * @brief MQTT adapter for SimpleInterface.
+ *
+ * @note Threading: property-change and signal callbacks arrive on the MQTT transport thread.
+ * Subscription management inside the publisher is thread safe, but the callbacks themselves
+ * execute without additional locking. Operation calls are not additionally synchronized —
+ * callers are responsible for thread safety of concurrent operation invocations.
+ */
 class TEST_TB_SIMPLE_EXPORT SimpleInterfaceClient : public ISimpleInterface, public ApiGear::MQTT::MqttBaseAdapter
 {
 public:
