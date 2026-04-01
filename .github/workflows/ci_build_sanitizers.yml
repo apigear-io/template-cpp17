@@ -65,10 +65,10 @@ jobs:
         working-directory: goldenmaster
         run: |
           cmake -Bbuild \
-            -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_BUILD_TYPE=RelWithDebInfo \
             -DCMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/deps \
-            -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer -g" \
-            -DCMAKE_C_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer -g" \
+            -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer" \
+            -DCMAKE_C_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer" \
             -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined" \
             -DCMAKE_SHARED_LINKER_FLAGS="-fsanitize=address,undefined" \
             -DBUILD_TESTING=ON \
@@ -133,10 +133,10 @@ jobs:
         working-directory: goldenmaster
         run: |
           cmake -Bbuild \
-            -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_BUILD_TYPE=RelWithDebInfo \
             -DCMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/deps \
-            -DCMAKE_CXX_FLAGS="-fsanitize=thread -fno-omit-frame-pointer -g" \
-            -DCMAKE_C_FLAGS="-fsanitize=thread -fno-omit-frame-pointer -g" \
+            -DCMAKE_CXX_FLAGS="-fsanitize=thread -fno-omit-frame-pointer" \
+            -DCMAKE_C_FLAGS="-fsanitize=thread -fno-omit-frame-pointer" \
             -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=thread" \
             -DCMAKE_SHARED_LINKER_FLAGS="-fsanitize=thread" \
             -DBUILD_TESTING=ON \
