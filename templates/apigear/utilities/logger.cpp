@@ -23,20 +23,28 @@
 */
 #include "logger.h"
 #include <iostream>
+#include <mutex>
 
 
 
 namespace ApiGear { namespace Utilities {
 
+static std::mutex logMutex;
 static WriteLogFunc logFunc = getConsoleLogFunc(LogLevel::Warning);
 
 void emitLog(LogLevel level, const std::string& msg){
-    if(logFunc) {
-        logFunc(level, msg);
+    WriteLogFunc fn;
+    {
+        std::lock_guard<std::mutex> lock(logMutex);
+        fn = logFunc;
+    }
+    if(fn) {
+        fn(level, msg);
     }
 }
 
 void setLog(WriteLogFunc func){
+    std::lock_guard<std::mutex> lock(logMutex);
     logFunc = func;
 }
 
