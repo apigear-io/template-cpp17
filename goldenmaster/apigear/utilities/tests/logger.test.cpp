@@ -4,6 +4,9 @@
 #include <catch2/catch.hpp>
 #include <iostream>
 #include <sstream>
+#include <thread>
+#include <atomic>
+#include <vector>
 
 #include "../logger.h"
 
@@ -125,6 +128,58 @@ SCENARIO("Test disabled log", "[log]")
             REQUIRE(output.cout.empty());
             REQUIRE(output.clog.empty());
             REQUIRE(output.cerr.empty());
+        }
+    }
+}
+
+SCENARIO("Test concurrent setLog and emitLog", "[log][thread_safety]")
+{
+    GIVEN("Multiple threads calling setLog and emitLog concurrently") {
+        // Restore default log function after this test
+        ApiGear::Utilities::setLog(ApiGear::Utilities::getConsoleLogFunc(ApiGear::Utilities::LogLevel::Warning));
+
+        std::atomic<bool> stop{false};
+        constexpr int numEmitThreads = 4;
+        constexpr int numSetThreads = 2;
+
+        std::vector<std::thread> threads;
+
+        THEN("No crashes or data races should occur") {
+            // Threads that continuously emit logs
+            for (int i = 0; i < numEmitThreads; ++i) {
+                threads.emplace_back([&stop]() {
+                    while (!stop.load(std::memory_order_relaxed)) {
+                        ApiGear::Utilities::emitLog(ApiGear::Utilities::LogLevel::Debug, "concurrent emit test");
+                    }
+                });
+            }
+
+            // Threads that continuously swap the log function
+            for (int i = 0; i < numSetThreads; ++i) {
+                threads.emplace_back([&stop, i]() {
+                    while (!stop.load(std::memory_order_relaxed)) {
+                        if (i % 2 == 0) {
+                            ApiGear::Utilities::setLog(ApiGear::Utilities::getConsoleLogFunc(ApiGear::Utilities::LogLevel::Error));
+                        } else {
+                            ApiGear::Utilities::setLog(nullptr);
+                        }
+                    }
+                });
+            }
+
+            // Let them race for a bit
+            std::this_thread::sleep_for(std::chrono::milliseconds(200));
+            stop.store(true, std::memory_order_relaxed);
+
+            for (auto& t : threads) {
+                t.join();
+            }
+
+            // Restore default log function
+            ApiGear::Utilities::setLog(ApiGear::Utilities::getConsoleLogFunc(ApiGear::Utilities::LogLevel::Warning));
+
+            // If we get here without crashing or TSAN/ASAN errors, the test passes
+            REQUIRE(true);
         }
     }
 }
