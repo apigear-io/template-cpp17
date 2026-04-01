@@ -2,7 +2,6 @@
 #include "mqttcwrapper.h"
 #include "utilities/logger.h"
 #include <chrono>
-#include <random>
 #include <memory>
 
 using namespace ApiGear::MQTT;
@@ -13,8 +12,6 @@ namespace
     int timeoutWhileWaitingForUnsubscribe = 7; //Milliseconds
     int  maxBufferedMessages = 10000;
 }
-
-std::mt19937 randomNumberGenerator (std::random_device{}());
 
 struct subscribeTopicContext {
     std::string topic;
@@ -34,40 +31,36 @@ void onSendFailure(void* /*context*/, MQTTAsync_failureData5* response)
 
 void onSubscribeSuccess(void* context, MQTTAsync_successData5* /*response*/)
 {
-    subscribeTopicContext* ctx = static_cast<subscribeTopicContext*>(context);
+    std::unique_ptr<subscribeTopicContext> ctx(static_cast<subscribeTopicContext*>(context));
     if (auto client = ctx->client.lock())
     {
         client->onSubscribed(ctx->topic, ctx->func, ctx->onSubscribedCallback);
     }
-    delete ctx;
 }
 
 void onSubscribeFailure(void* context, MQTTAsync_failureData5* response)
 {
-    subscribeTopicContext* ctx = static_cast<subscribeTopicContext*>(context);
+    std::unique_ptr<subscribeTopicContext> ctx(static_cast<subscribeTopicContext*>(context));
     if (auto client = ctx->client.lock())
     {
         ctx->onSubscribedCallback(ctx->topic, false);
     }
     AG_LOG_ERROR("Subscribe failed, ResponseCode " +  std::to_string(response->code));
-    delete ctx;
 }
 
 void onUnsubscribeSuccess(void* context, MQTTAsync_successData5* /*response*/)
 {
-    subscribeTopicContext* ctx = static_cast<subscribeTopicContext*>(context);
+    std::unique_ptr<subscribeTopicContext> ctx(static_cast<subscribeTopicContext*>(context));
     if (auto client = ctx->client.lock())
     {
         client->onUnsubscribed(ctx->topic);
     }
-    delete ctx;
 }
 
 void onUnsubscribeFailure(void* context, MQTTAsync_failureData5* response)
 {
-    subscribeTopicContext* ctx = static_cast<subscribeTopicContext*>(context);
+    std::unique_ptr<subscribeTopicContext> ctx(static_cast<subscribeTopicContext*>(context));
     AG_LOG_ERROR("Unsubscribe failed, ResponseCode " + std::to_string(response->code));
-    delete ctx;
 }
 
 void onConnected(void* context, MQTTAsync_successData5* /*response*/)
@@ -81,23 +74,21 @@ void onConnected(void* context, MQTTAsync_successData5* /*response*/)
 
 void onConnectedFail(void* context,  MQTTAsync_failureData5* response)
 {
-    genericContext* ctx = static_cast<genericContext*>(context);
+    std::unique_ptr<genericContext> ctx(static_cast<genericContext*>(context));
     AG_LOG_ERROR("Connect failed, ResponseCode " + std::to_string(response->code));
     if (auto client = ctx->client.lock())
     {
         client->onDisconnected();
     }
-    delete ctx;
 }
 
 void onDisconnected(void* context, MQTTAsync_successData5* /*response*/)
 {
-    genericContext* ctx = static_cast<genericContext*>(context);
+    std::unique_ptr<genericContext> ctx(static_cast<genericContext*>(context));
     if (auto client = ctx->client.lock())
     {
         client->onDisconnected();
     }
-    delete ctx;
 }
 
 
@@ -134,12 +125,11 @@ int OnMessageArrived(void *context, char *topicName, int topicLen, MQTTAsync_mes
 void OnConnectionLost(void *context, char * /*cause*/)
 {
     AG_LOG_ERROR("Connection lost");
-    genericContext* ctx = static_cast<genericContext*>(context);
+    std::unique_ptr<genericContext> ctx(static_cast<genericContext*>(context));
     if (auto client = ctx->client.lock())
     {
         client->onDisconnected();
     }
-    delete ctx;
 }
 
 CWrapper::CWrapper(const std::string& clientID)
@@ -158,35 +148,25 @@ void CWrapper::MqttClientDeleter::operator()(MQTTAsync* cli)
 };
 
 
-int CWrapper::createUniqueConnectionStatusId()
-{
-    auto subscriptionId = 0;
-    std::uniform_int_distribution<> distribution (0, 100000);
-    m_onConnectionStatusChangedCallbacksMutex.lock();
-    do {
-        subscriptionId = distribution(randomNumberGenerator);
-    } while (m_onConnectionStatusChangedCallbacks.find(subscriptionId) != m_onConnectionStatusChangedCallbacks.end());
-
-    return subscriptionId;
-}
-
 int CWrapper::subscribeToConnectionStatus(OnConnectionStatusChangedCallBackFunction callBack)
 {
-    auto subscriptionId = createUniqueConnectionStatusId();
+    std::lock_guard<std::mutex> lock(m_onConnectionStatusChangedCallbacksMutex);
+    int subscriptionId;
+    std::uniform_int_distribution<> distribution(0, 100000);
+    do {
+        subscriptionId = distribution(m_randomNumberGenerator);
+    } while (m_onConnectionStatusChangedCallbacks.find(subscriptionId) != m_onConnectionStatusChangedCallbacks.end());
     m_onConnectionStatusChangedCallbacks.insert({subscriptionId, callBack});
-    m_onConnectionStatusChangedCallbacksMutex.unlock();
-
     return subscriptionId;
 }
 
 void CWrapper::unsubscribeToConnectionStatus(int subscriptionID)
 {
-    m_onConnectionStatusChangedCallbacksMutex.lock();
+    std::lock_guard<std::mutex> lock(m_onConnectionStatusChangedCallbacksMutex);
     if((m_onConnectionStatusChangedCallbacks.find(subscriptionID) != m_onConnectionStatusChangedCallbacks.end()))
     {
         m_onConnectionStatusChangedCallbacks.erase(subscriptionID);
     }
-    m_onConnectionStatusChangedCallbacksMutex.unlock();
 }
 
 void CWrapper::run()
@@ -218,7 +198,8 @@ void CWrapper::addNewSubscriptions()
         MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
         opts.onSuccess5 = onSubscribeSuccess;
         opts.onFailure5 = onSubscribeFailure;
-        opts.context = new subscribeTopicContext{topic.first, topic.second.topicCallback, topic.second.subscribedCallback, getPtr()};
+        auto ctx = std::make_unique<subscribeTopicContext>(subscribeTopicContext{topic.first, topic.second.topicCallback, topic.second.subscribedCallback, getPtr()});
+        opts.context = ctx.release();
         int responseCode = MQTTAsync_subscribe(*m_client.get(), topic.first.c_str(), QOS, &opts);
         if (responseCode != MQTTASYNC_SUCCESS)
         {
@@ -237,7 +218,8 @@ void CWrapper::removeOldSubscriptions()
         MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
         opts.onSuccess5 = onUnsubscribeSuccess;
         opts.onFailure5 = onUnsubscribeFailure;
-        opts.context = new subscribeTopicContext{topic, nullptr, nullptr, getPtr()};
+        auto ctx = std::make_unique<subscribeTopicContext>(subscribeTopicContext{topic, nullptr, nullptr, getPtr()});
+        opts.context = ctx.release();
         int responseCode = MQTTAsync_unsubscribe(*m_client.get(), topic.c_str(), &opts);
         if (responseCode != MQTTASYNC_SUCCESS)
         {
@@ -280,19 +262,15 @@ void CWrapper::waitForPendingMessages()
 
 void CWrapper::connectToHost(const std::string& brokerURL)
 {
-    static bool connecting = false;
-
     if(brokerURL.empty()) {
         m_serverUrl = "tcp://localhost:1883";
     } else {
         m_serverUrl = brokerURL;
     }
     AG_LOG_DEBUG("Connecting to host " + m_serverUrl);
-    
-    if(!m_client && !connecting) {
-        try {
-            connecting = true;
 
+    if(!m_client && !m_connecting.exchange(true)) {
+        try {
             m_client = std::unique_ptr<MQTTAsync, MqttClientDeleter>(new MQTTAsync());
             MQTTAsync_createOptions create_opts = MQTTAsync_createOptions_initializer5;
             create_opts.maxBufferedMessages = maxBufferedMessages;
@@ -302,14 +280,15 @@ void CWrapper::connectToHost(const std::string& brokerURL)
             conn_opts.keepAliveInterval = 20;
             conn_opts.onSuccess5 = ::onConnected;
             conn_opts.onFailure5 = onConnectedFail;
-            conn_opts.context = new genericContext{getPtr()};
+            auto ctx = std::make_unique<genericContext>(genericContext{getPtr()});
+            conn_opts.context = ctx.release();
 
             MQTTAsync_setCallbacks(*m_client.get(), conn_opts.context, OnConnectionLost, OnMessageArrived, NULL);
             int responseCode = MQTTAsync_connect(*m_client.get(), &conn_opts);
             if (responseCode != MQTTASYNC_SUCCESS)
             {
                 AG_LOG_ERROR("Failed to connect, return code " + std::to_string(responseCode));
-                connecting = false;
+                m_connecting = false;
                 m_client.reset();
                 return;
             }
@@ -318,7 +297,7 @@ void CWrapper::connectToHost(const std::string& brokerURL)
             m_client.reset();
             AG_LOG_ERROR("Exception " + std::string(e.what()));
         }
-        connecting = false;
+        m_connecting = false;
     }
 }
 
@@ -335,7 +314,8 @@ void CWrapper::disconnect() {
     }
     MQTTAsync_disconnectOptions disconn_opts = MQTTAsync_disconnectOptions_initializer5;
     disconn_opts.onSuccess5 = ::onDisconnected;
-    disconn_opts.context = new genericContext{getPtr()};
+    auto ctx = std::make_unique<genericContext>(genericContext{getPtr()});
+    disconn_opts.context = ctx.release();
     disconn_opts.timeout = 10;
     MQTTAsync_disconnect(*m_client.get(), &disconn_opts);
 }
@@ -391,23 +371,18 @@ void CWrapper::onDisconnected()
     for (auto& callback : onConnectionStatusChangedCallbacks) {
         callback.second(false);
     }
-    std::weak_ptr<CWrapper> weakClient = getPtr();
     // reconnect if the connection was not dropped intentionally by us
     if (!disconnectRequested)
     {
         // this function is called from within the MQTTAsync client
         // therefore the client must be reset in a separate thread afterwards
-        std::thread([this, weakClient]() {
-            auto client = weakClient.lock();
-            if (!client)
-            {
-                return;
-            }
-            m_client.reset();
+        auto self = getPtr();
+        std::thread([self]() {
+            self->m_client.reset();
 
             // we need to re-subscribe to all topics on re-connection
-            resubscribeAllTopics();
-            connectToHost(m_serverUrl);
+            self->resubscribeAllTopics();
+            self->connectToHost(self->m_serverUrl);
             }).detach();
     }
 }
@@ -424,7 +399,11 @@ void CWrapper::handleTextMessage(const Message& message)
     {
         if(iter->second.topicCallback != nullptr)
         {
-            iter->second.topicCallback(message.content, message.responseTopic, message.correlationData);
+            try {
+                iter->second.topicCallback(message.content, message.responseTopic, message.correlationData);
+            } catch (const std::exception& e) {
+                AG_LOG_ERROR("MQTT message handling error on topic " + message.topic + ": " + std::string(e.what()));
+            }
         }
     }
 }
@@ -468,7 +447,8 @@ void CWrapper::invokeRemote(const std::string& topic, const std::string& respons
     MQTTProperties_addResponseIdAsCorrData(opts, responseId);
 
     opts.onFailure5 = onSendFailure;
-    opts.context = new genericContext{getPtr()};
+    auto ctx = std::make_unique<genericContext>(genericContext{getPtr()});
+    opts.context = ctx.release();
     pubmsg.payload = const_cast<void*>(static_cast<const void*>(value.c_str()));
     pubmsg.payloadlen = static_cast<int>(value.size());
     pubmsg.qos = QOS;
@@ -486,7 +466,8 @@ void CWrapper::notifyPropertyChange(const std::string& topic, const std::string&
     MQTTAsync_message pubmsg = MQTTAsync_message_initializer;
 
     opts.onFailure5 = onSendFailure;
-    opts.context = new genericContext{getPtr()};
+    auto ctx = std::make_unique<genericContext>(genericContext{getPtr()});
+    opts.context = ctx.release();
     pubmsg.payload = const_cast<void*>(static_cast<const void*>(value.c_str()));
     pubmsg.payloadlen = static_cast<int>(value.size());
     pubmsg.qos = QOS;
@@ -520,7 +501,8 @@ void CWrapper::notifyInvokeResponse(const std::string& responseTopic, const std:
     MQTTProperties_add(&(opts.properties), &correlationDataProperty);
 
     opts.onFailure5 = onSendFailure;
-    opts.context = new genericContext{getPtr()};
+    auto ctx = std::make_unique<genericContext>(genericContext{getPtr()});
+    opts.context = ctx.release();
     pubmsg.payload = const_cast<void*>(static_cast<const void*>(value.c_str()));
     pubmsg.payloadlen = static_cast<int>(value.size());
     pubmsg.qos = QOS;
