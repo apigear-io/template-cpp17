@@ -17,7 +17,7 @@ namespace nlohmann {
             (void) j;
             // Do deserialization here, e.g.
             //return {j.template get<int>()};
-            return {};
+            return Eigen::Vector3f(0,0,0);
         }
 
         static void to_json(json& j, Eigen::Vector3f t) {
