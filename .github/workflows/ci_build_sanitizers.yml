@@ -1,5 +1,5 @@
 # Sanitizer builds to detect memory errors, data races, and undefined behavior.
-# Tests use continue-on-error: true until all safety issues are fixed.
+# Sanitizer test failures will fail the job and block the PR.
 
 name: Sanitizer Build & Test
 
@@ -75,7 +75,6 @@ jobs:
       - name: Test
         working-directory: goldenmaster
         run: ctest --test-dir build/ --output-on-failure --timeout 300
-        continue-on-error: true
 
   tsan:
     name: "TSan (Ubuntu GCC)"
@@ -139,4 +138,3 @@ jobs:
       - name: Test
         working-directory: goldenmaster
         run: ctest --test-dir build/ --output-on-failure --timeout 300
-        continue-on-error: true
