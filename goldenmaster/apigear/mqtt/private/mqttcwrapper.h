@@ -7,6 +7,7 @@
 #include <mutex>
 #include <string>
 #include <atomic>
+#include <random>
 #include <thread>
 #include <condition_variable>
 #include "nlohmann/json.hpp"
@@ -94,9 +95,7 @@ private:
 
     int sendMessage(const std::string& destinationName, const MQTTAsync_message* msg, MQTTAsync_responseOptions* response);
 
-    /// @brief create an unique id for the connection status subscription
-    /// @return unique id in the connection status subscription context
-    int createUniqueConnectionStatusId();
+    std::mt19937 m_randomNumberGenerator { std::random_device{}() };
 private:
     std::condition_variable m_synchronizeSubscriptionChanges;
     std::mutex m_waitForSubscriptionChangesMutex;
@@ -110,6 +109,7 @@ private:
     std::queue<std::string> m_queue;
     std::atomic<bool> m_disconnectRequested { false };
     std::atomic<bool> m_connected { false };
+    std::atomic<bool> m_connecting { false };
     std::mutex m_onConnectionStatusChangedCallbacksMutex;
     std::map<int, OnConnectionStatusChangedCallBackFunction> m_onConnectionStatusChangedCallbacks;
     std::mutex m_subscribedTopicsMutex;
