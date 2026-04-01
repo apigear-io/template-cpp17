@@ -1,0 +1,9 @@
+# LeakSanitizer suppressions for known third-party library leaks.
+# These are internal allocations in external dependencies that we cannot fix.
+
+# Paho MQTT C library internal connection/session allocations
+leak:libpaho-mqtt3as
+
+# CWrapper connection contexts not freed when test teardown doesn't
+# fully destroy CWrapper shared_ptrs (Paho async disconnect races)
+leak:CWrapper::connectToHost

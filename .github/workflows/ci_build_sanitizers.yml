@@ -19,6 +19,7 @@ jobs:
       CTEST_OUTPUT_ON_FAILURE: 1
       ASAN_OPTIONS: halt_on_error=0:print_stacktrace=1
       UBSAN_OPTIONS: halt_on_error=0:print_stacktrace=1
+      LSAN_OPTIONS: suppressions=${{ github.workspace }}/.github/workflows/lsan_suppressions.txt
     steps:
       - uses: actions/checkout@v4
         with:
