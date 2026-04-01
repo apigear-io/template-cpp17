@@ -1,5 +1,6 @@
 #include "tb_simple/generated/mqtt/simplearrayinterfaceservice.h"
 #include "tb_simple/generated/core/tb_simple.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::TbSimple;
@@ -63,147 +64,211 @@ void SimpleArrayInterfaceService::onConnectionStatusChanged(bool connectionStatu
 }
 void SimpleArrayInterfaceService::onSetPropBool(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto propBool = json_args.get<std::list<bool>>();
-    m_impl->setPropBool(propBool);
+        auto propBool = json_args.get<std::list<bool>>();
+        m_impl->setPropBool(propBool);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleArrayInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void SimpleArrayInterfaceService::onSetPropInt(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto propInt = json_args.get<std::list<int>>();
-    m_impl->setPropInt(propInt);
+        auto propInt = json_args.get<std::list<int>>();
+        m_impl->setPropInt(propInt);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleArrayInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void SimpleArrayInterfaceService::onSetPropInt32(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto propInt32 = json_args.get<std::list<int32_t>>();
-    m_impl->setPropInt32(propInt32);
+        auto propInt32 = json_args.get<std::list<int32_t>>();
+        m_impl->setPropInt32(propInt32);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleArrayInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void SimpleArrayInterfaceService::onSetPropInt64(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto propInt64 = json_args.get<std::list<int64_t>>();
-    m_impl->setPropInt64(propInt64);
+        auto propInt64 = json_args.get<std::list<int64_t>>();
+        m_impl->setPropInt64(propInt64);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleArrayInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void SimpleArrayInterfaceService::onSetPropFloat(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto propFloat = json_args.get<std::list<float>>();
-    m_impl->setPropFloat(propFloat);
+        auto propFloat = json_args.get<std::list<float>>();
+        m_impl->setPropFloat(propFloat);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleArrayInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void SimpleArrayInterfaceService::onSetPropFloat32(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto propFloat32 = json_args.get<std::list<float>>();
-    m_impl->setPropFloat32(propFloat32);
+        auto propFloat32 = json_args.get<std::list<float>>();
+        m_impl->setPropFloat32(propFloat32);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleArrayInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void SimpleArrayInterfaceService::onSetPropFloat64(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto propFloat64 = json_args.get<std::list<double>>();
-    m_impl->setPropFloat64(propFloat64);
+        auto propFloat64 = json_args.get<std::list<double>>();
+        m_impl->setPropFloat64(propFloat64);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleArrayInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void SimpleArrayInterfaceService::onSetPropString(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto propString = json_args.get<std::list<std::string>>();
-    m_impl->setPropString(propString);
+        auto propString = json_args.get<std::list<std::string>>();
+        m_impl->setPropString(propString);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleArrayInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void SimpleArrayInterfaceService::onInvokeFuncBool(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const std::list<bool>& paramBool = json_args.at(0).get<std::list<bool>>();
-    auto result = m_impl->funcBool(paramBool);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const std::list<bool>& paramBool = json_args.at(0).get<std::list<bool>>();
+        auto result = m_impl->funcBool(paramBool);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleArrayInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void SimpleArrayInterfaceService::onInvokeFuncInt(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const std::list<int>& paramInt = json_args.at(0).get<std::list<int>>();
-    auto result = m_impl->funcInt(paramInt);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const std::list<int>& paramInt = json_args.at(0).get<std::list<int>>();
+        auto result = m_impl->funcInt(paramInt);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleArrayInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void SimpleArrayInterfaceService::onInvokeFuncInt32(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const std::list<int32_t>& paramInt32 = json_args.at(0).get<std::list<int32_t>>();
-    auto result = m_impl->funcInt32(paramInt32);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const std::list<int32_t>& paramInt32 = json_args.at(0).get<std::list<int32_t>>();
+        auto result = m_impl->funcInt32(paramInt32);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleArrayInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void SimpleArrayInterfaceService::onInvokeFuncInt64(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const std::list<int64_t>& paramInt64 = json_args.at(0).get<std::list<int64_t>>();
-    auto result = m_impl->funcInt64(paramInt64);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const std::list<int64_t>& paramInt64 = json_args.at(0).get<std::list<int64_t>>();
+        auto result = m_impl->funcInt64(paramInt64);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleArrayInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void SimpleArrayInterfaceService::onInvokeFuncFloat(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const std::list<float>& paramFloat = json_args.at(0).get<std::list<float>>();
-    auto result = m_impl->funcFloat(paramFloat);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const std::list<float>& paramFloat = json_args.at(0).get<std::list<float>>();
+        auto result = m_impl->funcFloat(paramFloat);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleArrayInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void SimpleArrayInterfaceService::onInvokeFuncFloat32(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const std::list<float>& paramFloat32 = json_args.at(0).get<std::list<float>>();
-    auto result = m_impl->funcFloat32(paramFloat32);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const std::list<float>& paramFloat32 = json_args.at(0).get<std::list<float>>();
+        auto result = m_impl->funcFloat32(paramFloat32);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleArrayInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void SimpleArrayInterfaceService::onInvokeFuncFloat64(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const std::list<double>& paramFloat = json_args.at(0).get<std::list<double>>();
-    auto result = m_impl->funcFloat64(paramFloat);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const std::list<double>& paramFloat = json_args.at(0).get<std::list<double>>();
+        auto result = m_impl->funcFloat64(paramFloat);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleArrayInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void SimpleArrayInterfaceService::onInvokeFuncString(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const std::list<std::string>& paramString = json_args.at(0).get<std::list<std::string>>();
-    auto result = m_impl->funcString(paramString);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const std::list<std::string>& paramString = json_args.at(0).get<std::list<std::string>>();
+        auto result = m_impl->funcString(paramString);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleArrayInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void SimpleArrayInterfaceService::onSigBool(const std::list<bool>& paramBool)
 {

@@ -1,5 +1,6 @@
 #include "tb_names/generated/mqtt/namesservice.h"
 #include "tb_names/generated/core/tb_names.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::TbNames;
@@ -48,63 +49,87 @@ void Nam_EsService::onConnectionStatusChanged(bool connectionStatus)
 }
 void Nam_EsService::onSetSwitch(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto Switch = json_args.get<bool>();
-    m_impl->setSwitch(Switch);
+        auto Switch = json_args.get<bool>();
+        m_impl->setSwitch(Switch);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("Nam_EsService JSON error: " + std::string(e.what()));
+    }
 }
 void Nam_EsService::onSetSomeProperty(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto SOME_PROPERTY = json_args.get<int>();
-    m_impl->setSomeProperty(SOME_PROPERTY);
+        auto SOME_PROPERTY = json_args.get<int>();
+        m_impl->setSomeProperty(SOME_PROPERTY);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("Nam_EsService JSON error: " + std::string(e.what()));
+    }
 }
 void Nam_EsService::onSetSomePoperty2(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto Some_Poperty2 = json_args.get<int>();
-    m_impl->setSomePoperty2(Some_Poperty2);
+        auto Some_Poperty2 = json_args.get<int>();
+        m_impl->setSomePoperty2(Some_Poperty2);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("Nam_EsService JSON error: " + std::string(e.what()));
+    }
 }
 void Nam_EsService::onSetEnumProperty(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto enum_property = json_args.get<Enum_With_Under_scoresEnum>();
-    m_impl->setEnumProperty(enum_property);
+        auto enum_property = json_args.get<Enum_With_Under_scoresEnum>();
+        m_impl->setEnumProperty(enum_property);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("Nam_EsService JSON error: " + std::string(e.what()));
+    }
 }
 void Nam_EsService::onInvokeSomeFunction(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    (void) responseTopic;
-    (void) correlationData;
-    const bool& SOME_PARAM = json_args.at(0).get<bool>();
-    m_impl->sOME_FUNCTION(SOME_PARAM);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        (void) responseTopic;
+        (void) correlationData;
+        const bool& SOME_PARAM = json_args.at(0).get<bool>();
+        m_impl->sOME_FUNCTION(SOME_PARAM);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("Nam_EsService JSON error: " + std::string(e.what()));
+    }
 }
 void Nam_EsService::onInvokeSomeFunction2(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    (void) responseTopic;
-    (void) correlationData;
-    const bool& Some_Param = json_args.at(0).get<bool>();
-    m_impl->some_Function2(Some_Param);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        (void) responseTopic;
+        (void) correlationData;
+        const bool& Some_Param = json_args.at(0).get<bool>();
+        m_impl->some_Function2(Some_Param);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("Nam_EsService JSON error: " + std::string(e.what()));
+    }
 }
 void Nam_EsService::onSomeSignal(bool SOME_PARAM)
 {

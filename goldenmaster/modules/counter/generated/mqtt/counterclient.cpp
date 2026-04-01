@@ -3,6 +3,7 @@
 #include "counter/generated/core/counter.json.adapter.h"
 #include "custom_types/generated/core/custom_types.json.adapter.h"
 #include "extern_types/generated/core/extern_types.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <random>
 
 using namespace Test::Counter;
@@ -54,16 +55,20 @@ void CounterClient::setVector(const Test::CustomTypes::Vector3D& vector)
 
 void CounterClient::setVectorLocal(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    const Test::CustomTypes::Vector3D& vector = fields.get<Test::CustomTypes::Vector3D>();
-    if (m_data.m_vector != vector) {
-        m_data.m_vector = vector;
-        m_publisher->publishVectorChanged(vector);
+        const Test::CustomTypes::Vector3D& vector = fields.get<Test::CustomTypes::Vector3D>();
+        if (m_data.m_vector != vector) {
+            m_data.m_vector = vector;
+            m_publisher->publishVectorChanged(vector);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("CounterClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -83,16 +88,20 @@ void CounterClient::setExternVector(const Eigen::Vector3f& extern_vector)
 
 void CounterClient::setExternVectorLocal(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    const Eigen::Vector3f& extern_vector = fields.get<Eigen::Vector3f>();
-    if (m_data.m_extern_vector != extern_vector) {
-        m_data.m_extern_vector = extern_vector;
-        m_publisher->publishExternVectorChanged(extern_vector);
+        const Eigen::Vector3f& extern_vector = fields.get<Eigen::Vector3f>();
+        if (m_data.m_extern_vector != extern_vector) {
+            m_data.m_extern_vector = extern_vector;
+            m_publisher->publishExternVectorChanged(extern_vector);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("CounterClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -112,16 +121,20 @@ void CounterClient::setVectorArray(const std::list<Test::CustomTypes::Vector3D>&
 
 void CounterClient::setVectorArrayLocal(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    const std::list<Test::CustomTypes::Vector3D>& vectorArray = fields.get<std::list<Test::CustomTypes::Vector3D>>();
-    if (m_data.m_vectorArray != vectorArray) {
-        m_data.m_vectorArray = vectorArray;
-        m_publisher->publishVectorArrayChanged(vectorArray);
+        const std::list<Test::CustomTypes::Vector3D>& vectorArray = fields.get<std::list<Test::CustomTypes::Vector3D>>();
+        if (m_data.m_vectorArray != vectorArray) {
+            m_data.m_vectorArray = vectorArray;
+            m_publisher->publishVectorArrayChanged(vectorArray);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("CounterClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -141,16 +154,20 @@ void CounterClient::setExternVectorArray(const std::list<Eigen::Vector3f>& exter
 
 void CounterClient::setExternVectorArrayLocal(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    const std::list<Eigen::Vector3f>& extern_vectorArray = fields.get<std::list<Eigen::Vector3f>>();
-    if (m_data.m_extern_vectorArray != extern_vectorArray) {
-        m_data.m_extern_vectorArray = extern_vectorArray;
-        m_publisher->publishExternVectorArrayChanged(extern_vectorArray);
+        const std::list<Eigen::Vector3f>& extern_vectorArray = fields.get<std::list<Eigen::Vector3f>>();
+        if (m_data.m_extern_vectorArray != extern_vectorArray) {
+            m_data.m_extern_vectorArray = extern_vectorArray;
+            m_publisher->publishExternVectorArrayChanged(extern_vectorArray);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("CounterClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -176,20 +193,26 @@ std::future<Eigen::Vector3f> CounterClient::incrementAsync(const Eigen::Vector3f
     return std::async(std::launch::async, [this, callback,
                     vec]()
         {
-            std::promise<Eigen::Vector3f> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<Eigen::Vector3f>>();
             static const auto topic = std::string("counter/Counter/rpc/increment");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const Eigen::Vector3f& value = arg.value.get<Eigen::Vector3f>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const Eigen::Vector3f& value = arg.value.get<Eigen::Vector3f>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({vec}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
@@ -211,20 +234,26 @@ std::future<std::list<Eigen::Vector3f>> CounterClient::incrementArrayAsync(const
     return std::async(std::launch::async, [this, callback,
                     vec]()
         {
-            std::promise<std::list<Eigen::Vector3f>> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<std::list<Eigen::Vector3f>>>();
             static const auto topic = std::string("counter/Counter/rpc/incrementArray");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const std::list<Eigen::Vector3f>& value = arg.value.get<std::list<Eigen::Vector3f>>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const std::list<Eigen::Vector3f>& value = arg.value.get<std::list<Eigen::Vector3f>>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({vec}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
@@ -246,20 +275,26 @@ std::future<Test::CustomTypes::Vector3D> CounterClient::decrementAsync(const Tes
     return std::async(std::launch::async, [this, callback,
                     vec]()
         {
-            std::promise<Test::CustomTypes::Vector3D> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<Test::CustomTypes::Vector3D>>();
             static const auto topic = std::string("counter/Counter/rpc/decrement");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const Test::CustomTypes::Vector3D& value = arg.value.get<Test::CustomTypes::Vector3D>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const Test::CustomTypes::Vector3D& value = arg.value.get<Test::CustomTypes::Vector3D>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({vec}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
@@ -281,27 +316,37 @@ std::future<std::list<Test::CustomTypes::Vector3D>> CounterClient::decrementArra
     return std::async(std::launch::async, [this, callback,
                     vec]()
         {
-            std::promise<std::list<Test::CustomTypes::Vector3D>> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<std::list<Test::CustomTypes::Vector3D>>>();
             static const auto topic = std::string("counter/Counter/rpc/decrementArray");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const std::list<Test::CustomTypes::Vector3D>& value = arg.value.get<std::list<Test::CustomTypes::Vector3D>>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const std::list<Test::CustomTypes::Vector3D>& value = arg.value.get<std::list<Test::CustomTypes::Vector3D>>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({vec}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
 void CounterClient::onValueChanged(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishValueChanged(json_args[0].get<Test::CustomTypes::Vector3D>(),json_args[1].get<Eigen::Vector3f>(),json_args[2].get<std::list<Test::CustomTypes::Vector3D>>(),json_args[3].get<std::list<Eigen::Vector3f>>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishValueChanged(json_args[0].get<Test::CustomTypes::Vector3D>(),json_args[1].get<Eigen::Vector3f>(),json_args[2].get<std::list<Test::CustomTypes::Vector3D>>(),json_args[3].get<std::list<Eigen::Vector3f>>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("CounterClient JSON error: " + std::string(e.what()));
+    }
 }
 
 int CounterClient::registerResponseHandler(ApiGear::MQTT::InvokeReplyFunc handler)

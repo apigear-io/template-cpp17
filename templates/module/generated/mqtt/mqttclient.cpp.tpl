@@ -9,6 +9,7 @@
 {{- range .Module.Imports }}
 #include "{{snake .Name}}/generated/core/{{snake .Name}}.json.adapter.h"
 {{- end }}
+#include "apigear/utilities/logger.h"
 #include <random>
 
 using namespace {{ Camel .System.Name }}::{{ Camel .Module.Name }};
@@ -71,19 +72,23 @@ void {{$class}}::set{{Camel $name}}({{cppParam "" $property}})
 
 void {{$class}}::set{{Camel $name}}Local(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    {{ cppParam "" $property }} = fields.get<{{cppType "" $property}}>();
-    {{- if ( or ( eq (cppType "" $property) "float") ( eq (cppType "" $property) "double") ) }}
-    // consider using fuzzy compare, check library ApiGear::Utilities::fuzzyCompare
-    {{- end }}
-    if (m_data.m_{{$name}} != {{$name}}) {
-        m_data.m_{{$name}} = {{$name}};
-        m_publisher->publish{{Camel $name}}Changed({{$name}});
+        {{ cppParam "" $property }} = fields.get<{{cppType "" $property}}>();
+        {{- if ( or ( eq (cppType "" $property) "float") ( eq (cppType "" $property) "double") ) }}
+        // consider using fuzzy compare, check library ApiGear::Utilities::fuzzyCompare
+        {{- end }}
+        if (m_data.m_{{$name}} != {{$name}}) {
+            m_data.m_{{$name}} = {{$name}};
+            m_publisher->publish{{Camel $name}}Changed({{$name}});
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("{{$class}} JSON error: " + std::string(e.what()));
     }
 }
 {{- end }}
@@ -125,16 +130,22 @@ std::future<{{$returnType}}> {{$class}}::{{lower1 $operation.Name}}Async({{cppPa
                     {{.Name}}
                 {{- end -}}]()
         {
-            std::promise<{{$returnType}}> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<{{$returnType}}>>();
             static const auto topic = std::string("{{$.Module.Name}}/{{$interfaceName}}/rpc/{{$operation}}");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
             {{- if not ( .Return.IsVoid) }}
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const {{$returnType}}& value = arg.value.get<{{$returnType}}>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const {{$returnType}}& value = arg.value.get<{{$returnType}}>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
@@ -143,13 +154,13 @@ std::future<{{$returnType}}> {{$class}}::{{lower1 $operation.Name}}Async({{cppPa
             {{- end }}
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({ {{- cppVars $operation.Params -}} }).dump(), responseId);
             {{- if .Return.IsVoid }}
-            resultPromise.set_value();
+            resultPromise->set_value();
             if (callback)
             {
                 callback();
             }
             {{- end }}
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
@@ -160,14 +171,18 @@ std::future<{{$returnType}}> {{$class}}::{{lower1 $operation.Name}}Async({{cppPa
 {{- $signal := . }}
 void {{$class}}::on{{Camel $signal.Name }}(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publish{{Camel $signal.Name }}(
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publish{{Camel $signal.Name }}(
 {{- range $idx, $elem := $signal.Params }}
 {{- $param := . -}}
-        {{- if $idx }},{{- end -}}
-        json_args[{{$idx}}].get<{{cppType "" $param}}>()
+            {{- if $idx }},{{- end -}}
+            json_args[{{$idx}}].get<{{cppType "" $param}}>()
 {{- end -}}
-    );
+        );
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("{{$class}} JSON error: " + std::string(e.what()));
+    }
 }
 {{- end }}
 

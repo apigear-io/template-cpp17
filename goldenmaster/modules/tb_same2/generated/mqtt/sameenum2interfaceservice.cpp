@@ -1,5 +1,6 @@
 #include "tb_same2/generated/mqtt/sameenum2interfaceservice.h"
 #include "tb_same2/generated/core/tb_same2.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::TbSame2;
@@ -44,40 +45,56 @@ void SameEnum2InterfaceService::onConnectionStatusChanged(bool connectionStatus)
 }
 void SameEnum2InterfaceService::onSetProp1(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto prop1 = json_args.get<Enum1Enum>();
-    m_impl->setProp1(prop1);
+        auto prop1 = json_args.get<Enum1Enum>();
+        m_impl->setProp1(prop1);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SameEnum2InterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void SameEnum2InterfaceService::onSetProp2(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto prop2 = json_args.get<Enum2Enum>();
-    m_impl->setProp2(prop2);
+        auto prop2 = json_args.get<Enum2Enum>();
+        m_impl->setProp2(prop2);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SameEnum2InterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void SameEnum2InterfaceService::onInvokeFunc1(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const Enum1Enum& param1 = json_args.at(0).get<Enum1Enum>();
-    auto result = m_impl->func1(param1);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const Enum1Enum& param1 = json_args.at(0).get<Enum1Enum>();
+        auto result = m_impl->func1(param1);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SameEnum2InterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void SameEnum2InterfaceService::onInvokeFunc2(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const Enum1Enum& param1 = json_args.at(0).get<Enum1Enum>();
-    const Enum2Enum& param2 = json_args.at(1).get<Enum2Enum>();
-    auto result = m_impl->func2(param1, param2);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const Enum1Enum& param1 = json_args.at(0).get<Enum1Enum>();
+        const Enum2Enum& param2 = json_args.at(1).get<Enum2Enum>();
+        auto result = m_impl->func2(param1, param2);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SameEnum2InterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void SameEnum2InterfaceService::onSig1(Enum1Enum param1)
 {

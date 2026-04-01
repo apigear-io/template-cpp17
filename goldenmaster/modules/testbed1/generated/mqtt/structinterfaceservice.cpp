@@ -1,5 +1,6 @@
 #include "testbed1/generated/mqtt/structinterfaceservice.h"
 #include "testbed1/generated/core/testbed1.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::Testbed1;
@@ -50,75 +51,107 @@ void StructInterfaceService::onConnectionStatusChanged(bool connectionStatus)
 }
 void StructInterfaceService::onSetPropBool(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto propBool = json_args.get<StructBool>();
-    m_impl->setPropBool(propBool);
+        auto propBool = json_args.get<StructBool>();
+        m_impl->setPropBool(propBool);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void StructInterfaceService::onSetPropInt(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto propInt = json_args.get<StructInt>();
-    m_impl->setPropInt(propInt);
+        auto propInt = json_args.get<StructInt>();
+        m_impl->setPropInt(propInt);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void StructInterfaceService::onSetPropFloat(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto propFloat = json_args.get<StructFloat>();
-    m_impl->setPropFloat(propFloat);
+        auto propFloat = json_args.get<StructFloat>();
+        m_impl->setPropFloat(propFloat);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void StructInterfaceService::onSetPropString(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto propString = json_args.get<StructString>();
-    m_impl->setPropString(propString);
+        auto propString = json_args.get<StructString>();
+        m_impl->setPropString(propString);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void StructInterfaceService::onInvokeFuncBool(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const StructBool& paramBool = json_args.at(0).get<StructBool>();
-    auto result = m_impl->funcBool(paramBool);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const StructBool& paramBool = json_args.at(0).get<StructBool>();
+        auto result = m_impl->funcBool(paramBool);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void StructInterfaceService::onInvokeFuncInt(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const StructInt& paramInt = json_args.at(0).get<StructInt>();
-    auto result = m_impl->funcInt(paramInt);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const StructInt& paramInt = json_args.at(0).get<StructInt>();
+        auto result = m_impl->funcInt(paramInt);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void StructInterfaceService::onInvokeFuncFloat(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const StructFloat& paramFloat = json_args.at(0).get<StructFloat>();
-    auto result = m_impl->funcFloat(paramFloat);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const StructFloat& paramFloat = json_args.at(0).get<StructFloat>();
+        auto result = m_impl->funcFloat(paramFloat);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void StructInterfaceService::onInvokeFuncString(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const StructString& paramString = json_args.at(0).get<StructString>();
-    auto result = m_impl->funcString(paramString);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const StructString& paramString = json_args.at(0).get<StructString>();
+        auto result = m_impl->funcString(paramString);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void StructInterfaceService::onSigBool(const StructBool& paramBool)
 {

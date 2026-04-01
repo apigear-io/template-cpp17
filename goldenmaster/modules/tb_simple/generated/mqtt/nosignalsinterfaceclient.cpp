@@ -1,6 +1,7 @@
 #include "tb_simple/generated/mqtt/nosignalsinterfaceclient.h"
 #include "tb_simple/generated/core/nosignalsinterface.publisher.h"
 #include "tb_simple/generated/core/tb_simple.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <random>
 
 using namespace Test::TbSimple;
@@ -47,16 +48,20 @@ void NoSignalsInterfaceClient::setPropBool(bool propBool)
 
 void NoSignalsInterfaceClient::setPropBoolLocal(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    bool propBool = fields.get<bool>();
-    if (m_data.m_propBool != propBool) {
-        m_data.m_propBool = propBool;
-        m_publisher->publishPropBoolChanged(propBool);
+        bool propBool = fields.get<bool>();
+        if (m_data.m_propBool != propBool) {
+            m_data.m_propBool = propBool;
+            m_publisher->publishPropBoolChanged(propBool);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("NoSignalsInterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -76,16 +81,20 @@ void NoSignalsInterfaceClient::setPropInt(int propInt)
 
 void NoSignalsInterfaceClient::setPropIntLocal(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    int propInt = fields.get<int>();
-    if (m_data.m_propInt != propInt) {
-        m_data.m_propInt = propInt;
-        m_publisher->publishPropIntChanged(propInt);
+        int propInt = fields.get<int>();
+        if (m_data.m_propInt != propInt) {
+            m_data.m_propInt = propInt;
+            m_publisher->publishPropIntChanged(propInt);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("NoSignalsInterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -109,17 +118,17 @@ std::future<void> NoSignalsInterfaceClient::funcVoidAsync( std::function<void(vo
     }
     return std::async(std::launch::async, [this, callback]()
         {
-            std::promise<void> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<void>>();
             static const auto topic = std::string("tb.simple/NoSignalsInterface/rpc/funcVoid");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
             auto responseId = 0; //Not used, the service won't respond, no handler is added for response.
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({}).dump(), responseId);
-            resultPromise.set_value();
+            resultPromise->set_value();
             if (callback)
             {
                 callback();
             }
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
@@ -141,20 +150,26 @@ std::future<bool> NoSignalsInterfaceClient::funcBoolAsync(bool paramBool, std::f
     return std::async(std::launch::async, [this, callback,
                     paramBool]()
         {
-            std::promise<bool> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<bool>>();
             static const auto topic = std::string("tb.simple/NoSignalsInterface/rpc/funcBool");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const bool& value = arg.value.get<bool>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const bool& value = arg.value.get<bool>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({paramBool}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }

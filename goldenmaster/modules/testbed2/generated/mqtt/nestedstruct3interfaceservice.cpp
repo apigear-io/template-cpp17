@@ -1,5 +1,6 @@
 #include "testbed2/generated/mqtt/nestedstruct3interfaceservice.h"
 #include "testbed2/generated/core/testbed2.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::Testbed2;
@@ -47,60 +48,84 @@ void NestedStruct3InterfaceService::onConnectionStatusChanged(bool connectionSta
 }
 void NestedStruct3InterfaceService::onSetProp1(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto prop1 = json_args.get<NestedStruct1>();
-    m_impl->setProp1(prop1);
+        auto prop1 = json_args.get<NestedStruct1>();
+        m_impl->setProp1(prop1);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("NestedStruct3InterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void NestedStruct3InterfaceService::onSetProp2(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto prop2 = json_args.get<NestedStruct2>();
-    m_impl->setProp2(prop2);
+        auto prop2 = json_args.get<NestedStruct2>();
+        m_impl->setProp2(prop2);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("NestedStruct3InterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void NestedStruct3InterfaceService::onSetProp3(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto prop3 = json_args.get<NestedStruct3>();
-    m_impl->setProp3(prop3);
+        auto prop3 = json_args.get<NestedStruct3>();
+        m_impl->setProp3(prop3);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("NestedStruct3InterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void NestedStruct3InterfaceService::onInvokeFunc1(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const NestedStruct1& param1 = json_args.at(0).get<NestedStruct1>();
-    auto result = m_impl->func1(param1);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const NestedStruct1& param1 = json_args.at(0).get<NestedStruct1>();
+        auto result = m_impl->func1(param1);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("NestedStruct3InterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void NestedStruct3InterfaceService::onInvokeFunc2(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const NestedStruct1& param1 = json_args.at(0).get<NestedStruct1>();
-    const NestedStruct2& param2 = json_args.at(1).get<NestedStruct2>();
-    auto result = m_impl->func2(param1, param2);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const NestedStruct1& param1 = json_args.at(0).get<NestedStruct1>();
+        const NestedStruct2& param2 = json_args.at(1).get<NestedStruct2>();
+        auto result = m_impl->func2(param1, param2);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("NestedStruct3InterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void NestedStruct3InterfaceService::onInvokeFunc3(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const NestedStruct1& param1 = json_args.at(0).get<NestedStruct1>();
-    const NestedStruct2& param2 = json_args.at(1).get<NestedStruct2>();
-    const NestedStruct3& param3 = json_args.at(2).get<NestedStruct3>();
-    auto result = m_impl->func3(param1, param2, param3);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const NestedStruct1& param1 = json_args.at(0).get<NestedStruct1>();
+        const NestedStruct2& param2 = json_args.at(1).get<NestedStruct2>();
+        const NestedStruct3& param3 = json_args.at(2).get<NestedStruct3>();
+        auto result = m_impl->func3(param1, param2, param3);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("NestedStruct3InterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void NestedStruct3InterfaceService::onSig1(const NestedStruct1& param1)
 {

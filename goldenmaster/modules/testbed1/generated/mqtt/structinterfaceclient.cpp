@@ -1,6 +1,7 @@
 #include "testbed1/generated/mqtt/structinterfaceclient.h"
 #include "testbed1/generated/core/structinterface.publisher.h"
 #include "testbed1/generated/core/testbed1.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <random>
 
 using namespace Test::Testbed1;
@@ -55,16 +56,20 @@ void StructInterfaceClient::setPropBool(const StructBool& propBool)
 
 void StructInterfaceClient::setPropBoolLocal(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    const StructBool& propBool = fields.get<StructBool>();
-    if (m_data.m_propBool != propBool) {
-        m_data.m_propBool = propBool;
-        m_publisher->publishPropBoolChanged(propBool);
+        const StructBool& propBool = fields.get<StructBool>();
+        if (m_data.m_propBool != propBool) {
+            m_data.m_propBool = propBool;
+            m_publisher->publishPropBoolChanged(propBool);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructInterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -84,16 +89,20 @@ void StructInterfaceClient::setPropInt(const StructInt& propInt)
 
 void StructInterfaceClient::setPropIntLocal(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    const StructInt& propInt = fields.get<StructInt>();
-    if (m_data.m_propInt != propInt) {
-        m_data.m_propInt = propInt;
-        m_publisher->publishPropIntChanged(propInt);
+        const StructInt& propInt = fields.get<StructInt>();
+        if (m_data.m_propInt != propInt) {
+            m_data.m_propInt = propInt;
+            m_publisher->publishPropIntChanged(propInt);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructInterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -113,16 +122,20 @@ void StructInterfaceClient::setPropFloat(const StructFloat& propFloat)
 
 void StructInterfaceClient::setPropFloatLocal(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    const StructFloat& propFloat = fields.get<StructFloat>();
-    if (m_data.m_propFloat != propFloat) {
-        m_data.m_propFloat = propFloat;
-        m_publisher->publishPropFloatChanged(propFloat);
+        const StructFloat& propFloat = fields.get<StructFloat>();
+        if (m_data.m_propFloat != propFloat) {
+            m_data.m_propFloat = propFloat;
+            m_publisher->publishPropFloatChanged(propFloat);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructInterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -142,16 +155,20 @@ void StructInterfaceClient::setPropString(const StructString& propString)
 
 void StructInterfaceClient::setPropStringLocal(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    const StructString& propString = fields.get<StructString>();
-    if (m_data.m_propString != propString) {
-        m_data.m_propString = propString;
-        m_publisher->publishPropStringChanged(propString);
+        const StructString& propString = fields.get<StructString>();
+        if (m_data.m_propString != propString) {
+            m_data.m_propString = propString;
+            m_publisher->publishPropStringChanged(propString);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructInterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -177,20 +194,26 @@ std::future<StructBool> StructInterfaceClient::funcBoolAsync(const StructBool& p
     return std::async(std::launch::async, [this, callback,
                     paramBool]()
         {
-            std::promise<StructBool> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<StructBool>>();
             static const auto topic = std::string("testbed1/StructInterface/rpc/funcBool");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const StructBool& value = arg.value.get<StructBool>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const StructBool& value = arg.value.get<StructBool>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({paramBool}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
@@ -212,20 +235,26 @@ std::future<StructInt> StructInterfaceClient::funcIntAsync(const StructInt& para
     return std::async(std::launch::async, [this, callback,
                     paramInt]()
         {
-            std::promise<StructInt> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<StructInt>>();
             static const auto topic = std::string("testbed1/StructInterface/rpc/funcInt");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const StructInt& value = arg.value.get<StructInt>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const StructInt& value = arg.value.get<StructInt>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({paramInt}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
@@ -247,20 +276,26 @@ std::future<StructFloat> StructInterfaceClient::funcFloatAsync(const StructFloat
     return std::async(std::launch::async, [this, callback,
                     paramFloat]()
         {
-            std::promise<StructFloat> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<StructFloat>>();
             static const auto topic = std::string("testbed1/StructInterface/rpc/funcFloat");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const StructFloat& value = arg.value.get<StructFloat>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const StructFloat& value = arg.value.get<StructFloat>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({paramFloat}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
@@ -282,42 +317,64 @@ std::future<StructString> StructInterfaceClient::funcStringAsync(const StructStr
     return std::async(std::launch::async, [this, callback,
                     paramString]()
         {
-            std::promise<StructString> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<StructString>>();
             static const auto topic = std::string("testbed1/StructInterface/rpc/funcString");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const StructString& value = arg.value.get<StructString>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const StructString& value = arg.value.get<StructString>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({paramString}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
 void StructInterfaceClient::onSigBool(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSigBool(json_args[0].get<StructBool>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSigBool(json_args[0].get<StructBool>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructInterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 void StructInterfaceClient::onSigInt(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSigInt(json_args[0].get<StructInt>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSigInt(json_args[0].get<StructInt>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructInterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 void StructInterfaceClient::onSigFloat(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSigFloat(json_args[0].get<StructFloat>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSigFloat(json_args[0].get<StructFloat>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructInterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 void StructInterfaceClient::onSigString(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSigString(json_args[0].get<StructString>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSigString(json_args[0].get<StructString>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructInterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 
 int StructInterfaceClient::registerResponseHandler(ApiGear::MQTT::InvokeReplyFunc handler)

@@ -1,6 +1,7 @@
 #include "tb_simple/generated/mqtt/simpleinterfaceclient.h"
 #include "tb_simple/generated/core/simpleinterface.publisher.h"
 #include "tb_simple/generated/core/tb_simple.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <random>
 
 using namespace Test::TbSimple;
@@ -69,16 +70,20 @@ void SimpleInterfaceClient::setPropBool(bool propBool)
 
 void SimpleInterfaceClient::setPropBoolLocal(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    bool propBool = fields.get<bool>();
-    if (m_data.m_propBool != propBool) {
-        m_data.m_propBool = propBool;
-        m_publisher->publishPropBoolChanged(propBool);
+        bool propBool = fields.get<bool>();
+        if (m_data.m_propBool != propBool) {
+            m_data.m_propBool = propBool;
+            m_publisher->publishPropBoolChanged(propBool);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleInterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -98,16 +103,20 @@ void SimpleInterfaceClient::setPropInt(int propInt)
 
 void SimpleInterfaceClient::setPropIntLocal(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    int propInt = fields.get<int>();
-    if (m_data.m_propInt != propInt) {
-        m_data.m_propInt = propInt;
-        m_publisher->publishPropIntChanged(propInt);
+        int propInt = fields.get<int>();
+        if (m_data.m_propInt != propInt) {
+            m_data.m_propInt = propInt;
+            m_publisher->publishPropIntChanged(propInt);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleInterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -127,16 +136,20 @@ void SimpleInterfaceClient::setPropInt32(int32_t propInt32)
 
 void SimpleInterfaceClient::setPropInt32Local(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    int32_t propInt32 = fields.get<int32_t>();
-    if (m_data.m_propInt32 != propInt32) {
-        m_data.m_propInt32 = propInt32;
-        m_publisher->publishPropInt32Changed(propInt32);
+        int32_t propInt32 = fields.get<int32_t>();
+        if (m_data.m_propInt32 != propInt32) {
+            m_data.m_propInt32 = propInt32;
+            m_publisher->publishPropInt32Changed(propInt32);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleInterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -156,16 +169,20 @@ void SimpleInterfaceClient::setPropInt64(int64_t propInt64)
 
 void SimpleInterfaceClient::setPropInt64Local(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    int64_t propInt64 = fields.get<int64_t>();
-    if (m_data.m_propInt64 != propInt64) {
-        m_data.m_propInt64 = propInt64;
-        m_publisher->publishPropInt64Changed(propInt64);
+        int64_t propInt64 = fields.get<int64_t>();
+        if (m_data.m_propInt64 != propInt64) {
+            m_data.m_propInt64 = propInt64;
+            m_publisher->publishPropInt64Changed(propInt64);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleInterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -185,17 +202,21 @@ void SimpleInterfaceClient::setPropFloat(float propFloat)
 
 void SimpleInterfaceClient::setPropFloatLocal(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    float propFloat = fields.get<float>();
-    // consider using fuzzy compare, check library ApiGear::Utilities::fuzzyCompare
-    if (m_data.m_propFloat != propFloat) {
-        m_data.m_propFloat = propFloat;
-        m_publisher->publishPropFloatChanged(propFloat);
+        float propFloat = fields.get<float>();
+        // consider using fuzzy compare, check library ApiGear::Utilities::fuzzyCompare
+        if (m_data.m_propFloat != propFloat) {
+            m_data.m_propFloat = propFloat;
+            m_publisher->publishPropFloatChanged(propFloat);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleInterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -215,17 +236,21 @@ void SimpleInterfaceClient::setPropFloat32(float propFloat32)
 
 void SimpleInterfaceClient::setPropFloat32Local(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    float propFloat32 = fields.get<float>();
-    // consider using fuzzy compare, check library ApiGear::Utilities::fuzzyCompare
-    if (m_data.m_propFloat32 != propFloat32) {
-        m_data.m_propFloat32 = propFloat32;
-        m_publisher->publishPropFloat32Changed(propFloat32);
+        float propFloat32 = fields.get<float>();
+        // consider using fuzzy compare, check library ApiGear::Utilities::fuzzyCompare
+        if (m_data.m_propFloat32 != propFloat32) {
+            m_data.m_propFloat32 = propFloat32;
+            m_publisher->publishPropFloat32Changed(propFloat32);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleInterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -245,17 +270,21 @@ void SimpleInterfaceClient::setPropFloat64(double propFloat64)
 
 void SimpleInterfaceClient::setPropFloat64Local(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    double propFloat64 = fields.get<double>();
-    // consider using fuzzy compare, check library ApiGear::Utilities::fuzzyCompare
-    if (m_data.m_propFloat64 != propFloat64) {
-        m_data.m_propFloat64 = propFloat64;
-        m_publisher->publishPropFloat64Changed(propFloat64);
+        double propFloat64 = fields.get<double>();
+        // consider using fuzzy compare, check library ApiGear::Utilities::fuzzyCompare
+        if (m_data.m_propFloat64 != propFloat64) {
+            m_data.m_propFloat64 = propFloat64;
+            m_publisher->publishPropFloat64Changed(propFloat64);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleInterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -275,16 +304,20 @@ void SimpleInterfaceClient::setPropString(const std::string& propString)
 
 void SimpleInterfaceClient::setPropStringLocal(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    const std::string& propString = fields.get<std::string>();
-    if (m_data.m_propString != propString) {
-        m_data.m_propString = propString;
-        m_publisher->publishPropStringChanged(propString);
+        const std::string& propString = fields.get<std::string>();
+        if (m_data.m_propString != propString) {
+            m_data.m_propString = propString;
+            m_publisher->publishPropStringChanged(propString);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleInterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -309,17 +342,17 @@ std::future<void> SimpleInterfaceClient::funcNoReturnValueAsync(bool paramBool, 
     return std::async(std::launch::async, [this, callback,
                     paramBool]()
         {
-            std::promise<void> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<void>>();
             static const auto topic = std::string("tb.simple/SimpleInterface/rpc/funcNoReturnValue");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
             auto responseId = 0; //Not used, the service won't respond, no handler is added for response.
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({paramBool}).dump(), responseId);
-            resultPromise.set_value();
+            resultPromise->set_value();
             if (callback)
             {
                 callback();
             }
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
@@ -375,20 +408,26 @@ std::future<bool> SimpleInterfaceClient::funcBoolAsync(bool paramBool, std::func
     return std::async(std::launch::async, [this, callback,
                     paramBool]()
         {
-            std::promise<bool> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<bool>>();
             static const auto topic = std::string("tb.simple/SimpleInterface/rpc/funcBool");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const bool& value = arg.value.get<bool>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const bool& value = arg.value.get<bool>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({paramBool}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
@@ -410,20 +449,26 @@ std::future<int> SimpleInterfaceClient::funcIntAsync(int paramInt, std::function
     return std::async(std::launch::async, [this, callback,
                     paramInt]()
         {
-            std::promise<int> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<int>>();
             static const auto topic = std::string("tb.simple/SimpleInterface/rpc/funcInt");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const int& value = arg.value.get<int>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const int& value = arg.value.get<int>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({paramInt}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
@@ -445,20 +490,26 @@ std::future<int32_t> SimpleInterfaceClient::funcInt32Async(int32_t paramInt32, s
     return std::async(std::launch::async, [this, callback,
                     paramInt32]()
         {
-            std::promise<int32_t> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<int32_t>>();
             static const auto topic = std::string("tb.simple/SimpleInterface/rpc/funcInt32");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const int32_t& value = arg.value.get<int32_t>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const int32_t& value = arg.value.get<int32_t>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({paramInt32}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
@@ -480,20 +531,26 @@ std::future<int64_t> SimpleInterfaceClient::funcInt64Async(int64_t paramInt64, s
     return std::async(std::launch::async, [this, callback,
                     paramInt64]()
         {
-            std::promise<int64_t> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<int64_t>>();
             static const auto topic = std::string("tb.simple/SimpleInterface/rpc/funcInt64");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const int64_t& value = arg.value.get<int64_t>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const int64_t& value = arg.value.get<int64_t>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({paramInt64}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
@@ -515,20 +572,26 @@ std::future<float> SimpleInterfaceClient::funcFloatAsync(float paramFloat, std::
     return std::async(std::launch::async, [this, callback,
                     paramFloat]()
         {
-            std::promise<float> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<float>>();
             static const auto topic = std::string("tb.simple/SimpleInterface/rpc/funcFloat");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const float& value = arg.value.get<float>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const float& value = arg.value.get<float>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({paramFloat}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
@@ -550,20 +613,26 @@ std::future<float> SimpleInterfaceClient::funcFloat32Async(float paramFloat32, s
     return std::async(std::launch::async, [this, callback,
                     paramFloat32]()
         {
-            std::promise<float> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<float>>();
             static const auto topic = std::string("tb.simple/SimpleInterface/rpc/funcFloat32");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const float& value = arg.value.get<float>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const float& value = arg.value.get<float>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({paramFloat32}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
@@ -585,20 +654,26 @@ std::future<double> SimpleInterfaceClient::funcFloat64Async(double paramFloat, s
     return std::async(std::launch::async, [this, callback,
                     paramFloat]()
         {
-            std::promise<double> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<double>>();
             static const auto topic = std::string("tb.simple/SimpleInterface/rpc/funcFloat64");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const double& value = arg.value.get<double>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const double& value = arg.value.get<double>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({paramFloat}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
@@ -620,62 +695,100 @@ std::future<std::string> SimpleInterfaceClient::funcStringAsync(const std::strin
     return std::async(std::launch::async, [this, callback,
                     paramString]()
         {
-            std::promise<std::string> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<std::string>>();
             static const auto topic = std::string("tb.simple/SimpleInterface/rpc/funcString");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const std::string& value = arg.value.get<std::string>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const std::string& value = arg.value.get<std::string>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({paramString}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
 void SimpleInterfaceClient::onSigBool(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSigBool(json_args[0].get<bool>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSigBool(json_args[0].get<bool>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleInterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 void SimpleInterfaceClient::onSigInt(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSigInt(json_args[0].get<int>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSigInt(json_args[0].get<int>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleInterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 void SimpleInterfaceClient::onSigInt32(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSigInt32(json_args[0].get<int32_t>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSigInt32(json_args[0].get<int32_t>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleInterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 void SimpleInterfaceClient::onSigInt64(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSigInt64(json_args[0].get<int64_t>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSigInt64(json_args[0].get<int64_t>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleInterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 void SimpleInterfaceClient::onSigFloat(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSigFloat(json_args[0].get<float>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSigFloat(json_args[0].get<float>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleInterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 void SimpleInterfaceClient::onSigFloat32(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSigFloat32(json_args[0].get<float>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSigFloat32(json_args[0].get<float>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleInterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 void SimpleInterfaceClient::onSigFloat64(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSigFloat64(json_args[0].get<double>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSigFloat64(json_args[0].get<double>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleInterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 void SimpleInterfaceClient::onSigString(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSigString(json_args[0].get<std::string>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSigString(json_args[0].get<std::string>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleInterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 
 int SimpleInterfaceClient::registerResponseHandler(ApiGear::MQTT::InvokeReplyFunc handler)

@@ -1,6 +1,7 @@
 #include "tb_same2/generated/mqtt/sameenum1interfaceclient.h"
 #include "tb_same2/generated/core/sameenum1interface.publisher.h"
 #include "tb_same2/generated/core/tb_same2.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <random>
 
 using namespace Test::TbSame2;
@@ -46,16 +47,20 @@ void SameEnum1InterfaceClient::setProp1(Enum1Enum prop1)
 
 void SameEnum1InterfaceClient::setProp1Local(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    Enum1Enum prop1 = fields.get<Enum1Enum>();
-    if (m_data.m_prop1 != prop1) {
-        m_data.m_prop1 = prop1;
-        m_publisher->publishProp1Changed(prop1);
+        Enum1Enum prop1 = fields.get<Enum1Enum>();
+        if (m_data.m_prop1 != prop1) {
+            m_data.m_prop1 = prop1;
+            m_publisher->publishProp1Changed(prop1);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SameEnum1InterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -81,27 +86,37 @@ std::future<Enum1Enum> SameEnum1InterfaceClient::func1Async(Enum1Enum param1, st
     return std::async(std::launch::async, [this, callback,
                     param1]()
         {
-            std::promise<Enum1Enum> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<Enum1Enum>>();
             static const auto topic = std::string("tb.same2/SameEnum1Interface/rpc/func1");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const Enum1Enum& value = arg.value.get<Enum1Enum>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const Enum1Enum& value = arg.value.get<Enum1Enum>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({param1}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
 void SameEnum1InterfaceClient::onSig1(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSig1(json_args[0].get<Enum1Enum>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSig1(json_args[0].get<Enum1Enum>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SameEnum1InterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 
 int SameEnum1InterfaceClient::registerResponseHandler(ApiGear::MQTT::InvokeReplyFunc handler)

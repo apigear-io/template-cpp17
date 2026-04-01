@@ -8,6 +8,7 @@
 {{- range .Module.Imports }}
 #include "{{snake .Name}}/generated/core/{{snake .Name}}.json.adapter.h"
 {{- end }}
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace {{ Camel .System.Name }}::{{ Camel .Module.Name }};
@@ -64,14 +65,18 @@ void {{$class}}::onConnectionStatusChanged(bool connectionStatus)
 {{- if not .IsReadOnly }}
 void {{$class}}::onSet{{Camel $property.Name}}(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto {{$property}} = json_args.get<{{cppType "" $property}}>();
-    m_impl->set{{Camel $property.Name}}({{$property}});
+        auto {{$property}} = json_args.get<{{cppType "" $property}}>();
+        m_impl->set{{Camel $property.Name}}({{$property}});
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("{{$class}} JSON error: " + std::string(e.what()));
+    }
 }
 {{- end }}
 {{- end }}
@@ -80,23 +85,27 @@ void {{$class}}::onSet{{Camel $property.Name}}(const std::string& args) const
 {{- $operation := . }}
 void {{$class}}::onInvoke{{ Camel $operation.Name }}(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
 
 {{- if .Return.IsVoid }}
-    (void) responseTopic;
-    (void) correlationData;
+        (void) responseTopic;
+        (void) correlationData;
 {{- end }}
 
 {{- range $idx, $elem := $operation.Params }}
 {{- $param := . }}
-    const {{cppType "" $param}}& {{$param}} = json_args.at({{$idx}}).get<{{cppType "" $param}}>();
+        const {{cppType "" $param}}& {{$param}} = json_args.at({{$idx}}).get<{{cppType "" $param}}>();
 {{- end }}
 {{- if .Return.IsVoid }}
-    m_impl->{{lower1 $operation.Name}}({{ cppVars $operation.Params }});
+        m_impl->{{lower1 $operation.Name}}({{ cppVars $operation.Params }});
 {{- else }}
-    auto result = m_impl->{{lower1 $operation.Name}}({{ cppVars $operation.Params }});
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+        auto result = m_impl->{{lower1 $operation.Name}}({{ cppVars $operation.Params }});
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
 {{- end }}
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("{{$class}} JSON error: " + std::string(e.what()));
+    }
 }
 {{- end }}
 

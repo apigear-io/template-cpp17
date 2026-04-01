@@ -1,6 +1,7 @@
 #include "tb_simple/generated/mqtt/nopropertiesinterfaceclient.h"
 #include "tb_simple/generated/core/nopropertiesinterface.publisher.h"
 #include "tb_simple/generated/core/tb_simple.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <random>
 
 using namespace Test::TbSimple;
@@ -51,17 +52,17 @@ std::future<void> NoPropertiesInterfaceClient::funcVoidAsync( std::function<void
     }
     return std::async(std::launch::async, [this, callback]()
         {
-            std::promise<void> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<void>>();
             static const auto topic = std::string("tb.simple/NoPropertiesInterface/rpc/funcVoid");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
             auto responseId = 0; //Not used, the service won't respond, no handler is added for response.
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({}).dump(), responseId);
-            resultPromise.set_value();
+            resultPromise->set_value();
             if (callback)
             {
                 callback();
             }
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
@@ -83,32 +84,46 @@ std::future<bool> NoPropertiesInterfaceClient::funcBoolAsync(bool paramBool, std
     return std::async(std::launch::async, [this, callback,
                     paramBool]()
         {
-            std::promise<bool> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<bool>>();
             static const auto topic = std::string("tb.simple/NoPropertiesInterface/rpc/funcBool");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const bool& value = arg.value.get<bool>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const bool& value = arg.value.get<bool>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({paramBool}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
 void NoPropertiesInterfaceClient::onSigVoid(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSigVoid();
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSigVoid();
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("NoPropertiesInterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 void NoPropertiesInterfaceClient::onSigBool(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSigBool(json_args[0].get<bool>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSigBool(json_args[0].get<bool>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("NoPropertiesInterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 
 int NoPropertiesInterfaceClient::registerResponseHandler(ApiGear::MQTT::InvokeReplyFunc handler)

@@ -1,5 +1,6 @@
 #include "tb_simple/generated/mqtt/nooperationsinterfaceservice.h"
 #include "tb_simple/generated/core/tb_simple.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::TbSimple;
@@ -42,25 +43,33 @@ void NoOperationsInterfaceService::onConnectionStatusChanged(bool connectionStat
 }
 void NoOperationsInterfaceService::onSetPropBool(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto propBool = json_args.get<bool>();
-    m_impl->setPropBool(propBool);
+        auto propBool = json_args.get<bool>();
+        m_impl->setPropBool(propBool);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("NoOperationsInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void NoOperationsInterfaceService::onSetPropInt(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto propInt = json_args.get<int>();
-    m_impl->setPropInt(propInt);
+        auto propInt = json_args.get<int>();
+        m_impl->setPropInt(propInt);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("NoOperationsInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void NoOperationsInterfaceService::onSigVoid()
 {

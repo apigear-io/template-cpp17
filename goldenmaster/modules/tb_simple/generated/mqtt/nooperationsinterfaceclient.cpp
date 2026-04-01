@@ -1,6 +1,7 @@
 #include "tb_simple/generated/mqtt/nooperationsinterfaceclient.h"
 #include "tb_simple/generated/core/nooperationsinterface.publisher.h"
 #include "tb_simple/generated/core/tb_simple.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <random>
 
 using namespace Test::TbSimple;
@@ -47,16 +48,20 @@ void NoOperationsInterfaceClient::setPropBool(bool propBool)
 
 void NoOperationsInterfaceClient::setPropBoolLocal(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    bool propBool = fields.get<bool>();
-    if (m_data.m_propBool != propBool) {
-        m_data.m_propBool = propBool;
-        m_publisher->publishPropBoolChanged(propBool);
+        bool propBool = fields.get<bool>();
+        if (m_data.m_propBool != propBool) {
+            m_data.m_propBool = propBool;
+            m_publisher->publishPropBoolChanged(propBool);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("NoOperationsInterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -76,16 +81,20 @@ void NoOperationsInterfaceClient::setPropInt(int propInt)
 
 void NoOperationsInterfaceClient::setPropIntLocal(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    int propInt = fields.get<int>();
-    if (m_data.m_propInt != propInt) {
-        m_data.m_propInt = propInt;
-        m_publisher->publishPropIntChanged(propInt);
+        int propInt = fields.get<int>();
+        if (m_data.m_propInt != propInt) {
+            m_data.m_propInt = propInt;
+            m_publisher->publishPropIntChanged(propInt);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("NoOperationsInterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -95,13 +104,21 @@ int NoOperationsInterfaceClient::getPropInt() const
 }
 void NoOperationsInterfaceClient::onSigVoid(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSigVoid();
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSigVoid();
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("NoOperationsInterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 void NoOperationsInterfaceClient::onSigBool(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSigBool(json_args[0].get<bool>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSigBool(json_args[0].get<bool>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("NoOperationsInterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 
 int NoOperationsInterfaceClient::registerResponseHandler(ApiGear::MQTT::InvokeReplyFunc handler)
