@@ -1,6 +1,7 @@
 #include "testbed2/generated/mqtt/manyparaminterfaceclient.h"
 #include "testbed2/generated/core/manyparaminterface.publisher.h"
 #include "testbed2/generated/core/testbed2.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <random>
 
 using namespace Test::Testbed2;
@@ -55,16 +56,20 @@ void ManyParamInterfaceClient::setProp1(int prop1)
 
 void ManyParamInterfaceClient::setProp1Local(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    int prop1 = fields.get<int>();
-    if (m_data.m_prop1 != prop1) {
-        m_data.m_prop1 = prop1;
-        m_publisher->publishProp1Changed(prop1);
+        int prop1 = fields.get<int>();
+        if (m_data.m_prop1 != prop1) {
+            m_data.m_prop1 = prop1;
+            m_publisher->publishProp1Changed(prop1);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("ManyParamInterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -84,16 +89,20 @@ void ManyParamInterfaceClient::setProp2(int prop2)
 
 void ManyParamInterfaceClient::setProp2Local(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    int prop2 = fields.get<int>();
-    if (m_data.m_prop2 != prop2) {
-        m_data.m_prop2 = prop2;
-        m_publisher->publishProp2Changed(prop2);
+        int prop2 = fields.get<int>();
+        if (m_data.m_prop2 != prop2) {
+            m_data.m_prop2 = prop2;
+            m_publisher->publishProp2Changed(prop2);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("ManyParamInterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -113,16 +122,20 @@ void ManyParamInterfaceClient::setProp3(int prop3)
 
 void ManyParamInterfaceClient::setProp3Local(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    int prop3 = fields.get<int>();
-    if (m_data.m_prop3 != prop3) {
-        m_data.m_prop3 = prop3;
-        m_publisher->publishProp3Changed(prop3);
+        int prop3 = fields.get<int>();
+        if (m_data.m_prop3 != prop3) {
+            m_data.m_prop3 = prop3;
+            m_publisher->publishProp3Changed(prop3);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("ManyParamInterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -142,16 +155,20 @@ void ManyParamInterfaceClient::setProp4(int prop4)
 
 void ManyParamInterfaceClient::setProp4Local(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    int prop4 = fields.get<int>();
-    if (m_data.m_prop4 != prop4) {
-        m_data.m_prop4 = prop4;
-        m_publisher->publishProp4Changed(prop4);
+        int prop4 = fields.get<int>();
+        if (m_data.m_prop4 != prop4) {
+            m_data.m_prop4 = prop4;
+            m_publisher->publishProp4Changed(prop4);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("ManyParamInterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -177,20 +194,26 @@ std::future<int> ManyParamInterfaceClient::func1Async(int param1, std::function<
     return std::async(std::launch::async, [this, callback,
                     param1]()
         {
-            std::promise<int> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<int>>();
             static const auto topic = std::string("testbed2/ManyParamInterface/rpc/func1");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const int& value = arg.value.get<int>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const int& value = arg.value.get<int>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({param1}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
@@ -213,20 +236,26 @@ std::future<int> ManyParamInterfaceClient::func2Async(int param1, int param2, st
                     param1,
                     param2]()
         {
-            std::promise<int> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<int>>();
             static const auto topic = std::string("testbed2/ManyParamInterface/rpc/func2");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const int& value = arg.value.get<int>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const int& value = arg.value.get<int>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({param1, param2}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
@@ -250,20 +279,26 @@ std::future<int> ManyParamInterfaceClient::func3Async(int param1, int param2, in
                     param2,
                     param3]()
         {
-            std::promise<int> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<int>>();
             static const auto topic = std::string("testbed2/ManyParamInterface/rpc/func3");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const int& value = arg.value.get<int>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const int& value = arg.value.get<int>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({param1, param2, param3}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
@@ -288,42 +323,64 @@ std::future<int> ManyParamInterfaceClient::func4Async(int param1, int param2, in
                     param3,
                     param4]()
         {
-            std::promise<int> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<int>>();
             static const auto topic = std::string("testbed2/ManyParamInterface/rpc/func4");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const int& value = arg.value.get<int>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const int& value = arg.value.get<int>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({param1, param2, param3, param4}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
 void ManyParamInterfaceClient::onSig1(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSig1(json_args[0].get<int>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSig1(json_args[0].get<int>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("ManyParamInterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 void ManyParamInterfaceClient::onSig2(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSig2(json_args[0].get<int>(),json_args[1].get<int>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSig2(json_args[0].get<int>(),json_args[1].get<int>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("ManyParamInterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 void ManyParamInterfaceClient::onSig3(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSig3(json_args[0].get<int>(),json_args[1].get<int>(),json_args[2].get<int>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSig3(json_args[0].get<int>(),json_args[1].get<int>(),json_args[2].get<int>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("ManyParamInterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 void ManyParamInterfaceClient::onSig4(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSig4(json_args[0].get<int>(),json_args[1].get<int>(),json_args[2].get<int>(),json_args[3].get<int>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSig4(json_args[0].get<int>(),json_args[1].get<int>(),json_args[2].get<int>(),json_args[3].get<int>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("ManyParamInterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 
 int ManyParamInterfaceClient::registerResponseHandler(ApiGear::MQTT::InvokeReplyFunc handler)

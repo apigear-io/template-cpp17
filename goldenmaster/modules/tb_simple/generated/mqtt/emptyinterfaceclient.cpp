@@ -1,6 +1,7 @@
 #include "tb_simple/generated/mqtt/emptyinterfaceclient.h"
 #include "tb_simple/generated/core/emptyinterface.publisher.h"
 #include "tb_simple/generated/core/tb_simple.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <random>
 
 using namespace Test::TbSimple;

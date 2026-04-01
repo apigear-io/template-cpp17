@@ -1,5 +1,6 @@
 #include "tb_simple/generated/mqtt/nosignalsinterfaceservice.h"
 #include "tb_simple/generated/core/tb_simple.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::TbSimple;
@@ -44,39 +45,55 @@ void NoSignalsInterfaceService::onConnectionStatusChanged(bool connectionStatus)
 }
 void NoSignalsInterfaceService::onSetPropBool(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto propBool = json_args.get<bool>();
-    m_impl->setPropBool(propBool);
+        auto propBool = json_args.get<bool>();
+        m_impl->setPropBool(propBool);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("NoSignalsInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void NoSignalsInterfaceService::onSetPropInt(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto propInt = json_args.get<int>();
-    m_impl->setPropInt(propInt);
+        auto propInt = json_args.get<int>();
+        m_impl->setPropInt(propInt);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("NoSignalsInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void NoSignalsInterfaceService::onInvokeFuncVoid(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    (void) responseTopic;
-    (void) correlationData;
-    m_impl->funcVoid();
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        (void) responseTopic;
+        (void) correlationData;
+        m_impl->funcVoid();
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("NoSignalsInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void NoSignalsInterfaceService::onInvokeFuncBool(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const bool& paramBool = json_args.at(0).get<bool>();
-    auto result = m_impl->funcBool(paramBool);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const bool& paramBool = json_args.at(0).get<bool>();
+        auto result = m_impl->funcBool(paramBool);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("NoSignalsInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void NoSignalsInterfaceService::onPropBoolChanged(bool propBool)
 {

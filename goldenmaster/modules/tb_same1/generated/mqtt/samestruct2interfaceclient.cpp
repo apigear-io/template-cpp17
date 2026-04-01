@@ -1,6 +1,7 @@
 #include "tb_same1/generated/mqtt/samestruct2interfaceclient.h"
 #include "tb_same1/generated/core/samestruct2interface.publisher.h"
 #include "tb_same1/generated/core/tb_same1.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <random>
 
 using namespace Test::TbSame1;
@@ -49,16 +50,20 @@ void SameStruct2InterfaceClient::setProp1(const Struct2& prop1)
 
 void SameStruct2InterfaceClient::setProp1Local(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    const Struct2& prop1 = fields.get<Struct2>();
-    if (m_data.m_prop1 != prop1) {
-        m_data.m_prop1 = prop1;
-        m_publisher->publishProp1Changed(prop1);
+        const Struct2& prop1 = fields.get<Struct2>();
+        if (m_data.m_prop1 != prop1) {
+            m_data.m_prop1 = prop1;
+            m_publisher->publishProp1Changed(prop1);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SameStruct2InterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -78,16 +83,20 @@ void SameStruct2InterfaceClient::setProp2(const Struct2& prop2)
 
 void SameStruct2InterfaceClient::setProp2Local(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    const Struct2& prop2 = fields.get<Struct2>();
-    if (m_data.m_prop2 != prop2) {
-        m_data.m_prop2 = prop2;
-        m_publisher->publishProp2Changed(prop2);
+        const Struct2& prop2 = fields.get<Struct2>();
+        if (m_data.m_prop2 != prop2) {
+            m_data.m_prop2 = prop2;
+            m_publisher->publishProp2Changed(prop2);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SameStruct2InterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -113,20 +122,26 @@ std::future<Struct1> SameStruct2InterfaceClient::func1Async(const Struct1& param
     return std::async(std::launch::async, [this, callback,
                     param1]()
         {
-            std::promise<Struct1> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<Struct1>>();
             static const auto topic = std::string("tb.same1/SameStruct2Interface/rpc/func1");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const Struct1& value = arg.value.get<Struct1>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const Struct1& value = arg.value.get<Struct1>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({param1}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
@@ -149,32 +164,46 @@ std::future<Struct1> SameStruct2InterfaceClient::func2Async(const Struct1& param
                     param1,
                     param2]()
         {
-            std::promise<Struct1> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<Struct1>>();
             static const auto topic = std::string("tb.same1/SameStruct2Interface/rpc/func2");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const Struct1& value = arg.value.get<Struct1>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const Struct1& value = arg.value.get<Struct1>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({param1, param2}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
 void SameStruct2InterfaceClient::onSig1(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSig1(json_args[0].get<Struct1>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSig1(json_args[0].get<Struct1>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SameStruct2InterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 void SameStruct2InterfaceClient::onSig2(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSig2(json_args[0].get<Struct1>(),json_args[1].get<Struct2>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSig2(json_args[0].get<Struct1>(),json_args[1].get<Struct2>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SameStruct2InterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 
 int SameStruct2InterfaceClient::registerResponseHandler(ApiGear::MQTT::InvokeReplyFunc handler)

@@ -1,5 +1,6 @@
 #include "tb_enum/generated/mqtt/enuminterfaceservice.h"
 #include "tb_enum/generated/core/tb_enum.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::TbEnum;
@@ -50,75 +51,107 @@ void EnumInterfaceService::onConnectionStatusChanged(bool connectionStatus)
 }
 void EnumInterfaceService::onSetProp0(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto prop0 = json_args.get<Enum0Enum>();
-    m_impl->setProp0(prop0);
+        auto prop0 = json_args.get<Enum0Enum>();
+        m_impl->setProp0(prop0);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("EnumInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void EnumInterfaceService::onSetProp1(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto prop1 = json_args.get<Enum1Enum>();
-    m_impl->setProp1(prop1);
+        auto prop1 = json_args.get<Enum1Enum>();
+        m_impl->setProp1(prop1);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("EnumInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void EnumInterfaceService::onSetProp2(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto prop2 = json_args.get<Enum2Enum>();
-    m_impl->setProp2(prop2);
+        auto prop2 = json_args.get<Enum2Enum>();
+        m_impl->setProp2(prop2);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("EnumInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void EnumInterfaceService::onSetProp3(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto prop3 = json_args.get<Enum3Enum>();
-    m_impl->setProp3(prop3);
+        auto prop3 = json_args.get<Enum3Enum>();
+        m_impl->setProp3(prop3);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("EnumInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void EnumInterfaceService::onInvokeFunc0(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const Enum0Enum& param0 = json_args.at(0).get<Enum0Enum>();
-    auto result = m_impl->func0(param0);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const Enum0Enum& param0 = json_args.at(0).get<Enum0Enum>();
+        auto result = m_impl->func0(param0);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("EnumInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void EnumInterfaceService::onInvokeFunc1(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const Enum1Enum& param1 = json_args.at(0).get<Enum1Enum>();
-    auto result = m_impl->func1(param1);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const Enum1Enum& param1 = json_args.at(0).get<Enum1Enum>();
+        auto result = m_impl->func1(param1);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("EnumInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void EnumInterfaceService::onInvokeFunc2(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const Enum2Enum& param2 = json_args.at(0).get<Enum2Enum>();
-    auto result = m_impl->func2(param2);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const Enum2Enum& param2 = json_args.at(0).get<Enum2Enum>();
+        auto result = m_impl->func2(param2);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("EnumInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void EnumInterfaceService::onInvokeFunc3(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const Enum3Enum& param3 = json_args.at(0).get<Enum3Enum>();
-    auto result = m_impl->func3(param3);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const Enum3Enum& param3 = json_args.at(0).get<Enum3Enum>();
+        auto result = m_impl->func3(param3);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("EnumInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void EnumInterfaceService::onSig0(Enum0Enum param0)
 {

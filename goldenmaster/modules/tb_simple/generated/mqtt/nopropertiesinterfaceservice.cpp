@@ -1,5 +1,6 @@
 #include "tb_simple/generated/mqtt/nopropertiesinterfaceservice.h"
 #include "tb_simple/generated/core/tb_simple.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::TbSimple;
@@ -40,17 +41,25 @@ void NoPropertiesInterfaceService::onConnectionStatusChanged(bool connectionStat
 }
 void NoPropertiesInterfaceService::onInvokeFuncVoid(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    (void) responseTopic;
-    (void) correlationData;
-    m_impl->funcVoid();
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        (void) responseTopic;
+        (void) correlationData;
+        m_impl->funcVoid();
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("NoPropertiesInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void NoPropertiesInterfaceService::onInvokeFuncBool(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const bool& paramBool = json_args.at(0).get<bool>();
-    auto result = m_impl->funcBool(paramBool);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const bool& paramBool = json_args.at(0).get<bool>();
+        auto result = m_impl->funcBool(paramBool);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("NoPropertiesInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void NoPropertiesInterfaceService::onSigVoid()
 {

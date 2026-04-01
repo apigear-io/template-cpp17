@@ -1,5 +1,6 @@
 #include "tb_simple/generated/mqtt/voidinterfaceservice.h"
 #include "tb_simple/generated/core/tb_simple.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::TbSimple;
@@ -39,10 +40,14 @@ void VoidInterfaceService::onConnectionStatusChanged(bool connectionStatus)
 }
 void VoidInterfaceService::onInvokeFuncVoid(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    (void) responseTopic;
-    (void) correlationData;
-    m_impl->funcVoid();
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        (void) responseTopic;
+        (void) correlationData;
+        m_impl->funcVoid();
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("VoidInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void VoidInterfaceService::onSigVoid()
 {

@@ -1,6 +1,7 @@
 #include "tb_names/generated/mqtt/namesclient.h"
 #include "tb_names/generated/core/names.publisher.h"
 #include "tb_names/generated/core/tb_names.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <random>
 
 using namespace Test::TbNames;
@@ -51,16 +52,20 @@ void Nam_EsClient::setSwitch(bool Switch)
 
 void Nam_EsClient::setSwitchLocal(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    bool Switch = fields.get<bool>();
-    if (m_data.m_Switch != Switch) {
-        m_data.m_Switch = Switch;
-        m_publisher->publishSwitchChanged(Switch);
+        bool Switch = fields.get<bool>();
+        if (m_data.m_Switch != Switch) {
+            m_data.m_Switch = Switch;
+            m_publisher->publishSwitchChanged(Switch);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("Nam_EsClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -80,16 +85,20 @@ void Nam_EsClient::setSomeProperty(int SOME_PROPERTY)
 
 void Nam_EsClient::setSomePropertyLocal(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    int SOME_PROPERTY = fields.get<int>();
-    if (m_data.m_SOME_PROPERTY != SOME_PROPERTY) {
-        m_data.m_SOME_PROPERTY = SOME_PROPERTY;
-        m_publisher->publishSomePropertyChanged(SOME_PROPERTY);
+        int SOME_PROPERTY = fields.get<int>();
+        if (m_data.m_SOME_PROPERTY != SOME_PROPERTY) {
+            m_data.m_SOME_PROPERTY = SOME_PROPERTY;
+            m_publisher->publishSomePropertyChanged(SOME_PROPERTY);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("Nam_EsClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -109,16 +118,20 @@ void Nam_EsClient::setSomePoperty2(int Some_Poperty2)
 
 void Nam_EsClient::setSomePoperty2Local(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    int Some_Poperty2 = fields.get<int>();
-    if (m_data.m_Some_Poperty2 != Some_Poperty2) {
-        m_data.m_Some_Poperty2 = Some_Poperty2;
-        m_publisher->publishSomePoperty2Changed(Some_Poperty2);
+        int Some_Poperty2 = fields.get<int>();
+        if (m_data.m_Some_Poperty2 != Some_Poperty2) {
+            m_data.m_Some_Poperty2 = Some_Poperty2;
+            m_publisher->publishSomePoperty2Changed(Some_Poperty2);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("Nam_EsClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -138,16 +151,20 @@ void Nam_EsClient::setEnumProperty(Enum_With_Under_scoresEnum enum_property)
 
 void Nam_EsClient::setEnumPropertyLocal(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    Enum_With_Under_scoresEnum enum_property = fields.get<Enum_With_Under_scoresEnum>();
-    if (m_data.m_enum_property != enum_property) {
-        m_data.m_enum_property = enum_property;
-        m_publisher->publishEnumPropertyChanged(enum_property);
+        Enum_With_Under_scoresEnum enum_property = fields.get<Enum_With_Under_scoresEnum>();
+        if (m_data.m_enum_property != enum_property) {
+            m_data.m_enum_property = enum_property;
+            m_publisher->publishEnumPropertyChanged(enum_property);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("Nam_EsClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -172,17 +189,17 @@ std::future<void> Nam_EsClient::sOME_FUNCTIONAsync(bool SOME_PARAM, std::functio
     return std::async(std::launch::async, [this, callback,
                     SOME_PARAM]()
         {
-            std::promise<void> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<void>>();
             static const auto topic = std::string("tb.names/Nam_Es/rpc/SOME_FUNCTION");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
             auto responseId = 0; //Not used, the service won't respond, no handler is added for response.
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({SOME_PARAM}).dump(), responseId);
-            resultPromise.set_value();
+            resultPromise->set_value();
             if (callback)
             {
                 callback();
             }
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
@@ -203,29 +220,37 @@ std::future<void> Nam_EsClient::some_Function2Async(bool Some_Param, std::functi
     return std::async(std::launch::async, [this, callback,
                     Some_Param]()
         {
-            std::promise<void> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<void>>();
             static const auto topic = std::string("tb.names/Nam_Es/rpc/Some_Function2");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
             auto responseId = 0; //Not used, the service won't respond, no handler is added for response.
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({Some_Param}).dump(), responseId);
-            resultPromise.set_value();
+            resultPromise->set_value();
             if (callback)
             {
                 callback();
             }
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
 void Nam_EsClient::onSomeSignal(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSomeSignal(json_args[0].get<bool>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSomeSignal(json_args[0].get<bool>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("Nam_EsClient JSON error: " + std::string(e.what()));
+    }
 }
 void Nam_EsClient::onSomeSignal2(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSomeSignal2(json_args[0].get<bool>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSomeSignal2(json_args[0].get<bool>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("Nam_EsClient JSON error: " + std::string(e.what()));
+    }
 }
 
 int Nam_EsClient::registerResponseHandler(ApiGear::MQTT::InvokeReplyFunc handler)

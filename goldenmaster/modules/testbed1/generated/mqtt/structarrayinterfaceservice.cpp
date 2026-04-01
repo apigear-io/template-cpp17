@@ -1,5 +1,6 @@
 #include "testbed1/generated/mqtt/structarrayinterfaceservice.h"
 #include "testbed1/generated/core/testbed1.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::Testbed1;
@@ -53,47 +54,63 @@ void StructArrayInterfaceService::onConnectionStatusChanged(bool connectionStatu
 }
 void StructArrayInterfaceService::onSetPropBool(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto propBool = json_args.get<std::list<StructBool>>();
-    m_impl->setPropBool(propBool);
+        auto propBool = json_args.get<std::list<StructBool>>();
+        m_impl->setPropBool(propBool);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructArrayInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void StructArrayInterfaceService::onSetPropInt(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto propInt = json_args.get<std::list<StructInt>>();
-    m_impl->setPropInt(propInt);
+        auto propInt = json_args.get<std::list<StructInt>>();
+        m_impl->setPropInt(propInt);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructArrayInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void StructArrayInterfaceService::onSetPropFloat(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto propFloat = json_args.get<std::list<StructFloat>>();
-    m_impl->setPropFloat(propFloat);
+        auto propFloat = json_args.get<std::list<StructFloat>>();
+        m_impl->setPropFloat(propFloat);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructArrayInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void StructArrayInterfaceService::onSetPropString(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto propString = json_args.get<std::list<StructString>>();
-    m_impl->setPropString(propString);
+        auto propString = json_args.get<std::list<StructString>>();
+        m_impl->setPropString(propString);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructArrayInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void StructArrayInterfaceService::onSetPropEnum(const std::string& args) const
 {
@@ -108,31 +125,47 @@ void StructArrayInterfaceService::onSetPropEnum(const std::string& args) const
 }
 void StructArrayInterfaceService::onInvokeFuncBool(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const std::list<StructBool>& paramBool = json_args.at(0).get<std::list<StructBool>>();
-    auto result = m_impl->funcBool(paramBool);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const std::list<StructBool>& paramBool = json_args.at(0).get<std::list<StructBool>>();
+        auto result = m_impl->funcBool(paramBool);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructArrayInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void StructArrayInterfaceService::onInvokeFuncInt(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const std::list<StructInt>& paramInt = json_args.at(0).get<std::list<StructInt>>();
-    auto result = m_impl->funcInt(paramInt);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const std::list<StructInt>& paramInt = json_args.at(0).get<std::list<StructInt>>();
+        auto result = m_impl->funcInt(paramInt);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructArrayInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void StructArrayInterfaceService::onInvokeFuncFloat(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const std::list<StructFloat>& paramFloat = json_args.at(0).get<std::list<StructFloat>>();
-    auto result = m_impl->funcFloat(paramFloat);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const std::list<StructFloat>& paramFloat = json_args.at(0).get<std::list<StructFloat>>();
+        auto result = m_impl->funcFloat(paramFloat);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructArrayInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void StructArrayInterfaceService::onInvokeFuncString(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const std::list<StructString>& paramString = json_args.at(0).get<std::list<StructString>>();
-    auto result = m_impl->funcString(paramString);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const std::list<StructString>& paramString = json_args.at(0).get<std::list<StructString>>();
+        auto result = m_impl->funcString(paramString);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructArrayInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void StructArrayInterfaceService::onInvokeFuncEnum(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {

@@ -1,6 +1,7 @@
 #include "tb_enum/generated/mqtt/enuminterfaceclient.h"
 #include "tb_enum/generated/core/enuminterface.publisher.h"
 #include "tb_enum/generated/core/tb_enum.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <random>
 
 using namespace Test::TbEnum;
@@ -55,16 +56,20 @@ void EnumInterfaceClient::setProp0(Enum0Enum prop0)
 
 void EnumInterfaceClient::setProp0Local(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    Enum0Enum prop0 = fields.get<Enum0Enum>();
-    if (m_data.m_prop0 != prop0) {
-        m_data.m_prop0 = prop0;
-        m_publisher->publishProp0Changed(prop0);
+        Enum0Enum prop0 = fields.get<Enum0Enum>();
+        if (m_data.m_prop0 != prop0) {
+            m_data.m_prop0 = prop0;
+            m_publisher->publishProp0Changed(prop0);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("EnumInterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -84,16 +89,20 @@ void EnumInterfaceClient::setProp1(Enum1Enum prop1)
 
 void EnumInterfaceClient::setProp1Local(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    Enum1Enum prop1 = fields.get<Enum1Enum>();
-    if (m_data.m_prop1 != prop1) {
-        m_data.m_prop1 = prop1;
-        m_publisher->publishProp1Changed(prop1);
+        Enum1Enum prop1 = fields.get<Enum1Enum>();
+        if (m_data.m_prop1 != prop1) {
+            m_data.m_prop1 = prop1;
+            m_publisher->publishProp1Changed(prop1);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("EnumInterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -113,16 +122,20 @@ void EnumInterfaceClient::setProp2(Enum2Enum prop2)
 
 void EnumInterfaceClient::setProp2Local(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    Enum2Enum prop2 = fields.get<Enum2Enum>();
-    if (m_data.m_prop2 != prop2) {
-        m_data.m_prop2 = prop2;
-        m_publisher->publishProp2Changed(prop2);
+        Enum2Enum prop2 = fields.get<Enum2Enum>();
+        if (m_data.m_prop2 != prop2) {
+            m_data.m_prop2 = prop2;
+            m_publisher->publishProp2Changed(prop2);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("EnumInterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -142,16 +155,20 @@ void EnumInterfaceClient::setProp3(Enum3Enum prop3)
 
 void EnumInterfaceClient::setProp3Local(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    Enum3Enum prop3 = fields.get<Enum3Enum>();
-    if (m_data.m_prop3 != prop3) {
-        m_data.m_prop3 = prop3;
-        m_publisher->publishProp3Changed(prop3);
+        Enum3Enum prop3 = fields.get<Enum3Enum>();
+        if (m_data.m_prop3 != prop3) {
+            m_data.m_prop3 = prop3;
+            m_publisher->publishProp3Changed(prop3);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("EnumInterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -177,20 +194,26 @@ std::future<Enum0Enum> EnumInterfaceClient::func0Async(Enum0Enum param0, std::fu
     return std::async(std::launch::async, [this, callback,
                     param0]()
         {
-            std::promise<Enum0Enum> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<Enum0Enum>>();
             static const auto topic = std::string("tb.enum/EnumInterface/rpc/func0");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const Enum0Enum& value = arg.value.get<Enum0Enum>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const Enum0Enum& value = arg.value.get<Enum0Enum>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({param0}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
@@ -212,20 +235,26 @@ std::future<Enum1Enum> EnumInterfaceClient::func1Async(Enum1Enum param1, std::fu
     return std::async(std::launch::async, [this, callback,
                     param1]()
         {
-            std::promise<Enum1Enum> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<Enum1Enum>>();
             static const auto topic = std::string("tb.enum/EnumInterface/rpc/func1");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const Enum1Enum& value = arg.value.get<Enum1Enum>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const Enum1Enum& value = arg.value.get<Enum1Enum>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({param1}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
@@ -247,20 +276,26 @@ std::future<Enum2Enum> EnumInterfaceClient::func2Async(Enum2Enum param2, std::fu
     return std::async(std::launch::async, [this, callback,
                     param2]()
         {
-            std::promise<Enum2Enum> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<Enum2Enum>>();
             static const auto topic = std::string("tb.enum/EnumInterface/rpc/func2");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const Enum2Enum& value = arg.value.get<Enum2Enum>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const Enum2Enum& value = arg.value.get<Enum2Enum>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({param2}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
@@ -282,42 +317,64 @@ std::future<Enum3Enum> EnumInterfaceClient::func3Async(Enum3Enum param3, std::fu
     return std::async(std::launch::async, [this, callback,
                     param3]()
         {
-            std::promise<Enum3Enum> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<Enum3Enum>>();
             static const auto topic = std::string("tb.enum/EnumInterface/rpc/func3");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const Enum3Enum& value = arg.value.get<Enum3Enum>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const Enum3Enum& value = arg.value.get<Enum3Enum>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({param3}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
 void EnumInterfaceClient::onSig0(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSig0(json_args[0].get<Enum0Enum>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSig0(json_args[0].get<Enum0Enum>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("EnumInterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 void EnumInterfaceClient::onSig1(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSig1(json_args[0].get<Enum1Enum>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSig1(json_args[0].get<Enum1Enum>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("EnumInterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 void EnumInterfaceClient::onSig2(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSig2(json_args[0].get<Enum2Enum>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSig2(json_args[0].get<Enum2Enum>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("EnumInterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 void EnumInterfaceClient::onSig3(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSig3(json_args[0].get<Enum3Enum>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSig3(json_args[0].get<Enum3Enum>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("EnumInterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 
 int EnumInterfaceClient::registerResponseHandler(ApiGear::MQTT::InvokeReplyFunc handler)

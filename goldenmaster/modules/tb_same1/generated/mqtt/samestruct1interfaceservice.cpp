@@ -1,5 +1,6 @@
 #include "tb_same1/generated/mqtt/samestruct1interfaceservice.h"
 #include "tb_same1/generated/core/tb_same1.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::TbSame1;
@@ -41,21 +42,29 @@ void SameStruct1InterfaceService::onConnectionStatusChanged(bool connectionStatu
 }
 void SameStruct1InterfaceService::onSetProp1(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto prop1 = json_args.get<Struct1>();
-    m_impl->setProp1(prop1);
+        auto prop1 = json_args.get<Struct1>();
+        m_impl->setProp1(prop1);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SameStruct1InterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void SameStruct1InterfaceService::onInvokeFunc1(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const Struct1& param1 = json_args.at(0).get<Struct1>();
-    auto result = m_impl->func1(param1);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const Struct1& param1 = json_args.at(0).get<Struct1>();
+        auto result = m_impl->func1(param1);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SameStruct1InterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void SameStruct1InterfaceService::onSig1(const Struct1& param1)
 {

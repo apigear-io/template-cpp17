@@ -1,5 +1,6 @@
 #include "testbed2/generated/mqtt/nestedstruct1interfaceservice.h"
 #include "testbed2/generated/core/testbed2.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::Testbed2;
@@ -43,14 +44,18 @@ void NestedStruct1InterfaceService::onConnectionStatusChanged(bool connectionSta
 }
 void NestedStruct1InterfaceService::onSetProp1(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto prop1 = json_args.get<NestedStruct1>();
-    m_impl->setProp1(prop1);
+        auto prop1 = json_args.get<NestedStruct1>();
+        m_impl->setProp1(prop1);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("NestedStruct1InterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void NestedStruct1InterfaceService::onInvokeFuncNoReturnValue(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
@@ -68,10 +73,14 @@ void NestedStruct1InterfaceService::onInvokeFuncNoParams(const std::string& args
 }
 void NestedStruct1InterfaceService::onInvokeFunc1(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const NestedStruct1& param1 = json_args.at(0).get<NestedStruct1>();
-    auto result = m_impl->func1(param1);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const NestedStruct1& param1 = json_args.at(0).get<NestedStruct1>();
+        auto result = m_impl->func1(param1);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("NestedStruct1InterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void NestedStruct1InterfaceService::onSig1(const NestedStruct1& param1)
 {

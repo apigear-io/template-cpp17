@@ -2,6 +2,7 @@
 #include "counter/generated/core/counter.json.adapter.h"
 #include "custom_types/generated/core/custom_types.json.adapter.h"
 #include "extern_types/generated/core/extern_types.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::Counter;
@@ -52,75 +53,107 @@ void CounterService::onConnectionStatusChanged(bool connectionStatus)
 }
 void CounterService::onSetVector(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto vector = json_args.get<Test::CustomTypes::Vector3D>();
-    m_impl->setVector(vector);
+        auto vector = json_args.get<Test::CustomTypes::Vector3D>();
+        m_impl->setVector(vector);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("CounterService JSON error: " + std::string(e.what()));
+    }
 }
 void CounterService::onSetExternVector(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto extern_vector = json_args.get<Eigen::Vector3f>();
-    m_impl->setExternVector(extern_vector);
+        auto extern_vector = json_args.get<Eigen::Vector3f>();
+        m_impl->setExternVector(extern_vector);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("CounterService JSON error: " + std::string(e.what()));
+    }
 }
 void CounterService::onSetVectorArray(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto vectorArray = json_args.get<std::list<Test::CustomTypes::Vector3D>>();
-    m_impl->setVectorArray(vectorArray);
+        auto vectorArray = json_args.get<std::list<Test::CustomTypes::Vector3D>>();
+        m_impl->setVectorArray(vectorArray);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("CounterService JSON error: " + std::string(e.what()));
+    }
 }
 void CounterService::onSetExternVectorArray(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto extern_vectorArray = json_args.get<std::list<Eigen::Vector3f>>();
-    m_impl->setExternVectorArray(extern_vectorArray);
+        auto extern_vectorArray = json_args.get<std::list<Eigen::Vector3f>>();
+        m_impl->setExternVectorArray(extern_vectorArray);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("CounterService JSON error: " + std::string(e.what()));
+    }
 }
 void CounterService::onInvokeIncrement(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const Eigen::Vector3f& vec = json_args.at(0).get<Eigen::Vector3f>();
-    auto result = m_impl->increment(vec);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const Eigen::Vector3f& vec = json_args.at(0).get<Eigen::Vector3f>();
+        auto result = m_impl->increment(vec);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("CounterService JSON error: " + std::string(e.what()));
+    }
 }
 void CounterService::onInvokeIncrementArray(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const std::list<Eigen::Vector3f>& vec = json_args.at(0).get<std::list<Eigen::Vector3f>>();
-    auto result = m_impl->incrementArray(vec);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const std::list<Eigen::Vector3f>& vec = json_args.at(0).get<std::list<Eigen::Vector3f>>();
+        auto result = m_impl->incrementArray(vec);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("CounterService JSON error: " + std::string(e.what()));
+    }
 }
 void CounterService::onInvokeDecrement(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const Test::CustomTypes::Vector3D& vec = json_args.at(0).get<Test::CustomTypes::Vector3D>();
-    auto result = m_impl->decrement(vec);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const Test::CustomTypes::Vector3D& vec = json_args.at(0).get<Test::CustomTypes::Vector3D>();
+        auto result = m_impl->decrement(vec);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("CounterService JSON error: " + std::string(e.what()));
+    }
 }
 void CounterService::onInvokeDecrementArray(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const std::list<Test::CustomTypes::Vector3D>& vec = json_args.at(0).get<std::list<Test::CustomTypes::Vector3D>>();
-    auto result = m_impl->decrementArray(vec);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const std::list<Test::CustomTypes::Vector3D>& vec = json_args.at(0).get<std::list<Test::CustomTypes::Vector3D>>();
+        auto result = m_impl->decrementArray(vec);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("CounterService JSON error: " + std::string(e.what()));
+    }
 }
 void CounterService::onValueChanged(const Test::CustomTypes::Vector3D& vector, const Eigen::Vector3f& extern_vector, const std::list<Test::CustomTypes::Vector3D>& vectorArray, const std::list<Eigen::Vector3f>& extern_vectorArray)
 {

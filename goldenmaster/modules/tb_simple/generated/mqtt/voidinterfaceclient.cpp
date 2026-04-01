@@ -1,6 +1,7 @@
 #include "tb_simple/generated/mqtt/voidinterfaceclient.h"
 #include "tb_simple/generated/core/voidinterface.publisher.h"
 #include "tb_simple/generated/core/tb_simple.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <random>
 
 using namespace Test::TbSimple;
@@ -49,24 +50,28 @@ std::future<void> VoidInterfaceClient::funcVoidAsync( std::function<void(void)> 
     }
     return std::async(std::launch::async, [this, callback]()
         {
-            std::promise<void> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<void>>();
             static const auto topic = std::string("tb.simple/VoidInterface/rpc/funcVoid");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
             auto responseId = 0; //Not used, the service won't respond, no handler is added for response.
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({}).dump(), responseId);
-            resultPromise.set_value();
+            resultPromise->set_value();
             if (callback)
             {
                 callback();
             }
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
 void VoidInterfaceClient::onSigVoid(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSigVoid();
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSigVoid();
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("VoidInterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 
 int VoidInterfaceClient::registerResponseHandler(ApiGear::MQTT::InvokeReplyFunc handler)
