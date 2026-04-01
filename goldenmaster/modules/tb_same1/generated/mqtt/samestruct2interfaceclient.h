@@ -22,6 +22,7 @@ class TEST_TB_SAME1_EXPORT SameStruct2InterfaceClient : public ISameStruct2Inter
 {
 public:
     explicit SameStruct2InterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> client);
+    static std::shared_ptr<SameStruct2InterfaceClient> create(std::shared_ptr<ApiGear::MQTT::Client> client);
     virtual ~SameStruct2InterfaceClient() override;
     const Struct2& getProp1() const override;
     void setProp1(const Struct2& prop1) override;

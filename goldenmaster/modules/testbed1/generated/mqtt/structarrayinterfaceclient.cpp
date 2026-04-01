@@ -17,6 +17,11 @@ StructArrayInterfaceClient::StructArrayInterfaceClient(std::shared_ptr<ApiGear::
 {
 }
 
+std::shared_ptr<StructArrayInterfaceClient> StructArrayInterfaceClient::create(std::shared_ptr<ApiGear::MQTT::Client> client)
+{
+    return std::make_shared<StructArrayInterfaceClient>(client);
+}
+
 StructArrayInterfaceClient::~StructArrayInterfaceClient()
 {
 }

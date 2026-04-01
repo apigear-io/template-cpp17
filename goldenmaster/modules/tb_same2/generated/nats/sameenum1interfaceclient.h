@@ -26,7 +26,7 @@ class TEST_TB_SAME2_EXPORT SameEnum1InterfaceClient : public ISameEnum1Interface
 protected:
     explicit SameEnum1InterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client);
 public:
-    static std::shared_ptr<SameEnum1InterfaceClient>create(std::shared_ptr<ApiGear::Nats::Client> client);
+    static std::shared_ptr<SameEnum1InterfaceClient> create(std::shared_ptr<ApiGear::Nats::Client> client);
     virtual ~SameEnum1InterfaceClient() override;
     void init();
     Enum1Enum getProp1() const override;

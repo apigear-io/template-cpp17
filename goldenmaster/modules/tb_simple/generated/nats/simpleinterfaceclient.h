@@ -26,7 +26,7 @@ class TEST_TB_SIMPLE_EXPORT SimpleInterfaceClient : public ISimpleInterface, pub
 protected:
     explicit SimpleInterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client);
 public:
-    static std::shared_ptr<SimpleInterfaceClient>create(std::shared_ptr<ApiGear::Nats::Client> client);
+    static std::shared_ptr<SimpleInterfaceClient> create(std::shared_ptr<ApiGear::Nats::Client> client);
     virtual ~SimpleInterfaceClient() override;
     void init();
     bool getPropBool() const override;

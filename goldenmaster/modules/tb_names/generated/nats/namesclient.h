@@ -26,7 +26,7 @@ class TEST_TB_NAMES_EXPORT Nam_EsClient : public INamEs, public ApiGear::Nats::B
 protected:
     explicit Nam_EsClient(std::shared_ptr<ApiGear::Nats::Client> client);
 public:
-    static std::shared_ptr<Nam_EsClient>create(std::shared_ptr<ApiGear::Nats::Client> client);
+    static std::shared_ptr<Nam_EsClient> create(std::shared_ptr<ApiGear::Nats::Client> client);
     virtual ~Nam_EsClient() override;
     void init();
     bool getSwitch() const override;

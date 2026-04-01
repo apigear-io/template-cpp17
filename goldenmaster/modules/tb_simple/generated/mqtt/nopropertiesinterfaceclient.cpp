@@ -17,6 +17,11 @@ NoPropertiesInterfaceClient::NoPropertiesInterfaceClient(std::shared_ptr<ApiGear
 {
 }
 
+std::shared_ptr<NoPropertiesInterfaceClient> NoPropertiesInterfaceClient::create(std::shared_ptr<ApiGear::MQTT::Client> client)
+{
+    return std::make_shared<NoPropertiesInterfaceClient>(client);
+}
+
 NoPropertiesInterfaceClient::~NoPropertiesInterfaceClient()
 {
 }

@@ -22,6 +22,7 @@ class TEST_TESTBED2_EXPORT ManyParamInterfaceClient : public IManyParamInterface
 {
 public:
     explicit ManyParamInterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> client);
+    static std::shared_ptr<ManyParamInterfaceClient> create(std::shared_ptr<ApiGear::MQTT::Client> client);
     virtual ~ManyParamInterfaceClient() override;
     int getProp1() const override;
     void setProp1(int prop1) override;

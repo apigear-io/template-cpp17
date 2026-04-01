@@ -26,7 +26,7 @@ class TEST_TB_ENUM_EXPORT EnumInterfaceClient : public IEnumInterface, public Ap
 protected:
     explicit EnumInterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client);
 public:
-    static std::shared_ptr<EnumInterfaceClient>create(std::shared_ptr<ApiGear::Nats::Client> client);
+    static std::shared_ptr<EnumInterfaceClient> create(std::shared_ptr<ApiGear::Nats::Client> client);
     virtual ~EnumInterfaceClient() override;
     void init();
     Enum0Enum getProp0() const override;

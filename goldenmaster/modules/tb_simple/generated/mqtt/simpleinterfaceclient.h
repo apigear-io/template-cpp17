@@ -22,6 +22,7 @@ class TEST_TB_SIMPLE_EXPORT SimpleInterfaceClient : public ISimpleInterface, pub
 {
 public:
     explicit SimpleInterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> client);
+    static std::shared_ptr<SimpleInterfaceClient> create(std::shared_ptr<ApiGear::MQTT::Client> client);
     virtual ~SimpleInterfaceClient() override;
     bool getPropBool() const override;
     void setPropBool(bool propBool) override;

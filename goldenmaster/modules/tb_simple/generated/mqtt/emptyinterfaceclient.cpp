@@ -17,6 +17,11 @@ EmptyInterfaceClient::EmptyInterfaceClient(std::shared_ptr<ApiGear::MQTT::Client
 {
 }
 
+std::shared_ptr<EmptyInterfaceClient> EmptyInterfaceClient::create(std::shared_ptr<ApiGear::MQTT::Client> client)
+{
+    return std::make_shared<EmptyInterfaceClient>(client);
+}
+
 EmptyInterfaceClient::~EmptyInterfaceClient()
 {
 }

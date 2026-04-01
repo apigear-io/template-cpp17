@@ -26,7 +26,7 @@ class TEST_COUNTER_EXPORT CounterClient : public ICounter, public ApiGear::Nats:
 protected:
     explicit CounterClient(std::shared_ptr<ApiGear::Nats::Client> client);
 public:
-    static std::shared_ptr<CounterClient>create(std::shared_ptr<ApiGear::Nats::Client> client);
+    static std::shared_ptr<CounterClient> create(std::shared_ptr<ApiGear::Nats::Client> client);
     virtual ~CounterClient() override;
     void init();
     const Test::CustomTypes::Vector3D& getVector() const override;

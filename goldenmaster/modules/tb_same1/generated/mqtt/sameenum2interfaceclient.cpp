@@ -17,6 +17,11 @@ SameEnum2InterfaceClient::SameEnum2InterfaceClient(std::shared_ptr<ApiGear::MQTT
 {
 }
 
+std::shared_ptr<SameEnum2InterfaceClient> SameEnum2InterfaceClient::create(std::shared_ptr<ApiGear::MQTT::Client> client)
+{
+    return std::make_shared<SameEnum2InterfaceClient>(client);
+}
+
 SameEnum2InterfaceClient::~SameEnum2InterfaceClient()
 {
 }

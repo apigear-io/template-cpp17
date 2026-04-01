@@ -22,6 +22,7 @@ class TEST_TB_SIMPLE_EXPORT NoOperationsInterfaceClient : public INoOperationsIn
 {
 public:
     explicit NoOperationsInterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> client);
+    static std::shared_ptr<NoOperationsInterfaceClient> create(std::shared_ptr<ApiGear::MQTT::Client> client);
     virtual ~NoOperationsInterfaceClient() override;
     bool getPropBool() const override;
     void setPropBool(bool propBool) override;

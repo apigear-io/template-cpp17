@@ -22,6 +22,7 @@ class TEST_TB_NAMES_EXPORT Nam_EsClient : public INamEs, public ApiGear::MQTT::M
 {
 public:
     explicit Nam_EsClient(std::shared_ptr<ApiGear::MQTT::Client> client);
+    static std::shared_ptr<Nam_EsClient> create(std::shared_ptr<ApiGear::MQTT::Client> client);
     virtual ~Nam_EsClient() override;
     bool getSwitch() const override;
     void setSwitch(bool Switch) override;

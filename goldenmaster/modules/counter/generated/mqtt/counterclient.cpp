@@ -19,6 +19,11 @@ CounterClient::CounterClient(std::shared_ptr<ApiGear::MQTT::Client> client)
 {
 }
 
+std::shared_ptr<CounterClient> CounterClient::create(std::shared_ptr<ApiGear::MQTT::Client> client)
+{
+    return std::make_shared<CounterClient>(client);
+}
+
 CounterClient::~CounterClient()
 {
 }

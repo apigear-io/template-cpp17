@@ -22,6 +22,7 @@ class TEST_TB_SAME1_EXPORT SameEnum2InterfaceClient : public ISameEnum2Interface
 {
 public:
     explicit SameEnum2InterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> client);
+    static std::shared_ptr<SameEnum2InterfaceClient> create(std::shared_ptr<ApiGear::MQTT::Client> client);
     virtual ~SameEnum2InterfaceClient() override;
     Enum1Enum getProp1() const override;
     void setProp1(Enum1Enum prop1) override;

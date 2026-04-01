@@ -26,7 +26,7 @@ class TEST_TB_SIMPLE_EXPORT VoidInterfaceClient : public IVoidInterface, public 
 protected:
     explicit VoidInterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client);
 public:
-    static std::shared_ptr<VoidInterfaceClient>create(std::shared_ptr<ApiGear::Nats::Client> client);
+    static std::shared_ptr<VoidInterfaceClient> create(std::shared_ptr<ApiGear::Nats::Client> client);
     virtual ~VoidInterfaceClient() override;
     void init();
     void funcVoid() override;

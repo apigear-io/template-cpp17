@@ -17,6 +17,11 @@ NoSignalsInterfaceClient::NoSignalsInterfaceClient(std::shared_ptr<ApiGear::MQTT
 {
 }
 
+std::shared_ptr<NoSignalsInterfaceClient> NoSignalsInterfaceClient::create(std::shared_ptr<ApiGear::MQTT::Client> client)
+{
+    return std::make_shared<NoSignalsInterfaceClient>(client);
+}
+
 NoSignalsInterfaceClient::~NoSignalsInterfaceClient()
 {
 }

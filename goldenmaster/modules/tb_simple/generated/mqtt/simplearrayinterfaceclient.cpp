@@ -17,6 +17,11 @@ SimpleArrayInterfaceClient::SimpleArrayInterfaceClient(std::shared_ptr<ApiGear::
 {
 }
 
+std::shared_ptr<SimpleArrayInterfaceClient> SimpleArrayInterfaceClient::create(std::shared_ptr<ApiGear::MQTT::Client> client)
+{
+    return std::make_shared<SimpleArrayInterfaceClient>(client);
+}
+
 SimpleArrayInterfaceClient::~SimpleArrayInterfaceClient()
 {
 }

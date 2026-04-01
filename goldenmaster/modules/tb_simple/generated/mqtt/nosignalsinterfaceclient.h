@@ -22,6 +22,7 @@ class TEST_TB_SIMPLE_EXPORT NoSignalsInterfaceClient : public INoSignalsInterfac
 {
 public:
     explicit NoSignalsInterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> client);
+    static std::shared_ptr<NoSignalsInterfaceClient> create(std::shared_ptr<ApiGear::MQTT::Client> client);
     virtual ~NoSignalsInterfaceClient() override;
     bool getPropBool() const override;
     void setPropBool(bool propBool) override;

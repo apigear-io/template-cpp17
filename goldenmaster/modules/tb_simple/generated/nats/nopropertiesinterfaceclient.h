@@ -26,7 +26,7 @@ class TEST_TB_SIMPLE_EXPORT NoPropertiesInterfaceClient : public INoPropertiesIn
 protected:
     explicit NoPropertiesInterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client);
 public:
-    static std::shared_ptr<NoPropertiesInterfaceClient>create(std::shared_ptr<ApiGear::Nats::Client> client);
+    static std::shared_ptr<NoPropertiesInterfaceClient> create(std::shared_ptr<ApiGear::Nats::Client> client);
     virtual ~NoPropertiesInterfaceClient() override;
     void init();
     void funcVoid() override;

@@ -26,7 +26,7 @@ class TEST_TB_SAME2_EXPORT SameStruct1InterfaceClient : public ISameStruct1Inter
 protected:
     explicit SameStruct1InterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client);
 public:
-    static std::shared_ptr<SameStruct1InterfaceClient>create(std::shared_ptr<ApiGear::Nats::Client> client);
+    static std::shared_ptr<SameStruct1InterfaceClient> create(std::shared_ptr<ApiGear::Nats::Client> client);
     virtual ~SameStruct1InterfaceClient() override;
     void init();
     const Struct1& getProp1() const override;

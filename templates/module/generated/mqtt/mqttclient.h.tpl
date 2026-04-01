@@ -29,6 +29,7 @@ class {{ SNAKE .System.Name  }}_{{ SNAKE .Module.Name  }}_EXPORT {{$class}} : pu
 {
 public:
     explicit {{$class}}(std::shared_ptr<ApiGear::MQTT::Client> client);
+    static std::shared_ptr<{{$class}}> create(std::shared_ptr<ApiGear::MQTT::Client> client);
     virtual ~{{$class}}() override;
 
 {{- range .Interface.Properties}}

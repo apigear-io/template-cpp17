@@ -17,6 +17,11 @@ NestedStruct2InterfaceClient::NestedStruct2InterfaceClient(std::shared_ptr<ApiGe
 {
 }
 
+std::shared_ptr<NestedStruct2InterfaceClient> NestedStruct2InterfaceClient::create(std::shared_ptr<ApiGear::MQTT::Client> client)
+{
+    return std::make_shared<NestedStruct2InterfaceClient>(client);
+}
+
 NestedStruct2InterfaceClient::~NestedStruct2InterfaceClient()
 {
 }

@@ -26,7 +26,7 @@ class TEST_TB_SIMPLE_EXPORT EmptyInterfaceClient : public IEmptyInterface, publi
 protected:
     explicit EmptyInterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client);
 public:
-    static std::shared_ptr<EmptyInterfaceClient>create(std::shared_ptr<ApiGear::Nats::Client> client);
+    static std::shared_ptr<EmptyInterfaceClient> create(std::shared_ptr<ApiGear::Nats::Client> client);
     virtual ~EmptyInterfaceClient() override;
     void init();
     IEmptyInterfacePublisher& _getPublisher() const override;
