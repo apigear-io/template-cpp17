@@ -39,20 +39,29 @@ std::string EmptyInterfaceService::olinkObjectName() {
 }
 
 nlohmann::json EmptyInterfaceService::olinkInvoke(const std::string& methodId, const nlohmann::json& fcnArgs) {
+    try {
     AG_LOG_DEBUG("EmptyInterfaceService invoke " + methodId);
     const auto& memberMethod = ApiGear::ObjectLink::Name::getMemberName(methodId);
     // no operations to invoke
     (void) fcnArgs;
     (void) memberMethod;
     return nlohmann::json();
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in EmptyInterface: " + std::string(e.what()));
+        return nlohmann::json();
+    }
 }
 
 void EmptyInterfaceService::olinkSetProperty(const std::string& propertyId, const nlohmann::json& value) {
+    try {
     AG_LOG_DEBUG("EmptyInterfaceService set property " + propertyId);
     const auto& memberProperty = ApiGear::ObjectLink::Name::getMemberName(propertyId);
     // no properties to set
     (void) value;
-    (void) memberProperty; 
+    (void) memberProperty;
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in EmptyInterface: " + std::string(e.what()));
+    }
 }
 
 void EmptyInterfaceService::olinkLinked(const std::string& objectId, ApiGear::ObjectLink::IRemoteNode* /*node*/) {

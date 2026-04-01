@@ -38,6 +38,7 @@ std::string VoidInterfaceService::olinkObjectName() {
 }
 
 nlohmann::json VoidInterfaceService::olinkInvoke(const std::string& methodId, const nlohmann::json& fcnArgs) {
+    try {
     (void) fcnArgs;
     AG_LOG_DEBUG("VoidInterfaceService invoke " + methodId);
     const auto& memberMethod = ApiGear::ObjectLink::Name::getMemberName(methodId);
@@ -46,14 +47,22 @@ nlohmann::json VoidInterfaceService::olinkInvoke(const std::string& methodId, co
         return nlohmann::json{};
     }
     return nlohmann::json();
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in VoidInterface: " + std::string(e.what()));
+        return nlohmann::json();
+    }
 }
 
 void VoidInterfaceService::olinkSetProperty(const std::string& propertyId, const nlohmann::json& value) {
+    try {
     AG_LOG_DEBUG("VoidInterfaceService set property " + propertyId);
     const auto& memberProperty = ApiGear::ObjectLink::Name::getMemberName(propertyId);
     // no properties to set
     (void) value;
-    (void) memberProperty; 
+    (void) memberProperty;
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in VoidInterface: " + std::string(e.what()));
+    }
 }
 
 void VoidInterfaceService::olinkLinked(const std::string& objectId, ApiGear::ObjectLink::IRemoteNode* /*node*/) {

@@ -38,6 +38,7 @@ std::string Nam_EsService::olinkObjectName() {
 }
 
 nlohmann::json Nam_EsService::olinkInvoke(const std::string& methodId, const nlohmann::json& fcnArgs) {
+    try {
     AG_LOG_DEBUG("Nam_EsService invoke " + methodId);
     const auto& memberMethod = ApiGear::ObjectLink::Name::getMemberName(methodId);
     if(memberMethod == "SOME_FUNCTION") {
@@ -51,9 +52,14 @@ nlohmann::json Nam_EsService::olinkInvoke(const std::string& methodId, const nlo
         return nlohmann::json{};
     }
     return nlohmann::json();
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in NamEs: " + std::string(e.what()));
+        return nlohmann::json();
+    }
 }
 
 void Nam_EsService::olinkSetProperty(const std::string& propertyId, const nlohmann::json& value) {
+    try {
     AG_LOG_DEBUG("Nam_EsService set property " + propertyId);
     const auto& memberProperty = ApiGear::ObjectLink::Name::getMemberName(propertyId);
     if(memberProperty == "Switch") {
@@ -71,7 +77,10 @@ void Nam_EsService::olinkSetProperty(const std::string& propertyId, const nlohma
     if(memberProperty == "enum_property") {
         Enum_With_Under_scoresEnum enum_property = value.get<Enum_With_Under_scoresEnum>();
         m_Nam_Es->setEnumProperty(enum_property);
-    } 
+    }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in NamEs: " + std::string(e.what()));
+    }
 }
 
 void Nam_EsService::olinkLinked(const std::string& objectId, ApiGear::ObjectLink::IRemoteNode* /*node*/) {

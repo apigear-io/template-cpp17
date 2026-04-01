@@ -38,6 +38,7 @@ std::string StructArrayInterfaceService::olinkObjectName() {
 }
 
 nlohmann::json StructArrayInterfaceService::olinkInvoke(const std::string& methodId, const nlohmann::json& fcnArgs) {
+    try {
     AG_LOG_DEBUG("StructArrayInterfaceService invoke " + methodId);
     const auto& memberMethod = ApiGear::ObjectLink::Name::getMemberName(methodId);
     if(memberMethod == "funcBool") {
@@ -66,9 +67,14 @@ nlohmann::json StructArrayInterfaceService::olinkInvoke(const std::string& metho
         return result;
     }
     return nlohmann::json();
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in StructArrayInterface: " + std::string(e.what()));
+        return nlohmann::json();
+    }
 }
 
 void StructArrayInterfaceService::olinkSetProperty(const std::string& propertyId, const nlohmann::json& value) {
+    try {
     AG_LOG_DEBUG("StructArrayInterfaceService set property " + propertyId);
     const auto& memberProperty = ApiGear::ObjectLink::Name::getMemberName(propertyId);
     if(memberProperty == "propBool") {
@@ -90,7 +96,10 @@ void StructArrayInterfaceService::olinkSetProperty(const std::string& propertyId
     if(memberProperty == "propEnum") {
         std::list<Enum0Enum> propEnum = value.get<std::list<Enum0Enum>>();
         m_StructArrayInterface->setPropEnum(propEnum);
-    } 
+    }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in StructArrayInterface: " + std::string(e.what()));
+    }
 }
 
 void StructArrayInterfaceService::olinkLinked(const std::string& objectId, ApiGear::ObjectLink::IRemoteNode* /*node*/) {

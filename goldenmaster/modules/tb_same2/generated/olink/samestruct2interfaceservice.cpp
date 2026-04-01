@@ -38,6 +38,7 @@ std::string SameStruct2InterfaceService::olinkObjectName() {
 }
 
 nlohmann::json SameStruct2InterfaceService::olinkInvoke(const std::string& methodId, const nlohmann::json& fcnArgs) {
+    try {
     AG_LOG_DEBUG("SameStruct2InterfaceService invoke " + methodId);
     const auto& memberMethod = ApiGear::ObjectLink::Name::getMemberName(methodId);
     if(memberMethod == "func1") {
@@ -52,9 +53,14 @@ nlohmann::json SameStruct2InterfaceService::olinkInvoke(const std::string& metho
         return result;
     }
     return nlohmann::json();
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in SameStruct2Interface: " + std::string(e.what()));
+        return nlohmann::json();
+    }
 }
 
 void SameStruct2InterfaceService::olinkSetProperty(const std::string& propertyId, const nlohmann::json& value) {
+    try {
     AG_LOG_DEBUG("SameStruct2InterfaceService set property " + propertyId);
     const auto& memberProperty = ApiGear::ObjectLink::Name::getMemberName(propertyId);
     if(memberProperty == "prop1") {
@@ -64,7 +70,10 @@ void SameStruct2InterfaceService::olinkSetProperty(const std::string& propertyId
     if(memberProperty == "prop2") {
         Struct2 prop2 = value.get<Struct2>();
         m_SameStruct2Interface->setProp2(prop2);
-    } 
+    }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in SameStruct2Interface: " + std::string(e.what()));
+    }
 }
 
 void SameStruct2InterfaceService::olinkLinked(const std::string& objectId, ApiGear::ObjectLink::IRemoteNode* /*node*/) {

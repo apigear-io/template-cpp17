@@ -38,6 +38,7 @@ std::string ManyParamInterfaceService::olinkObjectName() {
 }
 
 nlohmann::json ManyParamInterfaceService::olinkInvoke(const std::string& methodId, const nlohmann::json& fcnArgs) {
+    try {
     AG_LOG_DEBUG("ManyParamInterfaceService invoke " + methodId);
     const auto& memberMethod = ApiGear::ObjectLink::Name::getMemberName(methodId);
     if(memberMethod == "func1") {
@@ -67,9 +68,14 @@ nlohmann::json ManyParamInterfaceService::olinkInvoke(const std::string& methodI
         return result;
     }
     return nlohmann::json();
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in ManyParamInterface: " + std::string(e.what()));
+        return nlohmann::json();
+    }
 }
 
 void ManyParamInterfaceService::olinkSetProperty(const std::string& propertyId, const nlohmann::json& value) {
+    try {
     AG_LOG_DEBUG("ManyParamInterfaceService set property " + propertyId);
     const auto& memberProperty = ApiGear::ObjectLink::Name::getMemberName(propertyId);
     if(memberProperty == "prop1") {
@@ -87,7 +93,10 @@ void ManyParamInterfaceService::olinkSetProperty(const std::string& propertyId, 
     if(memberProperty == "prop4") {
         int prop4 = value.get<int>();
         m_ManyParamInterface->setProp4(prop4);
-    } 
+    }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in ManyParamInterface: " + std::string(e.what()));
+    }
 }
 
 void ManyParamInterfaceService::olinkLinked(const std::string& objectId, ApiGear::ObjectLink::IRemoteNode* /*node*/) {

@@ -38,15 +38,21 @@ std::string NoOperationsInterfaceService::olinkObjectName() {
 }
 
 nlohmann::json NoOperationsInterfaceService::olinkInvoke(const std::string& methodId, const nlohmann::json& fcnArgs) {
+    try {
     AG_LOG_DEBUG("NoOperationsInterfaceService invoke " + methodId);
     const auto& memberMethod = ApiGear::ObjectLink::Name::getMemberName(methodId);
     // no operations to invoke
     (void) fcnArgs;
     (void) memberMethod;
     return nlohmann::json();
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in NoOperationsInterface: " + std::string(e.what()));
+        return nlohmann::json();
+    }
 }
 
 void NoOperationsInterfaceService::olinkSetProperty(const std::string& propertyId, const nlohmann::json& value) {
+    try {
     AG_LOG_DEBUG("NoOperationsInterfaceService set property " + propertyId);
     const auto& memberProperty = ApiGear::ObjectLink::Name::getMemberName(propertyId);
     if(memberProperty == "propBool") {
@@ -56,7 +62,10 @@ void NoOperationsInterfaceService::olinkSetProperty(const std::string& propertyI
     if(memberProperty == "propInt") {
         int propInt = value.get<int>();
         m_NoOperationsInterface->setPropInt(propInt);
-    } 
+    }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in NoOperationsInterface: " + std::string(e.what()));
+    }
 }
 
 void NoOperationsInterfaceService::olinkLinked(const std::string& objectId, ApiGear::ObjectLink::IRemoteNode* /*node*/) {

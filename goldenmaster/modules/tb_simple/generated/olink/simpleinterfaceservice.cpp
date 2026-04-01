@@ -38,6 +38,7 @@ std::string SimpleInterfaceService::olinkObjectName() {
 }
 
 nlohmann::json SimpleInterfaceService::olinkInvoke(const std::string& methodId, const nlohmann::json& fcnArgs) {
+    try {
     AG_LOG_DEBUG("SimpleInterfaceService invoke " + methodId);
     const auto& memberMethod = ApiGear::ObjectLink::Name::getMemberName(methodId);
     if(memberMethod == "funcNoReturnValue") {
@@ -90,9 +91,14 @@ nlohmann::json SimpleInterfaceService::olinkInvoke(const std::string& methodId, 
         return result;
     }
     return nlohmann::json();
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in SimpleInterface: " + std::string(e.what()));
+        return nlohmann::json();
+    }
 }
 
 void SimpleInterfaceService::olinkSetProperty(const std::string& propertyId, const nlohmann::json& value) {
+    try {
     AG_LOG_DEBUG("SimpleInterfaceService set property " + propertyId);
     const auto& memberProperty = ApiGear::ObjectLink::Name::getMemberName(propertyId);
     if(memberProperty == "propBool") {
@@ -126,7 +132,10 @@ void SimpleInterfaceService::olinkSetProperty(const std::string& propertyId, con
     if(memberProperty == "propString") {
         std::string propString = value.get<std::string>();
         m_SimpleInterface->setPropString(propString);
-    } 
+    }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in SimpleInterface: " + std::string(e.what()));
+    }
 }
 
 void SimpleInterfaceService::olinkLinked(const std::string& objectId, ApiGear::ObjectLink::IRemoteNode* /*node*/) {

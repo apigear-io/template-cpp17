@@ -38,6 +38,7 @@ std::string EnumInterfaceService::olinkObjectName() {
 }
 
 nlohmann::json EnumInterfaceService::olinkInvoke(const std::string& methodId, const nlohmann::json& fcnArgs) {
+    try {
     AG_LOG_DEBUG("EnumInterfaceService invoke " + methodId);
     const auto& memberMethod = ApiGear::ObjectLink::Name::getMemberName(methodId);
     if(memberMethod == "func0") {
@@ -61,9 +62,14 @@ nlohmann::json EnumInterfaceService::olinkInvoke(const std::string& methodId, co
         return result;
     }
     return nlohmann::json();
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in EnumInterface: " + std::string(e.what()));
+        return nlohmann::json();
+    }
 }
 
 void EnumInterfaceService::olinkSetProperty(const std::string& propertyId, const nlohmann::json& value) {
+    try {
     AG_LOG_DEBUG("EnumInterfaceService set property " + propertyId);
     const auto& memberProperty = ApiGear::ObjectLink::Name::getMemberName(propertyId);
     if(memberProperty == "prop0") {
@@ -81,7 +87,10 @@ void EnumInterfaceService::olinkSetProperty(const std::string& propertyId, const
     if(memberProperty == "prop3") {
         Enum3Enum prop3 = value.get<Enum3Enum>();
         m_EnumInterface->setProp3(prop3);
-    } 
+    }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in EnumInterface: " + std::string(e.what()));
+    }
 }
 
 void EnumInterfaceService::olinkLinked(const std::string& objectId, ApiGear::ObjectLink::IRemoteNode* /*node*/) {
