@@ -18,6 +18,7 @@
 #include "utilities/threadpool.h"
 
 #include <memory>
+#include <vector>
 
 using namespace ApiGear::PocoImpl;
 
@@ -52,6 +53,7 @@ void OlinkConnection::onConnectionClosedFromNetwork()
     if (m_reconnectTask) {
         m_reconnectTask->cancel();
     }
+    // Poco::Util::Timer takes ownership via TimerTask::Ptr (AutoPtr).
     m_reconnectTask = new Poco::Util::TimerTaskAdapter<OlinkConnection>(*this, &OlinkConnection::reconnect);
     lock.unlock();
 
@@ -63,6 +65,7 @@ void OlinkConnection::onNotifyNoSocket(){
     if (m_reconnectTask) {
         m_reconnectTask->cancel();
     }
+    // Poco::Util::Timer takes ownership via TimerTask::Ptr (AutoPtr).
     m_reconnectTask = new Poco::Util::TimerTaskAdapter<OlinkConnection>(*this, &OlinkConnection::reconnect);
     lock.unlock();
     // This function is called by socket wrapper, therefore to allow it to finish its function, and to be proceed properly
@@ -73,8 +76,12 @@ void OlinkConnection::onNotifyNoSocket(){
 
 OlinkConnection::~OlinkConnection()
 {
-    // DisconnectAndUnlink modifies collection.
-    auto copyObjectLinkStatus = m_objectLinkStatus;
+    // Copy under lock, then iterate outside — disconnectAndUnlink may do network I/O.
+    decltype(m_objectLinkStatus) copyObjectLinkStatus;
+    {
+        std::lock_guard<std::mutex> lock(m_objectLinkStatusMutex);
+        copyObjectLinkStatus = m_objectLinkStatus;
+    }
     for(auto& object : copyObjectLinkStatus){
         disconnectAndUnlink(object.first);
     }
@@ -94,22 +101,29 @@ void OlinkConnection::connectAndLinkObject(std::shared_ptr<ApiGear::ObjectLink::
     m_node->registry().addSink(object);
     if (!m_socket.isClosed()){
         m_node->linkRemote(object->olinkObjectName());
+        std::lock_guard<std::mutex> lock(m_objectLinkStatusMutex);
         m_objectLinkStatus[object->olinkObjectName()] = LinkStatus::Linked;
     }
-    else 
+    else
     {
+        std::lock_guard<std::mutex> lock(m_objectLinkStatusMutex);
         m_objectLinkStatus[object->olinkObjectName()] = LinkStatus::NotLinked;
     }
 }
 
-void OlinkConnection::disconnectAndUnlink(const std::string& objectId)  
+void OlinkConnection::disconnectAndUnlink(const std::string& objectId)
 {
-    auto objectStatus = m_objectLinkStatus.find(objectId);
-    if (objectStatus != m_objectLinkStatus.end()) {
-        if (objectStatus->second != LinkStatus::NotLinked){
-            m_node->unlinkRemote(objectId);
+    bool shouldUnlink = false;
+    {
+        std::lock_guard<std::mutex> lock(m_objectLinkStatusMutex);
+        auto objectStatus = m_objectLinkStatus.find(objectId);
+        if (objectStatus != m_objectLinkStatus.end()) {
+            shouldUnlink = (objectStatus->second != LinkStatus::NotLinked);
+            m_objectLinkStatus.erase(objectStatus);
         }
-        m_objectLinkStatus.erase(objectStatus);
+    }
+    if (shouldUnlink) {
+        m_node->unlinkRemote(objectId);
     }
     m_node->registry().removeSink(objectId);
 }
@@ -149,10 +163,18 @@ void OlinkConnection::disconnect() {
     if (m_reconnectTask) {
         m_reconnectTask->cancel();
     }
-    for (auto& object : m_objectLinkStatus){
-        if (object.second != LinkStatus::NotLinked){
-            m_node->unlinkRemote(object.first);
+    // Collect objects to unlink under lock, then unlink outside lock (may do network I/O).
+    std::vector<std::string> objectsToUnlink;
+    {
+        std::lock_guard<std::mutex> lock(m_objectLinkStatusMutex);
+        for (const auto& object : m_objectLinkStatus){
+            if (object.second != LinkStatus::NotLinked){
+                objectsToUnlink.push_back(object.first);
+            }
         }
+    }
+    for (const auto& objectId : objectsToUnlink){
+        m_node->unlinkRemote(objectId);
     }
 
     m_socket.close();
@@ -167,18 +189,32 @@ std::shared_ptr<ApiGear::ObjectLink::ClientNode> OlinkConnection::node()
 void OlinkConnection::onConnected()
 {
     AG_LOG_INFO("socket connected");
-    for(auto& object : m_objectLinkStatus)
+    // Collect object names under lock, then link outside (may do network I/O).
+    std::vector<std::string> objectNames;
     {
-        m_node->linkRemote(object.first);
-        object.second = LinkStatus::Linked;
+        std::lock_guard<std::mutex> lock(m_objectLinkStatusMutex);
+        objectNames.reserve(m_objectLinkStatus.size());
+        for (const auto& object : m_objectLinkStatus)
+        {
+            objectNames.push_back(object.first);
+        }
+    }
+    for (const auto& name : objectNames)
+    {
+        m_node->linkRemote(name);
+        std::lock_guard<std::mutex> lock(m_objectLinkStatusMutex);
+        m_objectLinkStatus[name] = LinkStatus::Linked;
     }
 }
 
 void OlinkConnection::onDisconnected()
 {
-    for (auto& object : m_objectLinkStatus)
     {
-        object.second = LinkStatus::NotLinked;
+        std::lock_guard<std::mutex> lock(m_objectLinkStatusMutex);
+        for (auto& object : m_objectLinkStatus)
+        {
+            object.second = LinkStatus::NotLinked;
+        }
     }
     AG_LOG_INFO("socket disconnected");
 }
