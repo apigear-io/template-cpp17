@@ -38,7 +38,12 @@ void SameEnum1InterfaceClient::init()
         AG_LOG_WARNING("init() called more than once on " "SameEnum1InterfaceClient" ", ignoring");
         return;
     }
-    BaseAdapter::init([this](){onConnected();});
+    std::weak_ptr<SameEnum1InterfaceClient> weak_self = shared_from_this();
+    BaseAdapter::init([weak_self](){
+        if (auto self = weak_self.lock()) {
+            self->onConnected();
+        }
+    });
 }
 
 SameEnum1InterfaceClient::~SameEnum1InterfaceClient() = default;

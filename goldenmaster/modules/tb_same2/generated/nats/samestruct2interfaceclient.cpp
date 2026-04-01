@@ -38,7 +38,12 @@ void SameStruct2InterfaceClient::init()
         AG_LOG_WARNING("init() called more than once on " "SameStruct2InterfaceClient" ", ignoring");
         return;
     }
-    BaseAdapter::init([this](){onConnected();});
+    std::weak_ptr<SameStruct2InterfaceClient> weak_self = shared_from_this();
+    BaseAdapter::init([weak_self](){
+        if (auto self = weak_self.lock()) {
+            self->onConnected();
+        }
+    });
 }
 
 SameStruct2InterfaceClient::~SameStruct2InterfaceClient() = default;

@@ -27,7 +27,12 @@ void SameEnum2InterfaceService::init()
         AG_LOG_WARNING("init() called more than once on " "SameEnum2InterfaceService" ", ignoring");
         return;
     }
-    BaseAdapter::init([this](){onConnected();});
+    std::weak_ptr<SameEnum2InterfaceService> weak_self = shared_from_this();
+    BaseAdapter::init([weak_self](){
+        if (auto self = weak_self.lock()) {
+            self->onConnected();
+        }
+    });
 }
 
 std::shared_ptr<SameEnum2InterfaceService> SameEnum2InterfaceService::create(std::shared_ptr<ISameEnum2Interface> impl, std::shared_ptr<ApiGear::Nats::Service> service)

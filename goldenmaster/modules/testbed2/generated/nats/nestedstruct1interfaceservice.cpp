@@ -27,7 +27,12 @@ void NestedStruct1InterfaceService::init()
         AG_LOG_WARNING("init() called more than once on " "NestedStruct1InterfaceService" ", ignoring");
         return;
     }
-    BaseAdapter::init([this](){onConnected();});
+    std::weak_ptr<NestedStruct1InterfaceService> weak_self = shared_from_this();
+    BaseAdapter::init([weak_self](){
+        if (auto self = weak_self.lock()) {
+            self->onConnected();
+        }
+    });
 }
 
 std::shared_ptr<NestedStruct1InterfaceService> NestedStruct1InterfaceService::create(std::shared_ptr<INestedStruct1Interface> impl, std::shared_ptr<ApiGear::Nats::Service> service)

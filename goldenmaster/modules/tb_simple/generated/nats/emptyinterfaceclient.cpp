@@ -35,7 +35,12 @@ void EmptyInterfaceClient::init()
         AG_LOG_WARNING("init() called more than once on " "EmptyInterfaceClient" ", ignoring");
         return;
     }
-    BaseAdapter::init([this](){onConnected();});
+    std::weak_ptr<EmptyInterfaceClient> weak_self = shared_from_this();
+    BaseAdapter::init([weak_self](){
+        if (auto self = weak_self.lock()) {
+            self->onConnected();
+        }
+    });
 }
 
 EmptyInterfaceClient::~EmptyInterfaceClient() = default;

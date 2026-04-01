@@ -27,7 +27,12 @@ void StructInterfaceService::init()
         AG_LOG_WARNING("init() called more than once on " "StructInterfaceService" ", ignoring");
         return;
     }
-    BaseAdapter::init([this](){onConnected();});
+    std::weak_ptr<StructInterfaceService> weak_self = shared_from_this();
+    BaseAdapter::init([weak_self](){
+        if (auto self = weak_self.lock()) {
+            self->onConnected();
+        }
+    });
 }
 
 std::shared_ptr<StructInterfaceService> StructInterfaceService::create(std::shared_ptr<IStructInterface> impl, std::shared_ptr<ApiGear::Nats::Service> service)
