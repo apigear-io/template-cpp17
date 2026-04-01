@@ -20,12 +20,21 @@ struct subscribeTopicContext {
     std::weak_ptr<CWrapper> client;
 };
 
+namespace ApiGear { namespace MQTT {
 struct genericContext {
     std::weak_ptr<CWrapper> client;
 };
+}} // namespace ApiGear::MQTT
+using ApiGear::MQTT::genericContext;
 
-void onSendFailure(void* /*context*/, MQTTAsync_failureData5* response)
+void onSendSuccess(void* context, MQTTAsync_successData5* /*response*/)
 {
+    std::unique_ptr<genericContext> ctx(static_cast<genericContext*>(context));
+}
+
+void onSendFailure(void* context, MQTTAsync_failureData5* response)
+{
+    std::unique_ptr<genericContext> ctx(static_cast<genericContext*>(context));
     AG_LOG_ERROR("Send failed, ResponseCode " +  std::to_string(response->code));
 }
 
@@ -74,7 +83,7 @@ void onConnected(void* context, MQTTAsync_successData5* /*response*/)
 
 void onConnectedFail(void* context,  MQTTAsync_failureData5* response)
 {
-    std::unique_ptr<genericContext> ctx(static_cast<genericContext*>(context));
+    genericContext* ctx = static_cast<genericContext*>(context);
     AG_LOG_ERROR("Connect failed, ResponseCode " + std::to_string(response->code));
     if (auto client = ctx->client.lock())
     {
@@ -125,7 +134,7 @@ int OnMessageArrived(void *context, char *topicName, int topicLen, MQTTAsync_mes
 void OnConnectionLost(void *context, char * /*cause*/)
 {
     AG_LOG_ERROR("Connection lost");
-    std::unique_ptr<genericContext> ctx(static_cast<genericContext*>(context));
+    genericContext* ctx = static_cast<genericContext*>(context);
     if (auto client = ctx->client.lock())
     {
         client->onDisconnected();
@@ -280,8 +289,8 @@ void CWrapper::connectToHost(const std::string& brokerURL)
             conn_opts.keepAliveInterval = 20;
             conn_opts.onSuccess5 = ::onConnected;
             conn_opts.onFailure5 = onConnectedFail;
-            auto ctx = std::make_unique<genericContext>(genericContext{getPtr()});
-            conn_opts.context = ctx.release();
+            m_connectionContext = std::make_unique<genericContext>(genericContext{getPtr()});
+            conn_opts.context = m_connectionContext.get();
 
             MQTTAsync_setCallbacks(*m_client.get(), conn_opts.context, OnConnectionLost, OnMessageArrived, NULL);
             int responseCode = MQTTAsync_connect(*m_client.get(), &conn_opts);
@@ -446,6 +455,7 @@ void CWrapper::invokeRemote(const std::string& topic, const std::string& respons
     MQTTProperties_addResponseTopic(opts, responseTopic);
     MQTTProperties_addResponseIdAsCorrData(opts, responseId);
 
+    opts.onSuccess5 = onSendSuccess;
     opts.onFailure5 = onSendFailure;
     auto ctx = std::make_unique<genericContext>(genericContext{getPtr()});
     opts.context = ctx.release();
@@ -465,6 +475,7 @@ void CWrapper::notifyPropertyChange(const std::string& topic, const std::string&
     MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
     MQTTAsync_message pubmsg = MQTTAsync_message_initializer;
 
+    opts.onSuccess5 = onSendSuccess;
     opts.onFailure5 = onSendFailure;
     auto ctx = std::make_unique<genericContext>(genericContext{getPtr()});
     opts.context = ctx.release();
@@ -500,6 +511,7 @@ void CWrapper::notifyInvokeResponse(const std::string& responseTopic, const std:
     correlationDataProperty.value.data = { static_cast<int>(correlationData.size()), const_cast<char*>(correlationData.c_str()) };
     MQTTProperties_add(&(opts.properties), &correlationDataProperty);
 
+    opts.onSuccess5 = onSendSuccess;
     opts.onFailure5 = onSendFailure;
     auto ctx = std::make_unique<genericContext>(genericContext{getPtr()});
     opts.context = ctx.release();

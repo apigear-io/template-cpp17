@@ -20,6 +20,8 @@
 namespace ApiGear {
 namespace MQTT {
 
+struct genericContext;
+
 /**
  * @brief This a simple c++ wrapper for the c MQTT implementation
  * 
@@ -123,6 +125,7 @@ private:
     std::multimap<std::string, TopicInfo> m_toBeSubscribedTopics;
     std::mutex m_toBeUnsubscribedTopicsMutex;
     std::set<std::string> m_toBeUnsubscribedTopics;
+    std::unique_ptr<genericContext> m_connectionContext;
 };
 } // namespace MQTT
 } // namespace ApiGear
