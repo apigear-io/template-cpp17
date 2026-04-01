@@ -1,0 +1,120 @@
+# Sanitizer builds to detect memory errors, data races, and undefined behavior.
+# Tests use continue-on-error: true until all safety issues are fixed.
+
+name: Sanitizer Build & Test
+
+on:
+  pull_request:
+    paths:
+      - 'goldenmaster/**'
+      - 'templates/**'
+      - '.github/workflows/ci_build_sanitizers.yml'
+    branches: [main]
+
+jobs:
+  asan_ubsan:
+    name: "ASan + UBSan (Ubuntu GCC)"
+    runs-on: ubuntu-latest
+    env:
+      CTEST_OUTPUT_ON_FAILURE: 1
+      ASAN_OPTIONS: halt_on_error=0:print_stacktrace=1
+      UBSAN_OPTIONS: halt_on_error=0:print_stacktrace=1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Install dependencies
+        run: sudo apt-get install -y cmake libpoco-dev nlohmann-json3-dev libeigen3-dev
+      - name: Install paho.mqtt.c
+        run: |
+          git clone --branch v1.3.13 --depth 1 https://github.com/eclipse/paho.mqtt.c.git
+          cd paho.mqtt.c
+          cmake -Bbuild -H. -DPAHO_BUILD_SHARED=OFF -DPAHO_BUILD_STATIC=ON -DPAHO_WITH_SSL=ON -DBUILD_TESTING=OFF
+          sudo cmake --build build/ --target install
+      - name: Install catch2
+        run: |
+          git clone --branch v2.13.8 --depth 1 https://github.com/catchorg/Catch2.git
+          cd Catch2
+          cmake -Bbuild -H. -DBUILD_TESTING=OFF
+          sudo cmake --build build/ --target install
+      - name: Start Mosquitto
+        uses: namoshek/mosquitto-github-action@v1
+        with:
+          version: '1.6'
+          ports: '1883:1883'
+          container-name: 'mqtt'
+      - name: Start NATS Server
+        uses: onichandame/nats-action@master
+        with:
+          port: "4222"
+      - name: Configure with ASan + UBSan
+        working-directory: goldenmaster
+        run: |
+          cmake -Bbuild \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer -g" \
+            -DCMAKE_C_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer -g" \
+            -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined" \
+            -DCMAKE_SHARED_LINKER_FLAGS="-fsanitize=address,undefined" \
+            -DBUILD_TESTING=ON \
+            -DTEST_FETCH_DEPS=ON
+      - name: Build
+        working-directory: goldenmaster
+        run: cmake --build build/ --parallel $(nproc)
+      - name: Test
+        working-directory: goldenmaster
+        run: ctest --test-dir build/ --output-on-failure --timeout 300
+        continue-on-error: true
+
+  tsan:
+    name: "TSan (Ubuntu GCC)"
+    runs-on: ubuntu-latest
+    env:
+      CTEST_OUTPUT_ON_FAILURE: 1
+      TSAN_OPTIONS: halt_on_error=0:second_deadlock_stack=1
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Install dependencies
+        run: sudo apt-get install -y cmake libpoco-dev nlohmann-json3-dev libeigen3-dev
+      - name: Install paho.mqtt.c
+        run: |
+          git clone --branch v1.3.13 --depth 1 https://github.com/eclipse/paho.mqtt.c.git
+          cd paho.mqtt.c
+          cmake -Bbuild -H. -DPAHO_BUILD_SHARED=OFF -DPAHO_BUILD_STATIC=ON -DPAHO_WITH_SSL=ON -DBUILD_TESTING=OFF
+          sudo cmake --build build/ --target install
+      - name: Install catch2
+        run: |
+          git clone --branch v2.13.8 --depth 1 https://github.com/catchorg/Catch2.git
+          cd Catch2
+          cmake -Bbuild -H. -DBUILD_TESTING=OFF
+          sudo cmake --build build/ --target install
+      - name: Start Mosquitto
+        uses: namoshek/mosquitto-github-action@v1
+        with:
+          version: '1.6'
+          ports: '1883:1883'
+          container-name: 'mqtt'
+      - name: Start NATS Server
+        uses: onichandame/nats-action@master
+        with:
+          port: "4222"
+      - name: Configure with TSan
+        working-directory: goldenmaster
+        run: |
+          cmake -Bbuild \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_CXX_FLAGS="-fsanitize=thread -fno-omit-frame-pointer -g" \
+            -DCMAKE_C_FLAGS="-fsanitize=thread -fno-omit-frame-pointer -g" \
+            -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=thread" \
+            -DCMAKE_SHARED_LINKER_FLAGS="-fsanitize=thread" \
+            -DBUILD_TESTING=ON \
+            -DTEST_FETCH_DEPS=ON
+      - name: Build
+        working-directory: goldenmaster
+        run: cmake --build build/ --parallel $(nproc)
+      - name: Test
+        working-directory: goldenmaster
+        run: ctest --test-dir build/ --output-on-failure --timeout 300
+        continue-on-error: true
