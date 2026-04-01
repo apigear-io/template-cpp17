@@ -22,6 +22,7 @@ class TEST_TESTBED1_EXPORT StructInterfaceClient : public IStructInterface, publ
 {
 public:
     explicit StructInterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> client);
+    static std::shared_ptr<StructInterfaceClient> create(std::shared_ptr<ApiGear::MQTT::Client> client);
     virtual ~StructInterfaceClient() override;
     const StructBool& getPropBool() const override;
     void setPropBool(const StructBool& propBool) override;

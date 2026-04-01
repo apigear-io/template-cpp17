@@ -17,6 +17,11 @@ EnumInterfaceClient::EnumInterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> 
 {
 }
 
+std::shared_ptr<EnumInterfaceClient> EnumInterfaceClient::create(std::shared_ptr<ApiGear::MQTT::Client> client)
+{
+    return std::make_shared<EnumInterfaceClient>(client);
+}
+
 EnumInterfaceClient::~EnumInterfaceClient()
 {
 }

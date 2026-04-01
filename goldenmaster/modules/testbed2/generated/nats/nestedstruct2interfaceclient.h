@@ -26,7 +26,7 @@ class TEST_TESTBED2_EXPORT NestedStruct2InterfaceClient : public INestedStruct2I
 protected:
     explicit NestedStruct2InterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client);
 public:
-    static std::shared_ptr<NestedStruct2InterfaceClient>create(std::shared_ptr<ApiGear::Nats::Client> client);
+    static std::shared_ptr<NestedStruct2InterfaceClient> create(std::shared_ptr<ApiGear::Nats::Client> client);
     virtual ~NestedStruct2InterfaceClient() override;
     void init();
     const NestedStruct1& getProp1() const override;

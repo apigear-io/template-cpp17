@@ -22,6 +22,7 @@ class TEST_TB_SIMPLE_EXPORT EmptyInterfaceClient : public IEmptyInterface, publi
 {
 public:
     explicit EmptyInterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> client);
+    static std::shared_ptr<EmptyInterfaceClient> create(std::shared_ptr<ApiGear::MQTT::Client> client);
     virtual ~EmptyInterfaceClient() override;
     IEmptyInterfacePublisher& _getPublisher() const override;
 

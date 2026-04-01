@@ -22,6 +22,7 @@ class TEST_TB_SIMPLE_EXPORT VoidInterfaceClient : public IVoidInterface, public 
 {
 public:
     explicit VoidInterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> client);
+    static std::shared_ptr<VoidInterfaceClient> create(std::shared_ptr<ApiGear::MQTT::Client> client);
     virtual ~VoidInterfaceClient() override;
     void funcVoid() override;
     std::future<void> funcVoidAsync( std::function<void(void)> callback = nullptr) override;

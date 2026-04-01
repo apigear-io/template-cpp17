@@ -17,6 +17,11 @@ ManyParamInterfaceClient::ManyParamInterfaceClient(std::shared_ptr<ApiGear::MQTT
 {
 }
 
+std::shared_ptr<ManyParamInterfaceClient> ManyParamInterfaceClient::create(std::shared_ptr<ApiGear::MQTT::Client> client)
+{
+    return std::make_shared<ManyParamInterfaceClient>(client);
+}
+
 ManyParamInterfaceClient::~ManyParamInterfaceClient()
 {
 }

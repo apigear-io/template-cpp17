@@ -26,7 +26,7 @@ class TEST_TESTBED1_EXPORT StructInterfaceClient : public IStructInterface, publ
 protected:
     explicit StructInterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client);
 public:
-    static std::shared_ptr<StructInterfaceClient>create(std::shared_ptr<ApiGear::Nats::Client> client);
+    static std::shared_ptr<StructInterfaceClient> create(std::shared_ptr<ApiGear::Nats::Client> client);
     virtual ~StructInterfaceClient() override;
     void init();
     const StructBool& getPropBool() const override;

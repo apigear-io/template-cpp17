@@ -17,6 +17,11 @@ SameStruct1InterfaceClient::SameStruct1InterfaceClient(std::shared_ptr<ApiGear::
 {
 }
 
+std::shared_ptr<SameStruct1InterfaceClient> SameStruct1InterfaceClient::create(std::shared_ptr<ApiGear::MQTT::Client> client)
+{
+    return std::make_shared<SameStruct1InterfaceClient>(client);
+}
+
 SameStruct1InterfaceClient::~SameStruct1InterfaceClient()
 {
 }

@@ -22,6 +22,7 @@ class TEST_TESTBED2_EXPORT NestedStruct3InterfaceClient : public INestedStruct3I
 {
 public:
     explicit NestedStruct3InterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> client);
+    static std::shared_ptr<NestedStruct3InterfaceClient> create(std::shared_ptr<ApiGear::MQTT::Client> client);
     virtual ~NestedStruct3InterfaceClient() override;
     const NestedStruct1& getProp1() const override;
     void setProp1(const NestedStruct1& prop1) override;

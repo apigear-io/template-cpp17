@@ -17,6 +17,11 @@ StructInterfaceClient::StructInterfaceClient(std::shared_ptr<ApiGear::MQTT::Clie
 {
 }
 
+std::shared_ptr<StructInterfaceClient> StructInterfaceClient::create(std::shared_ptr<ApiGear::MQTT::Client> client)
+{
+    return std::make_shared<StructInterfaceClient>(client);
+}
+
 StructInterfaceClient::~StructInterfaceClient()
 {
 }

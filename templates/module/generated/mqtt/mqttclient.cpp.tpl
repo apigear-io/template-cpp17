@@ -25,6 +25,11 @@ namespace {
 {
 }
 
+std::shared_ptr<{{$class}}> {{$class}}::create(std::shared_ptr<ApiGear::MQTT::Client> client)
+{
+    return std::make_shared<{{$class}}>(client);
+}
+
 {{$class}}::~{{$class}}()
 {
 }

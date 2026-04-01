@@ -26,7 +26,7 @@ class TEST_TB_SIMPLE_EXPORT SimpleArrayInterfaceClient : public ISimpleArrayInte
 protected:
     explicit SimpleArrayInterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client);
 public:
-    static std::shared_ptr<SimpleArrayInterfaceClient>create(std::shared_ptr<ApiGear::Nats::Client> client);
+    static std::shared_ptr<SimpleArrayInterfaceClient> create(std::shared_ptr<ApiGear::Nats::Client> client);
     virtual ~SimpleArrayInterfaceClient() override;
     void init();
     const std::list<bool>& getPropBool() const override;

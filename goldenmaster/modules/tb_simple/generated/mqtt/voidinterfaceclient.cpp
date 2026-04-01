@@ -17,6 +17,11 @@ VoidInterfaceClient::VoidInterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> 
 {
 }
 
+std::shared_ptr<VoidInterfaceClient> VoidInterfaceClient::create(std::shared_ptr<ApiGear::MQTT::Client> client)
+{
+    return std::make_shared<VoidInterfaceClient>(client);
+}
+
 VoidInterfaceClient::~VoidInterfaceClient()
 {
 }

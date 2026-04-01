@@ -26,7 +26,7 @@ class TEST_TB_SIMPLE_EXPORT NoSignalsInterfaceClient : public INoSignalsInterfac
 protected:
     explicit NoSignalsInterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client);
 public:
-    static std::shared_ptr<NoSignalsInterfaceClient>create(std::shared_ptr<ApiGear::Nats::Client> client);
+    static std::shared_ptr<NoSignalsInterfaceClient> create(std::shared_ptr<ApiGear::Nats::Client> client);
     virtual ~NoSignalsInterfaceClient() override;
     void init();
     bool getPropBool() const override;

@@ -26,7 +26,7 @@ class TEST_TESTBED2_EXPORT ManyParamInterfaceClient : public IManyParamInterface
 protected:
     explicit ManyParamInterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client);
 public:
-    static std::shared_ptr<ManyParamInterfaceClient>create(std::shared_ptr<ApiGear::Nats::Client> client);
+    static std::shared_ptr<ManyParamInterfaceClient> create(std::shared_ptr<ApiGear::Nats::Client> client);
     virtual ~ManyParamInterfaceClient() override;
     void init();
     int getProp1() const override;

@@ -17,6 +17,11 @@ NoOperationsInterfaceClient::NoOperationsInterfaceClient(std::shared_ptr<ApiGear
 {
 }
 
+std::shared_ptr<NoOperationsInterfaceClient> NoOperationsInterfaceClient::create(std::shared_ptr<ApiGear::MQTT::Client> client)
+{
+    return std::make_shared<NoOperationsInterfaceClient>(client);
+}
+
 NoOperationsInterfaceClient::~NoOperationsInterfaceClient()
 {
 }

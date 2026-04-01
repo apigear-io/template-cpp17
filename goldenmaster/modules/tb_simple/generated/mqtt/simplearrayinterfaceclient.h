@@ -22,6 +22,7 @@ class TEST_TB_SIMPLE_EXPORT SimpleArrayInterfaceClient : public ISimpleArrayInte
 {
 public:
     explicit SimpleArrayInterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> client);
+    static std::shared_ptr<SimpleArrayInterfaceClient> create(std::shared_ptr<ApiGear::MQTT::Client> client);
     virtual ~SimpleArrayInterfaceClient() override;
     const std::list<bool>& getPropBool() const override;
     void setPropBool(const std::list<bool>& propBool) override;

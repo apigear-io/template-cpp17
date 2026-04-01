@@ -26,7 +26,7 @@ class TEST_TB_SIMPLE_EXPORT NoOperationsInterfaceClient : public INoOperationsIn
 protected:
     explicit NoOperationsInterfaceClient(std::shared_ptr<ApiGear::Nats::Client> client);
 public:
-    static std::shared_ptr<NoOperationsInterfaceClient>create(std::shared_ptr<ApiGear::Nats::Client> client);
+    static std::shared_ptr<NoOperationsInterfaceClient> create(std::shared_ptr<ApiGear::Nats::Client> client);
     virtual ~NoOperationsInterfaceClient() override;
     void init();
     bool getPropBool() const override;

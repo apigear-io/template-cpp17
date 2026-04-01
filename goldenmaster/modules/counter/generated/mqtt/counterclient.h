@@ -22,6 +22,7 @@ class TEST_COUNTER_EXPORT CounterClient : public ICounter, public ApiGear::MQTT:
 {
 public:
     explicit CounterClient(std::shared_ptr<ApiGear::MQTT::Client> client);
+    static std::shared_ptr<CounterClient> create(std::shared_ptr<ApiGear::MQTT::Client> client);
     virtual ~CounterClient() override;
     const Test::CustomTypes::Vector3D& getVector() const override;
     void setVector(const Test::CustomTypes::Vector3D& vector) override;

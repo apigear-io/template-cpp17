@@ -22,6 +22,7 @@ class TEST_TB_ENUM_EXPORT EnumInterfaceClient : public IEnumInterface, public Ap
 {
 public:
     explicit EnumInterfaceClient(std::shared_ptr<ApiGear::MQTT::Client> client);
+    static std::shared_ptr<EnumInterfaceClient> create(std::shared_ptr<ApiGear::MQTT::Client> client);
     virtual ~EnumInterfaceClient() override;
     Enum0Enum getProp0() const override;
     void setProp0(Enum0Enum prop0) override;

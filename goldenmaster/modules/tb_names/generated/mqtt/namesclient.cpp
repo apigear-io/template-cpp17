@@ -17,6 +17,11 @@ Nam_EsClient::Nam_EsClient(std::shared_ptr<ApiGear::MQTT::Client> client)
 {
 }
 
+std::shared_ptr<Nam_EsClient> Nam_EsClient::create(std::shared_ptr<ApiGear::MQTT::Client> client)
+{
+    return std::make_shared<Nam_EsClient>(client);
+}
+
 Nam_EsClient::~Nam_EsClient()
 {
 }
