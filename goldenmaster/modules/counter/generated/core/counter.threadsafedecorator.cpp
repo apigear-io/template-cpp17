@@ -51,6 +51,9 @@ void CounterThreadSafeDecorator::setVector(const Test::CustomTypes::Vector3D& ve
 
 const Test::CustomTypes::Vector3D& CounterThreadSafeDecorator::getVector() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_vectorMutex);
     return m_impl->getVector();
 }
@@ -62,6 +65,9 @@ void CounterThreadSafeDecorator::setExternVector(const Eigen::Vector3f& extern_v
 
 const Eigen::Vector3f& CounterThreadSafeDecorator::getExternVector() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_externVectorMutex);
     return m_impl->getExternVector();
 }
@@ -73,6 +79,9 @@ void CounterThreadSafeDecorator::setVectorArray(const std::list<Test::CustomType
 
 const std::list<Test::CustomTypes::Vector3D>& CounterThreadSafeDecorator::getVectorArray() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_vectorArrayMutex);
     return m_impl->getVectorArray();
 }
@@ -84,6 +93,9 @@ void CounterThreadSafeDecorator::setExternVectorArray(const std::list<Eigen::Vec
 
 const std::list<Eigen::Vector3f>& CounterThreadSafeDecorator::getExternVectorArray() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_externVectorArrayMutex);
     return m_impl->getExternVectorArray();
 }

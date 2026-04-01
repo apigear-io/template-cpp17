@@ -87,6 +87,9 @@ void SimpleArrayInterfaceThreadSafeDecorator::setPropBool(const std::list<bool>&
 
 const std::list<bool>& SimpleArrayInterfaceThreadSafeDecorator::getPropBool() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_propBoolMutex);
     return m_impl->getPropBool();
 }
@@ -98,6 +101,9 @@ void SimpleArrayInterfaceThreadSafeDecorator::setPropInt(const std::list<int>& p
 
 const std::list<int>& SimpleArrayInterfaceThreadSafeDecorator::getPropInt() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_propIntMutex);
     return m_impl->getPropInt();
 }
@@ -109,6 +115,9 @@ void SimpleArrayInterfaceThreadSafeDecorator::setPropInt32(const std::list<int32
 
 const std::list<int32_t>& SimpleArrayInterfaceThreadSafeDecorator::getPropInt32() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_propInt32Mutex);
     return m_impl->getPropInt32();
 }
@@ -120,6 +129,9 @@ void SimpleArrayInterfaceThreadSafeDecorator::setPropInt64(const std::list<int64
 
 const std::list<int64_t>& SimpleArrayInterfaceThreadSafeDecorator::getPropInt64() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_propInt64Mutex);
     return m_impl->getPropInt64();
 }
@@ -131,6 +143,9 @@ void SimpleArrayInterfaceThreadSafeDecorator::setPropFloat(const std::list<float
 
 const std::list<float>& SimpleArrayInterfaceThreadSafeDecorator::getPropFloat() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_propFloatMutex);
     return m_impl->getPropFloat();
 }
@@ -142,6 +157,9 @@ void SimpleArrayInterfaceThreadSafeDecorator::setPropFloat32(const std::list<flo
 
 const std::list<float>& SimpleArrayInterfaceThreadSafeDecorator::getPropFloat32() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_propFloat32Mutex);
     return m_impl->getPropFloat32();
 }
@@ -153,6 +171,9 @@ void SimpleArrayInterfaceThreadSafeDecorator::setPropFloat64(const std::list<dou
 
 const std::list<double>& SimpleArrayInterfaceThreadSafeDecorator::getPropFloat64() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_propFloat64Mutex);
     return m_impl->getPropFloat64();
 }
@@ -164,12 +185,18 @@ void SimpleArrayInterfaceThreadSafeDecorator::setPropString(const std::list<std:
 
 const std::list<std::string>& SimpleArrayInterfaceThreadSafeDecorator::getPropString() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_propStringMutex);
     return m_impl->getPropString();
 }
 
 const std::string& SimpleArrayInterfaceThreadSafeDecorator::getPropReadOnlyString() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_propReadOnlyStringMutex);
     return m_impl->getPropReadOnlyString();
 }

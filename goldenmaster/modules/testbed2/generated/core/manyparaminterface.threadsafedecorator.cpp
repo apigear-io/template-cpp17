@@ -51,6 +51,9 @@ void ManyParamInterfaceThreadSafeDecorator::setProp1(int prop1)
 
 int ManyParamInterfaceThreadSafeDecorator::getProp1() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_prop1Mutex);
     return m_impl->getProp1();
 }
@@ -62,6 +65,9 @@ void ManyParamInterfaceThreadSafeDecorator::setProp2(int prop2)
 
 int ManyParamInterfaceThreadSafeDecorator::getProp2() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_prop2Mutex);
     return m_impl->getProp2();
 }
@@ -73,6 +79,9 @@ void ManyParamInterfaceThreadSafeDecorator::setProp3(int prop3)
 
 int ManyParamInterfaceThreadSafeDecorator::getProp3() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_prop3Mutex);
     return m_impl->getProp3();
 }
@@ -84,6 +93,9 @@ void ManyParamInterfaceThreadSafeDecorator::setProp4(int prop4)
 
 int ManyParamInterfaceThreadSafeDecorator::getProp4() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_prop4Mutex);
     return m_impl->getProp4();
 }

@@ -33,6 +33,9 @@ void NoSignalsInterfaceThreadSafeDecorator::setPropBool(bool propBool)
 
 bool NoSignalsInterfaceThreadSafeDecorator::getPropBool() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_propBoolMutex);
     return m_impl->getPropBool();
 }
@@ -44,6 +47,9 @@ void NoSignalsInterfaceThreadSafeDecorator::setPropInt(int propInt)
 
 int NoSignalsInterfaceThreadSafeDecorator::getPropInt() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_propIntMutex);
     return m_impl->getPropInt();
 }
