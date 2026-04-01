@@ -65,7 +65,7 @@ jobs:
         working-directory: goldenmaster
         run: |
           cmake -Bbuild \
-            -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+            -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/deps \
             -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer" \
             -DCMAKE_C_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer" \
@@ -133,7 +133,7 @@ jobs:
         working-directory: goldenmaster
         run: |
           cmake -Bbuild \
-            -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+            -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/deps \
             -DCMAKE_CXX_FLAGS="-fsanitize=thread -fno-omit-frame-pointer" \
             -DCMAKE_C_FLAGS="-fsanitize=thread -fno-omit-frame-pointer" \
