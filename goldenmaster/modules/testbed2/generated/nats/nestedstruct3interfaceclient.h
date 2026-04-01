@@ -13,6 +13,14 @@
 namespace Test {
 namespace Testbed2 {
 namespace Nats {
+/**
+ * @brief NATS adapter for NestedStruct3Interface.
+ *
+ * @note Threading: property-change and signal callbacks arrive on the NATS transport thread.
+ * Subscription management inside the publisher is thread safe, but the callbacks themselves
+ * execute without additional locking. Operation calls are not additionally synchronized —
+ * callers are responsible for thread safety of concurrent operation invocations.
+ */
 class TEST_TESTBED2_EXPORT NestedStruct3InterfaceClient : public INestedStruct3Interface, public ApiGear::Nats::BaseAdapter,  public std::enable_shared_from_this<NestedStruct3InterfaceClient>
 {
 protected:

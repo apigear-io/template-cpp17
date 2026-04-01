@@ -8,15 +8,16 @@
 namespace Test {
 namespace TbSimple {
 
-/** 
+/**
 * @brief The NoPropertiesInterfaceThreadSafeDecorator can be used to make property access thread safe.
 *
-* Each property is guarded with its own mutex.
-* Multiple read/get operations can occur at the same time but only one write/set operation at a time.
+* Each property is guarded with its own @c std::shared_timed_mutex — multiple concurrent
+* get calls are allowed, but a set call is exclusive.
 *
-* Operations are not guarded by default since the function logic can be too complex than to simply lock it.
-* However, functions can be locked by just adding the same mechanism in the implementation file of
-* the NoPropertiesInterface interface.
+* @note Operation (method) calls are NOT guarded by this decorator. If the underlying
+* implementation is not thread safe, callers must coordinate access to operations themselves.
+* Operations can be locked by adding the same mutex mechanism in the concrete
+* implementation of NoPropertiesInterface.
 * @see NoPropertiesInterface
 *
 \code{.cpp}

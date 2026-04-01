@@ -20,6 +20,14 @@
 namespace {{ Camel .System.Name }} {
 namespace {{ Camel .Module.Name }} {
 namespace Nats {
+/**
+ * @brief NATS adapter for {{$interfaceNameOriginal}}.
+ *
+ * @note Threading: property-change and signal callbacks arrive on the NATS transport thread.
+ * Subscription management inside the publisher is thread safe, but the callbacks themselves
+ * execute without additional locking. Operation calls are not additionally synchronized —
+ * callers are responsible for thread safety of concurrent operation invocations.
+ */
 class {{ SNAKE .System.Name  }}_{{ SNAKE .Module.Name  }}_EXPORT {{$class}} : public {{$interfaceClass}}, public ApiGear::Nats::BaseAdapter,  public std::enable_shared_from_this<{{$class}}>
 {
 protected:

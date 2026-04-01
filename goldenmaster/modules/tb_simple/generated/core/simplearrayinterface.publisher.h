@@ -19,7 +19,9 @@ namespace TbSimple {
  * Use this class to store clients of the SimpleArrayInterface and inform them about the change
  * on call of the appropriate publish function.
  *
- * @warning This class is thread safe, but the subscribed classes or functions are not protected.
+ * @warning Subscription management (subscribe/unsubscribe) is thread safe. However, subscriber
+ * callbacks are invoked without holding any internal lock — the subscriber itself must be
+ * thread safe if it can be called from multiple threads.
  */
 class TEST_TB_SIMPLE_EXPORT SimpleArrayInterfacePublisher : public ISimpleArrayInterfacePublisher
 {

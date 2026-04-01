@@ -13,6 +13,14 @@
 namespace Test {
 namespace TbNames {
 namespace Nats {
+/**
+ * @brief NATS adapter for Nam_Es.
+ *
+ * @note Threading: property-change and signal callbacks arrive on the NATS transport thread.
+ * Subscription management inside the publisher is thread safe, but the callbacks themselves
+ * execute without additional locking. Operation calls are not additionally synchronized —
+ * callers are responsible for thread safety of concurrent operation invocations.
+ */
 class TEST_TB_NAMES_EXPORT Nam_EsClient : public INamEs, public ApiGear::Nats::BaseAdapter,  public std::enable_shared_from_this<Nam_EsClient>
 {
 protected:
