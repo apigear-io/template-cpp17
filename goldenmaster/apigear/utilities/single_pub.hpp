@@ -28,10 +28,12 @@ public:
     }
     void publishChange(Arguments... params) const
     {
-        std::shared_lock<std::shared_timed_mutex> lock(m_callbacksMutex);
-        const auto callbacks = m_callbacks;
-        lock.unlock();
-        for (const auto& callbackEntry : callbacks)
+        decltype(m_callbacks) callbacksCopy;
+        {
+            std::shared_lock<std::shared_timed_mutex> lock(m_callbacksMutex);
+            callbacksCopy = m_callbacks;
+        }
+        for (const auto& callbackEntry : callbacksCopy)
         {
             if (callbackEntry.second)
             {
