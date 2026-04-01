@@ -14,11 +14,8 @@ Copyright (C) 2020 ApiGear UG
 
 using namespace ApiGear::PocoImpl;
 
-static bool isbusy = false;
-
 Tracer::Tracer()
     : m_traceUrl(Poco::URI(""))
-    , m_session(nullptr)
     , m_task(nullptr)
 {
 }
@@ -27,7 +24,7 @@ void Tracer::connect(const std::string& baseUrl, const std::string& identifier)
 {
     std::string gatewayUrl = baseUrl+"/monitor/"+identifier+"/";
     m_traceUrl = Poco::URI(gatewayUrl);
-    m_session = nullptr;
+    m_session.reset();
     if (!m_task.isNull())
     {
         m_task->cancel();
@@ -43,9 +40,9 @@ void Tracer::connect()
     }
     if(m_session == nullptr) {
         try {
-            m_session = new Poco::Net::HTTPClientSession(m_traceUrl.getHost(), m_traceUrl.getPort());
+            m_session = std::make_unique<Poco::Net::HTTPClientSession>(m_traceUrl.getHost(), m_traceUrl.getPort());
         } catch (std::exception &e) {
-            m_session = nullptr;
+            m_session.reset();
             AG_LOG_ERROR("tracer doProcess Exception " + std::string(e.what()));
         }
     }
@@ -58,7 +55,10 @@ void Tracer::trace(const std::string &eventType, const std::string &symbol, cons
     obj["symbol"] = symbol;
     obj["data"] = fields;
 
-    m_queueMutex.lock(100);
+    if (!m_queueMutex.tryLock(100)) {
+        AG_LOG_WARNING("Tracer: failed to acquire queue lock within timeout");
+        return;
+    }
     m_queue.push_back(obj);
     m_queueMutex.unlock();
     process();
@@ -91,7 +91,7 @@ void Tracer::process()
 
 void Tracer::doProcess(Poco::Util::TimerTask& task)
 {
-    if(isbusy) {
+    if(m_busy) {
         AG_LOG_DEBUG("still busy ... skipping");
         return;
     }
@@ -104,16 +104,20 @@ void Tracer::doProcess(Poco::Util::TimerTask& task)
         return;
     }
 
-    isbusy = true;
+    m_busy = true;
     Poco::Net::HTTPRequest request(Poco::Net::HTTPRequest::HTTP_POST, m_traceUrl.getPath(), Poco::Net::HTTPMessage::HTTP_1_1);
     request.setKeepAlive(true);
     request.setContentType("application/json; charset=utf-8");
     Poco::Net::HTTPResponse response;
     nlohmann::json list;
-    m_queueMutex.lock(100);
+    if (!m_queueMutex.tryLock(100)) {
+        AG_LOG_WARNING("Tracer: failed to acquire queue lock within timeout");
+        m_busy = false;
+        return;
+    }
     if(m_queue.empty())
     {
-        isbusy = false;
+        m_busy = false;
         m_queueMutex.unlock();
         return;
     }
@@ -140,16 +144,20 @@ void Tracer::doProcess(Poco::Util::TimerTask& task)
     }
 
     if(retry) {
-        m_queueMutex.lock(100);
+        if (!m_queueMutex.tryLock(100)) {
+            AG_LOG_WARNING("Tracer: failed to acquire queue lock within timeout");
+            m_busy = false;
+            return;
+        }
         for(const auto& entry: list) {
             m_queue.push_front(entry);
         }
         m_queueMutex.unlock();
-        
+
         m_task->cancel();
         connect();
         m_task = new Poco::Util::TimerTaskAdapter<Tracer>(*this, &Tracer::doProcess);
         m_retryTimer.schedule(m_task, 5000, 5000);
     }
-    isbusy = false;
+    m_busy = false;
 }

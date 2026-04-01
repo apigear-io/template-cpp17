@@ -22,6 +22,8 @@ Copyright (C) 2020 ApiGear UG
 #define JSON_USE_IMPLICIT_CONVERSIONS 0
 #endif
 #include <nlohmann/json.hpp>
+#include <atomic>
+#include <memory>
 #include <string>
 #include <map>
 #include <queue>
@@ -56,7 +58,8 @@ private:
     std::deque<nlohmann::json> m_queue;
     Poco::Mutex m_queueMutex;
     Poco::URI m_traceUrl;
-    Poco::Net::HTTPClientSession* m_session;
+    std::unique_ptr<Poco::Net::HTTPClientSession> m_session;
+    std::atomic<bool> m_busy{false};
     Poco::Util::Timer m_retryTimer;
     Poco::Util::TimerTask::Ptr m_task;
 };
