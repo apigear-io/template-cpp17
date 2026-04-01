@@ -115,6 +115,8 @@ private:
         NotLinked
     };
     std::map<std::string, LinkStatus> m_objectLinkStatus;
+    /** Mutex protecting m_objectLinkStatus from concurrent access. */
+    mutable std::mutex m_objectLinkStatusMutex;
 
     /** The server url to which socket connects. */
     Poco::URI m_serverUrl;

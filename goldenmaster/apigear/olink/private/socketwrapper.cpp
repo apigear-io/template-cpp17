@@ -42,9 +42,16 @@ void SocketWrapper::startReceiving()
             // receiveFrame requires pocobuffer with initial size 0, as it always extends it with adding frame content.
             Poco::Buffer<char> pocobuffer(0);
             int flags;
+            // Poll without holding the mutex to avoid blocking writes.
+            // The socket pointer may become null between poll and receiveFrame
+            // (TOCTOU), but we re-check under lock before using it.
             auto canSocketRead = m_socket ? m_socket->poll(Poco::Timespan(10000), Poco::Net::WebSocket::SELECT_READ) : false;
-            if (canSocketRead && !m_disconnectRequested && m_socket) {
+            if (canSocketRead && !m_disconnectRequested) {
                 std::unique_lock<std::timed_mutex> lock(m_socketMutex);
+                // Re-check socket validity under lock to close the TOCTOU gap
+                if (!m_socket || m_disconnectRequested) {
+                    continue;
+                }
                 auto frameSize = m_socket->receiveFrame(pocobuffer, flags);
                 lock.unlock();
                 auto messagePayload = std::string(pocobuffer.begin(), static_cast<size_t>(frameSize));
