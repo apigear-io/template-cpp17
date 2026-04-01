@@ -37,6 +37,20 @@ jobs:
           cd Catch2
           cmake -Bbuild -H. -DBUILD_TESTING=OFF
           sudo cmake --build build/ --target install
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: "pip"
+          cache-dependency-path: ".github/workflows/conan-requirements.txt"
+      - name: Install Conan
+        run: pip3 install -r .github/workflows/conan-requirements.txt
+      - name: Create default profile
+        run: conan profile detect
+      - name: Install nats using conan
+        run: |
+          mkdir -p deps
+          cd deps && conan install --requires=cnats/3.9.1@ --build missing -o nats/*:shared=False -o nats/*:fPIC=True -o nats/*:with_tls=False -o nats/*:with_sodium=False -o nats/*:enable_streaming=False --generator CMakeDeps --generator VirtualBuildEnv
       - name: Start Mosquitto
         uses: namoshek/mosquitto-github-action@v1
         with:
@@ -52,6 +66,7 @@ jobs:
         run: |
           cmake -Bbuild \
             -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/deps \
             -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer -g" \
             -DCMAKE_C_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer -g" \
             -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined" \
@@ -90,6 +105,20 @@ jobs:
           cd Catch2
           cmake -Bbuild -H. -DBUILD_TESTING=OFF
           sudo cmake --build build/ --target install
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: "pip"
+          cache-dependency-path: ".github/workflows/conan-requirements.txt"
+      - name: Install Conan
+        run: pip3 install -r .github/workflows/conan-requirements.txt
+      - name: Create default profile
+        run: conan profile detect
+      - name: Install nats using conan
+        run: |
+          mkdir -p deps
+          cd deps && conan install --requires=cnats/3.9.1@ --build missing -o nats/*:shared=False -o nats/*:fPIC=True -o nats/*:with_tls=False -o nats/*:with_sodium=False -o nats/*:enable_streaming=False --generator CMakeDeps --generator VirtualBuildEnv
       - name: Start Mosquitto
         uses: namoshek/mosquitto-github-action@v1
         with:
@@ -105,6 +134,7 @@ jobs:
         run: |
           cmake -Bbuild \
             -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/deps \
             -DCMAKE_CXX_FLAGS="-fsanitize=thread -fno-omit-frame-pointer -g" \
             -DCMAKE_C_FLAGS="-fsanitize=thread -fno-omit-frame-pointer -g" \
             -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=thread" \
