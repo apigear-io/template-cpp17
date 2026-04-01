@@ -356,6 +356,8 @@ features:
           raw: true
         - source: "apigear/utilities/tests/test_fuzzy_compare.cpp"
           raw: true
+        - source: "apigear/utilities/tests/test_threadpool.cpp"
+          raw: true
         - source: "apigear/utilities/tests/test_main.cpp"
           raw: true
         - source: "apigear/CMakeLists.txt"
