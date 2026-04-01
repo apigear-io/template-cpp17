@@ -52,6 +52,7 @@ std::string {{$class}}::olinkObjectName() {
 }
 
 nlohmann::json {{$class}}::olinkInvoke(const std::string& methodId, const nlohmann::json& fcnArgs) {
+    try {
 {{- if len .Interface.Operations }}
 {{- $paramsUsed := false}}
 {{- range .Interface.Operations }}
@@ -69,7 +70,7 @@ nlohmann::json {{$class}}::olinkInvoke(const std::string& methodId, const nlohma
     if(memberMethod == "{{$operation.Name}}") {
 {{- range $idx, $elem := $operation.Params }}
 {{- $param := . }}
-        const {{cppType "" $param}}& {{$param}} = fcnArgs.at({{ $idx}});      
+        const {{cppType "" $param}}& {{$param}} = fcnArgs.at({{ $idx}});
 {{- end }}
     {{- if .Return.IsVoid }}
         m_{{$interfaceNameOriginal}}->{{lower1 $operation.Name}}({{ cppVars $operation.Params }});
@@ -85,9 +86,14 @@ nlohmann::json {{$class}}::olinkInvoke(const std::string& methodId, const nlohma
     (void) memberMethod;
 {{- end }}
     return nlohmann::json();
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in {{$interfaceName}}: " + std::string(e.what()));
+        return nlohmann::json();
+    }
 }
 
 void {{$class}}::olinkSetProperty(const std::string& propertyId, const nlohmann::json& value) {
+    try {
     AG_LOG_DEBUG("{{$class}} set property " + propertyId);
     const auto& memberProperty = ApiGear::ObjectLink::Name::getMemberName(propertyId);
 {{- range .Interface.Properties}}
@@ -102,7 +108,10 @@ void {{$class}}::olinkSetProperty(const std::string& propertyId, const nlohmann:
     // no properties to set {{- /* we generate anyway for consistency */}}
     (void) value;
     (void) memberProperty;
-{{- end }} 
+{{- end }}
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in {{$interfaceName}}: " + std::string(e.what()));
+    }
 }
 
 void {{$class}}::olinkLinked(const std::string& objectId, ApiGear::ObjectLink::IRemoteNode* /*node*/) {

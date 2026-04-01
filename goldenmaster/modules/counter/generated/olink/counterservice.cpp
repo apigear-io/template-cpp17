@@ -40,6 +40,7 @@ std::string CounterService::olinkObjectName() {
 }
 
 nlohmann::json CounterService::olinkInvoke(const std::string& methodId, const nlohmann::json& fcnArgs) {
+    try {
     AG_LOG_DEBUG("CounterService invoke " + methodId);
     const auto& memberMethod = ApiGear::ObjectLink::Name::getMemberName(methodId);
     if(memberMethod == "increment") {
@@ -63,9 +64,14 @@ nlohmann::json CounterService::olinkInvoke(const std::string& methodId, const nl
         return result;
     }
     return nlohmann::json();
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in Counter: " + std::string(e.what()));
+        return nlohmann::json();
+    }
 }
 
 void CounterService::olinkSetProperty(const std::string& propertyId, const nlohmann::json& value) {
+    try {
     AG_LOG_DEBUG("CounterService set property " + propertyId);
     const auto& memberProperty = ApiGear::ObjectLink::Name::getMemberName(propertyId);
     if(memberProperty == "vector") {
@@ -83,7 +89,10 @@ void CounterService::olinkSetProperty(const std::string& propertyId, const nlohm
     if(memberProperty == "extern_vectorArray") {
         std::list<Eigen::Vector3f> extern_vectorArray = value.get<std::list<Eigen::Vector3f>>();
         m_Counter->setExternVectorArray(extern_vectorArray);
-    } 
+    }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in Counter: " + std::string(e.what()));
+    }
 }
 
 void CounterService::olinkLinked(const std::string& objectId, ApiGear::ObjectLink::IRemoteNode* /*node*/) {

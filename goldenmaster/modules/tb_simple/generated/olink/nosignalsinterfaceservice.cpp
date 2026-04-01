@@ -38,6 +38,7 @@ std::string NoSignalsInterfaceService::olinkObjectName() {
 }
 
 nlohmann::json NoSignalsInterfaceService::olinkInvoke(const std::string& methodId, const nlohmann::json& fcnArgs) {
+    try {
     AG_LOG_DEBUG("NoSignalsInterfaceService invoke " + methodId);
     const auto& memberMethod = ApiGear::ObjectLink::Name::getMemberName(methodId);
     if(memberMethod == "funcVoid") {
@@ -50,9 +51,14 @@ nlohmann::json NoSignalsInterfaceService::olinkInvoke(const std::string& methodI
         return result;
     }
     return nlohmann::json();
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in NoSignalsInterface: " + std::string(e.what()));
+        return nlohmann::json();
+    }
 }
 
 void NoSignalsInterfaceService::olinkSetProperty(const std::string& propertyId, const nlohmann::json& value) {
+    try {
     AG_LOG_DEBUG("NoSignalsInterfaceService set property " + propertyId);
     const auto& memberProperty = ApiGear::ObjectLink::Name::getMemberName(propertyId);
     if(memberProperty == "propBool") {
@@ -62,7 +68,10 @@ void NoSignalsInterfaceService::olinkSetProperty(const std::string& propertyId, 
     if(memberProperty == "propInt") {
         int propInt = value.get<int>();
         m_NoSignalsInterface->setPropInt(propInt);
-    } 
+    }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in NoSignalsInterface: " + std::string(e.what()));
+    }
 }
 
 void NoSignalsInterfaceService::olinkLinked(const std::string& objectId, ApiGear::ObjectLink::IRemoteNode* /*node*/) {

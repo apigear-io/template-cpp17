@@ -38,6 +38,7 @@ std::string SameEnum2InterfaceService::olinkObjectName() {
 }
 
 nlohmann::json SameEnum2InterfaceService::olinkInvoke(const std::string& methodId, const nlohmann::json& fcnArgs) {
+    try {
     AG_LOG_DEBUG("SameEnum2InterfaceService invoke " + methodId);
     const auto& memberMethod = ApiGear::ObjectLink::Name::getMemberName(methodId);
     if(memberMethod == "func1") {
@@ -52,9 +53,14 @@ nlohmann::json SameEnum2InterfaceService::olinkInvoke(const std::string& methodI
         return result;
     }
     return nlohmann::json();
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in SameEnum2Interface: " + std::string(e.what()));
+        return nlohmann::json();
+    }
 }
 
 void SameEnum2InterfaceService::olinkSetProperty(const std::string& propertyId, const nlohmann::json& value) {
+    try {
     AG_LOG_DEBUG("SameEnum2InterfaceService set property " + propertyId);
     const auto& memberProperty = ApiGear::ObjectLink::Name::getMemberName(propertyId);
     if(memberProperty == "prop1") {
@@ -64,7 +70,10 @@ void SameEnum2InterfaceService::olinkSetProperty(const std::string& propertyId, 
     if(memberProperty == "prop2") {
         Enum2Enum prop2 = value.get<Enum2Enum>();
         m_SameEnum2Interface->setProp2(prop2);
-    } 
+    }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in SameEnum2Interface: " + std::string(e.what()));
+    }
 }
 
 void SameEnum2InterfaceService::olinkLinked(const std::string& objectId, ApiGear::ObjectLink::IRemoteNode* /*node*/) {

@@ -38,6 +38,7 @@ std::string StructInterfaceService::olinkObjectName() {
 }
 
 nlohmann::json StructInterfaceService::olinkInvoke(const std::string& methodId, const nlohmann::json& fcnArgs) {
+    try {
     AG_LOG_DEBUG("StructInterfaceService invoke " + methodId);
     const auto& memberMethod = ApiGear::ObjectLink::Name::getMemberName(methodId);
     if(memberMethod == "funcBool") {
@@ -61,9 +62,14 @@ nlohmann::json StructInterfaceService::olinkInvoke(const std::string& methodId, 
         return result;
     }
     return nlohmann::json();
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in StructInterface: " + std::string(e.what()));
+        return nlohmann::json();
+    }
 }
 
 void StructInterfaceService::olinkSetProperty(const std::string& propertyId, const nlohmann::json& value) {
+    try {
     AG_LOG_DEBUG("StructInterfaceService set property " + propertyId);
     const auto& memberProperty = ApiGear::ObjectLink::Name::getMemberName(propertyId);
     if(memberProperty == "propBool") {
@@ -81,7 +87,10 @@ void StructInterfaceService::olinkSetProperty(const std::string& propertyId, con
     if(memberProperty == "propString") {
         StructString propString = value.get<StructString>();
         m_StructInterface->setPropString(propString);
-    } 
+    }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in StructInterface: " + std::string(e.what()));
+    }
 }
 
 void StructInterfaceService::olinkLinked(const std::string& objectId, ApiGear::ObjectLink::IRemoteNode* /*node*/) {

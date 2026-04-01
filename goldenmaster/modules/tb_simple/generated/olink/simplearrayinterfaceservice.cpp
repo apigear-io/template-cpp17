@@ -38,6 +38,7 @@ std::string SimpleArrayInterfaceService::olinkObjectName() {
 }
 
 nlohmann::json SimpleArrayInterfaceService::olinkInvoke(const std::string& methodId, const nlohmann::json& fcnArgs) {
+    try {
     AG_LOG_DEBUG("SimpleArrayInterfaceService invoke " + methodId);
     const auto& memberMethod = ApiGear::ObjectLink::Name::getMemberName(methodId);
     if(memberMethod == "funcBool") {
@@ -81,9 +82,14 @@ nlohmann::json SimpleArrayInterfaceService::olinkInvoke(const std::string& metho
         return result;
     }
     return nlohmann::json();
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in SimpleArrayInterface: " + std::string(e.what()));
+        return nlohmann::json();
+    }
 }
 
 void SimpleArrayInterfaceService::olinkSetProperty(const std::string& propertyId, const nlohmann::json& value) {
+    try {
     AG_LOG_DEBUG("SimpleArrayInterfaceService set property " + propertyId);
     const auto& memberProperty = ApiGear::ObjectLink::Name::getMemberName(propertyId);
     if(memberProperty == "propBool") {
@@ -117,7 +123,10 @@ void SimpleArrayInterfaceService::olinkSetProperty(const std::string& propertyId
     if(memberProperty == "propString") {
         std::list<std::string> propString = value.get<std::list<std::string>>();
         m_SimpleArrayInterface->setPropString(propString);
-    } 
+    }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in SimpleArrayInterface: " + std::string(e.what()));
+    }
 }
 
 void SimpleArrayInterfaceService::olinkLinked(const std::string& objectId, ApiGear::ObjectLink::IRemoteNode* /*node*/) {
