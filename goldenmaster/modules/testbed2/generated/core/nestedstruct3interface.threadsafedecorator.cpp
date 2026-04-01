@@ -42,6 +42,9 @@ void NestedStruct3InterfaceThreadSafeDecorator::setProp1(const NestedStruct1& pr
 
 const NestedStruct1& NestedStruct3InterfaceThreadSafeDecorator::getProp1() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_prop1Mutex);
     return m_impl->getProp1();
 }
@@ -53,6 +56,9 @@ void NestedStruct3InterfaceThreadSafeDecorator::setProp2(const NestedStruct2& pr
 
 const NestedStruct2& NestedStruct3InterfaceThreadSafeDecorator::getProp2() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_prop2Mutex);
     return m_impl->getProp2();
 }
@@ -64,6 +70,9 @@ void NestedStruct3InterfaceThreadSafeDecorator::setProp3(const NestedStruct3& pr
 
 const NestedStruct3& NestedStruct3InterfaceThreadSafeDecorator::getProp3() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_prop3Mutex);
     return m_impl->getProp3();
 }

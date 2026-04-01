@@ -24,6 +24,9 @@ void SameEnum1InterfaceThreadSafeDecorator::setProp1(Enum1Enum prop1)
 
 Enum1Enum SameEnum1InterfaceThreadSafeDecorator::getProp1() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_prop1Mutex);
     return m_impl->getProp1();
 }

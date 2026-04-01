@@ -105,6 +105,9 @@ void SimpleInterfaceThreadSafeDecorator::setPropBool(bool propBool)
 
 bool SimpleInterfaceThreadSafeDecorator::getPropBool() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_propBoolMutex);
     return m_impl->getPropBool();
 }
@@ -116,6 +119,9 @@ void SimpleInterfaceThreadSafeDecorator::setPropInt(int propInt)
 
 int SimpleInterfaceThreadSafeDecorator::getPropInt() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_propIntMutex);
     return m_impl->getPropInt();
 }
@@ -127,6 +133,9 @@ void SimpleInterfaceThreadSafeDecorator::setPropInt32(int32_t propInt32)
 
 int32_t SimpleInterfaceThreadSafeDecorator::getPropInt32() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_propInt32Mutex);
     return m_impl->getPropInt32();
 }
@@ -138,6 +147,9 @@ void SimpleInterfaceThreadSafeDecorator::setPropInt64(int64_t propInt64)
 
 int64_t SimpleInterfaceThreadSafeDecorator::getPropInt64() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_propInt64Mutex);
     return m_impl->getPropInt64();
 }
@@ -149,6 +161,9 @@ void SimpleInterfaceThreadSafeDecorator::setPropFloat(float propFloat)
 
 float SimpleInterfaceThreadSafeDecorator::getPropFloat() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_propFloatMutex);
     return m_impl->getPropFloat();
 }
@@ -160,6 +175,9 @@ void SimpleInterfaceThreadSafeDecorator::setPropFloat32(float propFloat32)
 
 float SimpleInterfaceThreadSafeDecorator::getPropFloat32() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_propFloat32Mutex);
     return m_impl->getPropFloat32();
 }
@@ -171,6 +189,9 @@ void SimpleInterfaceThreadSafeDecorator::setPropFloat64(double propFloat64)
 
 double SimpleInterfaceThreadSafeDecorator::getPropFloat64() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_propFloat64Mutex);
     return m_impl->getPropFloat64();
 }
@@ -182,6 +203,9 @@ void SimpleInterfaceThreadSafeDecorator::setPropString(const std::string& propSt
 
 const std::string& SimpleInterfaceThreadSafeDecorator::getPropString() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_propStringMutex);
     return m_impl->getPropString();
 }

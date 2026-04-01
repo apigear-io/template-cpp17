@@ -33,6 +33,9 @@ void NestedStruct2InterfaceThreadSafeDecorator::setProp1(const NestedStruct1& pr
 
 const NestedStruct1& NestedStruct2InterfaceThreadSafeDecorator::getProp1() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_prop1Mutex);
     return m_impl->getProp1();
 }
@@ -44,6 +47,9 @@ void NestedStruct2InterfaceThreadSafeDecorator::setProp2(const NestedStruct2& pr
 
 const NestedStruct2& NestedStruct2InterfaceThreadSafeDecorator::getProp2() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_prop2Mutex);
     return m_impl->getProp2();
 }

@@ -33,6 +33,9 @@ void NamEsThreadSafeDecorator::setSwitch(bool Switch)
 
 bool NamEsThreadSafeDecorator::getSwitch() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_switchMutex);
     return m_impl->getSwitch();
 }
@@ -44,6 +47,9 @@ void NamEsThreadSafeDecorator::setSomeProperty(int SOME_PROPERTY)
 
 int NamEsThreadSafeDecorator::getSomeProperty() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_somePropertyMutex);
     return m_impl->getSomeProperty();
 }
@@ -55,6 +61,9 @@ void NamEsThreadSafeDecorator::setSomePoperty2(int Some_Poperty2)
 
 int NamEsThreadSafeDecorator::getSomePoperty2() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_somePoperty2Mutex);
     return m_impl->getSomePoperty2();
 }
@@ -66,6 +75,9 @@ void NamEsThreadSafeDecorator::setEnumProperty(Enum_With_Under_scoresEnum enum_p
 
 Enum_With_Under_scoresEnum NamEsThreadSafeDecorator::getEnumProperty() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_enumPropertyMutex);
     return m_impl->getEnumProperty();
 }

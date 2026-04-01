@@ -29,6 +29,11 @@ namespace {{ Camel .Module.Name }} {
  * @warning Subscription management (subscribe/unsubscribe) is thread safe. However, subscriber
  * callbacks are invoked without holding any internal lock — the subscriber itself must be
  * thread safe if it can be called from multiple threads.
+ * @warning Subscribers are stored by reference. The caller MUST ensure that
+ *          subscriber objects outlive their subscription. Destroying a subscriber
+ *          without calling unsubscribeFromAllChanges() first causes undefined behavior.
+ * @warning Subscriber callbacks are invoked outside any lock. Subscriber
+ *          implementations must be thread-safe.
  */
 class {{ SNAKE .System.Name  }}_{{ SNAKE .Module.Name  }}_EXPORT {{$pub_class}} : public {{$pub_interface}}
 {
