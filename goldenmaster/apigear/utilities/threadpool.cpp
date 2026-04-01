@@ -1,4 +1,5 @@
 #include "threadpool.h"
+#include "apigear/utilities/logger.h"
 
 namespace ApiGear { namespace Utilities {
 
@@ -47,7 +48,13 @@ void ThreadPool::workerRun(){
             this->tasks.pop();
         }
 
-        task();
+        try {
+            task();
+        } catch (const std::exception& e) {
+            AG_LOG_ERROR("ThreadPool task threw exception: " + std::string(e.what()));
+        } catch (...) {
+            AG_LOG_ERROR("ThreadPool task threw unknown exception");
+        }
     }
 }
 

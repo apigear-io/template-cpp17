@@ -13,6 +13,7 @@ set(TEST_APIGEAR_UTILITIES_SOURCES
     test_main.cpp
     logger.test.cpp
     test_fuzzy_compare.cpp
+    test_threadpool.cpp
     )
 
 add_executable(test_apigear_utilities ${TEST_APIGEAR_UTILITIES_SOURCES})
