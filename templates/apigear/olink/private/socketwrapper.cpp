@@ -125,12 +125,7 @@ void SocketWrapper::close()
 
 void SocketWrapper::onClosed()
 {
-    std::unique_lock<std::timed_mutex> lock(m_socketMutex, std::defer_lock);
-    if (!lock.try_lock_for(std::chrono::milliseconds(100))) {
-        AG_LOG_INFO("Closing socket, some messages may be dropped");
-        m_hasSock = false;
-        return;
-    }
+    std::unique_lock<std::timed_mutex> lock(m_socketMutex);
     m_socket.reset();
     m_hasSock = false;
 }
