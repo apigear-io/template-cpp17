@@ -109,13 +109,13 @@ void SocketWrapper::writeMessageWithQueue(const std::string& msg)
 
 bool SocketWrapper::isClosed() const
 {
-    return m_socket == nullptr || m_disconnectRequested;
+    return !m_hasSock.load() || m_disconnectRequested.load();
 }
 
 void SocketWrapper::close()
 {
-    closeQueue();
     m_disconnectRequested = true;
+    closeQueue();
     if (m_receivingDone.valid()){
         m_receivingDone.wait();
     }
@@ -128,17 +128,15 @@ void SocketWrapper::onClosed()
     std::unique_lock<std::timed_mutex> lock(m_socketMutex, std::defer_lock);
     if (!lock.try_lock_for(std::chrono::milliseconds(100))) {
         AG_LOG_INFO("Closing socket, some messages may be dropped");
-        // Lock not acquired — reset socket without lock as last resort
     }
     m_socket.reset();
-    // Only unlock if we actually hold the lock
-    if (lock.owns_lock()) {
-        lock.unlock();
-    }
+    m_hasSock = false;
 }
 
 std::unique_ptr<Poco::Net::WebSocket> SocketWrapper::changeSocket(std::unique_ptr<Poco::Net::WebSocket> otherSocket)
 {
+    m_disconnectRequested = true;
+    m_retryTimer.cancel(true);
     {
         std::unique_lock<std::timed_mutex> lock(m_taskMutex);
         if (m_processMessagesTask) {
@@ -146,7 +144,6 @@ std::unique_ptr<Poco::Net::WebSocket> SocketWrapper::changeSocket(std::unique_pt
             m_processMessagesTask.reset();
         }
     }
-    m_disconnectRequested = true;
     if (m_socket && m_receivingDone.valid()){
         m_receivingDone.wait();
     }
@@ -154,6 +151,7 @@ std::unique_ptr<Poco::Net::WebSocket> SocketWrapper::changeSocket(std::unique_pt
     std::swap(m_socket, otherSocket);
     lock.unlock();
     if (m_socket){
+        m_hasSock = true;
         // Common default maximum frame size is 1Mb
         m_socket->setMaxPayloadSize(1048576);
         std::future<void> other;
@@ -167,6 +165,7 @@ std::unique_ptr<Poco::Net::WebSocket> SocketWrapper::changeSocket(std::unique_pt
 
 void SocketWrapper::closeQueue()
 {
+    m_retryTimer.cancel(true);
     {
         std::unique_lock<std::timed_mutex> lock(m_taskMutex);
         if (m_processMessagesTask) {

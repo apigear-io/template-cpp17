@@ -61,6 +61,7 @@ private:
     Poco::Mutex m_sessionMutex;
     std::unique_ptr<Poco::Net::HTTPClientSession> m_session;
     std::atomic<bool> m_busy{false};
+    Poco::Mutex m_taskMutex;
     Poco::Util::Timer m_retryTimer;
     Poco::Util::TimerTask::Ptr m_task;
 };

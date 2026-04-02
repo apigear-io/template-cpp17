@@ -120,6 +120,8 @@ private:
     bool m_addPingMessage;
     /** Flag handled between the threads with information that the connection should be closed. */
     std::atomic<bool> m_disconnectRequested;
+    /** Atomic flag tracking whether a socket is currently assigned (avoids reading m_socket without lock). */
+    std::atomic<bool> m_hasSock{false};
     /** Result of receiveInLoop. Used to wait for end of its work after m_stopConnection is set to true*/
     std::future<void> m_receivingDone;
 
