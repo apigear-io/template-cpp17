@@ -87,10 +87,9 @@ bool SocketWrapper::writeMessage(const std::string& message, int frameOpCode)
 {
     bool succeed = false;
     try {
+        std::unique_lock<std::timed_mutex> lock(m_socketMutex);
         if (m_socket) {
-            std::unique_lock<std::timed_mutex> lock(m_socketMutex);
             m_socket->sendFrame(message.c_str(), static_cast<int>(message.size()), frameOpCode);
-            lock.unlock();
             succeed = true;
         }
     }
@@ -129,19 +128,24 @@ void SocketWrapper::onClosed()
     std::unique_lock<std::timed_mutex> lock(m_socketMutex, std::defer_lock);
     if (!lock.try_lock_for(std::chrono::milliseconds(100))) {
         AG_LOG_INFO("Closing socket, some messages may be dropped");
+        // Lock not acquired — reset socket without lock as last resort
     }
     m_socket.reset();
-    lock.unlock();
+    // Only unlock if we actually hold the lock
+    if (lock.owns_lock()) {
+        lock.unlock();
+    }
 }
 
 std::unique_ptr<Poco::Net::WebSocket> SocketWrapper::changeSocket(std::unique_ptr<Poco::Net::WebSocket> otherSocket)
 {
-    if (m_processMessagesTask) {
-    std::unique_lock<std::timed_mutex> lock(m_taskMutex);
-    m_processMessagesTask->cancel();
-    m_processMessagesTask.reset();
-    lock.unlock();
-}
+    {
+        std::unique_lock<std::timed_mutex> lock(m_taskMutex);
+        if (m_processMessagesTask) {
+            m_processMessagesTask->cancel();
+            m_processMessagesTask.reset();
+        }
+    }
     m_disconnectRequested = true;
     if (m_socket && m_receivingDone.valid()){
         m_receivingDone.wait();
@@ -163,11 +167,12 @@ std::unique_ptr<Poco::Net::WebSocket> SocketWrapper::changeSocket(std::unique_pt
 
 void SocketWrapper::closeQueue()
 {
-    if (m_processMessagesTask) {
+    {
         std::unique_lock<std::timed_mutex> lock(m_taskMutex);
-        m_processMessagesTask->cancel();
-        m_processMessagesTask.reset();
-        lock.unlock();
+        if (m_processMessagesTask) {
+            m_processMessagesTask->cancel();
+            m_processMessagesTask.reset();
+        }
     }
     flushMessages();
 }
@@ -197,18 +202,24 @@ void SocketWrapper::processMessages(Poco::Util::TimerTask& /*task*/)
     }
     flushMessages();
 
-    std::unique_lock<std::timed_mutex> lock(m_taskMutex);
-    m_processMessagesTask->cancel();
-    m_processMessagesTask.reset();
-    lock.unlock();
-    if (!m_queue.empty()){
+    bool hasQueuedMessages;
+    {
+        std::unique_lock<std::timed_mutex> lock(m_taskMutex);
+        m_processMessagesTask->cancel();
+        m_processMessagesTask.reset();
+    }
+    {
+        std::unique_lock<std::timed_mutex> lock(m_queueMutex);
+        hasQueuedMessages = !m_queue.empty();
+    }
+    if (hasQueuedMessages) {
         scheduleProcessMessages(smallDelay);
     }
 }
 
 void SocketWrapper::flushMessages()
 {
-    if (m_socket)
+    if (!m_disconnectRequested)
     {
         std::deque<std::string> copyQueue;
 

@@ -103,11 +103,14 @@ private:
     std::mutex m_waitForSubscriptionChangesMutex;
     bool m_waitForSubscriptionChanges { true };
 
+    std::unique_ptr<genericContext> m_connectionContext;  // must outlive m_client
     std::unique_ptr<MQTTAsync, MqttClientDeleter> m_client;
     std::mutex m_queueMutex;
     std::string m_serverUrl;
     std::string m_clientID;
+    std::mutex m_lifecycleMutex;       // guards m_reconnectThread and m_mainMQTTThread transitions
     std::thread m_mainMQTTThread;
+    std::thread m_reconnectThread;
     std::queue<std::string> m_queue;
     std::atomic<bool> m_disconnectRequested { false };
     std::atomic<bool> m_connected { false };
@@ -125,7 +128,6 @@ private:
     std::multimap<std::string, TopicInfo> m_toBeSubscribedTopics;
     std::mutex m_toBeUnsubscribedTopicsMutex;
     std::set<std::string> m_toBeUnsubscribedTopics;
-    std::unique_ptr<genericContext> m_connectionContext;
 };
 } // namespace MQTT
 } // namespace ApiGear
