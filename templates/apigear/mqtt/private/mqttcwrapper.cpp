@@ -148,12 +148,40 @@ CWrapper::CWrapper(const std::string& clientID)
 {
 }
 
-CWrapper::~CWrapper() = default;
+CWrapper::~CWrapper()
+{
+    m_disconnectRequested = true;
+    {
+        std::lock_guard<std::mutex> lock(m_lifecycleMutex);
+        if (m_reconnectThread.joinable()) {
+            if (m_reconnectThread.get_id() == std::this_thread::get_id()) {
+                m_reconnectThread.detach();
+            } else {
+                m_reconnectThread.join();
+            }
+        }
+    }
+    if (m_mainMQTTThread.joinable()) {
+        {
+            std::lock_guard<std::mutex> l{m_waitForSubscriptionChangesMutex};
+            m_waitForSubscriptionChanges = false;
+        }
+        m_synchronizeSubscriptionChanges.notify_one();
+        if (m_mainMQTTThread.get_id() != std::this_thread::get_id()) {
+            m_mainMQTTThread.join();
+        } else {
+            m_mainMQTTThread.detach();
+        }
+    }
+    m_client.reset();
+    m_connectionContext.reset();
+}
 
 
 void CWrapper::MqttClientDeleter::operator()(MQTTAsync* cli)
 {
     MQTTAsync_destroy(cli);
+    delete cli;
 };
 
 
@@ -271,6 +299,7 @@ void CWrapper::waitForPendingMessages()
 
 void CWrapper::connectToHost(const std::string& brokerURL)
 {
+    m_disconnectRequested = false;
     if(brokerURL.empty()) {
         m_serverUrl = "tcp://localhost:1883";
     } else {
@@ -339,7 +368,13 @@ void CWrapper::onConnected()
     for (auto& callback: onConnectionStatusChangedCallbacks){
         callback.second(true);
     }
-    m_mainMQTTThread = std::thread(&CWrapper::run, this);
+    {
+        std::lock_guard<std::mutex> lock(m_lifecycleMutex);
+        if (m_mainMQTTThread.joinable()) {
+            m_mainMQTTThread.join();
+        }
+        m_mainMQTTThread = std::thread(&CWrapper::run, this);
+    }
 }
 
 void CWrapper::resubscribeAllTopics()
@@ -359,8 +394,7 @@ void CWrapper::resubscribeAllTopics()
 void CWrapper::onDisconnected()
 {
     m_connected = false;
-    bool disconnectRequested = m_disconnectRequested;
-    m_disconnectRequested = false;
+    bool disconnectRequested = m_disconnectRequested.load();
     AG_LOG_DEBUG("socket disconnected");
 
     // if we have not waited for our thread to finish, do it now
@@ -385,14 +419,18 @@ void CWrapper::onDisconnected()
     {
         // this function is called from within the MQTTAsync client
         // therefore the client must be reset in a separate thread afterwards
-        auto self = getPtr();
-        std::thread([self]() {
+        std::lock_guard<std::mutex> lock(m_lifecycleMutex);
+        if (m_reconnectThread.joinable()) {
+            m_reconnectThread.detach();  // previous reconnect still running
+        }
+        std::weak_ptr<CWrapper> weak_self = shared_from_this();
+        m_reconnectThread = std::thread([weak_self]() {
+            auto self = weak_self.lock();
+            if (!self) return;
             self->m_client.reset();
-
-            // we need to re-subscribe to all topics on re-connection
             self->resubscribeAllTopics();
             self->connectToHost(self->m_serverUrl);
-            }).detach();
+        });
     }
 }
 

@@ -3,7 +3,3 @@
 
 # Paho MQTT C library internal connection/session allocations
 leak:libpaho-mqtt3as
-
-# CWrapper connection contexts not freed when test teardown doesn't
-# fully destroy CWrapper shared_ptrs (Paho async disconnect races)
-leak:CWrapper::connectToHost

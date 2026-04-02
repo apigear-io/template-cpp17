@@ -58,6 +58,7 @@ private:
     std::deque<nlohmann::json> m_queue;
     Poco::Mutex m_queueMutex;
     Poco::URI m_traceUrl;
+    Poco::Mutex m_sessionMutex;
     std::unique_ptr<Poco::Net::HTTPClientSession> m_session;
     std::atomic<bool> m_busy{false};
     Poco::Util::Timer m_retryTimer;

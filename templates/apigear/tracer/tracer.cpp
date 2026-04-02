@@ -24,7 +24,10 @@ void Tracer::connect(const std::string& baseUrl, const std::string& identifier)
 {
     std::string gatewayUrl = baseUrl+"/monitor/"+identifier+"/";
     m_traceUrl = Poco::URI(gatewayUrl);
-    m_session.reset();
+    {
+        Poco::Mutex::ScopedLock lock(m_sessionMutex);
+        m_session.reset();
+    }
     if (!m_task.isNull())
     {
         m_task->cancel();
@@ -38,6 +41,7 @@ void Tracer::connect()
     if (m_traceUrl.getHost().empty()) {
         return;
     }
+    Poco::Mutex::ScopedLock lock(m_sessionMutex);
     if(m_session == nullptr) {
         try {
             m_session = std::make_unique<Poco::Net::HTTPClientSession>(m_traceUrl.getHost(), m_traceUrl.getPort());
@@ -96,7 +100,12 @@ void Tracer::doProcess(Poco::Util::TimerTask& task)
         return;
     }
 
-    if (m_session == nullptr) {
+    bool needsConnect = false;
+    {
+        Poco::Mutex::ScopedLock lock(m_sessionMutex);
+        needsConnect = (m_session == nullptr);
+    }
+    if (needsConnect) {
         m_task->cancel();
         connect();
         m_task = new Poco::Util::TimerTaskAdapter<Tracer>(*this, &Tracer::doProcess);
@@ -130,13 +139,18 @@ void Tracer::doProcess(Poco::Util::TimerTask& task)
 
     bool retry = false;
     try {
-        request.setContentLength(list.dump().length());
-        std::ostream& os = m_session->sendRequest(request);
-        os << list;
-
-        m_session->receiveResponse(response);
-        if (response.getStatus() != 200) {
+        Poco::Mutex::ScopedLock sessionLock(m_sessionMutex);
+        if (!m_session) {
             retry = true;
+        } else {
+            request.setContentLength(list.dump().length());
+            std::ostream& os = m_session->sendRequest(request);
+            os << list;
+
+            m_session->receiveResponse(response);
+            if (response.getStatus() != 200) {
+                retry = true;
+            }
         }
     } catch (std::exception &e) {
         retry = true;
