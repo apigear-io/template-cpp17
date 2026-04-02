@@ -20,6 +20,18 @@ Tracer::Tracer()
 {
 }
 
+Tracer::~Tracer()
+{
+    {
+        Poco::Mutex::ScopedLock lock(m_taskMutex);
+        if (!m_task.isNull())
+        {
+            m_task->cancel();
+        }
+    }
+    m_retryTimer.cancel(true);
+}
+
 void Tracer::connect(const std::string& baseUrl, const std::string& identifier)
 {
     std::string gatewayUrl = baseUrl+"/monitor/"+identifier+"/";

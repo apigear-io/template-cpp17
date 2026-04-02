@@ -39,6 +39,7 @@ class APIGEAR_TRACER_EXPORT Tracer
 {
 public:
     explicit Tracer();
+    ~Tracer();
     Tracer(Tracer const&) = delete;
     void operator=(Tracer const&) = delete;
 
