@@ -59,10 +59,11 @@ bool MqttBaseAdapter::isAlreadyAdded(const std::string& topic)
 {
     std::unique_lock<std::mutex> lock{ m_subscribedTopicsMutex };
     auto already_added = m_subscribedTopics.find(topic);
-    lock.unlock();
-    return already_added != m_subscribedTopics.end() &&
-        (already_added->second == ApiGear::MQTT::SubscriptionStatus::subscribed ||
-            already_added->second == ApiGear::MQTT::SubscriptionStatus::subscribing);
+    if (already_added == m_subscribedTopics.end()) {
+        return false;
+    }
+    return already_added->second == ApiGear::MQTT::SubscriptionStatus::subscribed ||
+        already_added->second == ApiGear::MQTT::SubscriptionStatus::subscribing;
 }
 
 void MqttBaseAdapter::unsubscribeTopics()
@@ -104,7 +105,7 @@ void MqttBaseAdapter::onSubscribed(const std::string& topic, bool is_subscribed)
         {
             m_subscribedTopics[topic] = ApiGear::MQTT::SubscriptionStatus::subscribed;
         }
-        bool isReady = _is_ready();
+        bool isReady = _is_ready_locked();
         lock.unlock();
         if (isReady)
         {
@@ -117,7 +118,9 @@ void MqttBaseAdapter::onSubscribed(const std::string& topic, bool is_subscribed)
         {
             subscription->second = ApiGear::MQTT::SubscriptionStatus::unsubscribed;
         }
-        if (_isUnsubscribed())
+        bool isUnsubscribed = _isUnsubscribed_locked();
+        lock.unlock();
+        if (isUnsubscribed)
         {
             _is_unsubscribed.publishChange(true);
         }
@@ -156,6 +159,12 @@ void MqttBaseAdapter::_unsubscribeFromIsUnsubscribed(uint64_t id)
 
 bool MqttBaseAdapter::_isUnsubscribed() const
 {
+    std::unique_lock<std::mutex> lock{m_subscribedTopicsMutex};
+    return _isUnsubscribed_locked();
+}
+
+bool MqttBaseAdapter::_isUnsubscribed_locked() const
+{
     return std::find_if(m_subscribedTopics.cbegin(),
         m_subscribedTopics.cend(),
         [](const auto& element) {return element.second != ApiGear::MQTT::SubscriptionStatus::unsubscribed; })
@@ -163,6 +172,12 @@ bool MqttBaseAdapter::_isUnsubscribed() const
 }
 
 bool MqttBaseAdapter::_is_ready() const
+{
+    std::unique_lock<std::mutex> lock{m_subscribedTopicsMutex};
+    return _is_ready_locked();
+}
+
+bool MqttBaseAdapter::_is_ready_locked() const
 {
     auto still_not_all_subscribed = std::find_if(m_subscribedTopics.cbegin(),
         m_subscribedTopics.cend(),

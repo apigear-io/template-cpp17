@@ -42,8 +42,10 @@ private:
     ApiGear::Utilities::SinglePub<bool> _is_readyChanges;
     ApiGear::Utilities::SinglePub<bool> _is_unsubscribed;
     int onConnectionChangedId;
-    std::mutex m_subscribedTopicsMutex;
+    mutable std::mutex m_subscribedTopicsMutex;
     std::unordered_map<std::string, SubscriptionStatus> m_subscribedTopics;
+    bool _is_ready_locked() const;
+    bool _isUnsubscribed_locked() const;
 };
 } // namespace MQTT
 } // namespace ApiGear

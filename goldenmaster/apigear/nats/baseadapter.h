@@ -57,8 +57,9 @@ private:
         int64_t id = ApiGear::Nats::Base::InvalidSubscriptionId;
     };
 
-    std::mutex m_subscribedTopicsMutex;
+    mutable std::mutex m_subscribedTopicsMutex;
     std::unordered_map<std::string, SubscriptionInfo> m_subscribedTopics;
+    bool _is_ready_locked() const;
     const uint32_t m_expectedSubscriptionsCount;
 };
 } // namespace Nats

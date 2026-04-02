@@ -3,3 +3,5 @@
 
 # Paho MQTT C library internal connection/session allocations
 leak:libpaho-mqtt3as
+# Paho MQTT C internal malloc (mymalloc) when statically linked into our wrapper
+leak:mymalloc

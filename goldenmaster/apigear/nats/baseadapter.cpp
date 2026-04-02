@@ -101,10 +101,11 @@ bool BaseAdapter::isAlreadyAdded(const std::string& topic)
 {
     std::unique_lock<std::mutex> lock{m_subscribedTopicsMutex};
     auto already_added = m_subscribedTopics.find(topic);
-    lock.unlock();
-    return already_added != m_subscribedTopics.end() &&
-        (already_added->second.status == ApiGear::Nats::SubscriptionStatus::subscribed ||
-            already_added->second.status == ApiGear::Nats::SubscriptionStatus::subscribing);
+    if (already_added == m_subscribedTopics.end()) {
+        return false;
+    }
+    return already_added->second.status == ApiGear::Nats::SubscriptionStatus::subscribed ||
+        already_added->second.status == ApiGear::Nats::SubscriptionStatus::subscribing;
 }
 
 void BaseAdapter::unsubscribeTopics()
@@ -146,7 +147,7 @@ void BaseAdapter::onSubscribed(int64_t id, const std::string& topic, bool is_sub
         {
             m_subscribedTopics[topic] = SubscriptionInfo(ApiGear::Nats::SubscriptionStatus::subscribed, id);
         }
-        bool isReady = _is_ready();
+        bool isReady = _is_ready_locked();
         lock.unlock();
         if (isReady)
         {
@@ -178,6 +179,12 @@ void BaseAdapter::_unsubscribeFromIsReady(uint64_t id)
 }
 
 bool BaseAdapter::_is_ready() const
+{
+    std::unique_lock<std::mutex> lock{m_subscribedTopicsMutex};
+    return _is_ready_locked();
+}
+
+bool BaseAdapter::_is_ready_locked() const
 {
     auto still_not_all_subscribed = std::find_if(m_subscribedTopics.cbegin(),
         m_subscribedTopics.cend(),

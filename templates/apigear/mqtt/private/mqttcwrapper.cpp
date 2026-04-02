@@ -350,12 +350,17 @@ void CWrapper::disconnect() {
         m_synchronizeSubscriptionChanges.notify_one();
         m_mainMQTTThread.join();
     }
+    m_connected = false;
     MQTTAsync_disconnectOptions disconn_opts = MQTTAsync_disconnectOptions_initializer5;
-    disconn_opts.onSuccess5 = ::onDisconnected;
-    auto ctx = std::make_unique<genericContext>(genericContext{getPtr()});
-    disconn_opts.context = ctx.release();
     disconn_opts.timeout = 10;
     MQTTAsync_disconnect(*m_client.get(), &disconn_opts);
+    // Notify listeners synchronously — no async callback needed for intentional disconnect
+    m_onConnectionStatusChangedCallbacksMutex.lock();
+    auto callbacks(m_onConnectionStatusChangedCallbacks);
+    m_onConnectionStatusChangedCallbacksMutex.unlock();
+    for (auto& cb : callbacks) {
+        cb.second(false);
+    }
 }
 
 void CWrapper::onConnected()

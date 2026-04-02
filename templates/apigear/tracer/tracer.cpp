@@ -28,12 +28,15 @@ void Tracer::connect(const std::string& baseUrl, const std::string& identifier)
         Poco::Mutex::ScopedLock lock(m_sessionMutex);
         m_session.reset();
     }
-    if (!m_task.isNull())
     {
-        m_task->cancel();
+        Poco::Mutex::ScopedLock lock(m_taskMutex);
+        if (!m_task.isNull())
+        {
+            m_task->cancel();
+        }
+        m_task = new Poco::Util::TimerTaskAdapter<Tracer>(*this, &Tracer::doProcess);
+        m_retryTimer.schedule(m_task, 10, 5000);
     }
-    m_task = new Poco::Util::TimerTaskAdapter<Tracer>(*this, &Tracer::doProcess);
-    m_retryTimer.schedule(m_task, 10, 5000);   
 }
 
 void Tracer::connect()
@@ -85,6 +88,7 @@ void Tracer::state(const std::string &symbol, const nlohmann::json &fields)
 
 void Tracer::process()
 {
+    Poco::Mutex::ScopedLock lock(m_taskMutex);
     if (!m_task.isNull())
     {
         m_task->cancel();
@@ -106,10 +110,13 @@ void Tracer::doProcess(Poco::Util::TimerTask& task)
         needsConnect = (m_session == nullptr);
     }
     if (needsConnect) {
-        m_task->cancel();
-        connect();
-        m_task = new Poco::Util::TimerTaskAdapter<Tracer>(*this, &Tracer::doProcess);
-        m_retryTimer.schedule(m_task, 100, 5000);
+        {
+            Poco::Mutex::ScopedLock lock(m_taskMutex);
+            m_task->cancel();
+            connect();
+            m_task = new Poco::Util::TimerTaskAdapter<Tracer>(*this, &Tracer::doProcess);
+            m_retryTimer.schedule(m_task, 100, 5000);
+        }
         return;
     }
 
@@ -168,10 +175,13 @@ void Tracer::doProcess(Poco::Util::TimerTask& task)
         }
         m_queueMutex.unlock();
 
-        m_task->cancel();
-        connect();
-        m_task = new Poco::Util::TimerTaskAdapter<Tracer>(*this, &Tracer::doProcess);
-        m_retryTimer.schedule(m_task, 5000, 5000);
+        {
+            Poco::Mutex::ScopedLock lock(m_taskMutex);
+            m_task->cancel();
+            connect();
+            m_task = new Poco::Util::TimerTaskAdapter<Tracer>(*this, &Tracer::doProcess);
+            m_retryTimer.schedule(m_task, 5000, 5000);
+        }
     }
     m_busy = false;
 }
