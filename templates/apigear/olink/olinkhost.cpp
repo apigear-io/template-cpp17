@@ -49,9 +49,17 @@ OLinkHost::~OLinkHost()
 void OLinkHost::listen(int port)
 {
     // Poco::Net::HttpServer takes ownership of Request Handler Factory
-    m_webserver = std::make_unique<Poco::Net::HTTPServer>(new RequestHandlerFactory(m_connectionStorage), port);
-    AG_LOG_INFO("wss.listen() on " + std::to_string(m_webserver->port()));
+    Poco::Net::ServerSocket socket;
+    socket.bind(Poco::Net::SocketAddress("0.0.0.0", static_cast<Poco::UInt16>(port)), true /* reuseAddress */);
+    socket.listen();
+    m_webserver = std::make_unique<Poco::Net::HTTPServer>(new RequestHandlerFactory(m_connectionStorage), socket, new Poco::Net::HTTPServerParams());
     m_webserver->start();
+    AG_LOG_INFO("wss.listen() on " + std::to_string(m_webserver->port()));
+}
+
+int OLinkHost::port() const
+{
+    return m_webserver ? m_webserver->port() : 0;
 }
 
 void OLinkHost::close()
@@ -60,6 +68,7 @@ void OLinkHost::close()
     if (m_webserver)
     {
         m_webserver->stop();
+        m_webserver.reset();
     }
     AG_LOG_INFO("wss.closed()");
 }

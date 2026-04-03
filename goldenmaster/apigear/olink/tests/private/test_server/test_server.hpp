@@ -43,6 +43,11 @@ public:
 		server.stop();
 	}
 
+	int port() const
+	{
+		return server.port();
+	}
+
 	virtual~TestServer()
 	{
 		stop();

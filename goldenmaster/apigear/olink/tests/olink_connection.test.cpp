@@ -54,11 +54,9 @@ namespace {
 
 TEST_CASE("OlinkConnection tests")
 {
-    auto portNumber = 8000;
-    auto localHostAddress = "ws://127.0.0.1:" + std::to_string(portNumber);
-
     bool skipPingMessages = true;
-    TestServer server(portNumber, skipPingMessages);
+    TestServer server(0, skipPingMessages);
+    auto localHostAddress = "ws://127.0.0.1:" + std::to_string(server.port());
     ApiGear::ObjectLink::ClientRegistry registry;
     auto testOlinkConnection = std::make_shared<ApiGear::PocoImpl::OlinkConnection>(registry);
 

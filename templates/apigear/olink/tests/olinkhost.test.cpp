@@ -59,7 +59,7 @@ namespace {
         registry.addSource(source1);
 
         // Common data.
-        auto portNumber = 8000;
+        auto portNumber = 0;
         auto localHostAddress = "127.0.0.1";
         Poco::Net::HTTPRequest request(Poco::Net::HTTPRequest::HTTP_GET, "/ws", Poco::Net::HTTPRequest::HTTP_1_1);
 
@@ -77,9 +77,10 @@ namespace {
         SECTION("Server creates two nodes for link messages from different sessions for same source and sends back init message. Unlink happens before server closes.")
         {
             testHost.listen(portNumber);
-            
-            Poco::Net::HTTPClientSession clientSession1(localHostAddress, portNumber);
-            Poco::Net::HTTPClientSession clientSession2(localHostAddress, portNumber);
+            auto actualPort = testHost.port();
+
+            Poco::Net::HTTPClientSession clientSession1(localHostAddress, actualPort);
+            Poco::Net::HTTPClientSession clientSession2(localHostAddress, actualPort);
             Poco::Net::HTTPResponse response1;
             Poco::Net::HTTPResponse response2;
             Poco::Net::WebSocket clientSocket1(clientSession1, request, response1), clientSocket2(clientSession2, request, response2);
@@ -156,8 +157,9 @@ namespace {
         SECTION("Host close before session closes. Only information sent to clients is close frame.")
         {
             testHost.listen(portNumber);
+            auto actualPort = testHost.port();
 
-            Poco::Net::HTTPClientSession clientSession1(localHostAddress, portNumber);
+            Poco::Net::HTTPClientSession clientSession1(localHostAddress, actualPort);
             Poco::Net::HTTPResponse response;
             Poco::Net::WebSocket clientSocket1(clientSession1, request, response);
 
@@ -199,8 +201,9 @@ namespace {
         SECTION("Source removal doesn't affect setup. It should inform somehow clients that service is not available.")
         {
             testHost.listen(portNumber);
+            auto actualPort = testHost.port();
 
-            Poco::Net::HTTPClientSession clientSession1(localHostAddress, portNumber);
+            Poco::Net::HTTPClientSession clientSession1(localHostAddress, actualPort);
             Poco::Net::HTTPResponse response;
             Poco::Net::WebSocket clientSocket1(clientSession1, request, response);
 
@@ -249,8 +252,9 @@ namespace {
         SECTION("One of connections receive close frame")
         {
             testHost.listen(portNumber);
+            auto actualPort = testHost.port();
 
-            Poco::Net::HTTPClientSession clientSession1(localHostAddress, portNumber);
+            Poco::Net::HTTPClientSession clientSession1(localHostAddress, actualPort);
             Poco::Net::HTTPClientSession clientSession2(localHostAddress, portNumber);
             Poco::Net::HTTPResponse response1;
             Poco::Net::HTTPResponse response2;
@@ -320,8 +324,9 @@ namespace {
         SECTION("Connection receives close frame from one client, and then client is up again")
         {
             testHost.listen(portNumber);
+            auto actualPort = testHost.port();
 
-            Poco::Net::HTTPClientSession clientSession1(localHostAddress, portNumber);
+            Poco::Net::HTTPClientSession clientSession1(localHostAddress, actualPort);
             Poco::Net::HTTPResponse response;
             Poco::Net::WebSocket clientSocket1(clientSession1, request, response);
 
