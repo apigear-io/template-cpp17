@@ -43,10 +43,14 @@
 #include "testbed1/generated/monitor/structinterface.tracedecorator.h"
 #include "testbed1/implementation/structarrayinterface.h"
 #include "testbed1/generated/monitor/structarrayinterface.tracedecorator.h"
+#include "testbed1/implementation/structarray2interface.h"
+#include "testbed1/generated/monitor/structarray2interface.tracedecorator.h"
 #include "tb_names/implementation/names.h"
 #include "tb_names/generated/monitor/names.tracedecorator.h"
 #include "counter/implementation/counter.h"
 #include "counter/generated/monitor/counter.tracedecorator.h"
+#include "tb_struct_array/implementation/structarrayfieldinterface.h"
+#include "tb_struct_array/generated/monitor/structarrayfieldinterface.tracedecorator.h"
 #include "apigear/tracer/tracer.h"
 
 using namespace Test;
@@ -98,10 +102,14 @@ int main(){
     std::unique_ptr<Testbed1::IStructInterface> testTestbed1StructInterfaceTraceDecorator = Testbed1::StructInterfaceTraceDecorator::connect(*testTestbed1StructInterface, tracer);
     std::unique_ptr<Testbed1::IStructArrayInterface> testTestbed1StructArrayInterface = std::make_unique<Testbed1::StructArrayInterface>();
     std::unique_ptr<Testbed1::IStructArrayInterface> testTestbed1StructArrayInterfaceTraceDecorator = Testbed1::StructArrayInterfaceTraceDecorator::connect(*testTestbed1StructArrayInterface, tracer);
+    std::unique_ptr<Testbed1::IStructArray2Interface> testTestbed1StructArray2Interface = std::make_unique<Testbed1::StructArray2Interface>();
+    std::unique_ptr<Testbed1::IStructArray2Interface> testTestbed1StructArray2InterfaceTraceDecorator = Testbed1::StructArray2InterfaceTraceDecorator::connect(*testTestbed1StructArray2Interface, tracer);
     std::unique_ptr<TbNames::INamEs> testTbNamesNamEs = std::make_unique<TbNames::NamEs>();
     std::unique_ptr<TbNames::INamEs> testTbNamesNamEsTraceDecorator = TbNames::NamEsTraceDecorator::connect(*testTbNamesNamEs, tracer);
     std::unique_ptr<Counter::ICounter> testCounterCounter = std::make_unique<Counter::Counter>();
     std::unique_ptr<Counter::ICounter> testCounterCounterTraceDecorator = Counter::CounterTraceDecorator::connect(*testCounterCounter, tracer);
+    std::unique_ptr<TbStructArray::IStructArrayFieldInterface> testTbStructArrayStructArrayFieldInterface = std::make_unique<TbStructArray::StructArrayFieldInterface>();
+    std::unique_ptr<TbStructArray::IStructArrayFieldInterface> testTbStructArrayStructArrayFieldInterfaceTraceDecorator = TbStructArray::StructArrayFieldInterfaceTraceDecorator::connect(*testTbStructArrayStructArrayFieldInterface, tracer);
 
     return 0;
 }

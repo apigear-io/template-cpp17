@@ -72,6 +72,15 @@ public:
     void unsubscribeFromPropStringChanged(uint64_t handleId) override;
 
     /**
+    * Implementation of IStructArrayInterfacePublisher::subscribeToPropEnumChanged
+    */
+    uint64_t subscribeToPropEnumChanged(StructArrayInterfacePropEnumPropertyCb callback) override;
+    /**
+    * Implementation of IStructArrayInterfacePublisher::subscribeToPropEnumChanged
+    */
+    void unsubscribeFromPropEnumChanged(uint64_t handleId) override;
+
+    /**
     * Implementation of IStructArrayInterfacePublisher::subscribeToSigBool
     */
     uint64_t subscribeToSigBool(StructArrayInterfaceSigBoolSignalCb callback) override;
@@ -108,6 +117,15 @@ public:
     void unsubscribeFromSigString(uint64_t handleId) override;
 
     /**
+    * Implementation of IStructArrayInterfacePublisher::subscribeToSigEnum
+    */
+    uint64_t subscribeToSigEnum(StructArrayInterfaceSigEnumSignalCb callback) override;
+    /**
+    * Implementation of IStructArrayInterfacePublisher::unsubscribeFromSigEnum
+    */
+    void unsubscribeFromSigEnum(uint64_t handleId) override;
+
+    /**
     * Implementation of IStructArrayInterfacePublisher::publishPropBoolChanged
     */
     void publishPropBoolChanged(const std::list<StructBool>& propBool) const override;
@@ -124,6 +142,10 @@ public:
     */
     void publishPropStringChanged(const std::list<StructString>& propString) const override;
     /**
+    * Implementation of IStructArrayInterfacePublisher::publishPropEnumChanged
+    */
+    void publishPropEnumChanged(const std::list<Enum0Enum>& propEnum) const override;
+    /**
     * Implementation of IStructArrayInterfacePublisher::publishSigBool
     */
     void publishSigBool(const std::list<StructBool>& paramBool) const override;
@@ -139,6 +161,10 @@ public:
     * Implementation of IStructArrayInterfacePublisher::publishSigString
     */
     void publishSigString(const std::list<StructString>& paramString) const override;
+    /**
+    * Implementation of IStructArrayInterfacePublisher::publishSigEnum
+    */
+    void publishSigEnum(const std::list<Enum0Enum>& paramEnum) const override;
 private:
     // Subscribers informed about any property change or signal emitted in StructArrayInterface
     std::vector<std::reference_wrapper<IStructArrayInterfaceSubscriber>> m_allChangesSubscribers;
@@ -148,10 +174,12 @@ private:
     ApiGear::Utilities::SinglePub<std::list<StructInt>> PropIntPublisher;
     ApiGear::Utilities::SinglePub<std::list<StructFloat>> PropFloatPublisher;
     ApiGear::Utilities::SinglePub<std::list<StructString>> PropStringPublisher;
+    ApiGear::Utilities::SinglePub<std::list<Enum0Enum>> PropEnumPublisher;
     ApiGear::Utilities::SinglePub<std::list<StructBool>> SigBoolPublisher;
     ApiGear::Utilities::SinglePub<std::list<StructInt>> SigIntPublisher;
     ApiGear::Utilities::SinglePub<std::list<StructFloat>> SigFloatPublisher;
     ApiGear::Utilities::SinglePub<std::list<StructString>> SigStringPublisher;
+    ApiGear::Utilities::SinglePub<std::list<Enum0Enum>> SigEnumPublisher;
 };
 
 } // namespace Testbed1

@@ -19,6 +19,7 @@ public:
     void onSigInt(const std::list<StructInt>& paramInt) override;
     void onSigFloat(const std::list<StructFloat>& paramFloat) override;
     void onSigString(const std::list<StructString>& paramString) override;
+    void onSigEnum(const std::list<Enum0Enum>& paramEnum) override;
 
 private:
     /// @brief factory to create the topic map which is used for bindings
@@ -30,6 +31,7 @@ private:
     void onInvokeFuncInt(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const;
     void onInvokeFuncFloat(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const;
     void onInvokeFuncString(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const;
+    void onInvokeFuncEnum(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const;
     void onPropBoolChanged(const std::list<StructBool>& propBool) override;
     /// @brief requests to set the value for the property PropBool coming from the client
     /// @param fields contains the param of the type std::list<StructBool>
@@ -46,6 +48,10 @@ private:
     /// @brief requests to set the value for the property PropString coming from the client
     /// @param fields contains the param of the type std::list<StructString>
     void onSetPropString(const std::string& args) const;
+    void onPropEnumChanged(const std::list<Enum0Enum>& propEnum) override;
+    /// @brief requests to set the value for the property PropEnum coming from the client
+    /// @param fields contains the param of the type std::list<Enum0Enum>
+    void onSetPropEnum(const std::string& args) const;
 
     std::shared_ptr<IStructArrayInterface> m_impl;
     std::shared_ptr<ApiGear::MQTT::Service> m_service;

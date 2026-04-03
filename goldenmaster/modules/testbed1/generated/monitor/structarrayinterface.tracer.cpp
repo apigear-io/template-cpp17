@@ -16,6 +16,7 @@ void StructArrayInterfaceTracer::capture_state(IStructArrayInterface* obj)
     fields_["propInt"] = obj->getPropInt();
     fields_["propFloat"] = obj->getPropFloat();
     fields_["propString"] = obj->getPropString();
+    fields_["propEnum"] = obj->getPropEnum();
     m_tracer.state("testbed1.StructArrayInterface#_state", fields_);
 }
 
@@ -46,6 +47,13 @@ void StructArrayInterfaceTracer::trace_funcString(const std::list<StructString>&
     fields_["paramString"] = paramString;
     m_tracer.call("testbed1.StructArrayInterface#funcString", fields_);
 }
+
+void StructArrayInterfaceTracer::trace_funcEnum(const std::list<Enum0Enum>& paramEnum)
+{
+    nlohmann::json fields_;
+    fields_["paramEnum"] = paramEnum;
+    m_tracer.call("testbed1.StructArrayInterface#funcEnum", fields_);
+}
 void StructArrayInterfaceTracer::trace_sigBool(const std::list<StructBool>& paramBool)
 {
     nlohmann::json fields_;
@@ -69,4 +77,10 @@ void StructArrayInterfaceTracer::trace_sigString(const std::list<StructString>& 
     nlohmann::json fields_;
     fields_["paramString"] = paramString;
     m_tracer.signal("testbed1.StructArrayInterface#sigString", fields_);
+}
+void StructArrayInterfaceTracer::trace_sigEnum(const std::list<Enum0Enum>& paramEnum)
+{
+    nlohmann::json fields_;
+    fields_["paramEnum"] = paramEnum;
+    m_tracer.signal("testbed1.StructArrayInterface#sigEnum", fields_);
 }

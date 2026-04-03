@@ -7,6 +7,8 @@ set (SOURCES_OLINK
     structinterfaceclient.cpp
     structarrayinterfaceservice.cpp
     structarrayinterfaceclient.cpp
+    structarray2interfaceservice.cpp
+    structarray2interfaceclient.cpp
 )
 add_library(testbed1-olink SHARED ${SOURCES_OLINK})
 add_library(testbed1::testbed1-olink ALIAS testbed1-olink)

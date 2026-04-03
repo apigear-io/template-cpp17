@@ -43,10 +43,14 @@
 #include "testbed1/generated/monitor/structinterface.tracedecorator.h"
 #include "testbed1/generated/olink/structarrayinterfaceclient.h"
 #include "testbed1/generated/monitor/structarrayinterface.tracedecorator.h"
+#include "testbed1/generated/olink/structarray2interfaceclient.h"
+#include "testbed1/generated/monitor/structarray2interface.tracedecorator.h"
 #include "tb_names/generated/olink/namesclient.h"
 #include "tb_names/generated/monitor/names.tracedecorator.h"
 #include "counter/generated/olink/counterclient.h"
 #include "counter/generated/monitor/counter.tracedecorator.h"
+#include "tb_struct_array/generated/olink/structarrayfieldinterfaceclient.h"
+#include "tb_struct_array/generated/monitor/structarrayfieldinterface.tracedecorator.h"
 
 #include "apigear/olink/olinkconnection.h"
 #include "apigear/tracer/tracer.h"
@@ -156,12 +160,18 @@ int main(){
     auto testbed1StructArrayInterface = std::make_shared<Testbed1::olink::StructArrayInterfaceClient>();
     clientNetworkEndpoint.connectAndLinkObject(testbed1StructArrayInterface);
     std::unique_ptr<Testbed1::IStructArrayInterface> testbed1StructArrayInterfaceTraced = Testbed1::StructArrayInterfaceTraceDecorator::connect(*testbed1StructArrayInterface, tracer);
+    auto testbed1StructArray2Interface = std::make_shared<Testbed1::olink::StructArray2InterfaceClient>();
+    clientNetworkEndpoint.connectAndLinkObject(testbed1StructArray2Interface);
+    std::unique_ptr<Testbed1::IStructArray2Interface> testbed1StructArray2InterfaceTraced = Testbed1::StructArray2InterfaceTraceDecorator::connect(*testbed1StructArray2Interface, tracer);
     auto tbNamesNamEs = std::make_shared<TbNames::olink::Nam_EsClient>();
     clientNetworkEndpoint.connectAndLinkObject(tbNamesNamEs);
     std::unique_ptr<TbNames::INamEs> tbNamesNamEsTraced = TbNames::NamEsTraceDecorator::connect(*tbNamesNamEs, tracer);
     auto counterCounter = std::make_shared<Counter::olink::CounterClient>();
     clientNetworkEndpoint.connectAndLinkObject(counterCounter);
     std::unique_ptr<Counter::ICounter> counterCounterTraced = Counter::CounterTraceDecorator::connect(*counterCounter, tracer);
+    auto tbStructArrayStructArrayFieldInterface = std::make_shared<TbStructArray::olink::StructArrayFieldInterfaceClient>();
+    clientNetworkEndpoint.connectAndLinkObject(tbStructArrayStructArrayFieldInterface);
+    std::unique_ptr<TbStructArray::IStructArrayFieldInterface> tbStructArrayStructArrayFieldInterfaceTraced = TbStructArray::StructArrayFieldInterfaceTraceDecorator::connect(*tbStructArrayStructArrayFieldInterface, tracer);
     
     clientNetworkEndpoint.connectToHost(Poco::URI("ws://localhost:8000"));
 
@@ -198,8 +208,10 @@ int main(){
     clientNetworkEndpoint.disconnectAndUnlink(tbSimpleEmptyInterface->olinkObjectName());
     clientNetworkEndpoint.disconnectAndUnlink(testbed1StructInterface->olinkObjectName());
     clientNetworkEndpoint.disconnectAndUnlink(testbed1StructArrayInterface->olinkObjectName());
+    clientNetworkEndpoint.disconnectAndUnlink(testbed1StructArray2Interface->olinkObjectName());
     clientNetworkEndpoint.disconnectAndUnlink(tbNamesNamEs->olinkObjectName());
     clientNetworkEndpoint.disconnectAndUnlink(counterCounter->olinkObjectName());
+    clientNetworkEndpoint.disconnectAndUnlink(tbStructArrayStructArrayFieldInterface->olinkObjectName());
 
     return 0;
 }

@@ -40,6 +40,15 @@ std::string NestedStruct1InterfaceService::olinkObjectName() {
 nlohmann::json NestedStruct1InterfaceService::olinkInvoke(const std::string& methodId, const nlohmann::json& fcnArgs) {
     AG_LOG_DEBUG("NestedStruct1InterfaceService invoke " + methodId);
     const auto& memberMethod = ApiGear::ObjectLink::Name::getMemberName(methodId);
+    if(memberMethod == "funcNoReturnValue") {
+        const NestedStruct1& param1 = fcnArgs.at(0);
+        m_NestedStruct1Interface->funcNoReturnValue(param1);
+        return nlohmann::json{};
+    }
+    if(memberMethod == "funcNoParams") {
+        NestedStruct1 result = m_NestedStruct1Interface->funcNoParams();
+        return result;
+    }
     if(memberMethod == "func1") {
         const NestedStruct1& param1 = fcnArgs.at(0);
         NestedStruct1 result = m_NestedStruct1Interface->func1(param1);

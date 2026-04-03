@@ -50,6 +50,8 @@ buildCMakeModule "modules/extern_types" $source_root
 if [ $buildresult -ne 0 ]; then exit 1; fi;
 buildCMakeModule "modules/counter" $source_root
 if [ $buildresult -ne 0 ]; then exit 1; fi;
+buildCMakeModule "modules/tb_struct_array" $source_root
+if [ $buildresult -ne 0 ]; then exit 1; fi;
 # examples app
 buildCMakeBinary "examples/app" $source_root
 if [ $buildresult -ne 0 ]; then exit 1; fi;

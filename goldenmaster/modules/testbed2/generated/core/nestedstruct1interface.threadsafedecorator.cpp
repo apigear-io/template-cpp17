@@ -7,6 +7,24 @@ NestedStruct1InterfaceThreadSafeDecorator::NestedStruct1InterfaceThreadSafeDecor
     : m_impl(impl)
 {
 }
+void NestedStruct1InterfaceThreadSafeDecorator::funcNoReturnValue(const NestedStruct1& param1)
+{
+    return m_impl->funcNoReturnValue(param1);
+}
+
+std::future<void> NestedStruct1InterfaceThreadSafeDecorator::funcNoReturnValueAsync(const NestedStruct1& param1, std::function<void(void)> callback)
+{
+    return m_impl->funcNoReturnValueAsync(param1, callback);
+}
+NestedStruct1 NestedStruct1InterfaceThreadSafeDecorator::funcNoParams()
+{
+    return m_impl->funcNoParams();
+}
+
+std::future<NestedStruct1> NestedStruct1InterfaceThreadSafeDecorator::funcNoParamsAsync( std::function<void(NestedStruct1)> callback)
+{
+    return m_impl->funcNoParamsAsync( callback);
+}
 NestedStruct1 NestedStruct1InterfaceThreadSafeDecorator::func1(const NestedStruct1& param1)
 {
     return m_impl->func1(param1);

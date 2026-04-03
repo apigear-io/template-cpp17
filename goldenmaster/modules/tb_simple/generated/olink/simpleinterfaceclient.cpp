@@ -334,6 +334,31 @@ std::future<void> SimpleInterfaceClient::funcNoReturnValueAsync(bool paramBool, 
     return resultPromise->get_future();
 }
 
+bool SimpleInterfaceClient::funcNoParams()
+{
+    return funcNoParamsAsync().get();
+}
+
+std::future<bool> SimpleInterfaceClient::funcNoParamsAsync( std::function<void(bool)> callback)
+{
+    if(!m_node) {
+        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
+        return std::future<bool>{};
+    }
+    std::shared_ptr<std::promise<bool>> resultPromise = std::make_shared<std::promise<bool>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcNoParams");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({}), [resultPromise, callback](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const bool& value = arg.value.get<bool>();
+            resultPromise->set_value(value);
+            if (callback)
+            {
+                callback(value);
+            }
+        });
+    return resultPromise->get_future();
+}
+
 bool SimpleInterfaceClient::funcBool(bool paramBool)
 {
     return funcBoolAsync(paramBool).get();

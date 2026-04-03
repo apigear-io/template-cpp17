@@ -28,6 +28,22 @@ public:
     virtual ~INestedStruct1Interface() = default;
 
 
+    virtual void funcNoReturnValue(const NestedStruct1& param1) = 0;
+    /**
+    * Asynchronous version of funcNoReturnValue(const NestedStruct1& param1)
+    * @return Promise of type void which is set once the function has completed
+    */
+    virtual std::future<void> funcNoReturnValueAsync(const NestedStruct1& param1, std::function<void(void)> callback = nullptr) = 0;
+
+
+    virtual NestedStruct1 funcNoParams() = 0;
+    /**
+    * Asynchronous version of funcNoParams()
+    * @return Promise of type NestedStruct1 which is set once the function has completed
+    */
+    virtual std::future<NestedStruct1> funcNoParamsAsync( std::function<void(NestedStruct1)> callback = nullptr) = 0;
+
+
     virtual NestedStruct1 func1(const NestedStruct1& param1) = 0;
     /**
     * Asynchronous version of func1(const NestedStruct1& param1)

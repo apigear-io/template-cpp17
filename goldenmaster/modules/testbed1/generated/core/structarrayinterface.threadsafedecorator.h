@@ -34,6 +34,8 @@ auto propFloat = testStructArrayInterface->getPropFloat();
 testStructArrayInterface->setPropFloat(std::list<StructFloat>());
 auto propString = testStructArrayInterface->getPropString();
 testStructArrayInterface->setPropString(std::list<StructString>());
+auto propEnum = testStructArrayInterface->getPropEnum();
+testStructArrayInterface->setPropEnum(std::list<Enum0Enum>());
 \endcode
 */
 class TEST_TESTBED1_EXPORT StructArrayInterfaceThreadSafeDecorator : public IStructArrayInterface
@@ -89,6 +91,17 @@ public:
     */
     std::future<std::list<StructString>> funcStringAsync(const std::list<StructString>& paramString, std::function<void(std::list<StructString>)> callback = nullptr) override;
 
+    /** 
+    * Forwards call to StructArrayInterface implementation.
+    * @warning This forward call is not made thread safe by this class.
+    */
+    std::list<Enum0Enum> funcEnum(const std::list<Enum0Enum>& paramEnum) override;
+    /** 
+    * Forwards call to StructArrayInterface implementation.
+    * @warning This forward call is not made thread safe by this class.
+    */
+    std::future<std::list<Enum0Enum>> funcEnumAsync(const std::list<Enum0Enum>& paramEnum, std::function<void(std::list<Enum0Enum>)> callback = nullptr) override;
+
     /** Guards and forwards call to StructArrayInterface implementation. */
     void setPropBool(const std::list<StructBool>& propBool) override;
     /** Guards and forwards call to StructArrayInterface implementation. */
@@ -109,6 +122,11 @@ public:
     /** Guards and forwards call to StructArrayInterface implementation. */
     const std::list<StructString>& getPropString() const override;
 
+    /** Guards and forwards call to StructArrayInterface implementation. */
+    void setPropEnum(const std::list<Enum0Enum>& propEnum) override;
+    /** Guards and forwards call to StructArrayInterface implementation. */
+    const std::list<Enum0Enum>& getPropEnum() const override;
+
     /**
     * Access to a publisher, use it to subscribe for StructArrayInterface changes and signal emission.
     * This call is thread safe.
@@ -126,6 +144,8 @@ private:
     mutable std::shared_timed_mutex m_propFloatMutex;
     // Mutex for propString property
     mutable std::shared_timed_mutex m_propStringMutex;
+    // Mutex for propEnum property
+    mutable std::shared_timed_mutex m_propEnumMutex;
 };
 } // namespace Testbed1
 } // namespace Test

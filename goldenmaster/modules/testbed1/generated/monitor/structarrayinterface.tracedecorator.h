@@ -54,6 +54,11 @@ public:
     /** Traces funcString and forwards call to StructArrayInterface implementation. */
     std::future<std::list<StructString>> funcStringAsync(const std::list<StructString>& paramString, std::function<void(std::list<StructString>)> callback = nullptr) override;
     
+    /** Traces funcEnum and forwards call to StructArrayInterface implementation. */
+    std::list<Enum0Enum> funcEnum(const std::list<Enum0Enum>& paramEnum) override;
+    /** Traces funcEnum and forwards call to StructArrayInterface implementation. */
+    std::future<std::list<Enum0Enum>> funcEnumAsync(const std::list<Enum0Enum>& paramEnum, std::function<void(std::list<Enum0Enum>)> callback = nullptr) override;
+    
     /** Forwards call to StructArrayInterface implementation. */
     void setPropBool(const std::list<StructBool>& propBool) override;
     /** Forwards call to StructArrayInterface implementation. */
@@ -74,6 +79,11 @@ public:
     /** Forwards call to StructArrayInterface implementation. */
     const std::list<StructString>& getPropString() const override;
     
+    /** Forwards call to StructArrayInterface implementation. */
+    void setPropEnum(const std::list<Enum0Enum>& propEnum) override;
+    /** Forwards call to StructArrayInterface implementation. */
+    const std::list<Enum0Enum>& getPropEnum() const override;
+    
     /**
     Traces sigBool emission.
     */
@@ -91,6 +101,10 @@ public:
     */
     void onSigString(const std::list<StructString>& paramString) override;
     /**
+    Traces sigEnum emission.
+    */
+    void onSigEnum(const std::list<Enum0Enum>& paramEnum) override;
+    /**
     Traces propBool changed.
     */
     void onPropBoolChanged(const std::list<StructBool>& propBool) override;
@@ -106,6 +120,10 @@ public:
     Traces propString changed.
     */
     void onPropStringChanged(const std::list<StructString>& propString) override;
+    /**
+    Traces propEnum changed.
+    */
+    void onPropEnumChanged(const std::list<Enum0Enum>& propEnum) override;
 
     /**
     * Access to a publisher, use it to subscribe for StructArrayInterface changes and signal emission.

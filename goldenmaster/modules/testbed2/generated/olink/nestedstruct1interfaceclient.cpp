@@ -64,6 +64,56 @@ const NestedStruct1& NestedStruct1InterfaceClient::getProp1() const
     return m_data.m_prop1;
 }
 
+void NestedStruct1InterfaceClient::funcNoReturnValue(const NestedStruct1& param1)
+{
+    return funcNoReturnValueAsync(param1).get();
+}
+
+std::future<void> NestedStruct1InterfaceClient::funcNoReturnValueAsync(const NestedStruct1& param1, std::function<void(void)> callback)
+{
+    if(!m_node) {
+        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
+        return std::future<void>{};
+    }
+    std::shared_ptr<std::promise<void>> resultPromise = std::make_shared<std::promise<void>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcNoReturnValue");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({param1}), [resultPromise, callback](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            (void) arg;
+            resultPromise->set_value();
+            if (callback)
+            {
+                callback();
+            }
+        });
+    return resultPromise->get_future();
+}
+
+NestedStruct1 NestedStruct1InterfaceClient::funcNoParams()
+{
+    return funcNoParamsAsync().get();
+}
+
+std::future<NestedStruct1> NestedStruct1InterfaceClient::funcNoParamsAsync( std::function<void(NestedStruct1)> callback)
+{
+    if(!m_node) {
+        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
+        return std::future<NestedStruct1>{};
+    }
+    std::shared_ptr<std::promise<NestedStruct1>> resultPromise = std::make_shared<std::promise<NestedStruct1>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcNoParams");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({}), [resultPromise, callback](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const NestedStruct1& value = arg.value.get<NestedStruct1>();
+            resultPromise->set_value(value);
+            if (callback)
+            {
+                callback(value);
+            }
+        });
+    return resultPromise->get_future();
+}
+
 NestedStruct1 NestedStruct1InterfaceClient::func1(const NestedStruct1& param1)
 {
     return func1Async(param1).get();

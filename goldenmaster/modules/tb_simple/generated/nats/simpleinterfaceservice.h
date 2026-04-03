@@ -67,6 +67,7 @@ private:
     /// @param fields contains the param of the type std::string
     void onSetPropString(const std::string& args) const;
     std::string onInvokeFuncNoReturnValue(const std::string& args) const;
+    std::string onInvokeFuncNoParams(const std::string& args) const;
     std::string onInvokeFuncBool(const std::string& args) const;
     std::string onInvokeFuncInt(const std::string& args) const;
     std::string onInvokeFuncInt32(const std::string& args) const;

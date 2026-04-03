@@ -29,6 +29,9 @@ public:
     void setPropString(const std::list<StructString>& propString) override;
     const std::list<StructString>& getPropString() const override;
     
+    void setPropEnum(const std::list<Enum0Enum>& propEnum) override;
+    const std::list<Enum0Enum>& getPropEnum() const override;
+    
     std::list<StructBool> funcBool(const std::list<StructBool>& paramBool) override;
     std::future<std::list<StructBool>> funcBoolAsync(const std::list<StructBool>& paramBool, std::function<void(std::list<StructBool>)> callback = nullptr) override;
         
@@ -40,6 +43,9 @@ public:
         
     std::list<StructString> funcString(const std::list<StructString>& paramString) override;
     std::future<std::list<StructString>> funcStringAsync(const std::list<StructString>& paramString, std::function<void(std::list<StructString>)> callback = nullptr) override;
+        
+    std::list<Enum0Enum> funcEnum(const std::list<Enum0Enum>& paramEnum) override;
+    std::future<std::list<Enum0Enum>> funcEnumAsync(const std::list<Enum0Enum>& paramEnum, std::function<void(std::list<Enum0Enum>)> callback = nullptr) override;
         
     /**
     * Access to a publisher, use it to subscribe for StructArrayInterface changes and signal emission.

@@ -7,7 +7,7 @@ using namespace Test::Testbed2;
 using namespace Test::Testbed2::Nats;
 
 namespace{
-const uint32_t  expectedMethodSubscriptions = 1;
+const uint32_t  expectedMethodSubscriptions = 3;
 const uint32_t  expectedPropertiesSubscriptions = 1;
 const uint32_t  initRespSubscription = 1;
 constexpr uint32_t expectedSubscriptionsCount = initRespSubscription + expectedMethodSubscriptions + expectedPropertiesSubscriptions;
@@ -62,6 +62,8 @@ void NestedStruct1InterfaceService::onConnected()
         _unsubscribeFromIsReady(m_onReadySubscriptionId);
     });
     subscribeTopic("testbed2.NestedStruct1Interface.set.prop1", [this](const auto& value){ onSetProp1(value); });
+    subscribeRequest("testbed2.NestedStruct1Interface.rpc.funcNoReturnValue", [this](const auto& args){  return onInvokeFuncNoReturnValue(args); });
+    subscribeRequest("testbed2.NestedStruct1Interface.rpc.funcNoParams", [this](const auto& args){  return onInvokeFuncNoParams(args); });
     subscribeRequest("testbed2.NestedStruct1Interface.rpc.func1", [this](const auto& args){  return onInvokeFunc1(args); });
 
     const std::string initRequestTopic = "testbed2.NestedStruct1Interface.init";
@@ -108,6 +110,19 @@ void NestedStruct1InterfaceService::onProp1Changed(const NestedStruct1& prop1)
 {
     static const std::string topic = "testbed2.NestedStruct1Interface.prop.prop1";
     m_service->publish(topic, nlohmann::json(prop1).dump());
+}
+std::string NestedStruct1InterfaceService::onInvokeFuncNoReturnValue(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const NestedStruct1& param1 = json_args.at(0).get<NestedStruct1>();
+    m_impl->funcNoReturnValue(param1);
+    return "0";
+}
+std::string NestedStruct1InterfaceService::onInvokeFuncNoParams(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    auto result = m_impl->funcNoParams();
+    return nlohmann::json(result).dump();
 }
 std::string NestedStruct1InterfaceService::onInvokeFunc1(const std::string& args) const
 {

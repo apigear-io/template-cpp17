@@ -25,6 +25,7 @@ find_package(tb_names REQUIRED COMPONENTS tb_names-core tb_names-implementation 
 find_package(custom_types REQUIRED COMPONENTS custom_types-core)
 find_package(extern_types REQUIRED COMPONENTS extern_types-core)
 find_package(counter REQUIRED COMPONENTS counter-core counter-implementation counter-mqtt)
+find_package(tb_struct_array REQUIRED COMPONENTS tb_struct_array-core tb_struct_array-implementation tb_struct_array-mqtt)
 target_link_libraries(MQTTServer
     apigear::utilities
     testbed2::testbed2-core
@@ -53,6 +54,9 @@ target_link_libraries(MQTTServer
     counter::counter-core
     counter::counter-implementation
     counter::counter-mqtt
+    tb_struct_array::tb_struct_array-core
+    tb_struct_array::tb_struct_array-implementation
+    tb_struct_array::tb_struct_array-mqtt
 )
 
 # we assume that the examples are built together with the libraries and thus ignore this warning

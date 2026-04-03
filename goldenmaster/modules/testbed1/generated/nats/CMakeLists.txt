@@ -4,6 +4,8 @@ set (SOURCES_NATS
     structinterfaceclient.cpp
     structarrayinterfaceservice.cpp
     structarrayinterfaceclient.cpp
+    structarray2interfaceservice.cpp
+    structarray2interfaceclient.cpp
 )
 add_library(testbed1-nats SHARED ${SOURCES_NATS})
 add_library(testbed1::testbed1-nats ALIAS testbed1-nats)

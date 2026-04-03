@@ -136,6 +136,15 @@ public:
     */
     std::future<void> funcNoReturnValueAsync(bool paramBool, std::function<void(void)> callback = nullptr) override;
     /**
+    * Remote call of ISimpleInterface::funcNoParams on the SimpleInterface service.
+    * Uses funcNoParamsAsync
+    */
+    bool funcNoParams() override;
+    /**
+    * Remote call of ISimpleInterface::funcNoParams on the SimpleInterface service.
+    */
+    std::future<bool> funcNoParamsAsync( std::function<void(bool)> callback = nullptr) override;
+    /**
     * Remote call of ISimpleInterface::funcBool on the SimpleInterface service.
     * Uses funcBoolAsync
     */

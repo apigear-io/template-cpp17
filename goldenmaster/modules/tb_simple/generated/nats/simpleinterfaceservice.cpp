@@ -7,7 +7,7 @@ using namespace Test::TbSimple;
 using namespace Test::TbSimple::Nats;
 
 namespace{
-const uint32_t  expectedMethodSubscriptions = 9;
+const uint32_t  expectedMethodSubscriptions = 10;
 const uint32_t  expectedPropertiesSubscriptions = 8;
 const uint32_t  initRespSubscription = 1;
 constexpr uint32_t expectedSubscriptionsCount = initRespSubscription + expectedMethodSubscriptions + expectedPropertiesSubscriptions;
@@ -70,6 +70,7 @@ void SimpleInterfaceService::onConnected()
     subscribeTopic("tb.simple.SimpleInterface.set.propFloat64", [this](const auto& value){ onSetPropFloat64(value); });
     subscribeTopic("tb.simple.SimpleInterface.set.propString", [this](const auto& value){ onSetPropString(value); });
     subscribeRequest("tb.simple.SimpleInterface.rpc.funcNoReturnValue", [this](const auto& args){  return onInvokeFuncNoReturnValue(args); });
+    subscribeRequest("tb.simple.SimpleInterface.rpc.funcNoParams", [this](const auto& args){  return onInvokeFuncNoParams(args); });
     subscribeRequest("tb.simple.SimpleInterface.rpc.funcBool", [this](const auto& args){  return onInvokeFuncBool(args); });
     subscribeRequest("tb.simple.SimpleInterface.rpc.funcInt", [this](const auto& args){  return onInvokeFuncInt(args); });
     subscribeRequest("tb.simple.SimpleInterface.rpc.funcInt32", [this](const auto& args){  return onInvokeFuncInt32(args); });
@@ -298,6 +299,12 @@ std::string SimpleInterfaceService::onInvokeFuncNoReturnValue(const std::string&
     const bool& paramBool = json_args.at(0).get<bool>();
     m_impl->funcNoReturnValue(paramBool);
     return "0";
+}
+std::string SimpleInterfaceService::onInvokeFuncNoParams(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    auto result = m_impl->funcNoParams();
+    return nlohmann::json(result).dump();
 }
 std::string SimpleInterfaceService::onInvokeFuncBool(const std::string& args) const
 {

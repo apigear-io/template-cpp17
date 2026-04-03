@@ -36,6 +36,14 @@ public:
     virtual std::future<void> funcNoReturnValueAsync(bool paramBool, std::function<void(void)> callback = nullptr) = 0;
 
 
+    virtual bool funcNoParams() = 0;
+    /**
+    * Asynchronous version of funcNoParams()
+    * @return Promise of type bool which is set once the function has completed
+    */
+    virtual std::future<bool> funcNoParamsAsync( std::function<void(bool)> callback = nullptr) = 0;
+
+
     virtual bool funcBool(bool paramBool) = 0;
     /**
     * Asynchronous version of funcBool(bool paramBool)

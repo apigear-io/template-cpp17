@@ -7,8 +7,8 @@ using namespace Test::Testbed1;
 using namespace Test::Testbed1::Nats;
 
 namespace{
-const uint32_t  expectedMethodSubscriptions = 4;
-const uint32_t  expectedPropertiesSubscriptions = 4;
+const uint32_t  expectedMethodSubscriptions = 5;
+const uint32_t  expectedPropertiesSubscriptions = 5;
 const uint32_t  initRespSubscription = 1;
 constexpr uint32_t expectedSubscriptionsCount = initRespSubscription + expectedMethodSubscriptions + expectedPropertiesSubscriptions;
 }
@@ -65,10 +65,12 @@ void StructArrayInterfaceService::onConnected()
     subscribeTopic("testbed1.StructArrayInterface.set.propInt", [this](const auto& value){ onSetPropInt(value); });
     subscribeTopic("testbed1.StructArrayInterface.set.propFloat", [this](const auto& value){ onSetPropFloat(value); });
     subscribeTopic("testbed1.StructArrayInterface.set.propString", [this](const auto& value){ onSetPropString(value); });
+    subscribeTopic("testbed1.StructArrayInterface.set.propEnum", [this](const auto& value){ onSetPropEnum(value); });
     subscribeRequest("testbed1.StructArrayInterface.rpc.funcBool", [this](const auto& args){  return onInvokeFuncBool(args); });
     subscribeRequest("testbed1.StructArrayInterface.rpc.funcInt", [this](const auto& args){  return onInvokeFuncInt(args); });
     subscribeRequest("testbed1.StructArrayInterface.rpc.funcFloat", [this](const auto& args){  return onInvokeFuncFloat(args); });
     subscribeRequest("testbed1.StructArrayInterface.rpc.funcString", [this](const auto& args){  return onInvokeFuncString(args); });
+    subscribeRequest("testbed1.StructArrayInterface.rpc.funcEnum", [this](const auto& args){  return onInvokeFuncEnum(args); });
 
     const std::string initRequestTopic = "testbed1.StructArrayInterface.init";
     subscribeTopic(initRequestTopic, [this, initRequestTopic](const auto& value){
@@ -92,7 +94,8 @@ nlohmann::json StructArrayInterfaceService::getState()
         { "propBool", m_impl->getPropBool() },
         { "propInt", m_impl->getPropInt() },
         { "propFloat", m_impl->getPropFloat() },
-        { "propString", m_impl->getPropString() }
+        { "propString", m_impl->getPropString() },
+        { "propEnum", m_impl->getPropEnum() }
     });
 }
 void StructArrayInterfaceService::onSetPropBool(const std::string& args) const
@@ -139,6 +142,17 @@ void StructArrayInterfaceService::onSetPropString(const std::string& args) const
     auto propString = json_args.get<std::list<StructString>>();
     m_impl->setPropString(propString);
 }
+void StructArrayInterfaceService::onSetPropEnum(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    if (json_args.empty())
+    {
+        return;
+    }
+
+    auto propEnum = json_args.get<std::list<Enum0Enum>>();
+    m_impl->setPropEnum(propEnum);
+}
 void StructArrayInterfaceService::onSigBool(const std::list<StructBool>& paramBool)
 {
     (void) paramBool;
@@ -167,6 +181,13 @@ void StructArrayInterfaceService::onSigString(const std::list<StructString>& par
     nlohmann::json args = { paramString };
     m_service->publish(topic, nlohmann::json(args).dump());
 }
+void StructArrayInterfaceService::onSigEnum(const std::list<Enum0Enum>& paramEnum)
+{
+    (void) paramEnum;
+    static const std::string topic = "testbed1.StructArrayInterface.sig.sigEnum";
+    nlohmann::json args = { paramEnum };
+    m_service->publish(topic, nlohmann::json(args).dump());
+}
 void StructArrayInterfaceService::onPropBoolChanged(const std::list<StructBool>& propBool)
 {
     static const std::string topic = "testbed1.StructArrayInterface.prop.propBool";
@@ -186,6 +207,11 @@ void StructArrayInterfaceService::onPropStringChanged(const std::list<StructStri
 {
     static const std::string topic = "testbed1.StructArrayInterface.prop.propString";
     m_service->publish(topic, nlohmann::json(propString).dump());
+}
+void StructArrayInterfaceService::onPropEnumChanged(const std::list<Enum0Enum>& propEnum)
+{
+    static const std::string topic = "testbed1.StructArrayInterface.prop.propEnum";
+    m_service->publish(topic, nlohmann::json(propEnum).dump());
 }
 std::string StructArrayInterfaceService::onInvokeFuncBool(const std::string& args) const
 {
@@ -213,5 +239,12 @@ std::string StructArrayInterfaceService::onInvokeFuncString(const std::string& a
     nlohmann::json json_args = nlohmann::json::parse(args);
     const std::list<StructString>& paramString = json_args.at(0).get<std::list<StructString>>();
     auto result = m_impl->funcString(paramString);
+    return nlohmann::json(result).dump();
+}
+std::string StructArrayInterfaceService::onInvokeFuncEnum(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    const std::list<Enum0Enum>& paramEnum = json_args.at(0).get<std::list<Enum0Enum>>();
+    auto result = m_impl->funcEnum(paramEnum);
     return nlohmann::json(result).dump();
 }

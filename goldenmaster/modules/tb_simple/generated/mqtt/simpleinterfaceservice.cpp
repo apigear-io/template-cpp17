@@ -34,6 +34,7 @@ std::map<std::string, ApiGear::MQTT::CallbackFunction> SimpleInterfaceService::c
         {std::string("tb.simple/SimpleInterface/set/propFloat64"), [this](const std::string& args, const std::string&, const std::string&){ this->onSetPropFloat64(args); } },
         {std::string("tb.simple/SimpleInterface/set/propString"), [this](const std::string& args, const std::string&, const std::string&){ this->onSetPropString(args); } },
         {std::string("tb.simple/SimpleInterface/rpc/funcNoReturnValue"), [this](const std::string& args, const std::string& responseTopic, const std::string& correlationData) { this->onInvokeFuncNoReturnValue(args, responseTopic, correlationData); } },
+        {std::string("tb.simple/SimpleInterface/rpc/funcNoParams"), [this](const std::string& args, const std::string& responseTopic, const std::string& correlationData) { this->onInvokeFuncNoParams(args, responseTopic, correlationData); } },
         {std::string("tb.simple/SimpleInterface/rpc/funcBool"), [this](const std::string& args, const std::string& responseTopic, const std::string& correlationData) { this->onInvokeFuncBool(args, responseTopic, correlationData); } },
         {std::string("tb.simple/SimpleInterface/rpc/funcInt"), [this](const std::string& args, const std::string& responseTopic, const std::string& correlationData) { this->onInvokeFuncInt(args, responseTopic, correlationData); } },
         {std::string("tb.simple/SimpleInterface/rpc/funcInt32"), [this](const std::string& args, const std::string& responseTopic, const std::string& correlationData) { this->onInvokeFuncInt32(args, responseTopic, correlationData); } },
@@ -156,6 +157,12 @@ void SimpleInterfaceService::onInvokeFuncNoReturnValue(const std::string& args, 
     (void) correlationData;
     const bool& paramBool = json_args.at(0).get<bool>();
     m_impl->funcNoReturnValue(paramBool);
+}
+void SimpleInterfaceService::onInvokeFuncNoParams(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    auto result = m_impl->funcNoParams();
+    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
 }
 void SimpleInterfaceService::onInvokeFuncBool(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {

@@ -34,6 +34,7 @@ find_package(tb_names REQUIRED COMPONENTS tb_names-core tb_names-implementation 
 find_package(custom_types REQUIRED COMPONENTS custom_types-core)
 find_package(extern_types REQUIRED COMPONENTS extern_types-core)
 find_package(counter REQUIRED COMPONENTS counter-core counter-implementation counter-olink)
+find_package(tb_struct_array REQUIRED COMPONENTS tb_struct_array-core tb_struct_array-implementation tb_struct_array-olink)
 target_link_libraries(OLinkServer
     testbed2::testbed2-core
     testbed2::testbed2-implementation
@@ -61,6 +62,9 @@ target_link_libraries(OLinkServer
     counter::counter-core
     counter::counter-implementation
     counter::counter-olink
+    tb_struct_array::tb_struct_array-core
+    tb_struct_array::tb_struct_array-implementation
+    tb_struct_array::tb_struct_array-olink
 )
 
 install(TARGETS OLinkServer

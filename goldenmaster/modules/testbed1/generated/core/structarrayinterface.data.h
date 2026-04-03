@@ -17,6 +17,7 @@ struct StructArrayInterfaceData
     std::list<StructInt> m_propInt {std::list<StructInt>()};
     std::list<StructFloat> m_propFloat {std::list<StructFloat>()};
     std::list<StructString> m_propString {std::list<StructString>()};
+    std::list<Enum0Enum> m_propEnum {std::list<Enum0Enum>()};
 };
 
 }

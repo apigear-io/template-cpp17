@@ -16,6 +16,19 @@ void NestedStruct1InterfaceTracer::capture_state(INestedStruct1Interface* obj)
     m_tracer.state("testbed2.NestedStruct1Interface#_state", fields_);
 }
 
+void NestedStruct1InterfaceTracer::trace_funcNoReturnValue(const NestedStruct1& param1)
+{
+    nlohmann::json fields_;
+    fields_["param1"] = param1;
+    m_tracer.call("testbed2.NestedStruct1Interface#funcNoReturnValue", fields_);
+}
+
+void NestedStruct1InterfaceTracer::trace_funcNoParams()
+{
+    nlohmann::json fields_;
+    m_tracer.call("testbed2.NestedStruct1Interface#funcNoParams", fields_);
+}
+
 void NestedStruct1InterfaceTracer::trace_func1(const NestedStruct1& param1)
 {
     nlohmann::json fields_;

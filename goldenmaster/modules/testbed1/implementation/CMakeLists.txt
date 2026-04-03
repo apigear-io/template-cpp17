@@ -9,6 +9,7 @@ find_package(Threads REQUIRED)
 set (SOURCES_CORE_IMPL
     structinterface.cpp
     structarrayinterface.cpp
+    structarray2interface.cpp
 )
 add_library(testbed1-implementation SHARED ${SOURCES_CORE_IMPL})
 add_library(testbed1::testbed1-implementation ALIAS testbed1-implementation)
@@ -35,6 +36,7 @@ set (SOURCES_TEST
     ${CMAKE_CURRENT_SOURCE_DIR}/../generated/core/testbed1.test.cpp
     structinterface.test.cpp
     structarrayinterface.test.cpp
+    structarray2interface.test.cpp
 )
 add_executable(test_testbed1
     ${SOURCES_TEST}

@@ -140,6 +140,24 @@ std::future<void> SimpleInterface::funcNoReturnValueAsync(bool paramBool, std::f
     );
 }
 
+bool SimpleInterface::funcNoParams()
+{
+    // do business logic here
+    return false;
+}
+
+std::future<bool> SimpleInterface::funcNoParamsAsync( std::function<void(bool)> callback)
+{
+    return std::async(std::launch::async, [this, callback]()
+        {auto result = funcNoParams();
+            if (callback)
+            {
+                callback(result);
+            }return result;
+        }
+    );
+}
+
 bool SimpleInterface::funcBool(bool paramBool)
 {
     (void) paramBool; // suppress the 'Unreferenced Formal Parameter' warning.

@@ -47,6 +47,11 @@ public:
   */
   void trace_funcString(const std::list<StructString>& paramString);
   /**
+  * Prepares information about the funcEnum call in a nlohmann::json format and puts to a tracer.
+  * @param The StructArrayInterface object to trace.
+  */
+  void trace_funcEnum(const std::list<Enum0Enum>& paramEnum);
+  /**
   * Prepares information about the sigBool call in a nlohmann::json format and puts to a tracer.
   * @param The StructArrayInterface object to trace.
   */
@@ -66,6 +71,11 @@ public:
   * @param The StructArrayInterface object to trace.
   */
   void trace_sigString(const std::list<StructString>& paramString);
+  /**
+  * Prepares information about the sigEnum call in a nlohmann::json format and puts to a tracer.
+  * @param The StructArrayInterface object to trace.
+  */
+  void trace_sigEnum(const std::list<Enum0Enum>& paramEnum);
 private:
   /**
   * A tracer object to which the information about the state and operations is put.

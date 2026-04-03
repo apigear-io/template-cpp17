@@ -425,6 +425,50 @@ std::future<void> SimpleInterfaceClient::funcNoReturnValueAsync(bool paramBool, 
     });
 }
 
+bool SimpleInterfaceClient::funcNoParams()
+{
+    if(m_client == nullptr) {
+        return false;
+    }
+    bool value(funcNoParamsAsync().get());
+    return value;
+}
+
+std::future<bool> SimpleInterfaceClient::funcNoParamsAsync( std::function<void(bool)> user_callback)
+{
+    if(m_client == nullptr) {
+        throw std::runtime_error("Client is not initialized");
+    }
+    static const auto topic = std::string("tb.simple.SimpleInterface.rpc.funcNoParams");
+
+    return std::async(std::launch::async, [this, user_callback]()
+    {
+        std::promise<bool> resultPromise;
+        auto callback = [&resultPromise, user_callback](const auto& result)
+        {
+            if (result.empty())
+            {
+                resultPromise.set_value(false);
+                if (user_callback)
+                {
+                    user_callback(false);
+                }
+                return;
+            }
+            nlohmann::json field = nlohmann::json::parse(result);
+            const bool value = field.get<bool>();
+            resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
+        };
+
+        m_client->request(topic,  nlohmann::json::array({}).dump(), callback);
+        return resultPromise.get_future().get();
+    });
+}
+
 bool SimpleInterfaceClient::funcBool(bool paramBool)
 {
     if(m_client == nullptr) {

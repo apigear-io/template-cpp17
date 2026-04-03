@@ -32,6 +32,11 @@ public:
   */
   void trace_funcNoReturnValue(bool paramBool);
   /**
+  * Prepares information about the funcNoParams call in a nlohmann::json format and puts to a tracer.
+  * @param The SimpleInterface object to trace.
+  */
+  void trace_funcNoParams();
+  /**
   * Prepares information about the funcBool call in a nlohmann::json format and puts to a tracer.
   * @param The SimpleInterface object to trace.
   */

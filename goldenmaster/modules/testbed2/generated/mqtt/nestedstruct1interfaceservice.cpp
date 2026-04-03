@@ -26,6 +26,8 @@ std::map<std::string, ApiGear::MQTT::CallbackFunction> NestedStruct1InterfaceSer
 {
     return {
         {std::string("testbed2/NestedStruct1Interface/set/prop1"), [this](const std::string& args, const std::string&, const std::string&){ this->onSetProp1(args); } },
+        {std::string("testbed2/NestedStruct1Interface/rpc/funcNoReturnValue"), [this](const std::string& args, const std::string& responseTopic, const std::string& correlationData) { this->onInvokeFuncNoReturnValue(args, responseTopic, correlationData); } },
+        {std::string("testbed2/NestedStruct1Interface/rpc/funcNoParams"), [this](const std::string& args, const std::string& responseTopic, const std::string& correlationData) { this->onInvokeFuncNoParams(args, responseTopic, correlationData); } },
         {std::string("testbed2/NestedStruct1Interface/rpc/func1"), [this](const std::string& args, const std::string& responseTopic, const std::string& correlationData) { this->onInvokeFunc1(args, responseTopic, correlationData); } },
     };
 }
@@ -49,6 +51,20 @@ void NestedStruct1InterfaceService::onSetProp1(const std::string& args) const
 
     auto prop1 = json_args.get<NestedStruct1>();
     m_impl->setProp1(prop1);
+}
+void NestedStruct1InterfaceService::onInvokeFuncNoReturnValue(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    (void) responseTopic;
+    (void) correlationData;
+    const NestedStruct1& param1 = json_args.at(0).get<NestedStruct1>();
+    m_impl->funcNoReturnValue(param1);
+}
+void NestedStruct1InterfaceService::onInvokeFuncNoParams(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    auto result = m_impl->funcNoParams();
+    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
 }
 void NestedStruct1InterfaceService::onInvokeFunc1(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {

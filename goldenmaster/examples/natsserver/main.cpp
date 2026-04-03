@@ -43,10 +43,14 @@
 #include "testbed1/generated/nats/structinterfaceservice.h"
 #include "testbed1/implementation/structarrayinterface.h"
 #include "testbed1/generated/nats/structarrayinterfaceservice.h"
+#include "testbed1/implementation/structarray2interface.h"
+#include "testbed1/generated/nats/structarray2interfaceservice.h"
 #include "tb_names/implementation/names.h"
 #include "tb_names/generated/nats/namesservice.h"
 #include "counter/implementation/counter.h"
 #include "counter/generated/nats/counterservice.h"
+#include "tb_struct_array/implementation/structarrayfieldinterface.h"
+#include "tb_struct_array/generated/nats/structarrayfieldinterfaceservice.h"
 #include "apigear/nats/natsservice.h"
 #include "apigear/utilities/logger.h"
 #include <iostream>
@@ -121,10 +125,14 @@ int main(){
     auto testTestbed1StructInterfaceService = Testbed1::Nats::StructInterfaceService::create(testTestbed1StructInterface, service);
     std::shared_ptr<Testbed1::IStructArrayInterface> testTestbed1StructArrayInterface = std::make_shared<Testbed1::StructArrayInterface>();
     auto testTestbed1StructArrayInterfaceService = Testbed1::Nats::StructArrayInterfaceService::create(testTestbed1StructArrayInterface, service);
+    std::shared_ptr<Testbed1::IStructArray2Interface> testTestbed1StructArray2Interface = std::make_shared<Testbed1::StructArray2Interface>();
+    auto testTestbed1StructArray2InterfaceService = Testbed1::Nats::StructArray2InterfaceService::create(testTestbed1StructArray2Interface, service);
     std::shared_ptr<TbNames::INamEs> testTbNamesNamEs = std::make_shared<TbNames::NamEs>();
     auto testTbNamesNamEsService = TbNames::Nats::Nam_EsService::create(testTbNamesNamEs, service);
     std::shared_ptr<Counter::ICounter> testCounterCounter = std::make_shared<Counter::Counter>();
     auto testCounterCounterService = Counter::Nats::CounterService::create(testCounterCounter, service);
+    std::shared_ptr<TbStructArray::IStructArrayFieldInterface> testTbStructArrayStructArrayFieldInterface = std::make_shared<TbStructArray::StructArrayFieldInterface>();
+    auto testTbStructArrayStructArrayFieldInterfaceService = TbStructArray::Nats::StructArrayFieldInterfaceService::create(testTbStructArrayStructArrayFieldInterface, service);
 
     service->connect("nats://localhost:4222");
 

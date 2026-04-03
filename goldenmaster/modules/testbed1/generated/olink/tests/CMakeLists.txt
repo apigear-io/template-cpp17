@@ -16,6 +16,7 @@ set(TEST_TESTBED1_GENERATED_OLINK_SOURCES
     test_main.cpp
     test_structinterface.cpp
     test_structarrayinterface.cpp
+    test_structarray2interface.cpp
     )
 
 

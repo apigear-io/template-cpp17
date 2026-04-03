@@ -43,6 +43,28 @@ public:
     * Forwards call to NestedStruct1Interface implementation.
     * @warning This forward call is not made thread safe by this class.
     */
+    void funcNoReturnValue(const NestedStruct1& param1) override;
+    /** 
+    * Forwards call to NestedStruct1Interface implementation.
+    * @warning This forward call is not made thread safe by this class.
+    */
+    std::future<void> funcNoReturnValueAsync(const NestedStruct1& param1, std::function<void(void)> callback = nullptr) override;
+
+    /** 
+    * Forwards call to NestedStruct1Interface implementation.
+    * @warning This forward call is not made thread safe by this class.
+    */
+    NestedStruct1 funcNoParams() override;
+    /** 
+    * Forwards call to NestedStruct1Interface implementation.
+    * @warning This forward call is not made thread safe by this class.
+    */
+    std::future<NestedStruct1> funcNoParamsAsync( std::function<void(NestedStruct1)> callback = nullptr) override;
+
+    /** 
+    * Forwards call to NestedStruct1Interface implementation.
+    * @warning This forward call is not made thread safe by this class.
+    */
     NestedStruct1 func1(const NestedStruct1& param1) override;
     /** 
     * Forwards call to NestedStruct1Interface implementation.

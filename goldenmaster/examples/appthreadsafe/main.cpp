@@ -43,10 +43,14 @@
 #include "testbed1/generated/core/structinterface.threadsafedecorator.h"
 #include "testbed1/implementation/structarrayinterface.h"
 #include "testbed1/generated/core/structarrayinterface.threadsafedecorator.h"
+#include "testbed1/implementation/structarray2interface.h"
+#include "testbed1/generated/core/structarray2interface.threadsafedecorator.h"
 #include "tb_names/implementation/names.h"
 #include "tb_names/generated/core/names.threadsafedecorator.h"
 #include "counter/implementation/counter.h"
 #include "counter/generated/core/counter.threadsafedecorator.h"
+#include "tb_struct_array/implementation/structarrayfieldinterface.h"
+#include "tb_struct_array/generated/core/structarrayfieldinterface.threadsafedecorator.h"
 
 void testTestbed2ManyParamInterface()
 {
@@ -408,6 +412,33 @@ void testTestbed1StructArrayInterface()
     auto l_propString = std::list<StructString>();
     l_propString = testStructArrayInterface->getPropString();
     testStructArrayInterface->setPropString(l_propString);
+    auto l_propEnum = std::list<Enum0Enum>();
+    l_propEnum = testStructArrayInterface->getPropEnum();
+    testStructArrayInterface->setPropEnum(l_propEnum);
+}
+
+void testTestbed1StructArray2Interface()
+{
+    using namespace Test::Testbed1;
+
+    std::unique_ptr<IStructArray2Interface> testStructArray2Interface = std::make_unique<StructArray2InterfaceThreadSafeDecorator>(std::make_shared<StructArray2Interface>());
+
+    // Thread safe access
+    auto l_propBool = StructBoolWithArray();
+    l_propBool = testStructArray2Interface->getPropBool();
+    testStructArray2Interface->setPropBool(l_propBool);
+    auto l_propInt = StructIntWithArray();
+    l_propInt = testStructArray2Interface->getPropInt();
+    testStructArray2Interface->setPropInt(l_propInt);
+    auto l_propFloat = StructFloatWithArray();
+    l_propFloat = testStructArray2Interface->getPropFloat();
+    testStructArray2Interface->setPropFloat(l_propFloat);
+    auto l_propString = StructStringWithArray();
+    l_propString = testStructArray2Interface->getPropString();
+    testStructArray2Interface->setPropString(l_propString);
+    auto l_propEnum = StructEnumWithArray();
+    l_propEnum = testStructArray2Interface->getPropEnum();
+    testStructArray2Interface->setPropEnum(l_propEnum);
 }
 
 void testTbNamesNamEs()
@@ -452,6 +483,27 @@ void testCounterCounter()
     testCounter->setExternVectorArray(l_externVectorArray);
 }
 
+void testTbStructArrayStructArrayFieldInterface()
+{
+    using namespace Test::TbStructArray;
+
+    std::unique_ptr<IStructArrayFieldInterface> testStructArrayFieldInterface = std::make_unique<StructArrayFieldInterfaceThreadSafeDecorator>(std::make_shared<StructArrayFieldInterface>());
+
+    // Thread safe access
+    auto l_propStructArray = StructWithArrayOfStructs();
+    l_propStructArray = testStructArrayFieldInterface->getPropStructArray();
+    testStructArrayFieldInterface->setPropStructArray(l_propStructArray);
+    auto l_propEnumArray = StructWithArrayOfEnums();
+    l_propEnumArray = testStructArrayFieldInterface->getPropEnumArray();
+    testStructArrayFieldInterface->setPropEnumArray(l_propEnumArray);
+    auto l_propIntArray = StructWithArrayOfInts();
+    l_propIntArray = testStructArrayFieldInterface->getPropIntArray();
+    testStructArrayFieldInterface->setPropIntArray(l_propIntArray);
+    auto l_propMixed = MixedStruct();
+    l_propMixed = testStructArrayFieldInterface->getPropMixed();
+    testStructArrayFieldInterface->setPropMixed(l_propMixed);
+}
+
 
 int main(){
     testTestbed2ManyParamInterface();
@@ -476,8 +528,10 @@ int main(){
     testTbSimpleEmptyInterface();
     testTestbed1StructInterface();
     testTestbed1StructArrayInterface();
+    testTestbed1StructArray2Interface();
     testTbNamesNamEs();
     testCounterCounter();
+    testTbStructArrayStructArrayFieldInterface();
 
     return 0;
 }

@@ -43,6 +43,15 @@ std::future<std::list<StructString>> StructArrayInterfaceThreadSafeDecorator::fu
 {
     return m_impl->funcStringAsync(paramString, callback);
 }
+std::list<Enum0Enum> StructArrayInterfaceThreadSafeDecorator::funcEnum(const std::list<Enum0Enum>& paramEnum)
+{
+    return m_impl->funcEnum(paramEnum);
+}
+
+std::future<std::list<Enum0Enum>> StructArrayInterfaceThreadSafeDecorator::funcEnumAsync(const std::list<Enum0Enum>& paramEnum, std::function<void(std::list<Enum0Enum>)> callback)
+{
+    return m_impl->funcEnumAsync(paramEnum, callback);
+}
 void StructArrayInterfaceThreadSafeDecorator::setPropBool(const std::list<StructBool>& propBool)
 {
     std::unique_lock<std::shared_timed_mutex> lock(m_propBoolMutex);
@@ -86,6 +95,17 @@ const std::list<StructString>& StructArrayInterfaceThreadSafeDecorator::getPropS
 {
     std::shared_lock<std::shared_timed_mutex> lock(m_propStringMutex);
     return m_impl->getPropString();
+}
+void StructArrayInterfaceThreadSafeDecorator::setPropEnum(const std::list<Enum0Enum>& propEnum)
+{
+    std::unique_lock<std::shared_timed_mutex> lock(m_propEnumMutex);
+    m_impl->setPropEnum(propEnum);
+}
+
+const std::list<Enum0Enum>& StructArrayInterfaceThreadSafeDecorator::getPropEnum() const
+{
+    std::shared_lock<std::shared_timed_mutex> lock(m_propEnumMutex);
+    return m_impl->getPropEnum();
 }
 
 IStructArrayInterfacePublisher& StructArrayInterfaceThreadSafeDecorator::_getPublisher() const

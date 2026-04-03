@@ -25,6 +25,7 @@ find_package(tb_names REQUIRED COMPONENTS tb_names-core tb_names-implementation 
 find_package(custom_types REQUIRED COMPONENTS custom_types-core)
 find_package(extern_types REQUIRED COMPONENTS extern_types-core)
 find_package(counter REQUIRED COMPONENTS counter-core counter-implementation counter-nats)
+find_package(tb_struct_array REQUIRED COMPONENTS tb_struct_array-core tb_struct_array-implementation tb_struct_array-nats)
 target_link_libraries(NatsServer
     apigear::utilities
     apigear::nats
@@ -54,6 +55,9 @@ target_link_libraries(NatsServer
     counter::counter-core
     counter::counter-implementation
     counter::counter-nats
+    tb_struct_array::tb_struct_array-core
+    tb_struct_array::tb_struct_array-implementation
+    tb_struct_array::tb_struct_array-nats
 )
 
 # we assume that the examples are built together with the libraries and thus ignore this warning

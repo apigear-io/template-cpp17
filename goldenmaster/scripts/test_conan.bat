@@ -41,6 +41,9 @@ if %ERRORLEVEL% GEQ 1 exit /b %ERRORLEVEL%
 @REM Building and testing counter module
 call :build_and_test_module "counter" "../../modules/counter/conan"
 if %ERRORLEVEL% GEQ 1 exit /b %ERRORLEVEL%
+@REM Building and testing tb_struct_array module
+call :build_and_test_module "tb_struct_array" "../../modules/tb_struct_array/conan"
+if %ERRORLEVEL% GEQ 1 exit /b %ERRORLEVEL%
 
 @REM Leave build folder
 cd ..

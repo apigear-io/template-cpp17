@@ -88,6 +88,10 @@ public:
     */
     void onSigString(const std::list<StructString>& paramString) override;
     /**
+    * Forwards emitted sigEnum through network if the connection is established.
+    */
+    void onSigEnum(const std::list<Enum0Enum>& paramEnum) override;
+    /**
     * Forwards propBool change through network if the connection is established.
     */
     void onPropBoolChanged(const std::list<StructBool>& propBool) override;
@@ -103,6 +107,10 @@ public:
     * Forwards propString change through network if the connection is established.
     */
     void onPropStringChanged(const std::list<StructString>& propString) override;
+    /**
+    * Forwards propEnum change through network if the connection is established.
+    */
+    void onPropEnumChanged(const std::list<Enum0Enum>& propEnum) override;
 
 private:
     /**

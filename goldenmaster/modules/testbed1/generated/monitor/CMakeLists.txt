@@ -7,6 +7,8 @@ set (SOURCES_MONITOR
     structinterface.tracer.cpp
     structarrayinterface.tracedecorator.cpp
     structarrayinterface.tracer.cpp
+    structarray2interface.tracedecorator.cpp
+    structarray2interface.tracer.cpp
 )
 add_library(testbed1-monitor SHARED ${SOURCES_MONITOR})
 add_library(testbed1::testbed1-monitor ALIAS testbed1-monitor)

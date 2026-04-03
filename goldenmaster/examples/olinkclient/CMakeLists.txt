@@ -34,6 +34,7 @@ find_package(tb_names REQUIRED COMPONENTS tb_names-core tb_names-implementation 
 find_package(custom_types REQUIRED COMPONENTS custom_types-core)
 find_package(extern_types REQUIRED COMPONENTS extern_types-core)
 find_package(counter REQUIRED COMPONENTS counter-core counter-implementation counter-monitor counter-olink)
+find_package(tb_struct_array REQUIRED COMPONENTS tb_struct_array-core tb_struct_array-implementation tb_struct_array-monitor tb_struct_array-olink)
 target_link_libraries(OLinkClient
     apigear::poco-tracer
     testbed2::testbed2-core
@@ -68,6 +69,10 @@ target_link_libraries(OLinkClient
     counter::counter-implementation
     counter::counter-monitor
     counter::counter-olink
+    tb_struct_array::tb_struct_array-core
+    tb_struct_array::tb_struct_array-implementation
+    tb_struct_array::tb_struct_array-monitor
+    tb_struct_array::tb_struct_array-olink
 )
 
 install(TARGETS OLinkClient

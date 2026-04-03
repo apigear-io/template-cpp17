@@ -36,6 +36,8 @@ public:
     void setPropFloat(const std::list<StructFloat>& propFloat) override;
     const std::list<StructString>& getPropString() const override;
     void setPropString(const std::list<StructString>& propString) override;
+    const std::list<Enum0Enum>& getPropEnum() const override;
+    void setPropEnum(const std::list<Enum0Enum>& propEnum) override;
     std::list<StructBool> funcBool(const std::list<StructBool>& paramBool) override;
     std::future<std::list<StructBool>> funcBoolAsync(const std::list<StructBool>& paramBool, std::function<void(std::list<StructBool>)> callback = nullptr) override;
     std::list<StructInt> funcInt(const std::list<StructInt>& paramInt) override;
@@ -44,6 +46,8 @@ public:
     std::future<std::list<StructFloat>> funcFloatAsync(const std::list<StructFloat>& paramFloat, std::function<void(std::list<StructFloat>)> callback = nullptr) override;
     std::list<StructString> funcString(const std::list<StructString>& paramString) override;
     std::future<std::list<StructString>> funcStringAsync(const std::list<StructString>& paramString, std::function<void(std::list<StructString>)> callback = nullptr) override;
+    std::list<Enum0Enum> funcEnum(const std::list<Enum0Enum>& paramEnum) override;
+    std::future<std::list<Enum0Enum>> funcEnumAsync(const std::list<Enum0Enum>& paramEnum, std::function<void(std::list<Enum0Enum>)> callback = nullptr) override;
     IStructArrayInterfacePublisher& _getPublisher() const override;
 
     bool isReady() const;
@@ -67,6 +71,9 @@ private:
     /// @brief sets the value for the property PropString coming from the service
     /// @param args contains the param of the type std::list<StructString>
     void setPropStringLocal(const std::string& args);
+    /// @brief sets the value for the property PropEnum coming from the service
+    /// @param args contains the param of the type std::list<Enum0Enum>
+    void setPropEnumLocal(const std::string& args);
     /// @brief publishes the value for the signal SigBool coming from the service
     /// @param args contains the param(s) of the type(s) const std::list<StructBool>& paramBool
     void onSigBool(const std::string& args) const;
@@ -79,6 +86,9 @@ private:
     /// @brief publishes the value for the signal SigString coming from the service
     /// @param args contains the param(s) of the type(s) const std::list<StructString>& paramString
     void onSigString(const std::string& args) const;
+    /// @brief publishes the value for the signal SigEnum coming from the service
+    /// @param args contains the param(s) of the type(s) const std::list<Enum0Enum>& paramEnum
+    void onSigEnum(const std::string& args) const;
 
     bool m_isReady;
     /** Local storage for properties values. */

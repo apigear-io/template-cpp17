@@ -87,6 +87,16 @@ public:
     */
     void setPropString(const std::list<StructString>& propString) override;
     /**
+    * Property getter
+    * @return Locally stored locally value for PropEnum.
+    */
+    const std::list<Enum0Enum>& getPropEnum() const override;
+    /**
+    * Request setting a property on the StructArrayInterface service.
+    * @param The value to which set request is send for the PropEnum.
+    */
+    void setPropEnum(const std::list<Enum0Enum>& propEnum) override;
+    /**
     * Remote call of IStructArrayInterface::funcBool on the StructArrayInterface service.
     * Uses funcBoolAsync
     */
@@ -122,6 +132,15 @@ public:
     * Remote call of IStructArrayInterface::funcString on the StructArrayInterface service.
     */
     std::future<std::list<StructString>> funcStringAsync(const std::list<StructString>& paramString, std::function<void(std::list<StructString>)> callback = nullptr) override;
+    /**
+    * Remote call of IStructArrayInterface::funcEnum on the StructArrayInterface service.
+    * Uses funcEnumAsync
+    */
+    std::list<Enum0Enum> funcEnum(const std::list<Enum0Enum>& paramEnum) override;
+    /**
+    * Remote call of IStructArrayInterface::funcEnum on the StructArrayInterface service.
+    */
+    std::future<std::list<Enum0Enum>> funcEnumAsync(const std::list<Enum0Enum>& paramEnum, std::function<void(std::list<Enum0Enum>)> callback = nullptr) override;
 
     /** The publisher to subscribe to. */
     IStructArrayInterfacePublisher& _getPublisher() const override;
@@ -192,6 +211,10 @@ private:
     void setPropStringLocal(const std::list<StructString>& propString);
     /* Mutex for propString property */
     mutable std::shared_timed_mutex m_propStringMutex;
+    /**  Updates local value for PropEnum and informs subscriber about the change*/
+    void setPropEnumLocal(const std::list<Enum0Enum>& propEnum);
+    /* Mutex for propEnum property */
+    mutable std::shared_timed_mutex m_propEnumMutex;
 
     /** Local storage for properties values. */
     StructArrayInterfaceData m_data;

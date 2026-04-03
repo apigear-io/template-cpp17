@@ -7,6 +7,40 @@ using namespace Test::Testbed2;
 TEST_CASE("Testing NestedStruct1Interface", "[NestedStruct1Interface]"){
     std::unique_ptr<INestedStruct1Interface> testNestedStruct1Interface = std::make_unique<NestedStruct1Interface>();
     // setup your test
+    SECTION("Test operation funcNoReturnValue") {
+        // Do implement test here
+        testNestedStruct1Interface->funcNoReturnValue(NestedStruct1());
+    }
+
+    SECTION("Test operation async funcNoReturnValue") {
+        // Do implement test here
+
+        auto future = testNestedStruct1Interface->funcNoReturnValueAsync(NestedStruct1());
+    }
+
+    SECTION("Test operation async funcNoReturnValue with a callback") {
+        // Do implement test here
+
+        auto future = testNestedStruct1Interface->funcNoReturnValueAsync(NestedStruct1(),[]( ){ /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
+    }
+    SECTION("Test operation funcNoParams") {
+        // Do implement test here
+        testNestedStruct1Interface->funcNoParams();
+    }
+
+    SECTION("Test operation async funcNoParams") {
+        // Do implement test here
+
+        auto future = testNestedStruct1Interface->funcNoParamsAsync();
+    }
+
+    SECTION("Test operation async funcNoParams with a callback") {
+        // Do implement test here
+
+        auto future = testNestedStruct1Interface->funcNoParamsAsync([](NestedStruct1 value){ (void)value; /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
+    }
     SECTION("Test operation func1") {
         // Do implement test here
         testNestedStruct1Interface->func1(NestedStruct1());
