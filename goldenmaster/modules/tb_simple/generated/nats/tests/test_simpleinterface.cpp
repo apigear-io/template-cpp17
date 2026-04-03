@@ -344,6 +344,40 @@ TEST_CASE("Nats  tb.simple SimpleInterface tests")
 
         resultFuture.wait();
     }
+    SECTION("Test method funcNoParams")
+    {
+        [[maybe_unused]] auto result = clientSimpleInterface->funcNoParams();
+        // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+    SECTION("Test method funcNoParams async")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSimpleInterface->funcNoParamsAsync();
+        auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == false); 
+        // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+    SECTION("Test method funcNoParams async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientSimpleInterface->funcNoParamsAsync(
+            [&finished, &m_wait](bool value)
+            {
+                REQUIRE(value == false);
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
+    }
     SECTION("Test method funcBool")
     {
         [[maybe_unused]] auto result = clientSimpleInterface->funcBool(false);

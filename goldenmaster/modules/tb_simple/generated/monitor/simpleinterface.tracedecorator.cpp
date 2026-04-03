@@ -29,6 +29,16 @@ std::future<void> SimpleInterfaceTraceDecorator::funcNoReturnValueAsync(bool par
     m_tracer->trace_funcNoReturnValue(paramBool);
     return m_impl.funcNoReturnValueAsync(paramBool, callback);
 }
+bool SimpleInterfaceTraceDecorator::funcNoParams()
+{
+    m_tracer->trace_funcNoParams();
+    return m_impl.funcNoParams();
+}
+std::future<bool> SimpleInterfaceTraceDecorator::funcNoParamsAsync( std::function<void(bool)> callback)
+{
+    m_tracer->trace_funcNoParams();
+    return m_impl.funcNoParamsAsync( callback);
+}
 bool SimpleInterfaceTraceDecorator::funcBool(bool paramBool)
 {
     m_tracer->trace_funcBool(paramBool);

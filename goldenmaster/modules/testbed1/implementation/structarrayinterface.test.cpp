@@ -75,6 +75,23 @@ TEST_CASE("Testing StructArrayInterface", "[StructArrayInterface]"){
         auto future = testStructArrayInterface->funcStringAsync(std::list<StructString>(),[](std::list<StructString> value){ (void)value; /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
             );
     }
+    SECTION("Test operation funcEnum") {
+        // Do implement test here
+        testStructArrayInterface->funcEnum(std::list<Enum0Enum>());
+    }
+
+    SECTION("Test operation async funcEnum") {
+        // Do implement test here
+
+        auto future = testStructArrayInterface->funcEnumAsync(std::list<Enum0Enum>());
+    }
+
+    SECTION("Test operation async funcEnum with a callback") {
+        // Do implement test here
+
+        auto future = testStructArrayInterface->funcEnumAsync(std::list<Enum0Enum>(),[](std::list<Enum0Enum> value){ (void)value; /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
+    }
     SECTION("Test property propBool") {
         // Do implement test here
         testStructArrayInterface->setPropBool(std::list<StructBool>());
@@ -101,6 +118,13 @@ TEST_CASE("Testing StructArrayInterface", "[StructArrayInterface]"){
         testStructArrayInterface->setPropString(std::list<StructString>());
         auto actual = testStructArrayInterface->getPropString();
         auto expected =  std::list<StructString>();
+        REQUIRE(actual == expected);
+    }
+    SECTION("Test property propEnum") {
+        // Do implement test here
+        testStructArrayInterface->setPropEnum(std::list<Enum0Enum>());
+        auto actual = testStructArrayInterface->getPropEnum();
+        auto expected =  std::list<Enum0Enum>();
         REQUIRE(actual == expected);
     }
 }

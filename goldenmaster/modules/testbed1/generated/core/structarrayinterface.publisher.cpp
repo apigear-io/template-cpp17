@@ -116,6 +116,28 @@ void StructArrayInterfacePublisher::publishPropStringChanged(const std::list<Str
     PropStringPublisher.publishChange(propString);
 }
 
+uint64_t StructArrayInterfacePublisher::subscribeToPropEnumChanged(StructArrayInterfacePropEnumPropertyCb callback)
+{
+    return PropEnumPublisher.subscribeForChange(callback);
+}
+
+void StructArrayInterfacePublisher::unsubscribeFromPropEnumChanged(uint64_t handleId)
+{
+    PropEnumPublisher.unsubscribeFromChange(handleId);
+}
+
+void StructArrayInterfacePublisher::publishPropEnumChanged(const std::list<Enum0Enum>& propEnum) const
+{
+    std::shared_lock<std::shared_timed_mutex> allChangesSubscribersLock(m_allChangesSubscribersMutex);
+    const auto allChangesSubscribers = m_allChangesSubscribers;
+    allChangesSubscribersLock.unlock();
+    for(const auto& subscriber: allChangesSubscribers)
+    {
+        subscriber.get().onPropEnumChanged(propEnum);
+    }
+    PropEnumPublisher.publishChange(propEnum);
+}
+
 uint64_t StructArrayInterfacePublisher::subscribeToSigBool(StructArrayInterfaceSigBoolSignalCb callback)
 {
     return SigBoolPublisher.subscribeForChange(callback);
@@ -202,5 +224,27 @@ void StructArrayInterfacePublisher::publishSigString(const std::list<StructStrin
         subscriber.get().onSigString(paramString);
     }
     SigStringPublisher.publishChange(paramString);
+}
+
+uint64_t StructArrayInterfacePublisher::subscribeToSigEnum(StructArrayInterfaceSigEnumSignalCb callback)
+{
+    return SigEnumPublisher.subscribeForChange(callback);
+}
+
+void StructArrayInterfacePublisher::unsubscribeFromSigEnum(uint64_t handleId)
+{
+    SigEnumPublisher.unsubscribeFromChange(handleId);
+}
+
+void StructArrayInterfacePublisher::publishSigEnum(const std::list<Enum0Enum>& paramEnum) const
+{
+    std::shared_lock<std::shared_timed_mutex> allChangesSubscribersLock(m_allChangesSubscribersMutex);
+    const auto allChangesSubscribers = m_allChangesSubscribers;
+    allChangesSubscribersLock.unlock();
+    for(const auto& subscriber: allChangesSubscribers)
+    {
+        subscriber.get().onSigEnum(paramEnum);
+    }
+    SigEnumPublisher.publishChange(paramEnum);
 }
 

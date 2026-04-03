@@ -30,6 +30,12 @@ void SimpleInterfaceTracer::trace_funcNoReturnValue(bool paramBool)
     m_tracer.call("tb.simple.SimpleInterface#funcNoReturnValue", fields_);
 }
 
+void SimpleInterfaceTracer::trace_funcNoParams()
+{
+    nlohmann::json fields_;
+    m_tracer.call("tb.simple.SimpleInterface#funcNoParams", fields_);
+}
+
 void SimpleInterfaceTracer::trace_funcBool(bool paramBool)
 {
     nlohmann::json fields_;

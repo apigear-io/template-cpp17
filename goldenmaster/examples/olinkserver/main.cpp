@@ -65,12 +65,18 @@
 #include "testbed1/implementation/structarrayinterface.h"
 #include "testbed1/generated/olink/structarrayinterfaceservice.h"
 #include "testbed1/generated/core/structarrayinterface.threadsafedecorator.h"
+#include "testbed1/implementation/structarray2interface.h"
+#include "testbed1/generated/olink/structarray2interfaceservice.h"
+#include "testbed1/generated/core/structarray2interface.threadsafedecorator.h"
 #include "tb_names/implementation/names.h"
 #include "tb_names/generated/olink/namesservice.h"
 #include "tb_names/generated/core/names.threadsafedecorator.h"
 #include "counter/implementation/counter.h"
 #include "counter/generated/olink/counterservice.h"
 #include "counter/generated/core/counter.threadsafedecorator.h"
+#include "tb_struct_array/implementation/structarrayfieldinterface.h"
+#include "tb_struct_array/generated/olink/structarrayfieldinterfaceservice.h"
+#include "tb_struct_array/generated/core/structarrayfieldinterface.threadsafedecorator.h"
 
 #include "apigear/olink/olinklogadapter.h"
 #include "olink/remoteregistry.h"
@@ -201,6 +207,10 @@ int main(){
     auto testbed1StructArrayInterfaceThreadSafe = std::make_shared<Testbed1::StructArrayInterfaceThreadSafeDecorator>(testbed1StructArrayInterface);
     auto testbed1OlinkStructArrayInterfaceService = std::make_shared<Testbed1::olink::StructArrayInterfaceService>(testbed1StructArrayInterfaceThreadSafe, registry);
     registry.addSource(testbed1OlinkStructArrayInterfaceService);
+    auto testbed1StructArray2Interface = std::make_shared<Testbed1::StructArray2Interface>();
+    auto testbed1StructArray2InterfaceThreadSafe = std::make_shared<Testbed1::StructArray2InterfaceThreadSafeDecorator>(testbed1StructArray2Interface);
+    auto testbed1OlinkStructArray2InterfaceService = std::make_shared<Testbed1::olink::StructArray2InterfaceService>(testbed1StructArray2InterfaceThreadSafe, registry);
+    registry.addSource(testbed1OlinkStructArray2InterfaceService);
     auto tbNamesNamEs = std::make_shared<TbNames::NamEs>();
     auto tbNamesNamEsThreadSafe = std::make_shared<TbNames::NamEsThreadSafeDecorator>(tbNamesNamEs);
     auto tbNamesOlinkNamEsService = std::make_shared<TbNames::olink::Nam_EsService>(tbNamesNamEsThreadSafe, registry);
@@ -209,6 +219,10 @@ int main(){
     auto counterCounterThreadSafe = std::make_shared<Counter::CounterThreadSafeDecorator>(counterCounter);
     auto counterOlinkCounterService = std::make_shared<Counter::olink::CounterService>(counterCounterThreadSafe, registry);
     registry.addSource(counterOlinkCounterService);
+    auto tbStructArrayStructArrayFieldInterface = std::make_shared<TbStructArray::StructArrayFieldInterface>();
+    auto tbStructArrayStructArrayFieldInterfaceThreadSafe = std::make_shared<TbStructArray::StructArrayFieldInterfaceThreadSafeDecorator>(tbStructArrayStructArrayFieldInterface);
+    auto tbStructArrayOlinkStructArrayFieldInterfaceService = std::make_shared<TbStructArray::olink::StructArrayFieldInterfaceService>(tbStructArrayStructArrayFieldInterfaceThreadSafe, registry);
+    registry.addSource(tbStructArrayOlinkStructArrayFieldInterfaceService);
 
     // Start your server after all the services are added.
     // This ensures that any new client that connects, will find the source it needs.
@@ -247,8 +261,10 @@ int main(){
     registry.removeSource(tbSimpleOlinkEmptyInterfaceService->olinkObjectName());
     registry.removeSource(testbed1OlinkStructInterfaceService->olinkObjectName());
     registry.removeSource(testbed1OlinkStructArrayInterfaceService->olinkObjectName());
+    registry.removeSource(testbed1OlinkStructArray2InterfaceService->olinkObjectName());
     registry.removeSource(tbNamesOlinkNamEsService->olinkObjectName());
     registry.removeSource(counterOlinkCounterService->olinkObjectName());
+    registry.removeSource(tbStructArrayOlinkStructArrayFieldInterfaceService->olinkObjectName());
     
     return 0;
 }

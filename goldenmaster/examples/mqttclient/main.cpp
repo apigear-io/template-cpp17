@@ -21,8 +21,10 @@
 #include "tb_simple/generated/mqtt/emptyinterfaceclient.h"
 #include "testbed1/generated/mqtt/structinterfaceclient.h"
 #include "testbed1/generated/mqtt/structarrayinterfaceclient.h"
+#include "testbed1/generated/mqtt/structarray2interfaceclient.h"
 #include "tb_names/generated/mqtt/namesclient.h"
 #include "counter/generated/mqtt/counterclient.h"
+#include "tb_struct_array/generated/mqtt/structarrayfieldinterfaceclient.h"
 #include "apigear/mqtt/mqttclient.h"
 #include "apigear/utilities/logger.h"
 #include <iostream>
@@ -89,8 +91,10 @@ int main(){
     std::unique_ptr<TbSimple::IEmptyInterface> testTbSimpleEmptyInterface = std::make_unique<TbSimple::MQTT::EmptyInterfaceClient>(mqttclient);
     std::unique_ptr<Testbed1::IStructInterface> testTestbed1StructInterface = std::make_unique<Testbed1::MQTT::StructInterfaceClient>(mqttclient);
     std::unique_ptr<Testbed1::IStructArrayInterface> testTestbed1StructArrayInterface = std::make_unique<Testbed1::MQTT::StructArrayInterfaceClient>(mqttclient);
+    std::unique_ptr<Testbed1::IStructArray2Interface> testTestbed1StructArray2Interface = std::make_unique<Testbed1::MQTT::StructArray2InterfaceClient>(mqttclient);
     std::unique_ptr<TbNames::INamEs> testTbNamesNamEs = std::make_unique<TbNames::MQTT::Nam_EsClient>(mqttclient);
     std::unique_ptr<Counter::ICounter> testCounterCounter = std::make_unique<Counter::MQTT::CounterClient>(mqttclient);
+    std::unique_ptr<TbStructArray::IStructArrayFieldInterface> testTbStructArrayStructArrayFieldInterface = std::make_unique<TbStructArray::MQTT::StructArrayFieldInterfaceClient>(mqttclient);
 
     // start mqtt connection
     mqttclient->connectToHost("");

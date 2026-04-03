@@ -30,6 +30,10 @@ public:
     virtual ~NestedStruct1InterfaceClient() override;
     const NestedStruct1& getProp1() const override;
     void setProp1(const NestedStruct1& prop1) override;
+    void funcNoReturnValue(const NestedStruct1& param1) override;
+    std::future<void> funcNoReturnValueAsync(const NestedStruct1& param1, std::function<void(void)> callback = nullptr) override;
+    NestedStruct1 funcNoParams() override;
+    std::future<NestedStruct1> funcNoParamsAsync( std::function<void(NestedStruct1)> callback = nullptr) override;
     NestedStruct1 func1(const NestedStruct1& param1) override;
     std::future<NestedStruct1> func1Async(const NestedStruct1& param1, std::function<void(NestedStruct1)> callback = nullptr) override;
     INestedStruct1InterfacePublisher& _getPublisher() const override;

@@ -31,6 +31,7 @@ find_package(tb_names REQUIRED COMPONENTS tb_names-core tb_names-implementation 
 find_package(custom_types REQUIRED COMPONENTS custom_types-core)
 find_package(extern_types REQUIRED COMPONENTS extern_types-core)
 find_package(counter REQUIRED COMPONENTS counter-core counter-implementation counter-monitor)
+find_package(tb_struct_array REQUIRED COMPONENTS tb_struct_array-core tb_struct_array-implementation tb_struct_array-monitor)
 find_package(apigear REQUIRED COMPONENTS poco-tracer)
 target_link_libraries(app
     apigear::poco-tracer
@@ -60,6 +61,9 @@ target_link_libraries(app
     counter::counter-core
     counter::counter-implementation
     counter::counter-monitor
+    tb_struct_array::tb_struct_array-core
+    tb_struct_array::tb_struct_array-implementation
+    tb_struct_array::tb_struct_array-monitor
 )
 
 install(TARGETS app

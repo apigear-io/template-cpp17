@@ -60,6 +60,11 @@ nlohmann::json StructArrayInterfaceService::olinkInvoke(const std::string& metho
         std::list<StructString> result = m_StructArrayInterface->funcString(paramString);
         return result;
     }
+    if(memberMethod == "funcEnum") {
+        const std::list<Enum0Enum>& paramEnum = fcnArgs.at(0);
+        std::list<Enum0Enum> result = m_StructArrayInterface->funcEnum(paramEnum);
+        return result;
+    }
     return nlohmann::json();
 }
 
@@ -81,6 +86,10 @@ void StructArrayInterfaceService::olinkSetProperty(const std::string& propertyId
     if(memberProperty == "propString") {
         std::list<StructString> propString = value.get<std::list<StructString>>();
         m_StructArrayInterface->setPropString(propString);
+    }
+    if(memberProperty == "propEnum") {
+        std::list<Enum0Enum> propEnum = value.get<std::list<Enum0Enum>>();
+        m_StructArrayInterface->setPropEnum(propEnum);
     } 
 }
 
@@ -98,7 +107,8 @@ nlohmann::json StructArrayInterfaceService::olinkCollectProperties()
         { "propBool", m_StructArrayInterface->getPropBool() },
         { "propInt", m_StructArrayInterface->getPropInt() },
         { "propFloat", m_StructArrayInterface->getPropFloat() },
-        { "propString", m_StructArrayInterface->getPropString() }
+        { "propString", m_StructArrayInterface->getPropString() },
+        { "propEnum", m_StructArrayInterface->getPropEnum() }
     });
 }
 void StructArrayInterfaceService::onSigBool(const std::list<StructBool>& paramBool)
@@ -149,6 +159,18 @@ void StructArrayInterfaceService::onSigString(const std::list<StructString>& par
         }
     }
 }
+void StructArrayInterfaceService::onSigEnum(const std::list<Enum0Enum>& paramEnum)
+{
+    const nlohmann::json args = { paramEnum };
+    static const auto signalId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "sigEnum");
+    static const auto objectId = olinkObjectName();
+    for(auto node: m_registry.getNodes(objectId)) {
+        auto lockedNode = node.lock();
+        if(lockedNode) {
+            lockedNode->notifySignal(signalId, args);
+        }
+    }
+}
 void StructArrayInterfaceService::onPropBoolChanged(const std::list<StructBool>& propBool)
 {
     static const auto propertyId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "propBool");
@@ -190,6 +212,17 @@ void StructArrayInterfaceService::onPropStringChanged(const std::list<StructStri
         auto lockedNode = node.lock();
         if(lockedNode) {
             lockedNode->notifyPropertyChange(propertyId, propString);
+        }
+    }
+}
+void StructArrayInterfaceService::onPropEnumChanged(const std::list<Enum0Enum>& propEnum)
+{
+    static const auto propertyId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "propEnum");
+    static const auto objectId = olinkObjectName();
+    for(auto node: m_registry.getNodes(objectId)) {
+        auto lockedNode = node.lock();
+        if(lockedNode) {
+            lockedNode->notifyPropertyChange(propertyId, propEnum);
         }
     }
 }

@@ -27,6 +27,43 @@ const NestedStruct1& NestedStruct1Interface::getProp1() const
     return m_data.m_prop1;
 }
 
+void NestedStruct1Interface::funcNoReturnValue(const NestedStruct1& param1)
+{
+    (void) param1; // suppress the 'Unreferenced Formal Parameter' warning.
+    // do business logic here
+}
+
+std::future<void> NestedStruct1Interface::funcNoReturnValueAsync(const NestedStruct1& param1, std::function<void(void)> callback)
+{
+    return std::async(std::launch::async, [this, callback,
+                    param1]()
+        {funcNoReturnValue(param1);
+            if (callback)
+            {
+                callback();
+            }
+        }
+    );
+}
+
+NestedStruct1 NestedStruct1Interface::funcNoParams()
+{
+    // do business logic here
+    return NestedStruct1();
+}
+
+std::future<NestedStruct1> NestedStruct1Interface::funcNoParamsAsync( std::function<void(NestedStruct1)> callback)
+{
+    return std::async(std::launch::async, [this, callback]()
+        {auto result = funcNoParams();
+            if (callback)
+            {
+                callback(result);
+            }return result;
+        }
+    );
+}
+
 NestedStruct1 NestedStruct1Interface::func1(const NestedStruct1& param1)
 {
     (void) param1; // suppress the 'Unreferenced Formal Parameter' warning.

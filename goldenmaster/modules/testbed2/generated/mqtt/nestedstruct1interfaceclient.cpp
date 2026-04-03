@@ -31,6 +31,8 @@ std::map<std::string, ApiGear::MQTT::CallbackFunction> NestedStruct1InterfaceCli
     return {
         { std::string("testbed2/NestedStruct1Interface/prop/prop1"), [this](const std::string& args, const std::string&, const std::string&){ this->setProp1Local(args); } },
         { std::string("testbed2/NestedStruct1Interface/sig/sig1"), [this](const std::string& args, const std::string&, const std::string&){ this->onSig1(args); } },
+        { std::string("testbed2/NestedStruct1Interface/rpc/funcNoReturnValue/"+clientId+"/result"), [this](const std::string& args, const std::string&, const std::string& correlationData){ this->onInvokeReply(args, correlationData); } },
+        { std::string("testbed2/NestedStruct1Interface/rpc/funcNoParams/"+clientId+"/result"), [this](const std::string& args, const std::string&, const std::string& correlationData){ this->onInvokeReply(args, correlationData); } },
         { std::string("testbed2/NestedStruct1Interface/rpc/func1/"+clientId+"/result"), [this](const std::string& args, const std::string&, const std::string& correlationData){ this->onInvokeReply(args, correlationData); } },
     };
 };
@@ -62,6 +64,71 @@ void NestedStruct1InterfaceClient::setProp1Local(const std::string& args)
 const NestedStruct1& NestedStruct1InterfaceClient::getProp1() const
 {
     return m_data.m_prop1;
+}
+
+void NestedStruct1InterfaceClient::funcNoReturnValue(const NestedStruct1& param1)
+{
+    if(m_client == nullptr) {
+        return;
+    }
+    funcNoReturnValueAsync(param1);
+}
+
+std::future<void> NestedStruct1InterfaceClient::funcNoReturnValueAsync(const NestedStruct1& param1, std::function<void(void)> callback)
+{
+    if(m_client == nullptr) {
+        throw std::runtime_error("Client is not initialized");
+    }
+    return std::async(std::launch::async, [this, callback,
+                    param1]()
+        {
+            std::promise<void> resultPromise;
+            static const auto topic = std::string("testbed2/NestedStruct1Interface/rpc/funcNoReturnValue");
+            static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
+            auto responseId = 0; //Not used, the service won't respond, no handler is added for response.
+            m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({param1}).dump(), responseId);
+            resultPromise.set_value();
+            if (callback)
+            {
+                callback();
+            }
+            return resultPromise.get_future().get();
+        }
+    );
+}
+
+NestedStruct1 NestedStruct1InterfaceClient::funcNoParams()
+{
+    if(m_client == nullptr) {
+        return NestedStruct1();
+    }
+    NestedStruct1 value(funcNoParamsAsync().get());
+    return value;
+}
+
+std::future<NestedStruct1> NestedStruct1InterfaceClient::funcNoParamsAsync( std::function<void(NestedStruct1)> callback)
+{
+    if(m_client == nullptr) {
+        throw std::runtime_error("Client is not initialized");
+    }
+    return std::async(std::launch::async, [this, callback]()
+        {
+            std::promise<NestedStruct1> resultPromise;
+            static const auto topic = std::string("testbed2/NestedStruct1Interface/rpc/funcNoParams");
+            static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                const NestedStruct1& value = arg.value.get<NestedStruct1>();
+                resultPromise.set_value(value);
+                if (callback)
+                {
+                    callback(value);
+                }
+            };
+            auto responseId = registerResponseHandler(responseHandler);
+            m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({}).dump(), responseId);
+            return resultPromise.get_future().get();
+        }
+    );
 }
 
 NestedStruct1 NestedStruct1InterfaceClient::func1(const NestedStruct1& param1)

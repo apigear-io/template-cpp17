@@ -46,6 +46,8 @@ public:
     void setPropString(const std::string& propString) override;
     void funcNoReturnValue(bool paramBool) override;
     std::future<void> funcNoReturnValueAsync(bool paramBool, std::function<void(void)> callback = nullptr) override;
+    bool funcNoParams() override;
+    std::future<bool> funcNoParamsAsync( std::function<void(bool)> callback = nullptr) override;
     bool funcBool(bool paramBool) override;
     std::future<bool> funcBoolAsync(bool paramBool, std::function<void(bool)> callback = nullptr) override;
     int funcInt(int paramInt) override;

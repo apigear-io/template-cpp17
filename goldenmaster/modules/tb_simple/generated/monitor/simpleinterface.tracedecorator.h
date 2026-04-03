@@ -39,6 +39,11 @@ public:
     /** Traces funcNoReturnValue and forwards call to SimpleInterface implementation. */
     std::future<void> funcNoReturnValueAsync(bool paramBool, std::function<void(void)> callback = nullptr) override;
     
+    /** Traces funcNoParams and forwards call to SimpleInterface implementation. */
+    bool funcNoParams() override;
+    /** Traces funcNoParams and forwards call to SimpleInterface implementation. */
+    std::future<bool> funcNoParamsAsync( std::function<void(bool)> callback = nullptr) override;
+    
     /** Traces funcBool and forwards call to SimpleInterface implementation. */
     bool funcBool(bool paramBool) override;
     /** Traces funcBool and forwards call to SimpleInterface implementation. */

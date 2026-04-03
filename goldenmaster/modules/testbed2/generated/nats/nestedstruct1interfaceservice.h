@@ -31,6 +31,8 @@ private:
     /// @brief requests to set the value for the property Prop1 coming from the client
     /// @param fields contains the param of the type NestedStruct1
     void onSetProp1(const std::string& args) const;
+    std::string onInvokeFuncNoReturnValue(const std::string& args) const;
+    std::string onInvokeFuncNoParams(const std::string& args) const;
     std::string onInvokeFunc1(const std::string& args) const;
 
     std::shared_ptr<INestedStruct1Interface> m_impl;

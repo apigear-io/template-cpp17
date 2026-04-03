@@ -16,6 +16,15 @@ std::future<void> SimpleInterfaceThreadSafeDecorator::funcNoReturnValueAsync(boo
 {
     return m_impl->funcNoReturnValueAsync(paramBool, callback);
 }
+bool SimpleInterfaceThreadSafeDecorator::funcNoParams()
+{
+    return m_impl->funcNoParams();
+}
+
+std::future<bool> SimpleInterfaceThreadSafeDecorator::funcNoParamsAsync( std::function<void(bool)> callback)
+{
+    return m_impl->funcNoParamsAsync( callback);
+}
 bool SimpleInterfaceThreadSafeDecorator::funcBool(bool paramBool)
 {
     return m_impl->funcBool(paramBool);

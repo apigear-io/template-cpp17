@@ -7,8 +7,8 @@ using namespace Test::Testbed1;
 using namespace Test::Testbed1::Nats;
 
 namespace{
-const uint32_t  expectedSingalsSubscriptions = 4;
-const uint32_t  expectedPropertiesSubscriptions = 4;
+const uint32_t  expectedSingalsSubscriptions = 5;
+const uint32_t  expectedPropertiesSubscriptions = 5;
 const uint32_t  initSubscription = 1;
 const uint32_t  serviceAvailableSubscription = 1;
 constexpr uint32_t expectedSubscriptionsCount = serviceAvailableSubscription + initSubscription + expectedSingalsSubscriptions + expectedPropertiesSubscriptions;
@@ -67,6 +67,8 @@ void StructArrayInterfaceClient::onConnected()
     subscribeTopic(topic_propFloat, [this](const auto& value){ setPropFloatLocal(_to_PropFloat(value)); });
     const std::string topic_propString =  "testbed1.StructArrayInterface.prop.propString";
     subscribeTopic(topic_propString, [this](const auto& value){ setPropStringLocal(_to_PropString(value)); });
+    const std::string topic_propEnum =  "testbed1.StructArrayInterface.prop.propEnum";
+    subscribeTopic(topic_propEnum, [this](const auto& value){ setPropEnumLocal(_to_PropEnum(value)); });
     const std::string topic_sigBool = "testbed1.StructArrayInterface.sig.sigBool";
     subscribeTopic(topic_sigBool, [this](const auto& args){onSigBool(args);});
     const std::string topic_sigInt = "testbed1.StructArrayInterface.sig.sigInt";
@@ -75,6 +77,8 @@ void StructArrayInterfaceClient::onConnected()
     subscribeTopic(topic_sigFloat, [this](const auto& args){onSigFloat(args);});
     const std::string topic_sigString = "testbed1.StructArrayInterface.sig.sigString";
     subscribeTopic(topic_sigString, [this](const auto& args){onSigString(args);});
+    const std::string topic_sigEnum = "testbed1.StructArrayInterface.sig.sigEnum";
+    subscribeTopic(topic_sigEnum, [this](const auto& args){onSigEnum(args);});
 }
 void StructArrayInterfaceClient::handleAvailable(const std::string& /*empty payload*/)
 {
@@ -215,6 +219,39 @@ const std::list<StructString>& StructArrayInterfaceClient::getPropString() const
     return m_data.m_propString;
 }
 
+void StructArrayInterfaceClient::setPropEnum(const std::list<Enum0Enum>& propEnum)
+{
+    static const auto topic = std::string("testbed1.StructArrayInterface.set.propEnum");
+    if(m_client == nullptr) {
+        return;
+    }
+    m_client->publish(topic, nlohmann::json(propEnum).dump());
+}
+
+std::list<Enum0Enum> StructArrayInterfaceClient::_to_PropEnum(const std::string& args)
+{
+    nlohmann::json fields = nlohmann::json::parse(args);
+    if (fields.empty())
+    {
+        //AG_LOG_WARNING("error while setting the property propEnum");
+        return std::list<Enum0Enum>();
+    }
+   return fields.get<std::list<Enum0Enum>>();
+}
+
+void StructArrayInterfaceClient::setPropEnumLocal(const std::list<Enum0Enum>& propEnum)
+{
+    if (m_data.m_propEnum != propEnum) {
+        m_data.m_propEnum = propEnum;
+        m_publisher->publishPropEnumChanged(propEnum);
+    }
+}
+
+const std::list<Enum0Enum>& StructArrayInterfaceClient::getPropEnum() const
+{
+    return m_data.m_propEnum;
+}
+
 void StructArrayInterfaceClient::handleInit(const std::string& value)
 {
     nlohmann::json fields = nlohmann::json::parse(value);
@@ -229,6 +266,9 @@ void StructArrayInterfaceClient::handleInit(const std::string& value)
     }
     if(fields.contains("propString")) {
         setPropStringLocal(fields["propString"].get<std::list<StructString>>());
+    }
+    if(fields.contains("propEnum")) {
+        setPropEnumLocal(fields["propEnum"].get<std::list<Enum0Enum>>());
     }
 }
 
@@ -407,6 +447,50 @@ std::future<std::list<StructString>> StructArrayInterfaceClient::funcStringAsync
         return resultPromise.get_future().get();
     });
 }
+
+std::list<Enum0Enum> StructArrayInterfaceClient::funcEnum(const std::list<Enum0Enum>& paramEnum)
+{
+    if(m_client == nullptr) {
+        return std::list<Enum0Enum>();
+    }
+    std::list<Enum0Enum> value(funcEnumAsync(paramEnum).get());
+    return value;
+}
+
+std::future<std::list<Enum0Enum>> StructArrayInterfaceClient::funcEnumAsync(const std::list<Enum0Enum>& paramEnum, std::function<void(std::list<Enum0Enum>)> user_callback)
+{
+    if(m_client == nullptr) {
+        throw std::runtime_error("Client is not initialized");
+    }
+    static const auto topic = std::string("testbed1.StructArrayInterface.rpc.funcEnum");
+
+    return std::async(std::launch::async, [this, user_callback,paramEnum]()
+    {
+        std::promise<std::list<Enum0Enum>> resultPromise;
+        auto callback = [&resultPromise, user_callback](const auto& result)
+        {
+            if (result.empty())
+            {
+                resultPromise.set_value(std::list<Enum0Enum>());
+                if (user_callback)
+                {
+                    user_callback(std::list<Enum0Enum>());
+                }
+                return;
+            }
+            nlohmann::json field = nlohmann::json::parse(result);
+            const std::list<Enum0Enum> value = field.get<std::list<Enum0Enum>>();
+            resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
+        };
+
+        m_client->request(topic,  nlohmann::json::array({paramEnum}).dump(), callback);
+        return resultPromise.get_future().get();
+    });
+}
 void StructArrayInterfaceClient::onSigBool(const std::string& args) const
 {
     nlohmann::json json_args = nlohmann::json::parse(args);
@@ -426,6 +510,11 @@ void StructArrayInterfaceClient::onSigString(const std::string& args) const
 {
     nlohmann::json json_args = nlohmann::json::parse(args);
     m_publisher->publishSigString(json_args[0].get<std::list<StructString>>());
+}
+void StructArrayInterfaceClient::onSigEnum(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    m_publisher->publishSigEnum(json_args[0].get<std::list<Enum0Enum>>());
 }
 
 IStructArrayInterfacePublisher& StructArrayInterfaceClient::_getPublisher() const

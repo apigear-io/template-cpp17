@@ -1,0 +1,111 @@
+
+#pragma once
+
+#include "tb_struct_array/generated/api/tb_struct_array.h"
+#include "tb_struct_array/generated/api/common.h"
+THIRD_PARTY_INCLUDES_START
+#include "olink/iobjectsource.h"
+THIRD_PARTY_INCLUDES_END
+
+
+namespace ApiGear {
+namespace ObjectLink {
+
+class RemoteRegistry;
+class IRemoteNode;
+
+}} //namespace ApiGear::ObjectLink
+
+namespace Test {
+namespace TbStructArray {
+namespace olink {
+/**
+* Server side for StructArrayFieldInterface implements the StructArrayFieldInterface service.
+* It is a source of data for StructArrayFieldInterface clients.
+* Sends and receives data over the network with ObjectLink protocol. 
+* see https://objectlinkprotocol.net for Object Link Details
+*/
+class TEST_TB_STRUCT_ARRAY_EXPORT StructArrayFieldInterfaceService : public ApiGear::ObjectLink::IObjectSource, public IStructArrayFieldInterfaceSubscriber
+{
+public:
+    /**
+    * ctor
+    * @param StructArrayFieldInterface The service source object, the actual StructArrayFieldInterface object which is exposed for remote clients with olink.
+    * @param registry The global registry that keeps track of the object source services associated with network nodes.
+    */
+    explicit StructArrayFieldInterfaceService(std::shared_ptr<IStructArrayFieldInterface> StructArrayFieldInterface, ApiGear::ObjectLink::RemoteRegistry& registry);
+    virtual ~StructArrayFieldInterfaceService() override;
+
+    /**
+    * The name of the object for which this service is created, object on client side has to have the same name.
+    * It serves as an identifier for the source registry, it has to be unique for the pair source object - remote node.
+    * Passed in the olink messages as an object identifier.
+    */
+    std::string olinkObjectName() override;
+    /**
+    * Applies received method invocation with given arguments on the StructArrayFieldInterface object.
+    * @param name Path of the method to invoke. Contains object name and the method name.
+    * @param args Arguments required to invoke a method in json format.
+    * @return the result of the invoked method (if applicable) that needs to be sent back to the clients.
+    */
+    nlohmann::json olinkInvoke(const std::string& methodId, const nlohmann::json& args) override;
+    /**
+    * Applies received change property request to StructArrayFieldInterface object.
+    * @param name Path the property to change. Contains object name and the property name.
+    * @param args Value in json format requested to set for the property.
+    */
+    void olinkSetProperty(const std::string& propertyId, const nlohmann::json& value) override;
+    /**
+    * Informs this service source that the link was established.
+    * @param name The name of the object for which link was established.
+    * @param the initialized link endpoint.
+    */
+    void olinkLinked(const std::string& objectId, ApiGear::ObjectLink::IRemoteNode *node) override;
+    /**
+    * Informs this service source that the link was disconnected and cannot be used anymore.
+    */
+    void olinkUnlinked(const std::string& objectId) override;
+
+    /**
+    * Gets the current state of StructArrayFieldInterface object.
+    * @return the set of properties with their current values for the StructArrayFieldInterface object in json format.
+    */
+    nlohmann::json olinkCollectProperties() override;
+    /**
+    * Forwards emitted sigMixed through network if the connection is established.
+    */
+    void onSigMixed(const MixedStruct& paramMixed) override;
+    /**
+    * Forwards emitted sigStructArray through network if the connection is established.
+    */
+    void onSigStructArray(const StructWithArrayOfStructs& paramPoints) override;
+    /**
+    * Forwards propStructArray change through network if the connection is established.
+    */
+    void onPropStructArrayChanged(const StructWithArrayOfStructs& propStructArray) override;
+    /**
+    * Forwards propEnumArray change through network if the connection is established.
+    */
+    void onPropEnumArrayChanged(const StructWithArrayOfEnums& propEnumArray) override;
+    /**
+    * Forwards propIntArray change through network if the connection is established.
+    */
+    void onPropIntArrayChanged(const StructWithArrayOfInts& propIntArray) override;
+    /**
+    * Forwards propMixed change through network if the connection is established.
+    */
+    void onPropMixedChanged(const MixedStruct& propMixed) override;
+
+private:
+    /**
+    * The StructArrayFieldInterface used for object source.
+    */
+    std::shared_ptr<IStructArrayFieldInterface> m_StructArrayFieldInterface;
+    /**
+    * A global registry that keeps track of object sources associated with their network layer nodes.
+    */
+    ApiGear::ObjectLink::RemoteRegistry& m_registry;
+};
+} // namespace olink
+} // namespace TbStructArray
+} // namespace Test

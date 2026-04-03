@@ -24,6 +24,23 @@ TEST_CASE("Testing SimpleInterface", "[SimpleInterface]"){
         auto future = testSimpleInterface->funcNoReturnValueAsync(false,[]( ){ /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
             );
     }
+    SECTION("Test operation funcNoParams") {
+        // Do implement test here
+        testSimpleInterface->funcNoParams();
+    }
+
+    SECTION("Test operation async funcNoParams") {
+        // Do implement test here
+
+        auto future = testSimpleInterface->funcNoParamsAsync();
+    }
+
+    SECTION("Test operation async funcNoParams with a callback") {
+        // Do implement test here
+
+        auto future = testSimpleInterface->funcNoParamsAsync([](bool value){ (void)value; /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ }
+            );
+    }
     SECTION("Test operation funcBool") {
         // Do implement test here
         testSimpleInterface->funcBool(false);

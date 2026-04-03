@@ -111,6 +111,50 @@ TEST_CASE("mqtt  testbed2 NestedStruct1Interface tests")
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issig1Emitted ]() {return issig1Emitted   == true; }));
         lock.unlock();
     }
+    SECTION("Test method funcNoReturnValue")
+    {
+         clientNestedStruct1Interface->funcNoReturnValue(Testbed2::NestedStruct1());
+        // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
+    }
+    SECTION("Test method funcNoReturnValue async")
+    {
+        auto resultFuture = clientNestedStruct1Interface->funcNoReturnValueAsync(Testbed2::NestedStruct1());
+        // The void function only sends request. It does not wait for the actual function on server side to be finished.
+    }
+
+    SECTION("Test method funcNoReturnValue async with callback")
+    {
+        auto resultFuture = clientNestedStruct1Interface->funcNoReturnValueAsync(Testbed2::NestedStruct1(),[](){/* you can add a callback, but it will be called right after sending the request. It does not wait for the actual function on server side to be finished. */ });
+    }
+    SECTION("Test method funcNoParams")
+    {
+        [[maybe_unused]] auto result =  clientNestedStruct1Interface->funcNoParams();
+        // CHECK EFFECTS OF YOUR METHOD AFER FUTURE IS DONE
+    }
+    SECTION("Test method funcNoParams async")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientNestedStruct1Interface->funcNoParamsAsync();
+        auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == Testbed2::NestedStruct1()); 
+        // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+
+    SECTION("Test method funcNoParams async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientNestedStruct1Interface->funcNoParamsAsync([&finished, &m_wait](NestedStruct1 value){ (void) value; finished = true; m_wait.notify_all(); /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */ });
+
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == Testbed2::NestedStruct1()); 
+    }
     SECTION("Test method func1")
     {
         [[maybe_unused]] auto result =  clientNestedStruct1Interface->func1(Testbed2::NestedStruct1());

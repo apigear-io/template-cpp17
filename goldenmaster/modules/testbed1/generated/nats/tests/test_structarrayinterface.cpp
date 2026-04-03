@@ -124,6 +124,23 @@ TEST_CASE("Nats  testbed1 StructArrayInterface tests")
         REQUIRE(implStructArrayInterface->getPropString() == test_value);
         REQUIRE(clientStructArrayInterface->getPropString() == test_value);
     }
+    SECTION("Test setting propEnum")
+    {
+        std::atomic<bool> ispropEnumChanged = false;
+        clientStructArrayInterface->_getPublisher().subscribeToPropEnumChanged(
+        [&ispropEnumChanged, &m_wait ](auto value){
+            ispropEnumChanged  = true;
+            m_wait.notify_all();
+        });
+        auto test_value = std::list<Testbed1::Enum0Enum>();  
+        test_value.push_back(Testbed1::Enum0Enum::value1);
+        clientStructArrayInterface->setPropEnum(test_value);;
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&ispropEnumChanged]() {return ispropEnumChanged  == true; }));
+        lock.unlock();
+        REQUIRE(implStructArrayInterface->getPropEnum() == test_value);
+        REQUIRE(clientStructArrayInterface->getPropEnum() == test_value);
+    }
     SECTION("Test emit sigBool")
     {
         std::atomic<bool> issigBoolEmitted = false;
@@ -206,6 +223,25 @@ TEST_CASE("Nats  testbed1 StructArrayInterface tests")
          implStructArrayInterface->_getPublisher().publishSigString(local_param_string_array);
         lock.lock();
         REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigStringEmitted ]() {return issigStringEmitted   == true; }));
+        lock.unlock();
+    }
+    SECTION("Test emit sigEnum")
+    {
+        std::atomic<bool> issigEnumEmitted = false;
+        auto local_param_enum_array = std::list<Testbed1::Enum0Enum>();
+        local_param_enum_array.push_back(Testbed1::Enum0Enum::value1);
+
+        clientStructArrayInterface->_getPublisher().subscribeToSigEnum(
+        [&m_wait, &issigEnumEmitted, &local_param_enum_array](const std::list<Testbed1::Enum0Enum>& paramEnum)
+        {
+            REQUIRE(paramEnum == local_param_enum_array);
+            issigEnumEmitted  = true;
+            m_wait.notify_all();
+        });
+
+         implStructArrayInterface->_getPublisher().publishSigEnum(local_param_enum_array);
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&issigEnumEmitted ]() {return issigEnumEmitted   == true; }));
         lock.unlock();
     }
     SECTION("Test method funcBool")
@@ -334,6 +370,40 @@ TEST_CASE("Nats  testbed1 StructArrayInterface tests")
             [&finished, &m_wait](std::list<StructString> value)
             {
                 REQUIRE(value == std::list<Testbed1::StructString>());
+                finished = true;
+                m_wait.notify_all();
+                /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */
+            });
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+
+        resultFuture.wait();
+    }
+    SECTION("Test method funcEnum")
+    {
+        [[maybe_unused]] auto result = clientStructArrayInterface->funcEnum(std::list<Testbed1::Enum0Enum>());
+        // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+    SECTION("Test method funcEnum async")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientStructArrayInterface->funcEnumAsync(std::list<Testbed1::Enum0Enum>());
+        auto f = std::async(std::launch::async, [&finished, &resultFuture, &m_wait]() {resultFuture.wait(); finished = true; m_wait.notify_all();});
+        lock.lock();
+        REQUIRE( m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&finished](){ return finished == true; }));
+        lock.unlock();
+        auto return_value = resultFuture.get();
+        REQUIRE(return_value == std::list<Testbed1::Enum0Enum>()); 
+        // CHECK EFFECTS OF YOUR METHOD HERE
+    }
+    SECTION("Test method funcEnum async with callback")
+    {
+        std::atomic<bool> finished = false;
+        auto resultFuture = clientStructArrayInterface->funcEnumAsync(std::list<Testbed1::Enum0Enum>(),
+            [&finished, &m_wait](std::list<Enum0Enum> value)
+            {
+                REQUIRE(value == std::list<Testbed1::Enum0Enum>());
                 finished = true;
                 m_wait.notify_all();
                 /* YOU CAN CHECK EFFECTS OF YOUR METHOD HERE */

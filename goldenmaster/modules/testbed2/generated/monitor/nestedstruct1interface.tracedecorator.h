@@ -34,6 +34,16 @@ public:
     */
     virtual ~NestedStruct1InterfaceTraceDecorator();
 
+    /** Traces funcNoReturnValue and forwards call to NestedStruct1Interface implementation. */
+    void funcNoReturnValue(const NestedStruct1& param1) override;
+    /** Traces funcNoReturnValue and forwards call to NestedStruct1Interface implementation. */
+    std::future<void> funcNoReturnValueAsync(const NestedStruct1& param1, std::function<void(void)> callback = nullptr) override;
+    
+    /** Traces funcNoParams and forwards call to NestedStruct1Interface implementation. */
+    NestedStruct1 funcNoParams() override;
+    /** Traces funcNoParams and forwards call to NestedStruct1Interface implementation. */
+    std::future<NestedStruct1> funcNoParamsAsync( std::function<void(NestedStruct1)> callback = nullptr) override;
+    
     /** Traces func1 and forwards call to NestedStruct1Interface implementation. */
     NestedStruct1 func1(const NestedStruct1& param1) override;
     /** Traces func1 and forwards call to NestedStruct1Interface implementation. */

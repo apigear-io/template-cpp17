@@ -62,6 +62,8 @@ build_module "custom_types"
 build_module "extern_types"
 # Building and testing Counter module
 build_module "counter"
+# Building and testing TbStructArray module
+build_module "tb_struct_array"
 build_example "examples/app"
 build_example "examples/appthreadsafe"
 build_example "examples/olinkserver"

@@ -21,8 +21,10 @@
 #include "tb_simple/generated/nats/emptyinterfaceclient.h"
 #include "testbed1/generated/nats/structinterfaceclient.h"
 #include "testbed1/generated/nats/structarrayinterfaceclient.h"
+#include "testbed1/generated/nats/structarray2interfaceclient.h"
 #include "tb_names/generated/nats/namesclient.h"
 #include "counter/generated/nats/counterclient.h"
+#include "tb_struct_array/generated/nats/structarrayfieldinterfaceclient.h"
 #include "apigear/utilities/logger.h"
 #include <iostream>
 #include "apigear/nats/natsclient.h"
@@ -73,8 +75,10 @@ int main(){
     auto testTbSimpleEmptyInterface = TbSimple::Nats::EmptyInterfaceClient::create(client);
     auto testTestbed1StructInterface = Testbed1::Nats::StructInterfaceClient::create(client);
     auto testTestbed1StructArrayInterface = Testbed1::Nats::StructArrayInterfaceClient::create(client);
+    auto testTestbed1StructArray2Interface = Testbed1::Nats::StructArray2InterfaceClient::create(client);
     auto testTbNamesNamEs = TbNames::Nats::Nam_EsClient::create(client);
     auto testCounterCounter = Counter::Nats::CounterClient::create(client);
+    auto testTbStructArrayStructArrayFieldInterface = TbStructArray::Nats::StructArrayFieldInterfaceClient::create(client);
 
    
     

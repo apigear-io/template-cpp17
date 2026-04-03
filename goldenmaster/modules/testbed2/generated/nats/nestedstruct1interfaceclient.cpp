@@ -112,6 +112,83 @@ void NestedStruct1InterfaceClient::handleInit(const std::string& value)
     }
 }
 
+void NestedStruct1InterfaceClient::funcNoReturnValue(const NestedStruct1& param1)
+{
+    if(m_client == nullptr) {
+        return;
+    }
+    funcNoReturnValueAsync(param1);
+}
+
+std::future<void> NestedStruct1InterfaceClient::funcNoReturnValueAsync(const NestedStruct1& param1, std::function<void(void)> user_callback)
+{
+    if(m_client == nullptr) {
+        throw std::runtime_error("Client is not initialized");
+    }
+    static const auto topic = std::string("testbed2.NestedStruct1Interface.rpc.funcNoReturnValue");
+
+    return std::async(std::launch::async, [this, user_callback,param1]()
+    {
+        std::promise<void> resultPromise;
+        auto callback = [&resultPromise, user_callback](const auto& result)
+        {
+            (void) result;
+            resultPromise.set_value();
+            if (user_callback)
+            {
+                user_callback();
+            }
+        };
+
+        m_client->request(topic,  nlohmann::json::array({param1}).dump(), callback);
+        return resultPromise.get_future().get();
+    });
+}
+
+NestedStruct1 NestedStruct1InterfaceClient::funcNoParams()
+{
+    if(m_client == nullptr) {
+        return NestedStruct1();
+    }
+    NestedStruct1 value(funcNoParamsAsync().get());
+    return value;
+}
+
+std::future<NestedStruct1> NestedStruct1InterfaceClient::funcNoParamsAsync( std::function<void(NestedStruct1)> user_callback)
+{
+    if(m_client == nullptr) {
+        throw std::runtime_error("Client is not initialized");
+    }
+    static const auto topic = std::string("testbed2.NestedStruct1Interface.rpc.funcNoParams");
+
+    return std::async(std::launch::async, [this, user_callback]()
+    {
+        std::promise<NestedStruct1> resultPromise;
+        auto callback = [&resultPromise, user_callback](const auto& result)
+        {
+            if (result.empty())
+            {
+                resultPromise.set_value(NestedStruct1());
+                if (user_callback)
+                {
+                    user_callback(NestedStruct1());
+                }
+                return;
+            }
+            nlohmann::json field = nlohmann::json::parse(result);
+            const NestedStruct1 value = field.get<NestedStruct1>();
+            resultPromise.set_value(value);
+            if (user_callback)
+            {
+                user_callback(value);
+            }
+        };
+
+        m_client->request(topic,  nlohmann::json::array({}).dump(), callback);
+        return resultPromise.get_future().get();
+    });
+}
+
 NestedStruct1 NestedStruct1InterfaceClient::func1(const NestedStruct1& param1)
 {
     if(m_client == nullptr) {

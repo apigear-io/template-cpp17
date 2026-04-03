@@ -45,6 +45,10 @@ nlohmann::json SimpleInterfaceService::olinkInvoke(const std::string& methodId, 
         m_SimpleInterface->funcNoReturnValue(paramBool);
         return nlohmann::json{};
     }
+    if(memberMethod == "funcNoParams") {
+        bool result = m_SimpleInterface->funcNoParams();
+        return result;
+    }
     if(memberMethod == "funcBool") {
         const bool& paramBool = fcnArgs.at(0);
         bool result = m_SimpleInterface->funcBool(paramBool);

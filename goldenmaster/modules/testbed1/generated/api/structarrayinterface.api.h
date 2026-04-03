@@ -59,6 +59,14 @@ public:
     */
     virtual std::future<std::list<StructString>> funcStringAsync(const std::list<StructString>& paramString, std::function<void(std::list<StructString>)> callback = nullptr) = 0;
 
+
+    virtual std::list<Enum0Enum> funcEnum(const std::list<Enum0Enum>& paramEnum) = 0;
+    /**
+    * Asynchronous version of funcEnum(const std::list<Enum0Enum>& paramEnum)
+    * @return Promise of type std::list<Enum0Enum> which is set once the function has completed
+    */
+    virtual std::future<std::list<Enum0Enum>> funcEnumAsync(const std::list<Enum0Enum>& paramEnum, std::function<void(std::list<Enum0Enum>)> callback = nullptr) = 0;
+
     /**
     * Sets the value of the propBool property.
     */
@@ -94,6 +102,15 @@ public:
     * Gets the value of the propString property.
     */
     virtual const std::list<StructString>& getPropString() const = 0;
+
+    /**
+    * Sets the value of the propEnum property.
+    */
+    virtual void setPropEnum(const std::list<Enum0Enum>& propEnum) = 0;
+    /**
+    * Gets the value of the propEnum property.
+    */
+    virtual const std::list<Enum0Enum>& getPropEnum() const = 0;
 
     /**
     * Access to a publisher, use it to subscribe for StructArrayInterface changes and signal emission.
@@ -145,6 +162,13 @@ public:
     */
     virtual void onSigString(const std::list<StructString>& paramString) = 0;
     /**
+    * Called by the IStructArrayInterfacePublisher when the StructArrayInterface emits sigEnum, if subscribed for the sigEnum.
+    * @param paramEnum 
+    *
+    * @warning the subscribed function shall not be blocking and must return immediately!
+    */
+    virtual void onSigEnum(const std::list<Enum0Enum>& paramEnum) = 0;
+    /**
     * Called by the IStructArrayInterfacePublisher when propBool value has changed if subscribed for the propBool change.
     *
     * @warning the subscribed function shall not be blocking and must return immediately!
@@ -168,6 +192,12 @@ public:
     * @warning the subscribed function shall not be blocking and must return immediately!
     */
     virtual void onPropStringChanged(const std::list<StructString>& propString) = 0;
+    /**
+    * Called by the IStructArrayInterfacePublisher when propEnum value has changed if subscribed for the propEnum change.
+    *
+    * @warning the subscribed function shall not be blocking and must return immediately!
+    */
+    virtual void onPropEnumChanged(const std::list<Enum0Enum>& propEnum) = 0;
 };
 
 /** Callback for changes of propBool */
@@ -178,6 +208,8 @@ using StructArrayInterfacePropIntPropertyCb = std::function<void(const std::list
 using StructArrayInterfacePropFloatPropertyCb = std::function<void(const std::list<StructFloat>& propFloat)>;
 /** Callback for changes of propString */
 using StructArrayInterfacePropStringPropertyCb = std::function<void(const std::list<StructString>& propString)>;
+/** Callback for changes of propEnum */
+using StructArrayInterfacePropEnumPropertyCb = std::function<void(const std::list<Enum0Enum>& propEnum)>;
 /** Callback for sigBool signal triggers */
 using StructArrayInterfaceSigBoolSignalCb = std::function<void(const std::list<StructBool>& paramBool)> ;
 /** Callback for sigInt signal triggers */
@@ -186,6 +218,8 @@ using StructArrayInterfaceSigIntSignalCb = std::function<void(const std::list<St
 using StructArrayInterfaceSigFloatSignalCb = std::function<void(const std::list<StructFloat>& paramFloat)> ;
 /** Callback for sigString signal triggers */
 using StructArrayInterfaceSigStringSignalCb = std::function<void(const std::list<StructString>& paramString)> ;
+/** Callback for sigEnum signal triggers */
+using StructArrayInterfaceSigEnumSignalCb = std::function<void(const std::list<Enum0Enum>& paramEnum)> ;
 
 
 /**
@@ -292,6 +326,24 @@ public:
     virtual void unsubscribeFromPropStringChanged(uint64_t handleId) = 0;
 
     /**
+    * Use this function to subscribe for propEnum value changes.
+    * If your subscriber uses subscription with IStructArrayInterfaceSubscriber interface, you will get two notifications, one for each subscription mechanism.
+    * @param StructArrayInterfacePropEnumPropertyCb callback that will be executed on each change of the property.
+    * Make sure to remove subscription before the callback becomes invalid.
+    * @return subscription token for the subscription removal.
+    *
+    * @warning the subscribed function shall not be blocking and must return immediately!
+    */
+    virtual uint64_t subscribeToPropEnumChanged(StructArrayInterfacePropEnumPropertyCb callback) = 0;
+    /**
+    * Use this function to unsubscribe from propEnum property changes.
+    * If your subscriber uses subscription with IStructArrayInterfaceSubscriber interface, you will be still informed about this change,
+    * as those are two independent subscription mechanisms.
+    * @param subscription token received on subscription.
+    */
+    virtual void unsubscribeFromPropEnumChanged(uint64_t handleId) = 0;
+
+    /**
     * Use this function to subscribe for sigBool signal changes.
     * @param StructArrayInterfaceSigBoolSignalCb callback that will be executed on each signal emission.
     * Make sure to remove subscription before the callback becomes invalid.
@@ -352,6 +404,21 @@ public:
     virtual void unsubscribeFromSigString(uint64_t handleId) = 0;
 
     /**
+    * Use this function to subscribe for sigEnum signal changes.
+    * @param StructArrayInterfaceSigEnumSignalCb callback that will be executed on each signal emission.
+    * Make sure to remove subscription before the callback becomes invalid.
+    * @return subscription token for the subscription removal.
+    *
+    * @warning the subscribed function shall not be blocking and must return immediately!
+    */
+    virtual uint64_t subscribeToSigEnum(StructArrayInterfaceSigEnumSignalCb callback) = 0;
+    /**
+    * Use this function to unsubscribe from sigEnum signal changes.
+    * @param subscription token received on subscription.
+    */
+    virtual void unsubscribeFromSigEnum(uint64_t handleId) = 0;
+
+    /**
     * Publishes the property changed to all subscribed clients.
     * Needs to be invoked by the StructArrayInterface implementation when property propBool changes.
     * @param The new value of propBool.
@@ -376,6 +443,12 @@ public:
     */
     virtual void publishPropStringChanged(const std::list<StructString>& propString) const = 0;
     /**
+    * Publishes the property changed to all subscribed clients.
+    * Needs to be invoked by the StructArrayInterface implementation when property propEnum changes.
+    * @param The new value of propEnum.
+    */
+    virtual void publishPropEnumChanged(const std::list<Enum0Enum>& propEnum) const = 0;
+    /**
     * Publishes the emitted signal to all subscribed clients.
     * Needs to be invoked by the StructArrayInterface implementation when sigBool is emitted.
     * @param paramBool 
@@ -399,6 +472,12 @@ public:
     * @param paramString 
     */
     virtual void publishSigString(const std::list<StructString>& paramString) const = 0;
+    /**
+    * Publishes the emitted signal to all subscribed clients.
+    * Needs to be invoked by the StructArrayInterface implementation when sigEnum is emitted.
+    * @param paramEnum 
+    */
+    virtual void publishSigEnum(const std::list<Enum0Enum>& paramEnum) const = 0;
 };
 
 

@@ -35,6 +35,9 @@ void StructArrayInterfaceClient::applyState(const nlohmann::json& fields)
     if(fields.contains("propString")) {
         setPropStringLocal(fields["propString"].get<std::list<StructString>>());
     }
+    if(fields.contains("propEnum")) {
+        setPropEnumLocal(fields["propEnum"].get<std::list<Enum0Enum>>());
+    }
 }
 
 void StructArrayInterfaceClient::applyProperty(const std::string& propertyName, const nlohmann::json& value)
@@ -50,6 +53,9 @@ void StructArrayInterfaceClient::applyProperty(const std::string& propertyName, 
     }
     else if ( propertyName == "propString") {
         setPropStringLocal(value.get<std::list<StructString>>());
+    }
+    else if ( propertyName == "propEnum") {
+        setPropEnumLocal(value.get<std::list<Enum0Enum>>());
     }
 }
 
@@ -169,6 +175,35 @@ const std::list<StructString>& StructArrayInterfaceClient::getPropString() const
     return m_data.m_propString;
 }
 
+void StructArrayInterfaceClient::setPropEnum(const std::list<Enum0Enum>& propEnum)
+{
+    if(!m_node) {
+        AG_LOG_WARNING("Attempt to set property but " + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
+        return;
+    }
+    static const auto propertyId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "propEnum");
+    m_node->setRemoteProperty(propertyId, propEnum);
+}
+
+void StructArrayInterfaceClient::setPropEnumLocal(const std::list<Enum0Enum>& propEnum)
+{
+    {
+        std::unique_lock<std::shared_timed_mutex> lock(m_propEnumMutex);
+        if (m_data.m_propEnum == propEnum) {
+            return;
+        }
+        m_data.m_propEnum = propEnum;
+    }
+
+    m_publisher->publishPropEnumChanged(propEnum);
+}
+
+const std::list<Enum0Enum>& StructArrayInterfaceClient::getPropEnum() const
+{
+    std::shared_lock<std::shared_timed_mutex> lock(m_propEnumMutex);
+    return m_data.m_propEnum;
+}
+
 std::list<StructBool> StructArrayInterfaceClient::funcBool(const std::list<StructBool>& paramBool)
 {
     return funcBoolAsync(paramBool).get();
@@ -269,6 +304,31 @@ std::future<std::list<StructString>> StructArrayInterfaceClient::funcStringAsync
     return resultPromise->get_future();
 }
 
+std::list<Enum0Enum> StructArrayInterfaceClient::funcEnum(const std::list<Enum0Enum>& paramEnum)
+{
+    return funcEnumAsync(paramEnum).get();
+}
+
+std::future<std::list<Enum0Enum>> StructArrayInterfaceClient::funcEnumAsync(const std::list<Enum0Enum>& paramEnum, std::function<void(std::list<Enum0Enum>)> callback)
+{
+    if(!m_node) {
+        AG_LOG_WARNING("Attempt to invoke method but" + olinkObjectName() +" is not linked to source . Make sure your object is linked. Check your connection to service");
+        return std::future<std::list<Enum0Enum>>{};
+    }
+    std::shared_ptr<std::promise<std::list<Enum0Enum>>> resultPromise = std::make_shared<std::promise<std::list<Enum0Enum>>>();
+    static const auto operationId = ApiGear::ObjectLink::Name::createMemberId(olinkObjectName(), "funcEnum");
+    m_node->invokeRemote(operationId,
+        nlohmann::json::array({paramEnum}), [resultPromise, callback](ApiGear::ObjectLink::InvokeReplyArg arg) {
+            const std::list<Enum0Enum>& value = arg.value.get<std::list<Enum0Enum>>();
+            resultPromise->set_value(value);
+            if (callback)
+            {
+                callback(value);
+            }
+        });
+    return resultPromise->get_future();
+}
+
 std::string StructArrayInterfaceClient::olinkObjectName()
 {
     return interfaceId;
@@ -291,6 +351,10 @@ void StructArrayInterfaceClient::olinkOnSignal(const std::string& signalId, cons
     }
     if(signalName == "sigString") {
         m_publisher->publishSigString(args[0].get<std::list<StructString>>());   
+        return;
+    }
+    if(signalName == "sigEnum") {
+        m_publisher->publishSigEnum(args[0].get<std::list<Enum0Enum>>());   
         return;
     }
 }

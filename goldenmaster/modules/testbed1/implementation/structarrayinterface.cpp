@@ -66,6 +66,19 @@ const std::list<StructString>& StructArrayInterface::getPropString() const
     return m_data.m_propString;
 }
 
+void StructArrayInterface::setPropEnum(const std::list<Enum0Enum>& propEnum)
+{
+    if (m_data.m_propEnum != propEnum) {
+        m_data.m_propEnum = propEnum;
+        m_publisher->publishPropEnumChanged(propEnum);
+    }
+}
+
+const std::list<Enum0Enum>& StructArrayInterface::getPropEnum() const
+{
+    return m_data.m_propEnum;
+}
+
 std::list<StructBool> StructArrayInterface::funcBool(const std::list<StructBool>& paramBool)
 {
     (void) paramBool; // suppress the 'Unreferenced Formal Parameter' warning.
@@ -138,6 +151,26 @@ std::future<std::list<StructString>> StructArrayInterface::funcStringAsync(const
     return std::async(std::launch::async, [this, callback,
                     paramString]()
         {auto result = funcString(paramString);
+            if (callback)
+            {
+                callback(result);
+            }return result;
+        }
+    );
+}
+
+std::list<Enum0Enum> StructArrayInterface::funcEnum(const std::list<Enum0Enum>& paramEnum)
+{
+    (void) paramEnum; // suppress the 'Unreferenced Formal Parameter' warning.
+    // do business logic here
+    return std::list<Enum0Enum>();
+}
+
+std::future<std::list<Enum0Enum>> StructArrayInterface::funcEnumAsync(const std::list<Enum0Enum>& paramEnum, std::function<void(std::list<Enum0Enum>)> callback)
+{
+    return std::async(std::launch::async, [this, callback,
+                    paramEnum]()
+        {auto result = funcEnum(paramEnum);
             if (callback)
             {
                 callback(result);

@@ -208,6 +208,17 @@ if(NOT counter_FOUND)
   )
   FetchContent_MakeAvailable(counter)
 endif()
+find_package(tb_struct_array QUIET)
+if(NOT tb_struct_array_FOUND)
+  # pull tb_struct_array as dependency
+  message(STATUS "tb_struct_array NOT FOUND, building from source folder")
+  include(FetchContent)
+  FetchContent_Declare(tb_struct_array
+    SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/modules/tb_struct_array"
+    OVERRIDE_FIND_PACKAGE
+  )
+  FetchContent_MakeAvailable(tb_struct_array)
+endif()
 add_subdirectory(examples/app)
 add_subdirectory(examples/appthreadsafe)
 add_subdirectory(examples/olinkserver)

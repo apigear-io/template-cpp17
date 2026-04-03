@@ -59,6 +59,16 @@ std::future<std::list<StructString>> StructArrayInterfaceTraceDecorator::funcStr
     m_tracer->trace_funcString(paramString);
     return m_impl.funcStringAsync(paramString, callback);
 }
+std::list<Enum0Enum> StructArrayInterfaceTraceDecorator::funcEnum(const std::list<Enum0Enum>& paramEnum)
+{
+    m_tracer->trace_funcEnum(paramEnum);
+    return m_impl.funcEnum(paramEnum);
+}
+std::future<std::list<Enum0Enum>> StructArrayInterfaceTraceDecorator::funcEnumAsync(const std::list<Enum0Enum>& paramEnum, std::function<void(std::list<Enum0Enum>)> callback)
+{
+    m_tracer->trace_funcEnum(paramEnum);
+    return m_impl.funcEnumAsync(paramEnum, callback);
+}
 void StructArrayInterfaceTraceDecorator::setPropBool(const std::list<StructBool>& propBool)
 {
     m_impl.setPropBool(propBool);
@@ -95,6 +105,15 @@ const std::list<StructString>& StructArrayInterfaceTraceDecorator::getPropString
 {
     return m_impl.getPropString();
 }
+void StructArrayInterfaceTraceDecorator::setPropEnum(const std::list<Enum0Enum>& propEnum)
+{
+    m_impl.setPropEnum(propEnum);
+}
+
+const std::list<Enum0Enum>& StructArrayInterfaceTraceDecorator::getPropEnum() const
+{
+    return m_impl.getPropEnum();
+}
 void StructArrayInterfaceTraceDecorator::onSigBool(const std::list<StructBool>& paramBool)
 {
     m_tracer->trace_sigBool(paramBool);
@@ -113,6 +132,11 @@ void StructArrayInterfaceTraceDecorator::onSigFloat(const std::list<StructFloat>
 void StructArrayInterfaceTraceDecorator::onSigString(const std::list<StructString>& paramString)
 {
     m_tracer->trace_sigString(paramString);
+}
+
+void StructArrayInterfaceTraceDecorator::onSigEnum(const std::list<Enum0Enum>& paramEnum)
+{
+    m_tracer->trace_sigEnum(paramEnum);
 }
 
 void StructArrayInterfaceTraceDecorator::onPropBoolChanged(const std::list<StructBool>& propBool)
@@ -136,6 +160,12 @@ void StructArrayInterfaceTraceDecorator::onPropFloatChanged(const std::list<Stru
 void StructArrayInterfaceTraceDecorator::onPropStringChanged(const std::list<StructString>& propString)
 {
     (void) propString; // suppress the 'Unreferenced Formal Parameter' warning.
+    m_tracer->capture_state(this);
+}
+
+void StructArrayInterfaceTraceDecorator::onPropEnumChanged(const std::list<Enum0Enum>& propEnum)
+{
+    (void) propEnum; // suppress the 'Unreferenced Formal Parameter' warning.
     m_tracer->capture_state(this);
 }
 

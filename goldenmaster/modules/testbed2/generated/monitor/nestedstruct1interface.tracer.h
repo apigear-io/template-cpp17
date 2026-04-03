@@ -27,6 +27,16 @@ public:
   */
   void capture_state(INestedStruct1Interface* obj);
   /**
+  * Prepares information about the funcNoReturnValue call in a nlohmann::json format and puts to a tracer.
+  * @param The NestedStruct1Interface object to trace.
+  */
+  void trace_funcNoReturnValue(const NestedStruct1& param1);
+  /**
+  * Prepares information about the funcNoParams call in a nlohmann::json format and puts to a tracer.
+  * @param The NestedStruct1Interface object to trace.
+  */
+  void trace_funcNoParams();
+  /**
   * Prepares information about the func1 call in a nlohmann::json format and puts to a tracer.
   * @param The NestedStruct1Interface object to trace.
   */

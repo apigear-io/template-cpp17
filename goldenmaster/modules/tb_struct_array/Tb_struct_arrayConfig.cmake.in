@@ -1,0 +1,30 @@
+set(TB_STRUCT_ARRAY_VERSION 1.0.0)
+@PACKAGE_INIT@
+
+# make sure we have all needed dependencies
+include(CMakeFindDependencyMacro)
+find_dependency(Threads REQUIRED)
+find_dependency(nlohmann_json REQUIRED)
+find_dependency(apigear COMPONENTS utilities REQUIRED)
+find_dependency(apigear COMPONENTS poco-tracer REQUIRED)
+find_dependency(apigear COMPONENTS poco-olink REQUIRED)
+find_dependency(apigear COMPONENTS paho-mqtt REQUIRED)
+find_dependency(apigear COMPONENTS nats REQUIRED)
+
+INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_struct_arrayApiTargets.cmake")
+INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_struct_arrayCoreTargets.cmake")
+INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_struct_arrayMonitorTargets.cmake")
+INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_struct_arrayOLinkTargets.cmake")
+INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_struct_arrayMqttTargets.cmake")
+INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_struct_arrayNatsTargets.cmake")
+INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_struct_arrayImplementationTargets.cmake")
+
+check_required_components(
+TbStructArray-api
+TbStructArray-core
+TbStructArray-monitor
+TbStructArray-olink
+TbStructArray-mqtt
+TbStructArray-nats
+TbStructArray-implementation
+)

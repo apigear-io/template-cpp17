@@ -43,10 +43,14 @@
 #include "testbed1/generated/mqtt/structinterfaceservice.h"
 #include "testbed1/implementation/structarrayinterface.h"
 #include "testbed1/generated/mqtt/structarrayinterfaceservice.h"
+#include "testbed1/implementation/structarray2interface.h"
+#include "testbed1/generated/mqtt/structarray2interfaceservice.h"
 #include "tb_names/implementation/names.h"
 #include "tb_names/generated/mqtt/namesservice.h"
 #include "counter/implementation/counter.h"
 #include "counter/generated/mqtt/counterservice.h"
+#include "tb_struct_array/implementation/structarrayfieldinterface.h"
+#include "tb_struct_array/generated/mqtt/structarrayfieldinterfaceservice.h"
 #include "apigear/mqtt/mqttservice.h"
 #include "apigear/utilities/logger.h"
 #include <iostream>
@@ -137,10 +141,14 @@ int main(){
     Testbed1::MQTT::StructInterfaceService testTestbed1StructInterfaceService(testTestbed1StructInterface, mqttservice);
     std::shared_ptr<Testbed1::IStructArrayInterface> testTestbed1StructArrayInterface = std::make_shared<Testbed1::StructArrayInterface>();
     Testbed1::MQTT::StructArrayInterfaceService testTestbed1StructArrayInterfaceService(testTestbed1StructArrayInterface, mqttservice);
+    std::shared_ptr<Testbed1::IStructArray2Interface> testTestbed1StructArray2Interface = std::make_shared<Testbed1::StructArray2Interface>();
+    Testbed1::MQTT::StructArray2InterfaceService testTestbed1StructArray2InterfaceService(testTestbed1StructArray2Interface, mqttservice);
     std::shared_ptr<TbNames::INamEs> testTbNamesNamEs = std::make_shared<TbNames::NamEs>();
     TbNames::MQTT::Nam_EsService testTbNamesNamEsService(testTbNamesNamEs, mqttservice);
     std::shared_ptr<Counter::ICounter> testCounterCounter = std::make_shared<Counter::Counter>();
     Counter::MQTT::CounterService testCounterCounterService(testCounterCounter, mqttservice);
+    std::shared_ptr<TbStructArray::IStructArrayFieldInterface> testTbStructArrayStructArrayFieldInterface = std::make_shared<TbStructArray::StructArrayFieldInterface>();
+    TbStructArray::MQTT::StructArrayFieldInterfaceService testTbStructArrayStructArrayFieldInterfaceService(testTbStructArrayStructArrayFieldInterface, mqttservice);
 
     // start mqtt connection
     mqttservice->connectToHost("");

@@ -12,6 +12,8 @@ set (SOURCES_CORE_SUPPORT
     structinterface.threadsafedecorator.cpp
     structarrayinterface.publisher.cpp
     structarrayinterface.threadsafedecorator.cpp
+    structarray2interface.publisher.cpp
+    structarray2interface.threadsafedecorator.cpp
 )
 add_library(testbed1-core SHARED ${SOURCES_CORE_SUPPORT})
 add_library(testbed1::testbed1-core ALIAS testbed1-core)

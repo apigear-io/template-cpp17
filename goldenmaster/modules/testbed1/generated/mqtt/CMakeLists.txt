@@ -4,6 +4,8 @@ set (SOURCES_MQTT
     structinterfaceclient.cpp
     structarrayinterfaceservice.cpp
     structarrayinterfaceclient.cpp
+    structarray2interfaceservice.cpp
+    structarray2interfaceclient.cpp
 )
 add_library(testbed1-mqtt SHARED ${SOURCES_MQTT})
 add_library(testbed1::testbed1-mqtt ALIAS testbed1-mqtt)

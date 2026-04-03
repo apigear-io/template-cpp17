@@ -33,14 +33,17 @@ std::map<std::string, ApiGear::MQTT::CallbackFunction> StructArrayInterfaceClien
         { std::string("testbed1/StructArrayInterface/prop/propInt"), [this](const std::string& args, const std::string&, const std::string&){ this->setPropIntLocal(args); } },
         { std::string("testbed1/StructArrayInterface/prop/propFloat"), [this](const std::string& args, const std::string&, const std::string&){ this->setPropFloatLocal(args); } },
         { std::string("testbed1/StructArrayInterface/prop/propString"), [this](const std::string& args, const std::string&, const std::string&){ this->setPropStringLocal(args); } },
+        { std::string("testbed1/StructArrayInterface/prop/propEnum"), [this](const std::string& args, const std::string&, const std::string&){ this->setPropEnumLocal(args); } },
         { std::string("testbed1/StructArrayInterface/sig/sigBool"), [this](const std::string& args, const std::string&, const std::string&){ this->onSigBool(args); } },
         { std::string("testbed1/StructArrayInterface/sig/sigInt"), [this](const std::string& args, const std::string&, const std::string&){ this->onSigInt(args); } },
         { std::string("testbed1/StructArrayInterface/sig/sigFloat"), [this](const std::string& args, const std::string&, const std::string&){ this->onSigFloat(args); } },
         { std::string("testbed1/StructArrayInterface/sig/sigString"), [this](const std::string& args, const std::string&, const std::string&){ this->onSigString(args); } },
+        { std::string("testbed1/StructArrayInterface/sig/sigEnum"), [this](const std::string& args, const std::string&, const std::string&){ this->onSigEnum(args); } },
         { std::string("testbed1/StructArrayInterface/rpc/funcBool/"+clientId+"/result"), [this](const std::string& args, const std::string&, const std::string& correlationData){ this->onInvokeReply(args, correlationData); } },
         { std::string("testbed1/StructArrayInterface/rpc/funcInt/"+clientId+"/result"), [this](const std::string& args, const std::string&, const std::string& correlationData){ this->onInvokeReply(args, correlationData); } },
         { std::string("testbed1/StructArrayInterface/rpc/funcFloat/"+clientId+"/result"), [this](const std::string& args, const std::string&, const std::string& correlationData){ this->onInvokeReply(args, correlationData); } },
         { std::string("testbed1/StructArrayInterface/rpc/funcString/"+clientId+"/result"), [this](const std::string& args, const std::string&, const std::string& correlationData){ this->onInvokeReply(args, correlationData); } },
+        { std::string("testbed1/StructArrayInterface/rpc/funcEnum/"+clientId+"/result"), [this](const std::string& args, const std::string&, const std::string& correlationData){ this->onInvokeReply(args, correlationData); } },
     };
 };
 
@@ -158,6 +161,35 @@ void StructArrayInterfaceClient::setPropStringLocal(const std::string& args)
 const std::list<StructString>& StructArrayInterfaceClient::getPropString() const
 {
     return m_data.m_propString;
+}
+
+void StructArrayInterfaceClient::setPropEnum(const std::list<Enum0Enum>& propEnum)
+{
+    if(m_client == nullptr) {
+        return;
+    }
+    static const auto topic = std::string("testbed1/StructArrayInterface/set/propEnum");
+    m_client->setRemoteProperty(topic, nlohmann::json(propEnum).dump());
+}
+
+void StructArrayInterfaceClient::setPropEnumLocal(const std::string& args)
+{
+    nlohmann::json fields = nlohmann::json::parse(args);
+    if (fields.empty())
+    {
+        return;
+    }
+
+    const std::list<Enum0Enum>& propEnum = fields.get<std::list<Enum0Enum>>();
+    if (m_data.m_propEnum != propEnum) {
+        m_data.m_propEnum = propEnum;
+        m_publisher->publishPropEnumChanged(propEnum);
+    }
+}
+
+const std::list<Enum0Enum>& StructArrayInterfaceClient::getPropEnum() const
+{
+    return m_data.m_propEnum;
 }
 
 std::list<StructBool> StructArrayInterfaceClient::funcBool(const std::list<StructBool>& paramBool)
@@ -299,6 +331,41 @@ std::future<std::list<StructString>> StructArrayInterfaceClient::funcStringAsync
         }
     );
 }
+
+std::list<Enum0Enum> StructArrayInterfaceClient::funcEnum(const std::list<Enum0Enum>& paramEnum)
+{
+    if(m_client == nullptr) {
+        return std::list<Enum0Enum>();
+    }
+    std::list<Enum0Enum> value(funcEnumAsync(paramEnum).get());
+    return value;
+}
+
+std::future<std::list<Enum0Enum>> StructArrayInterfaceClient::funcEnumAsync(const std::list<Enum0Enum>& paramEnum, std::function<void(std::list<Enum0Enum>)> callback)
+{
+    if(m_client == nullptr) {
+        throw std::runtime_error("Client is not initialized");
+    }
+    return std::async(std::launch::async, [this, callback,
+                    paramEnum]()
+        {
+            std::promise<std::list<Enum0Enum>> resultPromise;
+            static const auto topic = std::string("testbed1/StructArrayInterface/rpc/funcEnum");
+            static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                const std::list<Enum0Enum>& value = arg.value.get<std::list<Enum0Enum>>();
+                resultPromise.set_value(value);
+                if (callback)
+                {
+                    callback(value);
+                }
+            };
+            auto responseId = registerResponseHandler(responseHandler);
+            m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({paramEnum}).dump(), responseId);
+            return resultPromise.get_future().get();
+        }
+    );
+}
 void StructArrayInterfaceClient::onSigBool(const std::string& args) const
 {
     nlohmann::json json_args = nlohmann::json::parse(args);
@@ -318,6 +385,11 @@ void StructArrayInterfaceClient::onSigString(const std::string& args) const
 {
     nlohmann::json json_args = nlohmann::json::parse(args);
     m_publisher->publishSigString(json_args[0].get<std::list<StructString>>());
+}
+void StructArrayInterfaceClient::onSigEnum(const std::string& args) const
+{
+    nlohmann::json json_args = nlohmann::json::parse(args);
+    m_publisher->publishSigEnum(json_args[0].get<std::list<Enum0Enum>>());
 }
 
 int StructArrayInterfaceClient::registerResponseHandler(ApiGear::MQTT::InvokeReplyFunc handler)

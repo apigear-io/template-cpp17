@@ -23,6 +23,8 @@ private:
     std::map<std::string, ApiGear::MQTT::CallbackFunction> createTopicMap();
 
     void onConnectionStatusChanged(bool connectionStatus);
+    void onInvokeFuncNoReturnValue(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const;
+    void onInvokeFuncNoParams(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const;
     void onInvokeFunc1(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const;
     void onProp1Changed(const NestedStruct1& prop1) override;
     /// @brief requests to set the value for the property Prop1 coming from the client

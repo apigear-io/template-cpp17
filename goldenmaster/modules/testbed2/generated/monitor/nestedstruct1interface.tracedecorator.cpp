@@ -19,6 +19,26 @@ std::unique_ptr<NestedStruct1InterfaceTraceDecorator> NestedStruct1InterfaceTrac
 {
     return std::unique_ptr<NestedStruct1InterfaceTraceDecorator>(new NestedStruct1InterfaceTraceDecorator(impl, tracer));
 }
+void NestedStruct1InterfaceTraceDecorator::funcNoReturnValue(const NestedStruct1& param1)
+{
+    m_tracer->trace_funcNoReturnValue(param1);
+    return m_impl.funcNoReturnValue(param1);
+}
+std::future<void> NestedStruct1InterfaceTraceDecorator::funcNoReturnValueAsync(const NestedStruct1& param1, std::function<void(void)> callback)
+{
+    m_tracer->trace_funcNoReturnValue(param1);
+    return m_impl.funcNoReturnValueAsync(param1, callback);
+}
+NestedStruct1 NestedStruct1InterfaceTraceDecorator::funcNoParams()
+{
+    m_tracer->trace_funcNoParams();
+    return m_impl.funcNoParams();
+}
+std::future<NestedStruct1> NestedStruct1InterfaceTraceDecorator::funcNoParamsAsync( std::function<void(NestedStruct1)> callback)
+{
+    m_tracer->trace_funcNoParams();
+    return m_impl.funcNoParamsAsync( callback);
+}
 NestedStruct1 NestedStruct1InterfaceTraceDecorator::func1(const NestedStruct1& param1)
 {
     m_tracer->trace_func1(param1);

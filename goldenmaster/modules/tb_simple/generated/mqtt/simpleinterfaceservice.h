@@ -31,6 +31,7 @@ private:
 
     void onConnectionStatusChanged(bool connectionStatus);
     void onInvokeFuncNoReturnValue(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const;
+    void onInvokeFuncNoParams(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const;
     void onInvokeFuncBool(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const;
     void onInvokeFuncInt(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const;
     void onInvokeFuncInt32(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const;

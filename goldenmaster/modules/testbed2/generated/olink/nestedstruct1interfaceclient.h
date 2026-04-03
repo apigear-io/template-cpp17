@@ -57,6 +57,24 @@ public:
     */
     void setProp1(const NestedStruct1& prop1) override;
     /**
+    * Remote call of INestedStruct1Interface::funcNoReturnValue on the NestedStruct1Interface service.
+    * Uses funcNoReturnValueAsync
+    */
+    void funcNoReturnValue(const NestedStruct1& param1) override;
+    /**
+    * Remote call of INestedStruct1Interface::funcNoReturnValue on the NestedStruct1Interface service.
+    */
+    std::future<void> funcNoReturnValueAsync(const NestedStruct1& param1, std::function<void(void)> callback = nullptr) override;
+    /**
+    * Remote call of INestedStruct1Interface::funcNoParams on the NestedStruct1Interface service.
+    * Uses funcNoParamsAsync
+    */
+    NestedStruct1 funcNoParams() override;
+    /**
+    * Remote call of INestedStruct1Interface::funcNoParams on the NestedStruct1Interface service.
+    */
+    std::future<NestedStruct1> funcNoParamsAsync( std::function<void(NestedStruct1)> callback = nullptr) override;
+    /**
     * Remote call of INestedStruct1Interface::func1 on the NestedStruct1Interface service.
     * Uses func1Async
     */
