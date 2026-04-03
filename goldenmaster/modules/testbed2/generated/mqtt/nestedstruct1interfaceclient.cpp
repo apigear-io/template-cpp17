@@ -87,17 +87,17 @@ std::future<void> NestedStruct1InterfaceClient::funcNoReturnValueAsync(const Nes
     return std::async(std::launch::async, [this, callback,
                     param1]()
         {
-            std::promise<void> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<void>>();
             static const auto topic = std::string("testbed2/NestedStruct1Interface/rpc/funcNoReturnValue");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
             auto responseId = 0; //Not used, the service won't respond, no handler is added for response.
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({param1}).dump(), responseId);
-            resultPromise.set_value();
+            resultPromise->set_value();
             if (callback)
             {
                 callback();
             }
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
@@ -118,20 +118,26 @@ std::future<NestedStruct1> NestedStruct1InterfaceClient::funcNoParamsAsync( std:
     }
     return std::async(std::launch::async, [this, callback]()
         {
-            std::promise<NestedStruct1> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<NestedStruct1>>();
             static const auto topic = std::string("testbed2/NestedStruct1Interface/rpc/funcNoParams");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const NestedStruct1& value = arg.value.get<NestedStruct1>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const NestedStruct1& value = arg.value.get<NestedStruct1>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }

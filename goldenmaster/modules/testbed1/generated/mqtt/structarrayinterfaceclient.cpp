@@ -191,16 +191,20 @@ void StructArrayInterfaceClient::setPropEnum(const std::list<Enum0Enum>& propEnu
 
 void StructArrayInterfaceClient::setPropEnumLocal(const std::string& args)
 {
-    nlohmann::json fields = nlohmann::json::parse(args);
-    if (fields.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json fields = nlohmann::json::parse(args);
+        if (fields.empty())
+        {
+            return;
+        }
 
-    const std::list<Enum0Enum>& propEnum = fields.get<std::list<Enum0Enum>>();
-    if (m_data.m_propEnum != propEnum) {
-        m_data.m_propEnum = propEnum;
-        m_publisher->publishPropEnumChanged(propEnum);
+        const std::list<Enum0Enum>& propEnum = fields.get<std::list<Enum0Enum>>();
+        if (m_data.m_propEnum != propEnum) {
+            m_data.m_propEnum = propEnum;
+            m_publisher->publishPropEnumChanged(propEnum);
+        }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructArrayInterfaceClient JSON error: " + std::string(e.what()));
     }
 }
 
@@ -390,20 +394,26 @@ std::future<std::list<Enum0Enum>> StructArrayInterfaceClient::funcEnumAsync(cons
     return std::async(std::launch::async, [this, callback,
                     paramEnum]()
         {
-            std::promise<std::list<Enum0Enum>> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<std::list<Enum0Enum>>>();
             static const auto topic = std::string("testbed1/StructArrayInterface/rpc/funcEnum");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const std::list<Enum0Enum>& value = arg.value.get<std::list<Enum0Enum>>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const std::list<Enum0Enum>& value = arg.value.get<std::list<Enum0Enum>>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({paramEnum}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }
@@ -445,8 +455,12 @@ void StructArrayInterfaceClient::onSigString(const std::string& args) const
 }
 void StructArrayInterfaceClient::onSigEnum(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    m_publisher->publishSigEnum(json_args[0].get<std::list<Enum0Enum>>());
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        m_publisher->publishSigEnum(json_args[0].get<std::list<Enum0Enum>>());
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructArrayInterfaceClient JSON error: " + std::string(e.what()));
+    }
 }
 
 int StructArrayInterfaceClient::registerResponseHandler(ApiGear::MQTT::InvokeReplyFunc handler)

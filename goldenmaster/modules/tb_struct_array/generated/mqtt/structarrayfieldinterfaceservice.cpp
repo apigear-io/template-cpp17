@@ -1,5 +1,6 @@
 #include "tb_struct_array/generated/mqtt/structarrayfieldinterfaceservice.h"
 #include "tb_struct_array/generated/core/tb_struct_array.json.adapter.h"
+#include "apigear/utilities/logger.h"
 #include <iostream>
 
 using namespace Test::TbStructArray;
@@ -48,61 +49,85 @@ void StructArrayFieldInterfaceService::onConnectionStatusChanged(bool connection
 }
 void StructArrayFieldInterfaceService::onSetPropStructArray(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto propStructArray = json_args.get<StructWithArrayOfStructs>();
-    m_impl->setPropStructArray(propStructArray);
+        auto propStructArray = json_args.get<StructWithArrayOfStructs>();
+        m_impl->setPropStructArray(propStructArray);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructArrayFieldInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void StructArrayFieldInterfaceService::onSetPropEnumArray(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto propEnumArray = json_args.get<StructWithArrayOfEnums>();
-    m_impl->setPropEnumArray(propEnumArray);
+        auto propEnumArray = json_args.get<StructWithArrayOfEnums>();
+        m_impl->setPropEnumArray(propEnumArray);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructArrayFieldInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void StructArrayFieldInterfaceService::onSetPropIntArray(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto propIntArray = json_args.get<StructWithArrayOfInts>();
-    m_impl->setPropIntArray(propIntArray);
+        auto propIntArray = json_args.get<StructWithArrayOfInts>();
+        m_impl->setPropIntArray(propIntArray);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructArrayFieldInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void StructArrayFieldInterfaceService::onSetPropMixed(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto propMixed = json_args.get<MixedStruct>();
-    m_impl->setPropMixed(propMixed);
+        auto propMixed = json_args.get<MixedStruct>();
+        m_impl->setPropMixed(propMixed);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructArrayFieldInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void StructArrayFieldInterfaceService::onInvokeFuncMixed(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const MixedStruct& paramMixed = json_args.at(0).get<MixedStruct>();
-    auto result = m_impl->funcMixed(paramMixed);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const MixedStruct& paramMixed = json_args.at(0).get<MixedStruct>();
+        auto result = m_impl->funcMixed(paramMixed);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructArrayFieldInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void StructArrayFieldInterfaceService::onInvokeFuncStructArray(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const StructWithArrayOfStructs& paramPoints = json_args.at(0).get<StructWithArrayOfStructs>();
-    auto result = m_impl->funcStructArray(paramPoints);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const StructWithArrayOfStructs& paramPoints = json_args.at(0).get<StructWithArrayOfStructs>();
+        auto result = m_impl->funcStructArray(paramPoints);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructArrayFieldInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void StructArrayFieldInterfaceService::onSigMixed(const MixedStruct& paramMixed)
 {

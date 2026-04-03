@@ -114,14 +114,18 @@ void StructArrayInterfaceService::onSetPropString(const std::string& args) const
 }
 void StructArrayInterfaceService::onSetPropEnum(const std::string& args) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    if (json_args.empty())
-    {
-        return;
-    }
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        if (json_args.empty())
+        {
+            return;
+        }
 
-    auto propEnum = json_args.get<std::list<Enum0Enum>>();
-    m_impl->setPropEnum(propEnum);
+        auto propEnum = json_args.get<std::list<Enum0Enum>>();
+        m_impl->setPropEnum(propEnum);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructArrayInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void StructArrayInterfaceService::onInvokeFuncBool(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
@@ -169,10 +173,14 @@ void StructArrayInterfaceService::onInvokeFuncString(const std::string& args, co
 }
 void StructArrayInterfaceService::onInvokeFuncEnum(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    const std::list<Enum0Enum>& paramEnum = json_args.at(0).get<std::list<Enum0Enum>>();
-    auto result = m_impl->funcEnum(paramEnum);
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        const std::list<Enum0Enum>& paramEnum = json_args.at(0).get<std::list<Enum0Enum>>();
+        auto result = m_impl->funcEnum(paramEnum);
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("StructArrayInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void StructArrayInterfaceService::onSigBool(const std::list<StructBool>& paramBool)
 {

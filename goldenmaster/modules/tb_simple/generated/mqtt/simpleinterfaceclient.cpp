@@ -373,20 +373,26 @@ std::future<bool> SimpleInterfaceClient::funcNoParamsAsync( std::function<void(b
     }
     return std::async(std::launch::async, [this, callback]()
         {
-            std::promise<bool> resultPromise;
+            auto resultPromise = std::make_shared<std::promise<bool>>();
             static const auto topic = std::string("tb.simple/SimpleInterface/rpc/funcNoParams");
             static const auto responseTopic = std::string(topic + "/" + m_client->getClientId() + "/result");
-            ApiGear::MQTT::InvokeReplyFunc responseHandler = [&resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
-                const bool& value = arg.value.get<bool>();
-                resultPromise.set_value(value);
-                if (callback)
-                {
-                    callback(value);
+            ApiGear::MQTT::InvokeReplyFunc responseHandler = [resultPromise, callback](ApiGear::MQTT::InvokeReplyArg arg) {
+                try {
+                    const bool& value = arg.value.get<bool>();
+                    resultPromise->set_value(value);
+                    if (callback)
+                    {
+                        callback(value);
+                    }
+                } catch (const std::exception& e) {
+                    try {
+                        resultPromise->set_exception(std::make_exception_ptr(std::runtime_error(std::string("MQTT response error: ") + e.what())));
+                    } catch (...) {}
                 }
             };
             auto responseId = registerResponseHandler(responseHandler);
             m_client->invokeRemote(topic, responseTopic, nlohmann::json::array({}).dump(), responseId);
-            return resultPromise.get_future().get();
+            return resultPromise->get_future().get();
         }
     );
 }

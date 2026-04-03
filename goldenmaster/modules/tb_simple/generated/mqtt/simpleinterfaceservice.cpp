@@ -197,9 +197,13 @@ void SimpleInterfaceService::onInvokeFuncNoReturnValue(const std::string& args, 
 }
 void SimpleInterfaceService::onInvokeFuncNoParams(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    auto result = m_impl->funcNoParams();
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        auto result = m_impl->funcNoParams();
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("SimpleInterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void SimpleInterfaceService::onInvokeFuncBool(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
