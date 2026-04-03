@@ -28,6 +28,7 @@ ConnectionStorage::ConnectionStorage(ApiGear::ObjectLink::RemoteRegistry& regist
 
 void ConnectionStorage::notifyConnectionClosed()
 {
+	m_removeConnectionTimer.cancel(true);
 	std::unique_lock<std::mutex> lock(m_taskMutex);
 	if (m_removeConnectionTask){
 		m_removeConnectionTask->cancel();
@@ -51,9 +52,11 @@ void ConnectionStorage::addConnection(std::unique_ptr<Poco::Net::WebSocket> conn
 
 void ConnectionStorage::closeConnections()
 {
+	m_removeConnectionTimer.cancel(true);
 	std::unique_lock<std::mutex> taskLock(m_taskMutex);
 	if (m_removeConnectionTask){
 		m_removeConnectionTask->cancel();
+		m_removeConnectionTask.reset();
 	}
 	taskLock.unlock();
 	std::unique_lock<std::mutex> connectionLock(m_connectionsMutex);
