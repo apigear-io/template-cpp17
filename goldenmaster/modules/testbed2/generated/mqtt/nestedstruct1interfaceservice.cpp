@@ -59,17 +59,25 @@ void NestedStruct1InterfaceService::onSetProp1(const std::string& args) const
 }
 void NestedStruct1InterfaceService::onInvokeFuncNoReturnValue(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    (void) responseTopic;
-    (void) correlationData;
-    const NestedStruct1& param1 = json_args.at(0).get<NestedStruct1>();
-    m_impl->funcNoReturnValue(param1);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        (void) responseTopic;
+        (void) correlationData;
+        const NestedStruct1& param1 = json_args.at(0).get<NestedStruct1>();
+        m_impl->funcNoReturnValue(param1);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("NestedStruct1InterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void NestedStruct1InterfaceService::onInvokeFuncNoParams(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {
-    nlohmann::json json_args = nlohmann::json::parse(args);
-    auto result = m_impl->funcNoParams();
-    m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    try {
+        nlohmann::json json_args = nlohmann::json::parse(args);
+        auto result = m_impl->funcNoParams();
+        m_service->notifyInvokeResponse(responseTopic, nlohmann::json(result).dump(), correlationData);
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("NestedStruct1InterfaceService JSON error: " + std::string(e.what()));
+    }
 }
 void NestedStruct1InterfaceService::onInvokeFunc1(const std::string& args, const std::string& responseTopic, const std::string& correlationData) const
 {

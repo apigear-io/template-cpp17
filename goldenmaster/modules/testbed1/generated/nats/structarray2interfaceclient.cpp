@@ -38,7 +38,12 @@ void StructArray2InterfaceClient::init()
         AG_LOG_WARNING("init() called more than once on " "StructArray2InterfaceClient" ", ignoring");
         return;
     }
-    BaseAdapter::init([this](){onConnected();});
+    std::weak_ptr<StructArray2InterfaceClient> weak_self = shared_from_this();
+    BaseAdapter::init([weak_self](){
+        if (auto self = weak_self.lock()) {
+            self->onConnected();
+        }
+    });
 }
 
 StructArray2InterfaceClient::~StructArray2InterfaceClient() = default;

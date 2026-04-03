@@ -33,6 +33,9 @@ void StructArrayFieldInterfaceThreadSafeDecorator::setPropStructArray(const Stru
 
 const StructWithArrayOfStructs& StructArrayFieldInterfaceThreadSafeDecorator::getPropStructArray() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_propStructArrayMutex);
     return m_impl->getPropStructArray();
 }
@@ -44,6 +47,9 @@ void StructArrayFieldInterfaceThreadSafeDecorator::setPropEnumArray(const Struct
 
 const StructWithArrayOfEnums& StructArrayFieldInterfaceThreadSafeDecorator::getPropEnumArray() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_propEnumArrayMutex);
     return m_impl->getPropEnumArray();
 }
@@ -55,6 +61,9 @@ void StructArrayFieldInterfaceThreadSafeDecorator::setPropIntArray(const StructW
 
 const StructWithArrayOfInts& StructArrayFieldInterfaceThreadSafeDecorator::getPropIntArray() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_propIntArrayMutex);
     return m_impl->getPropIntArray();
 }
@@ -66,6 +75,9 @@ void StructArrayFieldInterfaceThreadSafeDecorator::setPropMixed(const MixedStruc
 
 const MixedStruct& StructArrayFieldInterfaceThreadSafeDecorator::getPropMixed() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_propMixedMutex);
     return m_impl->getPropMixed();
 }

@@ -116,6 +116,9 @@ void StructArrayInterfaceThreadSafeDecorator::setPropEnum(const std::list<Enum0E
 
 const std::list<Enum0Enum>& StructArrayInterfaceThreadSafeDecorator::getPropEnum() const
 {
+    // WARNING: The returned reference is only valid while the internal lock is held.
+    // Callers should copy the result immediately: auto val = decorator->getXxx();
+    // Do NOT store the reference: const auto& ref = decorator->getXxx(); // UNSAFE
     std::shared_lock<std::shared_timed_mutex> lock(m_propEnumMutex);
     return m_impl->getPropEnum();
 }

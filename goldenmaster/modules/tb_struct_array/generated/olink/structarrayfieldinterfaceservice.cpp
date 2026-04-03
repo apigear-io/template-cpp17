@@ -38,6 +38,7 @@ std::string StructArrayFieldInterfaceService::olinkObjectName() {
 }
 
 nlohmann::json StructArrayFieldInterfaceService::olinkInvoke(const std::string& methodId, const nlohmann::json& fcnArgs) {
+    try {
     AG_LOG_DEBUG("StructArrayFieldInterfaceService invoke " + methodId);
     const auto& memberMethod = ApiGear::ObjectLink::Name::getMemberName(methodId);
     if(memberMethod == "funcMixed") {
@@ -51,9 +52,14 @@ nlohmann::json StructArrayFieldInterfaceService::olinkInvoke(const std::string& 
         return result;
     }
     return nlohmann::json();
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in StructArrayFieldInterface: " + std::string(e.what()));
+        return nlohmann::json();
+    }
 }
 
 void StructArrayFieldInterfaceService::olinkSetProperty(const std::string& propertyId, const nlohmann::json& value) {
+    try {
     AG_LOG_DEBUG("StructArrayFieldInterfaceService set property " + propertyId);
     const auto& memberProperty = ApiGear::ObjectLink::Name::getMemberName(propertyId);
     if(memberProperty == "propStructArray") {
@@ -71,7 +77,10 @@ void StructArrayFieldInterfaceService::olinkSetProperty(const std::string& prope
     if(memberProperty == "propMixed") {
         MixedStruct propMixed = value.get<MixedStruct>();
         m_StructArrayFieldInterface->setPropMixed(propMixed);
-    } 
+    }
+    } catch (const std::exception& e) {
+        AG_LOG_ERROR("OLink JSON error in StructArrayFieldInterface: " + std::string(e.what()));
+    }
 }
 
 void StructArrayFieldInterfaceService::olinkLinked(const std::string& objectId, ApiGear::ObjectLink::IRemoteNode* /*node*/) {
