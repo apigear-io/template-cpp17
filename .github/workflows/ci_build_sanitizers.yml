@@ -12,34 +12,73 @@ on:
     branches: [main]
 
 jobs:
-  asan_ubsan:
-    name: "ASan + UBSan (Ubuntu GCC)"
-    runs-on: ubuntu-latest
+  sanitizer:
+    name: "${{ matrix.name }}"
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: "ASan + UBSan (Ubuntu GCC)"
+            sanitizer_flags: "-fsanitize=address,undefined"
+            extra_cxx_flags: "-Wno-maybe-uninitialized"
+            sanitizer_key: "asan"
+            test_extra_args: ""
+          - name: "TSan (Ubuntu GCC)"
+            sanitizer_flags: "-fsanitize=thread"
+            extra_cxx_flags: ""
+            sanitizer_key: "tsan"
+            test_extra_args: "--label-exclude no_tsan"
     env:
       CTEST_OUTPUT_ON_FAILURE: 1
-      ASAN_OPTIONS: halt_on_error=0:print_stacktrace=1
-      UBSAN_OPTIONS: halt_on_error=0:print_stacktrace=1
-      LSAN_OPTIONS: suppressions=${{ github.workspace }}/.github/workflows/lsan_suppressions.txt
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-      - name: Install dependencies
-        run: sudo apt-get install -y cmake libpoco-dev nlohmann-json3-dev libeigen3-dev
+      - name: Set sanitizer environment (ASan)
+        if: matrix.sanitizer_key == 'asan'
+        run: |
+          echo "ASAN_OPTIONS=halt_on_error=0:print_stacktrace=1" >> $GITHUB_ENV
+          echo "UBSAN_OPTIONS=halt_on_error=0:print_stacktrace=1" >> $GITHUB_ENV
+          echo "LSAN_OPTIONS=suppressions=${{ github.workspace }}/.github/workflows/lsan_suppressions.txt" >> $GITHUB_ENV
+      - name: Set sanitizer environment (TSan)
+        if: matrix.sanitizer_key == 'tsan'
+        run: |
+          echo "TSAN_OPTIONS=halt_on_error=0:second_deadlock_stack=1:suppressions=${{ github.workspace }}/.github/workflows/tsan_suppressions.txt" >> $GITHUB_ENV
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            cmake libpoco-dev nlohmann-json3-dev libeigen3-dev mosquitto
+          sudo systemctl start mosquitto
+      - name: Cache paho and Catch2
+        id: dep-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            /usr/local/lib/libpaho*
+            /usr/local/lib/cmake/PahoMqttC
+            /usr/local/include/MQTTAsync.h
+            /usr/local/include/MQTTClient.h
+            /usr/local/lib/cmake/Catch2
+            /usr/local/include/catch2
+          key: sanitizer-deps-paho1.3.13-catch2.13.8-u2404
       - name: Install paho.mqtt.c
+        if: steps.dep-cache.outputs.cache-hit != 'true'
         run: |
           git clone --branch v1.3.13 --depth 1 https://github.com/eclipse/paho.mqtt.c.git
           cd paho.mqtt.c
           cmake -Bbuild -H. -DPAHO_BUILD_SHARED=OFF -DPAHO_BUILD_STATIC=ON -DPAHO_WITH_SSL=ON -DBUILD_TESTING=OFF
           sudo cmake --build build/ --target install
       - name: Install catch2
+        if: steps.dep-cache.outputs.cache-hit != 'true'
         run: |
           git clone --branch v2.13.8 --depth 1 https://github.com/catchorg/Catch2.git
           cd Catch2
           cmake -Bbuild -H. -DBUILD_TESTING=OFF
           sudo cmake --build build/ --target install
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
           cache: "pip"
@@ -48,26 +87,46 @@ jobs:
         run: pip3 install -r .github/workflows/conan-requirements.txt
       - name: Create default profile
         run: conan profile detect
+      - name: Cache Conan packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.conan2/p
+          key: sanitizer-conan-${{ hashFiles('.github/workflows/conan-requirements.txt') }}
+          restore-keys: sanitizer-conan-
       - name: Install nats using conan
         run: |
           mkdir -p deps
           cd deps && conan install --requires=cnats/3.9.1@ --build missing -o nats/*:shared=False -o nats/*:fPIC=True -o nats/*:with_tls=False -o nats/*:with_sodium=False -o nats/*:enable_streaming=False --generator CMakeDeps --generator VirtualBuildEnv
-      - name: Start Mosquitto
-        run: sudo apt-get install -y mosquitto && sudo systemctl start mosquitto
       - name: Start NATS Server
         uses: onichandame/nats-action@master
         with:
           port: "4222"
-      - name: Configure with ASan + UBSan
+      - name: Cache FetchContent downloads
+        id: fc-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.fetchcontent-cache
+          key: fetchcontent-${{ hashFiles('goldenmaster/**/CMakeLists.txt') }}
+          restore-keys: fetchcontent-
+      - name: Set up ccache
+        uses: hendrikmuhs/ccache-action@v1
+        with:
+          key: sanitizer-${{ matrix.sanitizer_key }}
+          max-size: 1G
+      - name: Configure
         working-directory: goldenmaster
         run: |
           cmake -Bbuild \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/deps \
-            -DCMAKE_CXX_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer -Wno-maybe-uninitialized" \
-            -DCMAKE_C_FLAGS="-fsanitize=address,undefined -fno-omit-frame-pointer -Wno-maybe-uninitialized" \
-            -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=address,undefined" \
-            -DCMAKE_SHARED_LINKER_FLAGS="-fsanitize=address,undefined" \
+            -DFETCHCONTENT_BASE_DIR=${{ github.workspace }}/.fetchcontent-cache \
+            ${{ steps.fc-cache.outputs.cache-hit == 'true' && '-DFETCHCONTENT_FULLY_DISCONNECTED=ON' || '' }} \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_CXX_FLAGS="${{ matrix.sanitizer_flags }} -fno-omit-frame-pointer ${{ matrix.extra_cxx_flags }}" \
+            -DCMAKE_C_FLAGS="${{ matrix.sanitizer_flags }} -fno-omit-frame-pointer ${{ matrix.extra_cxx_flags }}" \
+            -DCMAKE_EXE_LINKER_FLAGS="${{ matrix.sanitizer_flags }}" \
+            -DCMAKE_SHARED_LINKER_FLAGS="${{ matrix.sanitizer_flags }}" \
             -DBUILD_TESTING=ON \
             -DTEST_FETCH_DEPS=ON
       - name: Build
@@ -75,67 +134,4 @@ jobs:
         run: cmake --build build/ --parallel $(nproc)
       - name: Test
         working-directory: goldenmaster
-        run: ctest --test-dir build/ --output-on-failure --timeout 600
-
-  tsan:
-    name: "TSan (Ubuntu GCC)"
-    runs-on: ubuntu-latest
-    env:
-      CTEST_OUTPUT_ON_FAILURE: 1
-      TSAN_OPTIONS: halt_on_error=0:second_deadlock_stack=1:suppressions=${{ github.workspace }}/.github/workflows/tsan_suppressions.txt
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-      - name: Install dependencies
-        run: sudo apt-get install -y cmake libpoco-dev nlohmann-json3-dev libeigen3-dev
-      - name: Install paho.mqtt.c
-        run: |
-          git clone --branch v1.3.13 --depth 1 https://github.com/eclipse/paho.mqtt.c.git
-          cd paho.mqtt.c
-          cmake -Bbuild -H. -DPAHO_BUILD_SHARED=OFF -DPAHO_BUILD_STATIC=ON -DPAHO_WITH_SSL=ON -DBUILD_TESTING=OFF
-          sudo cmake --build build/ --target install
-      - name: Install catch2
-        run: |
-          git clone --branch v2.13.8 --depth 1 https://github.com/catchorg/Catch2.git
-          cd Catch2
-          cmake -Bbuild -H. -DBUILD_TESTING=OFF
-          sudo cmake --build build/ --target install
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-          cache: "pip"
-          cache-dependency-path: ".github/workflows/conan-requirements.txt"
-      - name: Install Conan
-        run: pip3 install -r .github/workflows/conan-requirements.txt
-      - name: Create default profile
-        run: conan profile detect
-      - name: Install nats using conan
-        run: |
-          mkdir -p deps
-          cd deps && conan install --requires=cnats/3.9.1@ --build missing -o nats/*:shared=False -o nats/*:fPIC=True -o nats/*:with_tls=False -o nats/*:with_sodium=False -o nats/*:enable_streaming=False --generator CMakeDeps --generator VirtualBuildEnv
-      - name: Start Mosquitto
-        run: sudo apt-get install -y mosquitto && sudo systemctl start mosquitto
-      - name: Start NATS Server
-        uses: onichandame/nats-action@master
-        with:
-          port: "4222"
-      - name: Configure with TSan
-        working-directory: goldenmaster
-        run: |
-          cmake -Bbuild \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/deps \
-            -DCMAKE_CXX_FLAGS="-fsanitize=thread -fno-omit-frame-pointer" \
-            -DCMAKE_C_FLAGS="-fsanitize=thread -fno-omit-frame-pointer" \
-            -DCMAKE_EXE_LINKER_FLAGS="-fsanitize=thread" \
-            -DCMAKE_SHARED_LINKER_FLAGS="-fsanitize=thread" \
-            -DBUILD_TESTING=ON \
-            -DTEST_FETCH_DEPS=ON
-      - name: Build
-        working-directory: goldenmaster
-        run: cmake --build build/ --parallel $(nproc)
-      - name: Test
-        working-directory: goldenmaster
-        run: ctest --test-dir build/ --output-on-failure --timeout 600 --label-exclude no_tsan
+        run: ctest --test-dir build/ --output-on-failure --timeout 600 --parallel $(nproc) ${{ matrix.test_extra_args }}
