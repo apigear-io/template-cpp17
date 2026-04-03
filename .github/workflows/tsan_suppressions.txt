@@ -1,0 +1,12 @@
+# ThreadSanitizer suppressions for known external library and test framework races.
+
+# olink_core RemoteRegistry has unsynchronized concurrent access to hash maps.
+# This is a bug in the external olink_core library, not in our code.
+race:ApiGear::ObjectLink::RemoteRegistry::registerNode
+race:ApiGear::ObjectLink::RemoteRegistry::addNodeForSource
+
+# Catch2 RunContext is not thread-safe for assertions from multiple threads.
+# trompeloeil mock callbacks assert from ThreadPool worker threads while the
+# main thread also asserts, causing benign races on Catch2 internal state.
+race:Catch::RunContext::handleExpr
+race:Catch::RunContext::reportExpr
