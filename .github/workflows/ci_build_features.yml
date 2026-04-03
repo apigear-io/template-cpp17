@@ -76,11 +76,7 @@ jobs:
         run: bin/apigear g x -f "${{ matrix.config.features }}" -t . -o test -i apigear/test-apis/testbed.simple.module.yaml,apigear/test-apis/testbed.struct.module.yaml
       - name: Start Mosquitto
         if: ${{ matrix.config.short == 'mqtt'}}
-        uses: namoshek/mosquitto-github-action@v1
-        with:
-          version: '1.6'
-          ports: '1883:1883'
-          container-name: 'mqtt'
+        run: sudo apt-get install -y mosquitto && sudo systemctl start mosquitto
       - name: Create Nats Server for ubuntu (only for nats)
         if: ${{ matrix.config.short == 'nats'}}
         uses: onichandame/nats-action@master
@@ -156,11 +152,7 @@ jobs:
         run: bin/apigear g x -f "${{ matrix.config.features }}" -t . -o test -i apigear/test-apis/testbed.simple.module.yaml,apigear/test-apis/testbed.struct.module.yaml
       - name: Start Mosquitto
         if: ${{ matrix.config.short == 'mqtt'}}
-        uses: namoshek/mosquitto-github-action@v1
-        with:
-          version: '1.6'
-          ports: '1883:1883'
-          container-name: 'mqtt'
+        run: sudo apt-get install -y mosquitto && sudo systemctl start mosquitto
       - name: Create Nats Server for ubuntu (only for nats)
         if: ${{ matrix.config.short == 'nats'}}
         uses: onichandame/nats-action@master
@@ -225,11 +217,7 @@ jobs:
         run: bin/apigear g x -f "${{ matrix.config.features }}" -t . -o test -i apigear/test-apis/testbed.simple.module.yaml
       - name: Start Mosquitto
         if: ${{ matrix.config.short == 'mqtt'}}
-        uses: namoshek/mosquitto-github-action@v1
-        with:
-          version: '1.6'
-          ports: '1883:1883'
-          container-name: 'mqtt'
+        run: sudo apt-get install -y mosquitto && sudo systemctl start mosquitto
       - name: Create Nats Server for ubuntu (only for nats)
         if: ${{ matrix.config.short == 'nats'}}
         uses: onichandame/nats-action@master

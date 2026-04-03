@@ -52,11 +52,7 @@ jobs:
           mkdir -p deps
           cd deps && conan install --requires=cnats/3.9.1@ --build missing -o nats/*:shared=False -o nats/*:fPIC=True -o nats/*:with_tls=False -o nats/*:with_sodium=False -o nats/*:enable_streaming=False --generator CMakeDeps --generator VirtualBuildEnv
       - name: Start Mosquitto
-        uses: namoshek/mosquitto-github-action@v1
-        with:
-          version: '1.6'
-          ports: '1883:1883'
-          container-name: 'mqtt'
+        run: sudo apt-get install -y mosquitto && sudo systemctl start mosquitto
       - name: Start NATS Server
         uses: onichandame/nats-action@master
         with:
@@ -120,11 +116,7 @@ jobs:
           mkdir -p deps
           cd deps && conan install --requires=cnats/3.9.1@ --build missing -o nats/*:shared=False -o nats/*:fPIC=True -o nats/*:with_tls=False -o nats/*:with_sodium=False -o nats/*:enable_streaming=False --generator CMakeDeps --generator VirtualBuildEnv
       - name: Start Mosquitto
-        uses: namoshek/mosquitto-github-action@v1
-        with:
-          version: '1.6'
-          ports: '1883:1883'
-          container-name: 'mqtt'
+        run: sudo apt-get install -y mosquitto && sudo systemctl start mosquitto
       - name: Start NATS Server
         uses: onichandame/nats-action@master
         with:
