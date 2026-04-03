@@ -15,7 +15,7 @@ void {{ Camel .Module.Name }}::fillTest{{Camel .Name }}({{Camel .Module.Name }}:
 	{{- if .IsArray }}
 	auto local_{{snake .Name}}_array = {{ cppDefault $namespacePrefix . }};
 	{{- if not ( or (eq .KindType "extern") ( or .IsPrimitive  (eq .KindType "enum") ) )}}
-	auto element{{snake .Name}} = {{ cppDefault $namespacePrefix . }};
+	auto element{{snake .Name}} = {{ cppTestValue $namespacePrefix . }};
 	fillTest{{Camel .Type }}(element{{snake .Name}});
 	{{- else}}
 	auto element{{snake .Name}} = {{cppTestValue $namespacePrefix . }};
