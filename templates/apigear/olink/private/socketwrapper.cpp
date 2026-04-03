@@ -114,8 +114,16 @@ bool SocketWrapper::isClosed() const
 
 void SocketWrapper::close()
 {
+    flushMessages();
     m_disconnectRequested = true;
-    closeQueue();
+    m_retryTimer.cancel(true);
+    {
+        std::unique_lock<std::timed_mutex> lock(m_taskMutex);
+        if (m_processMessagesTask) {
+            m_processMessagesTask->cancel();
+            m_processMessagesTask.reset();
+        }
+    }
     if (m_receivingDone.valid()){
         m_receivingDone.wait();
     }
@@ -132,6 +140,7 @@ void SocketWrapper::onClosed()
 
 std::unique_ptr<Poco::Net::WebSocket> SocketWrapper::changeSocket(std::unique_ptr<Poco::Net::WebSocket> otherSocket)
 {
+    flushMessages();
     m_disconnectRequested = true;
     m_retryTimer.cancel(true);
     {
@@ -240,9 +249,9 @@ void SocketWrapper::flushMessages()
                 copyQueue.pop_front();
             }
             else {
-                if (!isClosed()) {
+                if (!m_disconnectRequested) {
                     lock.lock();
-                    // push again not sent elements to queue front 
+                    // push again not sent elements to queue front
                     m_queue.insert(m_queue.begin(), copyQueue.begin(), copyQueue.end());
                     lock.unlock();
                 }

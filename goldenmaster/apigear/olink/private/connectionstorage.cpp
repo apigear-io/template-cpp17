@@ -52,26 +52,38 @@ void ConnectionStorage::addConnection(std::unique_ptr<Poco::Net::WebSocket> conn
 
 void ConnectionStorage::closeConnections()
 {
-	m_removeConnectionTimer.cancel(true);
-	std::unique_lock<std::mutex> taskLock(m_taskMutex);
-	if (m_removeConnectionTask){
-		m_removeConnectionTask->cancel();
-		m_removeConnectionTask.reset();
+	{
+		std::unique_lock<std::mutex> taskLock(m_taskMutex);
+		if (m_removeConnectionTask){
+			m_removeConnectionTask->cancel();
+			m_removeConnectionTask.reset();
+		}
 	}
-	taskLock.unlock();
-	std::unique_lock<std::mutex> connectionLock(m_connectionsMutex);
-	m_connectionNodes.clear();
+	// Move connections out under lock, destroy outside to avoid
+	// deadlock with removeClosedConnection timer callback.
+	std::vector<std::shared_ptr<OLinkRemote>> toDestroy;
+	{
+		std::unique_lock<std::mutex> connectionLock(m_connectionsMutex);
+		std::swap(toDestroy, m_connectionNodes);
+	}
+	toDestroy.clear();
 }
 
 void ConnectionStorage::removeClosedConnection(Poco::Util::TimerTask& /*task*/)
 {
-	std::vector<std::shared_ptr<OLinkRemote>> connectionNodesToRemove;
-	std::unique_lock<std::mutex> lock(m_connectionsMutex);
-	auto closedBegin = std::remove_if(m_connectionNodes.begin(),
-		m_connectionNodes.end(),
-		[](const auto& element){return element->isClosed(); });
-	m_connectionNodes.erase(closedBegin, m_connectionNodes.end());
-	lock.unlock();
+	// Move closed connections out under lock, destroy outside to avoid
+	// holding m_connectionsMutex during OLinkRemote destruction (which
+	// does blocking I/O in SocketWrapper::close).
+	std::vector<std::shared_ptr<OLinkRemote>> closedNodes;
+	{
+		std::unique_lock<std::mutex> lock(m_connectionsMutex);
+		auto closedBegin = std::partition(m_connectionNodes.begin(),
+			m_connectionNodes.end(),
+			[](const auto& element){return !element->isClosed(); });
+		closedNodes.assign(std::make_move_iterator(closedBegin), std::make_move_iterator(m_connectionNodes.end()));
+		m_connectionNodes.erase(closedBegin, m_connectionNodes.end());
+	}
+	// closedNodes destroyed here outside the lock
 }
 
 }}   //namespace ApiGear::PocoImpl

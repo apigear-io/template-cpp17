@@ -75,6 +75,8 @@ public:
     * @param port A port number on which the server should listen.
     */
     void listen(int port);
+    /** Returns the port the server is listening on (useful when listen(0) was used). */
+    int port() const;
     /* Close the server and all connections. */
     void close();
 
