@@ -15,6 +15,7 @@ targets:
       - test-apis/custom_types.module.yaml
       - test-apis/extern_types.module.yaml
       - test-apis/counter.module.yaml
+      - test-apis/testbed.structarray.module.yaml
     output: ../test
     template: ..
     force: true
