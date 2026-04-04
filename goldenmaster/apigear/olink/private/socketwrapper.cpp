@@ -77,7 +77,7 @@ void SocketWrapper::startReceiving()
         }
     } while (!closedFromNetwork && !m_disconnectRequested);
 
-    if (closedFromNetwork){
+    if (closedFromNetwork && !m_disconnectRequested){
         onClosed();
         m_socketUser.onConnectionClosedFromNetwork();
     }
@@ -156,6 +156,7 @@ std::unique_ptr<Poco::Net::WebSocket> SocketWrapper::changeSocket(std::unique_pt
     std::unique_lock<std::timed_mutex> lock(m_socketMutex);
     std::swap(m_socket, otherSocket);
     lock.unlock();
+    m_disconnectRequested = false;
     if (m_socket){
         m_hasSock = true;
         // Common default maximum frame size is 1Mb
@@ -165,7 +166,6 @@ std::unique_ptr<Poco::Net::WebSocket> SocketWrapper::changeSocket(std::unique_pt
         m_receivingDone = std::async(std::launch::async, [this](){startReceiving(); });
         scheduleProcessMessages(smallDelay);
     }
-    m_disconnectRequested = false;
     return otherSocket;
 }
 

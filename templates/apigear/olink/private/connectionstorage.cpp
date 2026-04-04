@@ -26,9 +26,13 @@ ConnectionStorage::ConnectionStorage(ApiGear::ObjectLink::RemoteRegistry& regist
   , m_logFunc(logFunc)
 {}
 
+ConnectionStorage::~ConnectionStorage()
+{
+	closeConnections();
+}
+
 void ConnectionStorage::notifyConnectionClosed()
 {
-	m_removeConnectionTimer.cancel(true);
 	std::unique_lock<std::mutex> lock(m_taskMutex);
 	if (m_removeConnectionTask){
 		m_removeConnectionTask->cancel();
@@ -59,6 +63,11 @@ void ConnectionStorage::closeConnections()
 			m_removeConnectionTask.reset();
 		}
 	}
+	// Use cancel(false) to avoid deadlock: the timer callback
+	// (removeClosedConnection) may be destroying an OLinkRemote whose
+	// receive thread calls notifyConnectionClosed(), creating a circular
+	// wait with cancel(true).
+	m_removeConnectionTimer.cancel(false);
 	// Move connections out under lock, destroy outside to avoid
 	// deadlock with removeClosedConnection timer callback.
 	std::vector<std::shared_ptr<OLinkRemote>> toDestroy;

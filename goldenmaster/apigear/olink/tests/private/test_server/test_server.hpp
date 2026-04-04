@@ -4,7 +4,9 @@
 
 
 #include "Poco/Net/ServerSocket.h"
+#include "Poco/Net/SocketAddress.h"
 #include "Poco/Net/HTTPServer.h"
+#include "Poco/Net/HTTPServerParams.h"
 #include <iostream>
 #include <memory>
 #include <vector>
@@ -29,8 +31,19 @@ public:
 	// The POCO server takes ownership of request handler factory.
 	TestServer(int port, bool skipPingMessages)
 		: m_skipPingMessages(skipPingMessages),
-		server(new TestServerRequestHandlerFactory(*this), port)
+		m_socket(),
+		server(new TestServerRequestHandlerFactory(*this), initSocket(port), new Poco::Net::HTTPServerParams())
 	{}
+
+private:
+	Poco::Net::ServerSocket& initSocket(int port)
+	{
+		m_socket.bind(Poco::Net::SocketAddress("0.0.0.0", static_cast<Poco::UInt16>(port)), true /* reuseAddress */);
+		m_socket.listen();
+		return m_socket;
+	}
+
+public:
 
 	void start()
 	{
@@ -109,6 +122,7 @@ public:
 	std::timed_mutex receivedFramesMutex;
 	// Storage for received frames.
 	std::vector<Frame> receivedFrames;
+	Poco::Net::ServerSocket m_socket;
 	Poco::Net::HTTPServer server;
 };
 
