@@ -90,16 +90,24 @@ if(NOT apigear_FOUND)
   message(STATUS "apigear NOT FOUND, building from source folder")
   include(FetchContent)
 {{- if $.Features.monitor }}
-  set(APIGEAR_BUILD_WITH_MONITOR ON CACHE INTERNAL "Enable support for monitoring")
+  if(NOT DEFINED APIGEAR_BUILD_WITH_MONITOR)
+    set(APIGEAR_BUILD_WITH_MONITOR ON)
+  endif()
 {{- end }}
 {{- if $.Features.olink }}
-  set(APIGEAR_BUILD_WITH_OLINK ON CACHE INTERNAL "Enable support for OLink")
+  if(NOT DEFINED APIGEAR_BUILD_WITH_OLINK)
+    set(APIGEAR_BUILD_WITH_OLINK ON)
+  endif()
 {{- end }}
 {{- if $.Features.mqtt }}
-  set(APIGEAR_BUILD_WITH_MQTT ON CACHE INTERNAL "Enable support for MQTT")
+  if(NOT DEFINED APIGEAR_BUILD_WITH_MQTT)
+    set(APIGEAR_BUILD_WITH_MQTT ON)
+  endif()
 {{- end }}
 {{- if $.Features.nats }}
-  set(APIGEAR_BUILD_WITH_NATS ON CACHE INTERNAL "Enable support for Nats")
+  if(NOT DEFINED APIGEAR_BUILD_WITH_NATS)
+    set(APIGEAR_BUILD_WITH_NATS ON)
+  endif()
 {{- end }}
   FetchContent_Declare(apigear
     SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/apigear"
@@ -129,14 +137,20 @@ add_subdirectory(examples/app)
 add_subdirectory(examples/appthreadsafe)
 {{- end }}
 {{- if .Features.examples_olink }}
+if(APIGEAR_BUILD_WITH_OLINK)
 add_subdirectory(examples/olinkserver)
 add_subdirectory(examples/olinkclient)
+endif()
 {{- end }}
 {{- if .Features.examples_mqtt }}
+if(APIGEAR_BUILD_WITH_MQTT)
 add_subdirectory(examples/mqttserver)
 add_subdirectory(examples/mqttclient)
+endif()
 {{- end }}
 {{- if .Features.examples_nats }}
+if(APIGEAR_BUILD_WITH_NATS)
 add_subdirectory(examples/natsserver)
 add_subdirectory(examples/natsclient)
+endif()
 {{- end }}

@@ -30,16 +30,24 @@ add_subdirectory(generated/core)
 add_subdirectory(implementation)
 {{- end}}
 {{- if and $features.monitor ( len .Module.Interfaces ) }}
+if(APIGEAR_BUILD_WITH_MONITOR)
 add_subdirectory(generated/monitor)
+endif()
 {{- end}}
 {{- if and $features.olink ( len .Module.Interfaces ) }}
+if(APIGEAR_BUILD_WITH_OLINK)
 add_subdirectory(generated/olink)
+endif()
 {{- end}}
 {{- if and $features.mqtt ( len .Module.Interfaces ) }}
+if(APIGEAR_BUILD_WITH_MQTT)
 add_subdirectory(generated/mqtt)
+endif()
 {{- end}}
 {{- if and $features.nats ( len .Module.Interfaces ) }}
+if(APIGEAR_BUILD_WITH_NATS)
 add_subdirectory(generated/nats)
+endif()
 {{- end}}
 
 include(CMakePackageConfigHelpers)
