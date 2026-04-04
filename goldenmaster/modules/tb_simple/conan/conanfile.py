@@ -66,6 +66,10 @@ class tb_simpleConan(ConanFile):
         tc = CMakeToolchain(self)
         if not cross_building(self):
             tc.cache_variables['BUILD_TESTING'] = self.options.build_testing
+        tc.cache_variables['APIGEAR_BUILD_WITH_MONITOR'] = True
+        tc.cache_variables['APIGEAR_BUILD_WITH_OLINK'] = True
+        tc.cache_variables['APIGEAR_BUILD_WITH_MQTT'] = True
+        tc.cache_variables['APIGEAR_BUILD_WITH_NATS'] = True
         tc.generate()
         deps = CMakeDeps(self)
         deps.generate()

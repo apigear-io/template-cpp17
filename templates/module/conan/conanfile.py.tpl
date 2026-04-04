@@ -89,6 +89,18 @@ class {{$module_id}}Conan(ConanFile):
         tc = CMakeToolchain(self)
         if not cross_building(self):
             tc.cache_variables['BUILD_TESTING'] = self.options.build_testing
+        {{- if and $features.monitor ( len .Module.Interfaces ) }}
+        tc.cache_variables['APIGEAR_BUILD_WITH_MONITOR'] = True
+        {{- end }}
+        {{- if and $features.olink ( len .Module.Interfaces ) }}
+        tc.cache_variables['APIGEAR_BUILD_WITH_OLINK'] = True
+        {{- end }}
+        {{- if and $features.mqtt ( len .Module.Interfaces ) }}
+        tc.cache_variables['APIGEAR_BUILD_WITH_MQTT'] = True
+        {{- end }}
+        {{- if and $features.nats ( len .Module.Interfaces ) }}
+        tc.cache_variables['APIGEAR_BUILD_WITH_NATS'] = True
+        {{- end }}
         tc.generate()
         deps = CMakeDeps(self)
         deps.generate()
