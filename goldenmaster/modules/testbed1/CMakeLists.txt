@@ -18,6 +18,9 @@ endif(BUILD_TESTING)
 
 # define variable for library include paths
 get_filename_component(MODULES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/.." ABSOLUTE)
+# Import APIGEAR_BUILD_WITH_* flags from installed apigear package.
+# When built via top-level CMakeLists (FetchContent), these are already set.
+find_package(apigear QUIET)
 
 add_subdirectory(generated/api)
 add_subdirectory(generated/core)

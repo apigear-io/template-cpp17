@@ -13,18 +13,22 @@ find_dependency(apigear COMPONENTS nats REQUIRED)
 
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Testbed2ApiTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Testbed2CoreTargets.cmake")
+if(APIGEAR_BUILD_WITH_MONITOR AND EXISTS "${CMAKE_CURRENT_LIST_DIR}/Testbed2MonitorTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Testbed2MonitorTargets.cmake")
+endif()
+if(APIGEAR_BUILD_WITH_OLINK AND EXISTS "${CMAKE_CURRENT_LIST_DIR}/Testbed2OLinkTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Testbed2OLinkTargets.cmake")
+endif()
+if(APIGEAR_BUILD_WITH_MQTT AND EXISTS "${CMAKE_CURRENT_LIST_DIR}/Testbed2MqttTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Testbed2MqttTargets.cmake")
+endif()
+if(APIGEAR_BUILD_WITH_NATS AND EXISTS "${CMAKE_CURRENT_LIST_DIR}/Testbed2NatsTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Testbed2NatsTargets.cmake")
+endif()
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Testbed2ImplementationTargets.cmake")
 
 check_required_components(
 Testbed2-api
 Testbed2-core
-Testbed2-monitor
-Testbed2-olink
-Testbed2-mqtt
-Testbed2-nats
 Testbed2-implementation
 )

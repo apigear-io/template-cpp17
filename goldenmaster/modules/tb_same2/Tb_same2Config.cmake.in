@@ -13,18 +13,22 @@ find_dependency(apigear COMPONENTS nats REQUIRED)
 
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_same2ApiTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_same2CoreTargets.cmake")
+if(APIGEAR_BUILD_WITH_MONITOR AND EXISTS "${CMAKE_CURRENT_LIST_DIR}/Tb_same2MonitorTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_same2MonitorTargets.cmake")
+endif()
+if(APIGEAR_BUILD_WITH_OLINK AND EXISTS "${CMAKE_CURRENT_LIST_DIR}/Tb_same2OLinkTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_same2OLinkTargets.cmake")
+endif()
+if(APIGEAR_BUILD_WITH_MQTT AND EXISTS "${CMAKE_CURRENT_LIST_DIR}/Tb_same2MqttTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_same2MqttTargets.cmake")
+endif()
+if(APIGEAR_BUILD_WITH_NATS AND EXISTS "${CMAKE_CURRENT_LIST_DIR}/Tb_same2NatsTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_same2NatsTargets.cmake")
+endif()
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_same2ImplementationTargets.cmake")
 
 check_required_components(
 TbSame2-api
 TbSame2-core
-TbSame2-monitor
-TbSame2-olink
-TbSame2-mqtt
-TbSame2-nats
 TbSame2-implementation
 )
