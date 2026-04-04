@@ -406,13 +406,12 @@ TEST_CASE("OlinkConnection tests")
         auto future6 = std::async(std::launch::async, [sendTenSetPropertyMessages](){sendTenSetPropertyMessages(60);});
         auto future7 = std::async(std::launch::async, [sendTenSetPropertyMessages](){sendTenSetPropertyMessages(70);});
 
-        // wait for re-connection
-        Poco::Thread::sleep(501);
-
-        lock.lock();
-        // 80 messages and a link message
-        m_messageArrived.wait_for(lock, std::chrono::milliseconds(500), [&server]() {return server.getReceivedFramesNumber() == 81; });
-        lock.unlock();
+        // wait for re-connection and message delivery
+        // Poll with short intervals — condition_variable is never notified
+        for (int i = 0; i < 100; ++i) {
+            if (server.getReceivedFramesNumber() >= 81) break;
+            Poco::Thread::sleep(50);
+        }
         msgs = server.getReceivedFrames();
         REQUIRE(msgs.size() == 81);
         // Expect socket re-connects, and sends change property messages and link message

@@ -160,8 +160,11 @@ void OlinkConnection::connectToHost(Poco::URI url)
 
 void OlinkConnection::disconnect() {
     AG_LOG_DEBUG("request to disconnect socket");
-    if (m_reconnectTask) {
-        m_reconnectTask->cancel();
+    {
+        std::lock_guard<std::mutex> lock(m_reconnectMutex);
+        if (m_reconnectTask) {
+            m_reconnectTask->cancel();
+        }
     }
     // Collect objects to unlink under lock, then unlink outside lock (may do network I/O).
     std::vector<std::string> objectsToUnlink;

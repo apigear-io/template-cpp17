@@ -78,7 +78,6 @@ namespace {
         {
             testHost.listen(portNumber);
             auto actualPort = testHost.port();
-
             Poco::Net::HTTPClientSession clientSession1(localHostAddress, actualPort);
             Poco::Net::HTTPClientSession clientSession2(localHostAddress, actualPort);
             Poco::Net::HTTPResponse response1;
@@ -158,7 +157,6 @@ namespace {
         {
             testHost.listen(portNumber);
             auto actualPort = testHost.port();
-
             Poco::Net::HTTPClientSession clientSession1(localHostAddress, actualPort);
             Poco::Net::HTTPResponse response;
             Poco::Net::WebSocket clientSocket1(clientSession1, request, response);
@@ -202,7 +200,6 @@ namespace {
         {
             testHost.listen(portNumber);
             auto actualPort = testHost.port();
-
             Poco::Net::HTTPClientSession clientSession1(localHostAddress, actualPort);
             Poco::Net::HTTPResponse response;
             Poco::Net::WebSocket clientSocket1(clientSession1, request, response);
@@ -253,9 +250,8 @@ namespace {
         {
             testHost.listen(portNumber);
             auto actualPort = testHost.port();
-
             Poco::Net::HTTPClientSession clientSession1(localHostAddress, actualPort);
-            Poco::Net::HTTPClientSession clientSession2(localHostAddress, portNumber);
+            Poco::Net::HTTPClientSession clientSession2(localHostAddress, actualPort);
             Poco::Net::HTTPResponse response1;
             Poco::Net::HTTPResponse response2;
             Poco::Net::WebSocket clientSocket1(clientSession1, request, response1), clientSocket2(clientSession2, request, response2);
@@ -325,7 +321,6 @@ namespace {
         {
             testHost.listen(portNumber);
             auto actualPort = testHost.port();
-
             Poco::Net::HTTPClientSession clientSession1(localHostAddress, actualPort);
             Poco::Net::HTTPResponse response;
             Poco::Net::WebSocket clientSocket1(clientSession1, request, response);
@@ -362,7 +357,7 @@ namespace {
 
             // Wait after close with opening a new connection
             Poco::Thread::sleep(50);
-            Poco::Net::HTTPClientSession clientSession2(localHostAddress, portNumber);
+            Poco::Net::HTTPClientSession clientSession2(localHostAddress, actualPort);
             Poco::Net::HTTPResponse response2;
             Poco::Net::WebSocket clientSocket2(clientSession2, request, response2);
             REQUIRE_CALL(*source1, olinkLinked(objectId, ANY(ApiGear::ObjectLink::IRemoteNode*)));

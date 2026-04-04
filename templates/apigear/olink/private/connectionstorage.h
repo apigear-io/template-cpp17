@@ -44,6 +44,7 @@ public:
     * @param logFunc The function to be used for logging inside the objectlink core remote nodes.
 	*/
 	ConnectionStorage(ApiGear::ObjectLink::RemoteRegistry& registry, const ApiGear::ObjectLink::WriteLogFunc& logFunc);
+	~ConnectionStorage();
 	/** Close all connections.*/
 	void closeConnections();
 
