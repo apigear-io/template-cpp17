@@ -42,16 +42,24 @@ INCLUDE("${CMAKE_CURRENT_LIST_DIR}/{{$module_idFirstUpper}}ApiTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/{{$module_idFirstUpper}}CoreTargets.cmake")
 {{- end}}
 {{- if and $features.monitor ( len .Module.Interfaces ) }}
+if(APIGEAR_BUILD_WITH_MONITOR AND EXISTS "${CMAKE_CURRENT_LIST_DIR}/{{$module_idFirstUpper}}MonitorTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/{{$module_idFirstUpper}}MonitorTargets.cmake")
+endif()
 {{- end}}
 {{- if and $features.olink ( len .Module.Interfaces ) }}
+if(APIGEAR_BUILD_WITH_OLINK AND EXISTS "${CMAKE_CURRENT_LIST_DIR}/{{$module_idFirstUpper}}OLinkTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/{{$module_idFirstUpper}}OLinkTargets.cmake")
+endif()
 {{- end}}
 {{- if and $features.mqtt ( len .Module.Interfaces ) }}
+if(APIGEAR_BUILD_WITH_MQTT AND EXISTS "${CMAKE_CURRENT_LIST_DIR}/{{$module_idFirstUpper}}MqttTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/{{$module_idFirstUpper}}MqttTargets.cmake")
+endif()
 {{- end}}
 {{- if and $features.nats ( len .Module.Interfaces ) }}
+if(APIGEAR_BUILD_WITH_NATS AND EXISTS "${CMAKE_CURRENT_LIST_DIR}/{{$module_idFirstUpper}}NatsTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/{{$module_idFirstUpper}}NatsTargets.cmake")
+endif()
 {{- end}}
 {{- if and $features.stubs ( len .Module.Interfaces ) }}
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/{{$module_idFirstUpper}}ImplementationTargets.cmake")
@@ -61,10 +69,6 @@ check_required_components(
 {{$module_idCamel}}-api
 {{if $features.core }}{{$module_idCamel}}-core {{- end}}
 {{- if ( len .Module.Interfaces ) }}
-{{if $features.monitor }}{{$module_idCamel}}-monitor {{- end}}
-{{if $features.olink }}{{$module_idCamel}}-olink {{- end}}
-{{if $features.mqtt }}{{$module_idCamel}}-mqtt {{- end}}
-{{if $features.nats }}{{$module_idCamel}}-nats {{- end}}
 {{if $features.stubs }}{{$module_idCamel}}-implementation {{- end}}
 {{- end }}
 )

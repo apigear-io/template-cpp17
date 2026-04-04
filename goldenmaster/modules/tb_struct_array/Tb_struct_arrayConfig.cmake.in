@@ -13,18 +13,22 @@ find_dependency(apigear COMPONENTS nats REQUIRED)
 
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_struct_arrayApiTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_struct_arrayCoreTargets.cmake")
+if(APIGEAR_BUILD_WITH_MONITOR AND EXISTS "${CMAKE_CURRENT_LIST_DIR}/Tb_struct_arrayMonitorTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_struct_arrayMonitorTargets.cmake")
+endif()
+if(APIGEAR_BUILD_WITH_OLINK AND EXISTS "${CMAKE_CURRENT_LIST_DIR}/Tb_struct_arrayOLinkTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_struct_arrayOLinkTargets.cmake")
+endif()
+if(APIGEAR_BUILD_WITH_MQTT AND EXISTS "${CMAKE_CURRENT_LIST_DIR}/Tb_struct_arrayMqttTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_struct_arrayMqttTargets.cmake")
+endif()
+if(APIGEAR_BUILD_WITH_NATS AND EXISTS "${CMAKE_CURRENT_LIST_DIR}/Tb_struct_arrayNatsTargets.cmake")
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_struct_arrayNatsTargets.cmake")
+endif()
 INCLUDE("${CMAKE_CURRENT_LIST_DIR}/Tb_struct_arrayImplementationTargets.cmake")
 
 check_required_components(
 TbStructArray-api
 TbStructArray-core
-TbStructArray-monitor
-TbStructArray-olink
-TbStructArray-mqtt
-TbStructArray-nats
 TbStructArray-implementation
 )
