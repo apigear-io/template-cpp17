@@ -52,6 +52,7 @@
 #include "tb_struct_array/implementation/structarrayfieldinterface.h"
 #include "tb_struct_array/generated/monitor/structarrayfieldinterface.tracedecorator.h"
 #include "apigear/tracer/tracer.h"
+#include <iostream>
 
 using namespace Test;
 
@@ -111,5 +112,21 @@ int main(){
     std::unique_ptr<TbStructArray::IStructArrayFieldInterface> testTbStructArrayStructArrayFieldInterface = std::make_unique<TbStructArray::StructArrayFieldInterface>();
     std::unique_ptr<TbStructArray::IStructArrayFieldInterface> testTbStructArrayStructArrayFieldInterfaceTraceDecorator = TbStructArray::StructArrayFieldInterfaceTraceDecorator::connect(*testTbStructArrayStructArrayFieldInterface, tracer);
 
+    // Demonstrate basic property access
+    
+    {
+        [[maybe_unused]] auto value = testTestbed2ManyParamInterface->getProp1();
+        std::cout << "Testbed2::ManyParamInterface::Prop1 default value retrieved" << std::endl;
+        testTestbed2ManyParamInterface->setProp1(0);
+        std::cout << "Testbed2::ManyParamInterface::Prop1 value set" << std::endl;
+    }
+    
+    {
+        [[maybe_unused]] auto result = testTestbed2ManyParamInterface->func1(0);
+        std::cout << "Testbed2::ManyParamInterface::func1 called" << std::endl;
+    }
+    
+
+    std::cout << "App example finished." << std::endl;
     return 0;
 }

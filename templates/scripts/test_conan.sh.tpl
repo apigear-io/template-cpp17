@@ -26,9 +26,8 @@ build_example()
 {
     mkdir -p $1 &&\
     pushd $1 &&\
-    cp -a ../../../$1/* . &&\
-    conan install --build missing . -g=VirtualRunEnv &&\
-    cmake -S . --preset conan-release &&\
+    conan install --build missing ../../../$1 -g=VirtualRunEnv &&\
+    cmake -B . -S ../../../$1 --preset conan-release &&\
     cmake --build .
     buildresult=$?
     popd

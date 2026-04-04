@@ -22,8 +22,6 @@ else()
   # disable the warning for getenv - needs better cross platform solution
   target_compile_definitions(OLinkServer PRIVATE -D_CRT_SECURE_NO_WARNINGS)
 endif()
-
-find_package(apigear REQUIRED COMPONENTS utilities)
 find_package(testbed2 REQUIRED COMPONENTS testbed2-core testbed2-implementation testbed2-olink)
 find_package(tb_enum REQUIRED COMPONENTS tb_enum-core tb_enum-implementation tb_enum-olink)
 find_package(tb_same1 REQUIRED COMPONENTS tb_same1-core tb_same1-implementation tb_same1-olink)

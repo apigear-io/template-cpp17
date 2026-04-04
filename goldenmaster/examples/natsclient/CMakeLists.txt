@@ -53,6 +53,7 @@ target_link_libraries(NatsClient
 # we assume that the examples are built together with the libraries and thus ignore this warning
 if(MSVC)
   target_compile_options(NatsClient PRIVATE /wd4251)
+  target_compile_definitions(NatsClient PRIVATE -D_CRT_SECURE_NO_WARNINGS)
 endif()
 
 install(TARGETS NatsClient
