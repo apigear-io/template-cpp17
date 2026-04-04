@@ -37,6 +37,7 @@ target_link_libraries(NatsServer
 # we assume that the examples are built together with the libraries and thus ignore this warning
 if(MSVC)
   target_compile_options(NatsServer PRIVATE /wd4251)
+  target_compile_definitions(NatsServer PRIVATE -D_CRT_SECURE_NO_WARNINGS)
 endif()
 
 install(TARGETS NatsServer

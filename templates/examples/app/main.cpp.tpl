@@ -11,7 +11,9 @@
 {{- end }}
 {{- if $features.monitor }}
 #include "apigear/tracer/tracer.h"
-{{ end}}
+{{- end}}
+#include <iostream>
+
 using namespace {{ Camel .System.Name }};
 
 int main(){
@@ -30,5 +32,47 @@ int main(){
 {{- end }}
 {{- end }}
 
+    // Demonstrate basic property access
+    {{ $propertyExampleReady := 0 -}}
+    {{ $operationExampleReady := 0 -}}
+    {{- range .System.Modules -}}
+    {{- $module := . -}}
+    {{- range $module.Interfaces -}}
+    {{- $interface := . -}}
+{{- if (and (eq $propertyExampleReady 0) (len $interface.Properties) )}}
+    {{- $property := (index $interface.Properties 0) }}
+    {{- $class := Camel $interface.Name }}
+    {{- $namespacePrefix := printf "%s::" (Camel $module.Name)}}
+    {
+        [[maybe_unused]] auto value = test{{ Camel $module.Name }}{{$class}}->get{{Camel $property.Name}}();
+        std::cout << "{{ Camel $module.Name }}::{{$class}}::{{Camel $property.Name}} default value retrieved" << std::endl;
+        test{{ Camel $module.Name }}{{$class}}->set{{Camel $property.Name}}({{cppDefault $namespacePrefix $property}});
+        std::cout << "{{ Camel $module.Name }}::{{$class}}::{{Camel $property.Name}} value set" << std::endl;
+    }
+    {{ $propertyExampleReady = 1}}
+{{- end }}
+{{- if (and (eq $operationExampleReady 0) (len $interface.Operations))}}
+    {{- $operation := (index $interface.Operations 0) }}
+    {{- $class := Camel $interface.Name }}
+    {{- $namespacePrefix := printf "%s::" (Camel $module.Name)}}
+    {
+        {{ if (not $operation.Return.IsVoid) }}[[maybe_unused]] auto result = {{ end }}test{{ Camel $module.Name }}{{$class}}->{{lower1 $operation.Name}}(
+            {{- range $i, $e := $operation.Params }}
+                {{- if $i }}, {{ end }}{{cppDefault $namespacePrefix $e}}
+            {{- end }});
+        std::cout << "{{ Camel $module.Name }}::{{$class}}::{{$operation.Name}} called" << std::endl;
+    }
+    {{ $operationExampleReady = 1}}
+{{- end }}
+{{- if (and $operationExampleReady $propertyExampleReady)}}
+    {{- break}}
+{{- end }}
+{{- end}}
+{{- if (and $operationExampleReady $propertyExampleReady)}}
+    {{- break}}
+{{- end }}
+{{- end}}
+
+    std::cout << "App example finished." << std::endl;
     return 0;
 }

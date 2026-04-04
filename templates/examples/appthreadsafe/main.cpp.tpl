@@ -5,8 +5,9 @@
 #include "{{snake $module.Name}}/implementation/{{ lower ( camel $interface.Name) }}.h"
 #include "{{snake $module.Name}}/generated/core/{{ lower ( camel $interface.Name) }}.threadsafedecorator.h"
 {{- end }}
-{{- end }}{{nl}}
-
+{{- end }}
+#include <iostream>
+{{nl}}
 {{- range .System.Modules }}
 {{- $module := . }}
 {{- range $module.Interfaces }}
@@ -24,8 +25,10 @@ void test{{ Camel $module.Name }}{{$class}}()
 {{- $property := . }}
     auto l_{{lower1 (Camel $property.Name)}} = {{cppDefault "" $property}};
     l_{{lower1 (Camel $property.Name)}} = test{{$class}}->get{{Camel $property.Name}}();
+    std::cout << "  {{$class}}::{{Camel $property.Name}} retrieved" << std::endl;
 {{- if not .IsReadOnly }}
     test{{$class}}->set{{Camel $property.Name}}(l_{{lower1 (Camel $property.Name)}});
+    std::cout << "  {{$class}}::{{Camel $property.Name}} set" << std::endl;
 {{- end }}
 {{- end }}
 }{{nl}}
@@ -38,10 +41,11 @@ int main(){
 {{- range $module.Interfaces }}
 {{- $interface := . }}
     {{- $class := Camel $interface.Name }}
-    {{- $tracer_class := printf "%sThreadSafeDecorator" $class }}
+    std::cout << "Testing {{ Camel $module.Name }}::{{$class}} (thread-safe)" << std::endl;
     test{{ Camel $module.Name }}{{$class}}();
 {{- end }}
 {{- end }}
 
+    std::cout << "AppThreadSafe example finished." << std::endl;
     return 0;
 }

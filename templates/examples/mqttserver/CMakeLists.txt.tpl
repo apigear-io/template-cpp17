@@ -36,6 +36,7 @@ target_link_libraries(MQTTServer
 # we assume that the examples are built together with the libraries and thus ignore this warning
 if(MSVC)
   target_compile_options(MQTTServer PRIVATE /wd4251)
+  target_compile_definitions(MQTTServer PRIVATE -D_CRT_SECURE_NO_WARNINGS)
 endif()
 
 install(TARGETS MQTTServer

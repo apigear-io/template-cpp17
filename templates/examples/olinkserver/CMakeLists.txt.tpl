@@ -23,7 +23,6 @@ else()
   target_compile_definitions(OLinkServer PRIVATE -D_CRT_SECURE_NO_WARNINGS)
 endif()
 
-find_package(apigear REQUIRED COMPONENTS utilities)
 {{- range .System.Modules }}
 {{- $module := . }}
 {{- $module_id := snake .Name }}
