@@ -27,7 +27,6 @@ using namespace Test::TbSame2;
 TEST_CASE("Nats  tb.same2 SameEnum1Interface tests")
 {
     auto service = std::make_shared<ApiGear::Nats::Service>();
-
     auto client = std::make_shared<ApiGear::Nats::Client>();
     service->connect("nats://localhost:4222");
     client->connect("nats://localhost:4222");
@@ -38,14 +37,42 @@ TEST_CASE("Nats  tb.same2 SameEnum1Interface tests")
 
     auto implSameEnum1Interface = std::make_shared<Test::TbSame2::SameEnum1Interface>();
     auto serviceSameEnum1Interface = Nats::SameEnum1InterfaceService::create(implSameEnum1Interface, service);
+
+    std::atomic<bool> is_serviceReady{ false };
+    serviceSameEnum1Interface->_subscribeForIsReady([&is_serviceReady, &m_wait](auto is_ready)
+        {
+            if (is_ready)
+            {
+                is_serviceReady = true;
+                m_wait.notify_all();
+            }
+        });
+    if (serviceSameEnum1Interface->_is_ready())
+    {
+        is_serviceReady = true;
+    }
     lock.lock();
-    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [serviceSameEnum1Interface]() {return  serviceSameEnum1Interface->_is_ready();}));
+    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_serviceReady]() {return is_serviceReady == true; }));
     lock.unlock();
     service->flush();
 
     auto clientSameEnum1Interface = Nats::SameEnum1InterfaceClient::create(client);
+
+    std::atomic<bool> is_clientReady{ false };
+    clientSameEnum1Interface->_subscribeForIsReady([&is_clientReady, &m_wait](auto is_ready)
+        {
+            if (is_ready)
+            {
+                is_clientReady = true;
+                m_wait.notify_all();
+            }
+        });
+    if (clientSameEnum1Interface->_is_ready())
+    {
+        is_clientReady = true;
+    }
     lock.lock();
-    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [clientSameEnum1Interface]() {return clientSameEnum1Interface->_is_ready(); }));
+    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_clientReady]() {return is_clientReady == true; }));
     lock.unlock();
     client->flush();
     SECTION("Test setting prop1")

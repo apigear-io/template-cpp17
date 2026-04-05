@@ -50,7 +50,6 @@ using namespace {{Camel .System.Name}}::{{$namespace}};
 TEST_CASE("Nats  {{.Module.Name}} {{$class}} tests")
 {
     auto service = std::make_shared<ApiGear::Nats::Service>();
-
     auto client = std::make_shared<ApiGear::Nats::Client>();
     service->connect("nats://localhost:4222");
     client->connect("nats://localhost:4222");
@@ -61,14 +60,42 @@ TEST_CASE("Nats  {{.Module.Name}} {{$class}} tests")
 
     auto impl{{$class}} = std::make_shared<{{Camel .System.Name}}::{{$namespace}}::{{$class}}>();
     auto service{{$class}} = Nats::{{$natsservice}}::create(impl{{$class}}, service);
+
+    std::atomic<bool> is_serviceReady{ false };
+    service{{$class}}->_subscribeForIsReady([&is_serviceReady, &m_wait](auto is_ready)
+        {
+            if (is_ready)
+            {
+                is_serviceReady = true;
+                m_wait.notify_all();
+            }
+        });
+    if (service{{$class}}->_is_ready())
+    {
+        is_serviceReady = true;
+    }
     lock.lock();
-    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [service{{$class}}]() {return  service{{$class}}->_is_ready();}));
+    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_serviceReady]() {return is_serviceReady == true; }));
     lock.unlock();
     service->flush();
 
     auto client{{$class}} = Nats::{{$natsclient}}::create(client);
+
+    std::atomic<bool> is_clientReady{ false };
+    client{{$class}}->_subscribeForIsReady([&is_clientReady, &m_wait](auto is_ready)
+        {
+            if (is_ready)
+            {
+                is_clientReady = true;
+                m_wait.notify_all();
+            }
+        });
+    if (client{{$class}}->_is_ready())
+    {
+        is_clientReady = true;
+    }
     lock.lock();
-    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [client{{$class}}]() {return client{{$class}}->_is_ready(); }));
+    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_clientReady]() {return is_clientReady == true; }));
     lock.unlock();
     client->flush();
   {{- range .Interface.Properties }}
@@ -87,7 +114,7 @@ TEST_CASE("Nats  {{.Module.Name}} {{$class}} tests")
         auto element = {{ cppTestValue $namespacePrefix . }};
         {{template "get_namespace" .}}::fillTest{{.Type }}(element);
         test_value.push_back(element);
-        {{- else }}  
+        {{- else }}
         test_value.push_back({{ cppTestValue $namespacePrefix .}});
         {{- end }}
 	{{- else }}
@@ -130,14 +157,14 @@ TEST_CASE("Nats  {{.Module.Name}} {{$class}} tests")
         {{- end }}
 
         client{{$class}}->_getPublisher().subscribeTo{{Camel .Name}}(
-        [&m_wait, &is{{.Name}}Emitted 
+        [&m_wait, &is{{.Name}}Emitted
         {{- range $idx, $p := .Params -}}
         {{- if .IsArray }}, &local_{{snake .Name}}_array
         {{- else if not ( or (eq .KindType "extern") ( or .IsPrimitive  (eq .KindType "enum") ) ) }}, &local_{{snake .Name}}_struct{{- end -}}
         {{- end }}]({{cppParams $namespacePrefix .Params}})
         {
         {{- range $idx, $p := .Params }}
-            REQUIRE({{ .Name}} == 
+            REQUIRE({{ .Name}} ==
             {{- if .IsArray }} local_{{snake .Name}}_array
             {{- else if (eq .KindType "extern") }} {{ cppDefault $namespacePrefix .}}
             {{- else if  ( or .IsPrimitive  (eq .KindType "enum") ) }} {{ cppTestValue $namespacePrefix . }}
@@ -208,7 +235,7 @@ TEST_CASE("Nats  {{.Module.Name}} {{$class}} tests")
     {{- if (len .Params) }},{{end }}
             [&finished, &m_wait](
                 {{- if (not .Return.IsVoid) -}}{{cppType "" .Return}} value)
-            { 
+            {
             {{- if (eq .Return.KindType "extern") }} (void) value;// Make sure the comparison is valid for extern type.
             {{- else }}
                 REQUIRE(value == {{ cppDefault $namespacePrefix .Return }});

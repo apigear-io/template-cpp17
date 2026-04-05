@@ -8,7 +8,7 @@ using namespace ApiGear::Nats;
 
 namespace
 {
-    uint32_t reply_timeout = 5000;//[ms]
+    uint32_t reply_timeout = 2000;//[ms]
 }
 
 struct NatsSubscriptionDeleter
@@ -236,15 +236,18 @@ uint64_t CWrapper::getId() const
 }
 
 
-void CWrapper::disconnect()
+void CWrapper::disconnect(bool graceful)
 {
     std::lock_guard<std::mutex> lock(m_connectionMutex);
     if (!m_connection)
     {
         return;
     }
-    natsConnection_Flush(m_connection.get());
-    natsConnection_Drain(m_connection.get());
+    if (graceful)
+    {
+        natsConnection_Flush(m_connection.get());
+        natsConnection_Drain(m_connection.get());
+    }
     natsConnection_Close(m_connection.get());
 }
 

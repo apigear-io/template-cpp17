@@ -27,7 +27,6 @@ using namespace Test::Testbed1;
 TEST_CASE("Nats  testbed1 StructArrayInterface tests")
 {
     auto service = std::make_shared<ApiGear::Nats::Service>();
-
     auto client = std::make_shared<ApiGear::Nats::Client>();
     service->connect("nats://localhost:4222");
     client->connect("nats://localhost:4222");
@@ -38,14 +37,42 @@ TEST_CASE("Nats  testbed1 StructArrayInterface tests")
 
     auto implStructArrayInterface = std::make_shared<Test::Testbed1::StructArrayInterface>();
     auto serviceStructArrayInterface = Nats::StructArrayInterfaceService::create(implStructArrayInterface, service);
+
+    std::atomic<bool> is_serviceReady{ false };
+    serviceStructArrayInterface->_subscribeForIsReady([&is_serviceReady, &m_wait](auto is_ready)
+        {
+            if (is_ready)
+            {
+                is_serviceReady = true;
+                m_wait.notify_all();
+            }
+        });
+    if (serviceStructArrayInterface->_is_ready())
+    {
+        is_serviceReady = true;
+    }
     lock.lock();
-    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [serviceStructArrayInterface]() {return  serviceStructArrayInterface->_is_ready();}));
+    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_serviceReady]() {return is_serviceReady == true; }));
     lock.unlock();
     service->flush();
 
     auto clientStructArrayInterface = Nats::StructArrayInterfaceClient::create(client);
+
+    std::atomic<bool> is_clientReady{ false };
+    clientStructArrayInterface->_subscribeForIsReady([&is_clientReady, &m_wait](auto is_ready)
+        {
+            if (is_ready)
+            {
+                is_clientReady = true;
+                m_wait.notify_all();
+            }
+        });
+    if (clientStructArrayInterface->_is_ready())
+    {
+        is_clientReady = true;
+    }
     lock.lock();
-    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [clientStructArrayInterface]() {return clientStructArrayInterface->_is_ready(); }));
+    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_clientReady]() {return is_clientReady == true; }));
     lock.unlock();
     client->flush();
     SECTION("Test setting propBool")
@@ -132,7 +159,7 @@ TEST_CASE("Nats  testbed1 StructArrayInterface tests")
             ispropEnumChanged  = true;
             m_wait.notify_all();
         });
-        auto test_value = std::list<Testbed1::Enum0Enum>();  
+        auto test_value = std::list<Testbed1::Enum0Enum>();
         test_value.push_back(Testbed1::Enum0Enum::value1);
         clientStructArrayInterface->setPropEnum(test_value);;
         lock.lock();
