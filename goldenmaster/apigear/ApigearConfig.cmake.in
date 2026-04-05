@@ -15,7 +15,7 @@ if(APIGEAR_BUILD_WITH_OLINK)
 find_dependency(olink_core REQUIRED)
 endif()
 if(APIGEAR_BUILD_WITH_MQTT)
-find_dependency(eclipse-paho-mqtt-c COMPONENTS paho-mqtt3as-static REQUIRED)
+find_dependency(eclipse-paho-mqtt-c REQUIRED)
 # needed for paho-c, should be forwarded implicitly but is not
 find_dependency(OpenSSL REQUIRED)
 endif()
