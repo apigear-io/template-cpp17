@@ -107,7 +107,11 @@ class apigearConan(ConanFile):
         tc.cache_variables['CONAN_BUILD'] = True
         tc.cache_variables['APIGEAR_FETCH_OLINKCORE'] = self.options.enable_olink and self.options.enable_fetch_olinkcore
         if self.options.enable_nats:
-            nats_lib = "cnats::nats_staticd" if self.settings.build_type == "Debug" else "cnats::nats_static"
+            cnats_shared = self.dependencies["cnats"].options.get_safe("shared", False)
+            if cnats_shared:
+                nats_lib = "cnats::natsd" if self.settings.build_type == "Debug" else "cnats::nats"
+            else:
+                nats_lib = "cnats::nats_staticd" if self.settings.build_type == "Debug" else "cnats::nats_static"
             tc.cache_variables["CONAN_NATS_LIB"] = nats_lib
         tc.generate()
         deps = CMakeDeps(self)
