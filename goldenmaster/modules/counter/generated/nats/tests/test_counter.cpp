@@ -29,7 +29,6 @@ using namespace Test::Counter;
 TEST_CASE("Nats  counter Counter tests")
 {
     auto service = std::make_shared<ApiGear::Nats::Service>();
-
     auto client = std::make_shared<ApiGear::Nats::Client>();
     service->connect("nats://localhost:4222");
     client->connect("nats://localhost:4222");
@@ -40,14 +39,42 @@ TEST_CASE("Nats  counter Counter tests")
 
     auto implCounter = std::make_shared<Test::Counter::Counter>();
     auto serviceCounter = Nats::CounterService::create(implCounter, service);
+
+    std::atomic<bool> is_serviceReady{ false };
+    serviceCounter->_subscribeForIsReady([&is_serviceReady, &m_wait](auto is_ready)
+        {
+            if (is_ready)
+            {
+                is_serviceReady = true;
+                m_wait.notify_all();
+            }
+        });
+    if (serviceCounter->_is_ready())
+    {
+        is_serviceReady = true;
+    }
     lock.lock();
-    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [serviceCounter]() {return  serviceCounter->_is_ready();}));
+    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_serviceReady]() {return is_serviceReady == true; }));
     lock.unlock();
     service->flush();
 
     auto clientCounter = Nats::CounterClient::create(client);
+
+    std::atomic<bool> is_clientReady{ false };
+    clientCounter->_subscribeForIsReady([&is_clientReady, &m_wait](auto is_ready)
+        {
+            if (is_ready)
+            {
+                is_clientReady = true;
+                m_wait.notify_all();
+            }
+        });
+    if (clientCounter->_is_ready())
+    {
+        is_clientReady = true;
+    }
     lock.lock();
-    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [clientCounter]() {return clientCounter->_is_ready(); }));
+    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_clientReady]() {return is_clientReady == true; }));
     lock.unlock();
     client->flush();
     SECTION("Test setting vector")

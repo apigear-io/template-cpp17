@@ -27,7 +27,6 @@ using namespace Test::TbSimple;
 TEST_CASE("Nats  tb.simple NoSignalsInterface tests")
 {
     auto service = std::make_shared<ApiGear::Nats::Service>();
-
     auto client = std::make_shared<ApiGear::Nats::Client>();
     service->connect("nats://localhost:4222");
     client->connect("nats://localhost:4222");
@@ -38,14 +37,42 @@ TEST_CASE("Nats  tb.simple NoSignalsInterface tests")
 
     auto implNoSignalsInterface = std::make_shared<Test::TbSimple::NoSignalsInterface>();
     auto serviceNoSignalsInterface = Nats::NoSignalsInterfaceService::create(implNoSignalsInterface, service);
+
+    std::atomic<bool> is_serviceReady{ false };
+    serviceNoSignalsInterface->_subscribeForIsReady([&is_serviceReady, &m_wait](auto is_ready)
+        {
+            if (is_ready)
+            {
+                is_serviceReady = true;
+                m_wait.notify_all();
+            }
+        });
+    if (serviceNoSignalsInterface->_is_ready())
+    {
+        is_serviceReady = true;
+    }
     lock.lock();
-    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [serviceNoSignalsInterface]() {return  serviceNoSignalsInterface->_is_ready();}));
+    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_serviceReady]() {return is_serviceReady == true; }));
     lock.unlock();
     service->flush();
 
     auto clientNoSignalsInterface = Nats::NoSignalsInterfaceClient::create(client);
+
+    std::atomic<bool> is_clientReady{ false };
+    clientNoSignalsInterface->_subscribeForIsReady([&is_clientReady, &m_wait](auto is_ready)
+        {
+            if (is_ready)
+            {
+                is_clientReady = true;
+                m_wait.notify_all();
+            }
+        });
+    if (clientNoSignalsInterface->_is_ready())
+    {
+        is_clientReady = true;
+    }
     lock.lock();
-    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [clientNoSignalsInterface]() {return clientNoSignalsInterface->_is_ready(); }));
+    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_clientReady]() {return is_clientReady == true; }));
     lock.unlock();
     client->flush();
     SECTION("Test setting propBool")

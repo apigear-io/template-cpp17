@@ -27,7 +27,6 @@ using namespace Test::TbStructArray;
 TEST_CASE("Nats  tb.struct.array StructArrayFieldInterface tests")
 {
     auto service = std::make_shared<ApiGear::Nats::Service>();
-
     auto client = std::make_shared<ApiGear::Nats::Client>();
     service->connect("nats://localhost:4222");
     client->connect("nats://localhost:4222");
@@ -38,14 +37,42 @@ TEST_CASE("Nats  tb.struct.array StructArrayFieldInterface tests")
 
     auto implStructArrayFieldInterface = std::make_shared<Test::TbStructArray::StructArrayFieldInterface>();
     auto serviceStructArrayFieldInterface = Nats::StructArrayFieldInterfaceService::create(implStructArrayFieldInterface, service);
+
+    std::atomic<bool> is_serviceReady{ false };
+    serviceStructArrayFieldInterface->_subscribeForIsReady([&is_serviceReady, &m_wait](auto is_ready)
+        {
+            if (is_ready)
+            {
+                is_serviceReady = true;
+                m_wait.notify_all();
+            }
+        });
+    if (serviceStructArrayFieldInterface->_is_ready())
+    {
+        is_serviceReady = true;
+    }
     lock.lock();
-    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [serviceStructArrayFieldInterface]() {return  serviceStructArrayFieldInterface->_is_ready();}));
+    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_serviceReady]() {return is_serviceReady == true; }));
     lock.unlock();
     service->flush();
 
     auto clientStructArrayFieldInterface = Nats::StructArrayFieldInterfaceClient::create(client);
+
+    std::atomic<bool> is_clientReady{ false };
+    clientStructArrayFieldInterface->_subscribeForIsReady([&is_clientReady, &m_wait](auto is_ready)
+        {
+            if (is_ready)
+            {
+                is_clientReady = true;
+                m_wait.notify_all();
+            }
+        });
+    if (clientStructArrayFieldInterface->_is_ready())
+    {
+        is_clientReady = true;
+    }
     lock.lock();
-    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [clientStructArrayFieldInterface]() {return clientStructArrayFieldInterface->_is_ready(); }));
+    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_clientReady]() {return is_clientReady == true; }));
     lock.unlock();
     client->flush();
     SECTION("Test setting propStructArray")

@@ -12,7 +12,7 @@ namespace
 std::mt19937 randomNumberGenerator(std::random_device{}());
 std::uniform_int_distribution<uint32_t> distribution(0, 0xFFFFFFFF);
 
-const size_t workerThreadsPerConnection = 10;
+const size_t workerThreadsPerConnection = 4;
 
 template<typename StoredItem>
 uint32_t createUniqueMapId(const std::map<uint32_t, StoredItem>& existing_map, std::mutex& map_mutex)
@@ -62,9 +62,9 @@ uint64_t Base::getId() const
     return m_cwrapper->getId();
 }
 
-void Base::disconnect()
+void Base::disconnect(bool graceful)
 {
-    m_cwrapper->disconnect();
+    m_cwrapper->disconnect(graceful);
 };
 
 void Base::flush()

@@ -27,7 +27,6 @@ using namespace Test::Testbed2;
 TEST_CASE("Nats  testbed2 NestedStruct1Interface tests")
 {
     auto service = std::make_shared<ApiGear::Nats::Service>();
-
     auto client = std::make_shared<ApiGear::Nats::Client>();
     service->connect("nats://localhost:4222");
     client->connect("nats://localhost:4222");
@@ -38,14 +37,42 @@ TEST_CASE("Nats  testbed2 NestedStruct1Interface tests")
 
     auto implNestedStruct1Interface = std::make_shared<Test::Testbed2::NestedStruct1Interface>();
     auto serviceNestedStruct1Interface = Nats::NestedStruct1InterfaceService::create(implNestedStruct1Interface, service);
+
+    std::atomic<bool> is_serviceReady{ false };
+    serviceNestedStruct1Interface->_subscribeForIsReady([&is_serviceReady, &m_wait](auto is_ready)
+        {
+            if (is_ready)
+            {
+                is_serviceReady = true;
+                m_wait.notify_all();
+            }
+        });
+    if (serviceNestedStruct1Interface->_is_ready())
+    {
+        is_serviceReady = true;
+    }
     lock.lock();
-    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [serviceNestedStruct1Interface]() {return  serviceNestedStruct1Interface->_is_ready();}));
+    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_serviceReady]() {return is_serviceReady == true; }));
     lock.unlock();
     service->flush();
 
     auto clientNestedStruct1Interface = Nats::NestedStruct1InterfaceClient::create(client);
+
+    std::atomic<bool> is_clientReady{ false };
+    clientNestedStruct1Interface->_subscribeForIsReady([&is_clientReady, &m_wait](auto is_ready)
+        {
+            if (is_ready)
+            {
+                is_clientReady = true;
+                m_wait.notify_all();
+            }
+        });
+    if (clientNestedStruct1Interface->_is_ready())
+    {
+        is_clientReady = true;
+    }
     lock.lock();
-    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [clientNestedStruct1Interface]() {return clientNestedStruct1Interface->_is_ready(); }));
+    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_clientReady]() {return is_clientReady == true; }));
     lock.unlock();
     client->flush();
     SECTION("Test setting prop1")

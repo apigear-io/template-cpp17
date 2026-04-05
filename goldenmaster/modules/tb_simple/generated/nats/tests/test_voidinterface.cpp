@@ -27,7 +27,6 @@ using namespace Test::TbSimple;
 TEST_CASE("Nats  tb.simple VoidInterface tests")
 {
     auto service = std::make_shared<ApiGear::Nats::Service>();
-
     auto client = std::make_shared<ApiGear::Nats::Client>();
     service->connect("nats://localhost:4222");
     client->connect("nats://localhost:4222");
@@ -38,14 +37,42 @@ TEST_CASE("Nats  tb.simple VoidInterface tests")
 
     auto implVoidInterface = std::make_shared<Test::TbSimple::VoidInterface>();
     auto serviceVoidInterface = Nats::VoidInterfaceService::create(implVoidInterface, service);
+
+    std::atomic<bool> is_serviceReady{ false };
+    serviceVoidInterface->_subscribeForIsReady([&is_serviceReady, &m_wait](auto is_ready)
+        {
+            if (is_ready)
+            {
+                is_serviceReady = true;
+                m_wait.notify_all();
+            }
+        });
+    if (serviceVoidInterface->_is_ready())
+    {
+        is_serviceReady = true;
+    }
     lock.lock();
-    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [serviceVoidInterface]() {return  serviceVoidInterface->_is_ready();}));
+    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_serviceReady]() {return is_serviceReady == true; }));
     lock.unlock();
     service->flush();
 
     auto clientVoidInterface = Nats::VoidInterfaceClient::create(client);
+
+    std::atomic<bool> is_clientReady{ false };
+    clientVoidInterface->_subscribeForIsReady([&is_clientReady, &m_wait](auto is_ready)
+        {
+            if (is_ready)
+            {
+                is_clientReady = true;
+                m_wait.notify_all();
+            }
+        });
+    if (clientVoidInterface->_is_ready())
+    {
+        is_clientReady = true;
+    }
     lock.lock();
-    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [clientVoidInterface]() {return clientVoidInterface->_is_ready(); }));
+    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_clientReady]() {return is_clientReady == true; }));
     lock.unlock();
     client->flush();
     SECTION("Test emit sigVoid")

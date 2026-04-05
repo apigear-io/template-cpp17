@@ -27,7 +27,6 @@ using namespace Test::Testbed1;
 TEST_CASE("Nats  testbed1 StructArray2Interface tests")
 {
     auto service = std::make_shared<ApiGear::Nats::Service>();
-
     auto client = std::make_shared<ApiGear::Nats::Client>();
     service->connect("nats://localhost:4222");
     client->connect("nats://localhost:4222");
@@ -38,14 +37,42 @@ TEST_CASE("Nats  testbed1 StructArray2Interface tests")
 
     auto implStructArray2Interface = std::make_shared<Test::Testbed1::StructArray2Interface>();
     auto serviceStructArray2Interface = Nats::StructArray2InterfaceService::create(implStructArray2Interface, service);
+
+    std::atomic<bool> is_serviceReady{ false };
+    serviceStructArray2Interface->_subscribeForIsReady([&is_serviceReady, &m_wait](auto is_ready)
+        {
+            if (is_ready)
+            {
+                is_serviceReady = true;
+                m_wait.notify_all();
+            }
+        });
+    if (serviceStructArray2Interface->_is_ready())
+    {
+        is_serviceReady = true;
+    }
     lock.lock();
-    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [serviceStructArray2Interface]() {return  serviceStructArray2Interface->_is_ready();}));
+    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_serviceReady]() {return is_serviceReady == true; }));
     lock.unlock();
     service->flush();
 
     auto clientStructArray2Interface = Nats::StructArray2InterfaceClient::create(client);
+
+    std::atomic<bool> is_clientReady{ false };
+    clientStructArray2Interface->_subscribeForIsReady([&is_clientReady, &m_wait](auto is_ready)
+        {
+            if (is_ready)
+            {
+                is_clientReady = true;
+                m_wait.notify_all();
+            }
+        });
+    if (clientStructArray2Interface->_is_ready())
+    {
+        is_clientReady = true;
+    }
     lock.lock();
-    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [clientStructArray2Interface]() {return clientStructArray2Interface->_is_ready(); }));
+    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_clientReady]() {return is_clientReady == true; }));
     lock.unlock();
     client->flush();
     SECTION("Test setting propBool")

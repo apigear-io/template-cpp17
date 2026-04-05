@@ -27,7 +27,6 @@ using namespace Test::TbSimple;
 TEST_CASE("Nats  tb.simple NoPropertiesInterface tests")
 {
     auto service = std::make_shared<ApiGear::Nats::Service>();
-
     auto client = std::make_shared<ApiGear::Nats::Client>();
     service->connect("nats://localhost:4222");
     client->connect("nats://localhost:4222");
@@ -38,14 +37,42 @@ TEST_CASE("Nats  tb.simple NoPropertiesInterface tests")
 
     auto implNoPropertiesInterface = std::make_shared<Test::TbSimple::NoPropertiesInterface>();
     auto serviceNoPropertiesInterface = Nats::NoPropertiesInterfaceService::create(implNoPropertiesInterface, service);
+
+    std::atomic<bool> is_serviceReady{ false };
+    serviceNoPropertiesInterface->_subscribeForIsReady([&is_serviceReady, &m_wait](auto is_ready)
+        {
+            if (is_ready)
+            {
+                is_serviceReady = true;
+                m_wait.notify_all();
+            }
+        });
+    if (serviceNoPropertiesInterface->_is_ready())
+    {
+        is_serviceReady = true;
+    }
     lock.lock();
-    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [serviceNoPropertiesInterface]() {return  serviceNoPropertiesInterface->_is_ready();}));
+    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_serviceReady]() {return is_serviceReady == true; }));
     lock.unlock();
     service->flush();
 
     auto clientNoPropertiesInterface = Nats::NoPropertiesInterfaceClient::create(client);
+
+    std::atomic<bool> is_clientReady{ false };
+    clientNoPropertiesInterface->_subscribeForIsReady([&is_clientReady, &m_wait](auto is_ready)
+        {
+            if (is_ready)
+            {
+                is_clientReady = true;
+                m_wait.notify_all();
+            }
+        });
+    if (clientNoPropertiesInterface->_is_ready())
+    {
+        is_clientReady = true;
+    }
     lock.lock();
-    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [clientNoPropertiesInterface]() {return clientNoPropertiesInterface->_is_ready(); }));
+    REQUIRE(m_wait.wait_for(lock, std::chrono::milliseconds(timeout), [&is_clientReady]() {return is_clientReady == true; }));
     lock.unlock();
     client->flush();
     SECTION("Test emit sigVoid")
