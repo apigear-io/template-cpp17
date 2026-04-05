@@ -67,10 +67,6 @@ class apigearConan(ConanFile):
         if self.settings.os == "Windows":
             self.options.rm_safe("fPIC")
 
-    def configure(self):
-        if self.options.shared:
-            self.options.rm_safe("fPIC")
-
     def export_sources(self):
         copy(self, "*", self.recipe_folder, dst=os.path.join(self.export_sources_folder, "apigear"))
 
@@ -124,6 +120,8 @@ class apigearConan(ConanFile):
         cmake.build()
 
     def configure(self):
+        if self.options.shared:
+            self.options.rm_safe("fPIC")
         if self.settings.os == "Windows":
             self.options["poco"].shared = False
 
