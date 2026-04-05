@@ -24,7 +24,7 @@ buildCMakeBinary()
 cd $source_root;
 rm -rf tmp/ && rm -rf build_cmake/ && mkdir -p build_cmake;
 if [ $? -ne 0 ]; then exit 1; fi;
-git clone --depth 1 --branch v0.2.9 https://github.com/apigear-io/objectlink-core-cpp.git build_cmake/objectlink-core-cpp
+git clone --depth 1 --branch v0.2.12 https://github.com/apigear-io/objectlink-core-cpp.git build_cmake/objectlink-core-cpp
 if [ $? -ne 0 ]; then exit 1; fi;
 buildCMakeModule "build_cmake/objectlink-core-cpp" $source_root
 if [ $? -ne 0 ]; then exit 1; fi;

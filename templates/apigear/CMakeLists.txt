@@ -22,7 +22,7 @@ option(APIGEAR_FETCH_OLINKCORE "Fetch and build objectlink-core, if not pre-inst
 
 if(APIGEAR_FETCH_OLINKCORE)
 if(NOT DEFINED APIGEAR_DEP_OLINK_CORE_VERSION)
-  set(APIGEAR_DEP_OLINK_CORE_VERSION "v0.2.10")
+  set(APIGEAR_DEP_OLINK_CORE_VERSION "v0.2.12")
 endif()
 find_package(olink_core QUIET)
 if(NOT olink_core_FOUND)
