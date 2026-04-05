@@ -56,11 +56,11 @@ class apigearConan(ConanFile):
                        "poco/*:enable_zip": False,
                        "paho-mqtt-c/*:shared": False,
                        "paho-mqtt-c/*:asynchronous": True,
-                       "nats/*:shared": False,
-                       "nats/*:fPIC": True,
-                       "nats/*:with_tls": False,
-                       "nats/*:with_sodium": False,
-                       "nats/*:enable_streaming": False
+                       "cnats/*:shared": False,
+                       "cnats/*:fPIC": True,
+                       "cnats/*:with_tls": False,
+                       "cnats/*:with_sodium": False,
+                       "cnats/*:enable_streaming": False
                        }
 
     def config_options(self):
