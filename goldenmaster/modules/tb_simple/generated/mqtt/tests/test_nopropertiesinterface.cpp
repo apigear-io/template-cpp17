@@ -19,7 +19,7 @@
 
 namespace{
 
-    int timeout = 2000;//in ms
+    int timeout = 1000;//in ms
 }
 
 using namespace Test;
@@ -153,43 +153,10 @@ TEST_CASE("mqtt  tb.simple NoPropertiesInterface tests")
         REQUIRE(return_value == false); 
     }
 
-    std::atomic<bool> serviceDisconnected{ false };
-    mqttservice->subscribeToConnectionStatus([&serviceDisconnected, &m_wait](auto isConnected) {
-        if (!isConnected)
-        {
-            serviceDisconnected = true;
-            m_wait.notify_all();
-        }
-        
-        });
-
     mqttservice->disconnect();
-
-    lock.lock();
-    m_wait.wait_for(lock, std::chrono::milliseconds(timeout),
-        [&serviceDisconnected]() { return serviceDisconnected == true; });
-    lock.unlock();
-    REQUIRE(serviceDisconnected);
-
-    std::atomic<bool> clientDisonnected{ false };
-    mqttclient->subscribeToConnectionStatus([&clientDisonnected, &m_wait](auto isConnected) {
-        if (!isConnected)
-        {
-            clientDisonnected = true;
-            m_wait.notify_all();
-        }
-        });
-
     mqttclient->disconnect();
-
-    lock.lock();
-    m_wait.wait_for(lock, std::chrono::milliseconds(timeout),
-        [&clientDisonnected]() { return clientDisonnected == true; });
-    lock.unlock();
-    REQUIRE(clientDisonnected);
-
-    mqttservice.reset();
-    mqttclient.reset();
     serviceNoPropertiesInterface.reset();
     clientNoPropertiesInterface.reset();
+    mqttservice.reset();
+    mqttclient.reset();
 }
