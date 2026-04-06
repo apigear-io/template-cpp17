@@ -119,11 +119,25 @@ static void removeSubscriptionResources(void* context)
 
 CWrapper::CWrapper()
 {
+    m_connectionHandlerContext.function = [this](uint64_t connection_id) {
+        handleConnectionStateChanged(connection_id);
+    };
+    m_subscriptionErrorContext.function = [this](uint64_t connection_id, int64_t subscription_id, int status) {
+        handleSubscriptionError(connection_id, subscription_id, status);
+    };
 }
 
 CWrapper::~CWrapper()
 {
-    natsConnection_Close(m_connection.get());
+    std::unique_ptr<natsConnection, NatsConnectionDeleter> conn;
+    {
+        std::lock_guard<std::mutex> lock(m_connectionMutex);
+        conn = std::move(m_connection);
+    }
+    if (conn)
+    {
+        natsConnection_Close(conn.get());
+    }
 }
 
 void CWrapper::NatsConnectionDeleter::operator()(natsConnection* conn)
@@ -137,13 +151,10 @@ void CWrapper::connect(const std::string& address, std::function<void(void)> con
     if (!m_connectionHandlerContext.object.lock())
     {
         m_connectionHandlerContext.object = getPtr();
-        m_connectionHandlerContext.function = [this](uint64_t connection_id) {handleConnectionStateChanged(connection_id); };
     }
-
     if (!m_subscriptionErrorContext.object.lock())
     {
         m_subscriptionErrorContext.object = shared_from_this();
-        m_subscriptionErrorContext.function = [this](uint64_t connection_id, int64_t subscription_id, int status) {handleSubscriptionError(connection_id, subscription_id, status); };
     }
 
     natsOptions* tmp_opts;
@@ -238,14 +249,18 @@ uint64_t CWrapper::getId() const
 
 void CWrapper::disconnect()
 {
-    std::lock_guard<std::mutex> lock(m_connectionMutex);
-    if (!m_connection)
+    std::unique_ptr<natsConnection, NatsConnectionDeleter> conn;
     {
-        return;
+        std::lock_guard<std::mutex> lock(m_connectionMutex);
+        if (!m_connection)
+        {
+            return;
+        }
+        conn = std::move(m_connection);
     }
-    natsConnection_Flush(m_connection.get());
-    natsConnection_Drain(m_connection.get());
-    natsConnection_Close(m_connection.get());
+    natsConnection_Flush(conn.get());
+    natsConnection_Drain(conn.get());
+    natsConnection_Close(conn.get());
 }
 
 
@@ -271,34 +286,56 @@ ConnectionStatus CWrapper::getStatus()
 }
 
 
-void  CWrapper::flush()
+void CWrapper::flush()
 {
-    if (!m_connection)
+    natsConnection* conn = nullptr;
     {
-        return;
+        std::lock_guard<std::mutex> lock(m_connectionMutex);
+        if (!m_connection)
+        {
+            return;
+        }
+        conn = m_connection.get();
     }
-    natsConnection_Flush(m_connection.get());
+    natsConnection_Flush(conn);
 }
 
 void CWrapper::handleConnectionStateChanged(uint64_t connection_id)
 {
-    uint64_t stored_connection_id;
-    natsConnection_GetClientID(m_connection.get(), &stored_connection_id);
-    if (connection_id == stored_connection_id && m_connectionStateChangedCallback)
+    std::function<void(void)> callback;
     {
-        m_connectionStateChangedCallback();
+        std::lock_guard<std::mutex> lock(m_connectionMutex);
+        if (!m_connection)
+        {
+            return;
+        }
+        uint64_t stored_connection_id;
+        natsConnection_GetClientID(m_connection.get(), &stored_connection_id);
+        if (connection_id == stored_connection_id)
+        {
+            callback = m_connectionStateChangedCallback;
+        }
+    }
+    if (callback)
+    {
+        callback();
     }
 }
 
 void CWrapper::handleSubscriptionError(uint64_t connection_id, int64_t subscription_id, int status)
 {
+    std::lock_guard<std::mutex> lock(m_connectionMutex);
+    if (!m_connection)
+    {
+        return;
+    }
     uint64_t stored_connection_id;
     natsConnection_GetClientID(m_connection.get(), &stored_connection_id);
     if (connection_id != stored_connection_id)
     {
         return;
     }
-    std::string errorMessage =  "Error for subscription: " + std::to_string(subscription_id) + " with status " + std::to_string(status);
+    std::string errorMessage = "Error for subscription: " + std::to_string(subscription_id) + " with status " + std::to_string(status);
     AG_LOG_ERROR(errorMessage);
 }
 
