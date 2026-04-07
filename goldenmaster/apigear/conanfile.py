@@ -78,7 +78,7 @@ class apigearConan(ConanFile):
         if self.options.enable_mqtt:
               self.requires("paho-mqtt-c/1.3.13", transitive_headers=True, transitive_libs=True)
         if self.options.enable_nats:
-              self.requires("cnats/3.9.1", visible=False)
+              self.requires("cnats/3.9.3", visible=False)
 
     def build_requirements(self):
         self.test_requires("catch2/2.13.7")
