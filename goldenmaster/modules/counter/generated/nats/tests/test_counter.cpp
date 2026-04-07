@@ -20,8 +20,17 @@
 // Before running tests make sure that the server of your choice is running.
 
 namespace{
-
+#if defined(__SANITIZE_THREAD__)
+    int timeout = 10000;//in ms - longer for TSan builds
+#elif defined(__has_feature)
+#   if __has_feature(thread_sanitizer)
+    int timeout = 10000;//in ms - longer for TSan builds
+#   else
     int timeout = 1000;//in ms
+#   endif
+#else
+    int timeout = 1000;//in ms
+#endif
 }
 using namespace Test;
 using namespace Test::Counter;
