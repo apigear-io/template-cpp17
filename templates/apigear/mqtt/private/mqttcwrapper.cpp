@@ -221,8 +221,11 @@ void CWrapper::run()
     }
     while (m_connected && !m_disconnectRequested);
 
-    unsubscribeAllTopics();
-    waitForPendingMessages();
+    if (!m_disconnectRequested)
+    {
+        unsubscribeAllTopics();
+        waitForPendingMessages();
+    }
 }
 
 void CWrapper::addNewSubscriptions()
@@ -235,7 +238,7 @@ void CWrapper::addNewSubscriptions()
         MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
         opts.onSuccess5 = onSubscribeSuccess;
         opts.onFailure5 = onSubscribeFailure;
-        auto ctx = std::make_unique<subscribeTopicContext>(subscribeTopicContext{topic.first, topic.second.topicCallback, topic.second.subscribedCallback, getPtr()});
+        auto ctx = std::make_unique<subscribeTopicContext>(subscribeTopicContext{topic.first, topic.second.topicCallback, topic.second.subscribedCallback, weak_from_this()});
         opts.context = ctx.release();
         int responseCode = MQTTAsync_subscribe(*m_client.get(), topic.first.c_str(), QOS, &opts);
         if (responseCode != MQTTASYNC_SUCCESS)
@@ -255,7 +258,7 @@ void CWrapper::removeOldSubscriptions()
         MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
         opts.onSuccess5 = onUnsubscribeSuccess;
         opts.onFailure5 = onUnsubscribeFailure;
-        auto ctx = std::make_unique<subscribeTopicContext>(subscribeTopicContext{topic, nullptr, nullptr, getPtr()});
+        auto ctx = std::make_unique<subscribeTopicContext>(subscribeTopicContext{topic, nullptr, nullptr, weak_from_this()});
         opts.context = ctx.release();
         int responseCode = MQTTAsync_unsubscribe(*m_client.get(), topic.c_str(), &opts);
         if (responseCode != MQTTASYNC_SUCCESS)
@@ -287,9 +290,15 @@ void CWrapper::unsubscribeAllTopics()
 void CWrapper::waitForPendingMessages()
 {
     bool unsubscribedFromAllTopics = false;
+    auto start = std::chrono::steady_clock::now();
     // wait for unsubscription to complete
-    while(m_connected && !unsubscribedFromAllTopics)
+    while(m_connected && !m_disconnectRequested && !unsubscribedFromAllTopics)
     {
+        if (std::chrono::steady_clock::now() - start > std::chrono::seconds(10))
+        {
+            AG_LOG_WARNING("Timed out waiting for pending unsubscriptions");
+            break;
+        }
         std::this_thread::sleep_for(std::chrono::milliseconds(timeoutWhileWaitingForUnsubscribe));
 
         std::lock_guard<std::mutex> guard(m_subscribedTopicsMutex);
@@ -318,7 +327,7 @@ void CWrapper::connectToHost(const std::string& brokerURL)
             conn_opts.keepAliveInterval = 20;
             conn_opts.onSuccess5 = ::onConnected;
             conn_opts.onFailure5 = onConnectedFail;
-            m_connectionContext = std::make_unique<genericContext>(genericContext{getPtr()});
+            m_connectionContext = std::make_unique<genericContext>(genericContext{weak_from_this()});
             conn_opts.context = m_connectionContext.get();
 
             MQTTAsync_setCallbacks(*m_client.get(), conn_opts.context, OnConnectionLost, OnMessageArrived, NULL);
@@ -351,6 +360,18 @@ void CWrapper::disconnect() {
         m_mainMQTTThread.join();
     }
     m_connected = false;
+    {
+        std::lock_guard<std::mutex> guard(m_subscribedTopicsMutex);
+        m_subscribedTopics.clear();
+    }
+    {
+        std::lock_guard<std::mutex> guard(m_toBeSubscribedTopicsMutex);
+        m_toBeSubscribedTopics.clear();
+    }
+    {
+        std::lock_guard<std::mutex> guard(m_toBeUnsubscribedTopicsMutex);
+        m_toBeUnsubscribedTopics.clear();
+    }
     MQTTAsync_disconnectOptions disconn_opts = MQTTAsync_disconnectOptions_initializer5;
     disconn_opts.timeout = 10;
     MQTTAsync_disconnect(*m_client.get(), &disconn_opts);
@@ -446,6 +467,7 @@ bool CWrapper::isConnected() const
 
 void CWrapper::handleTextMessage(const Message& message)
 {
+    std::lock_guard<std::mutex> guard(m_subscribedTopicsMutex);
     auto subscribedTopicsRange = m_subscribedTopics.equal_range(message.topic);
     for (auto iter = subscribedTopicsRange.first; iter != subscribedTopicsRange.second; ++iter)
     {
@@ -500,7 +522,7 @@ void CWrapper::invokeRemote(const std::string& topic, const std::string& respons
 
     opts.onSuccess5 = onSendSuccess;
     opts.onFailure5 = onSendFailure;
-    auto ctx = std::make_unique<genericContext>(genericContext{getPtr()});
+    auto ctx = std::make_unique<genericContext>(genericContext{weak_from_this()});
     opts.context = ctx.release();
     pubmsg.payload = const_cast<void*>(static_cast<const void*>(value.c_str()));
     pubmsg.payloadlen = static_cast<int>(value.size());
@@ -520,7 +542,7 @@ void CWrapper::notifyPropertyChange(const std::string& topic, const std::string&
 
     opts.onSuccess5 = onSendSuccess;
     opts.onFailure5 = onSendFailure;
-    auto ctx = std::make_unique<genericContext>(genericContext{getPtr()});
+    auto ctx = std::make_unique<genericContext>(genericContext{weak_from_this()});
     opts.context = ctx.release();
     pubmsg.payload = const_cast<void*>(static_cast<const void*>(value.c_str()));
     pubmsg.payloadlen = static_cast<int>(value.size());
@@ -556,7 +578,7 @@ void CWrapper::notifyInvokeResponse(const std::string& responseTopic, const std:
 
     opts.onSuccess5 = onSendSuccess;
     opts.onFailure5 = onSendFailure;
-    auto ctx = std::make_unique<genericContext>(genericContext{getPtr()});
+    auto ctx = std::make_unique<genericContext>(genericContext{weak_from_this()});
     opts.context = ctx.release();
     pubmsg.payload = const_cast<void*>(static_cast<const void*>(value.c_str()));
     pubmsg.payloadlen = static_cast<int>(value.size());
@@ -598,6 +620,7 @@ void CWrapper::subscribeTopic(const std::string& topic, CallbackFunction func, O
 
 void CWrapper::onSubscribed(const std::string& topic, CallbackFunction func, OnSubscriptionStatusChanged subscriptionCallback)
 {
+    if (m_disconnectRequested) return;
     subscriptionCallback(topic, true);
     AG_LOG_INFO("Subscribed to " + topic);
     std::lock_guard<std::mutex> guard(m_subscribedTopicsMutex);
@@ -608,12 +631,15 @@ void CWrapper::onUnsubscribed(const std::string& topic)
 {
     AG_LOG_INFO("Unsubscribed from " + topic);
     std::lock_guard<std::mutex> guard(m_subscribedTopicsMutex);
-    auto unsubscribedTopicsRange = m_subscribedTopics.equal_range(topic);
-    for (auto iter = unsubscribedTopicsRange.first; iter != unsubscribedTopicsRange.second; ++iter)
+    if (!m_disconnectRequested)
     {
-        if (iter->second.subscribedCallback != nullptr)
+        auto unsubscribedTopicsRange = m_subscribedTopics.equal_range(topic);
+        for (auto iter = unsubscribedTopicsRange.first; iter != unsubscribedTopicsRange.second; ++iter)
         {
-            iter->second.subscribedCallback(topic, false);
+            if (iter->second.subscribedCallback != nullptr)
+            {
+                iter->second.subscribedCallback(topic, false);
+            }
         }
     }
     m_subscribedTopics.erase(topic);
