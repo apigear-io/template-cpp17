@@ -350,10 +350,10 @@ TEST_CASE("Nats  testbed2 ManyParamInterface tests")
         resultFuture.wait();
     }
 
-    serviceManyParamInterface.reset();
-    clientManyParamInterface.reset();
     client->disconnect();
     service->disconnect();
+    serviceManyParamInterface.reset();
+    clientManyParamInterface.reset();
     client.reset();
     service.reset();
 }

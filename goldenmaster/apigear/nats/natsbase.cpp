@@ -65,6 +65,8 @@ uint64_t Base::getId() const
 void Base::disconnect(bool graceful)
 {
     m_cwrapper->disconnect(graceful);
+    m_subscriptions_pool.reset();
+    m_requests_pool.reset();
 };
 
 void Base::flush()

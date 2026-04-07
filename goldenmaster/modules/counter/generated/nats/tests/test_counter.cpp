@@ -276,10 +276,10 @@ TEST_CASE("Nats  counter Counter tests")
         resultFuture.wait();
     }
 
-    serviceCounter.reset();
-    clientCounter.reset();
     client->disconnect();
     service->disconnect();
+    serviceCounter.reset();
+    clientCounter.reset();
     client.reset();
     service.reset();
 }

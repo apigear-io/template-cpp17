@@ -254,10 +254,10 @@ TEST_CASE("Nats  {{.Module.Name}} {{$class}} tests")
     }
     {{- end }}
 
-    service{{$class}}.reset();
-    client{{$class}}.reset();
     client->disconnect();
     service->disconnect();
+    service{{$class}}.reset();
+    client{{$class}}.reset();
     client.reset();
     service.reset();
 }

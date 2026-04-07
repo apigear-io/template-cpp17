@@ -238,10 +238,10 @@ TEST_CASE("Nats  tb.names NamEs tests")
         resultFuture.wait();
     }
 
-    serviceNamEs.reset();
-    clientNamEs.reset();
     client->disconnect();
     service->disconnect();
+    serviceNamEs.reset();
+    clientNamEs.reset();
     client.reset();
     service.reset();
 }

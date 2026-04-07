@@ -356,10 +356,10 @@ TEST_CASE("Nats  testbed1 StructInterface tests")
         resultFuture.wait();
     }
 
-    serviceStructInterface.reset();
-    clientStructInterface.reset();
     client->disconnect();
     service->disconnect();
+    serviceStructInterface.reset();
+    clientStructInterface.reset();
     client.reset();
     service.reset();
 }

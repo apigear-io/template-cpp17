@@ -3,6 +3,7 @@
 #include "utilities/logger.h"
 #include <memory>
 #include <functional>
+#include <chrono>
 
 using namespace ApiGear::Nats;
 
@@ -80,26 +81,38 @@ static void onRequest(natsConnection* connection, natsSubscription* /*subscripti
     }
 }
 
-static void onError(natsConnection* connection, natsSubscription* subscription, natsStatus status, void* context)
+static void onError(natsConnection* /*connection*/, natsSubscription* subscription, natsStatus status, void* context)
 {
-    uint64_t connection_id = 0;
-    natsConnection_GetClientID(connection, &connection_id);
+    auto* ctx = static_cast<CWrapper::CallbackContext*>(context);
+    std::lock_guard<std::mutex> lock(ctx->mutex);
+    auto owner = ctx->owner.lock();
+    if (!owner) return;
     auto subscription_id = natsSubscription_GetID(subscription);
-    auto callbackStruct = static_cast<CWrapper::SubscriptionErrorContext*>(context);
-    if (callbackStruct && callbackStruct->object.lock())
-    {
-        callbackStruct->function(connection_id, subscription_id, status);
-    }
+    std::string errorMessage = "Error for subscription: " + std::to_string(subscription_id) + " with status " + std::to_string(status);
+    AG_LOG_ERROR(errorMessage);
 }
 
 static void conntectionHandler(natsConnection* connection, void* context)
 {
-    uint64_t id;
-    natsConnection_GetClientID(connection, &id);
-    auto callbackStruct = static_cast<CWrapper::ConnectionCallbackContext*>(context);
-    if (callbackStruct && callbackStruct->object.lock())
+    auto* ctx = static_cast<CWrapper::CallbackContext*>(context);
+    std::function<void(void)> callback;
     {
-        callbackStruct->function(id);
+        std::lock_guard<std::mutex> lock(ctx->mutex);
+        auto owner = ctx->owner.lock();
+        if (!owner)
+        {
+            if (natsConnection_IsClosed(connection))
+            {
+                ctx->closed = true;
+                ctx->closedCV.notify_all();
+            }
+            return;
+        }
+        callback = ctx->connectionStateChangedCallback;
+    }
+    if (callback)
+    {
+        callback();
     }
 }
 
@@ -118,12 +131,37 @@ static void removeSubscriptionResources(void* context)
 
 
 CWrapper::CWrapper()
+    : m_callbackContext(std::make_shared<CallbackContext>())
 {
 }
 
 CWrapper::~CWrapper()
 {
-    natsConnection_Close(m_connection.get());
+    {
+        std::lock_guard<std::mutex> lock(m_callbackContext->mutex);
+        m_callbackContext->owner.reset();
+        m_callbackContext->connectionStateChangedCallback = nullptr;
+        m_callbackContext->closed = false;
+    }
+    {
+        std::lock_guard<std::mutex> lock(m_subscriptionsMutex);
+        for (auto& [id, sub] : m_subscriptions)
+        {
+            natsSubscription_Drain(sub.get());
+        }
+    }
+    std::unique_ptr<natsConnection, NatsConnectionDeleter> conn;
+    {
+        std::lock_guard<std::mutex> lock(m_connectionMutex);
+        conn = std::move(m_connection);
+    }
+    if (conn)
+    {
+        natsConnection_Close(conn.get());
+        std::unique_lock<std::mutex> lock(m_callbackContext->mutex);
+        m_callbackContext->closedCV.wait_for(lock, std::chrono::seconds(5),
+            [this] { return m_callbackContext->closed; });
+    }
 }
 
 void CWrapper::NatsConnectionDeleter::operator()(natsConnection* conn)
@@ -133,29 +171,22 @@ void CWrapper::NatsConnectionDeleter::operator()(natsConnection* conn)
 
 void CWrapper::connect(const std::string& address, std::function<void(void)> connectionStateChangedCallback, bool sendAsap)
 {
-    m_connectionStateChangedCallback = connectionStateChangedCallback;
-    if (!m_connectionHandlerContext.object.lock())
     {
-        m_connectionHandlerContext.object = getPtr();
-        m_connectionHandlerContext.function = [this](uint64_t connection_id) {handleConnectionStateChanged(connection_id); };
-    }
-
-    if (!m_subscriptionErrorContext.object.lock())
-    {
-        m_subscriptionErrorContext.object = shared_from_this();
-        m_subscriptionErrorContext.function = [this](uint64_t connection_id, int64_t subscription_id, int status) {handleSubscriptionError(connection_id, subscription_id, status); };
+        std::lock_guard<std::mutex> lock(m_callbackContext->mutex);
+        m_callbackContext->owner = shared_from_this();
+        m_callbackContext->connectionStateChangedCallback = connectionStateChangedCallback;
     }
 
     natsOptions* tmp_opts;
     auto status = natsOptions_Create(&tmp_opts);
-    if (status != NATS_OK) { 
+    if (status != NATS_OK) {
         auto log = "Failed to connect. Could not configure connection. Check your connection. Error code " + std::to_string(static_cast<int>(status));
         AG_LOG_ERROR(log);
         return;
     }
     std::unique_ptr<natsOptions, NatsOptionsDeleter> opts(tmp_opts, NatsOptionsDeleter());
 
-    status = natsOptions_SetErrorHandler(opts.get(), onError, &m_subscriptionErrorContext);
+    status = natsOptions_SetErrorHandler(opts.get(), onError, m_callbackContext.get());
     if (status != NATS_OK) {
         AG_LOG_ERROR("Failed to connect. Could not configure connection (On configuring Error Handler). Check your connection");
         return;
@@ -166,25 +197,25 @@ void CWrapper::connect(const std::string& address, std::function<void(void)> con
         AG_LOG_ERROR(log);
         return;
     }
-    status = natsOptions_SetDisconnectedCB(opts.get(), conntectionHandler, &m_connectionHandlerContext);
+    status = natsOptions_SetDisconnectedCB(opts.get(), conntectionHandler, m_callbackContext.get());
     if (status != NATS_OK) {
         auto log = "Failed to connect. Could not configure connection (On configuring disconnect callback). Error code " + std::to_string(static_cast<int>(status));
         AG_LOG_ERROR(log);
         return;
     }
-    status = natsOptions_SetReconnectedCB(opts.get(), conntectionHandler, &m_connectionHandlerContext);
+    status = natsOptions_SetReconnectedCB(opts.get(), conntectionHandler, m_callbackContext.get());
     if (status != NATS_OK) {
         auto log = "Failed to connect. Could not configure connection (On configuring disconnect callback). Error code " + std::to_string(static_cast<int>(status));
         AG_LOG_ERROR(log);
         return;
     }
-    status = natsOptions_SetRetryOnFailedConnect(opts.get(), true, conntectionHandler, &m_connectionHandlerContext);
+    status = natsOptions_SetRetryOnFailedConnect(opts.get(), true, conntectionHandler, m_callbackContext.get());
     if (status != NATS_OK) {
         auto log = "Failed to connect. Could not configure connection (On configuring disconnect callback). Error code " + std::to_string(static_cast<int>(status));
         AG_LOG_ERROR(log);
         return;
     }
-    status = natsOptions_SetClosedCB(opts.get(), conntectionHandler, &m_connectionHandlerContext);
+    status = natsOptions_SetClosedCB(opts.get(), conntectionHandler, m_callbackContext.get());
     if (status != NATS_OK) {
         auto log = "Failed to connect. Could not configure connection (On configuring disconnect callback). Error code " + std::to_string(static_cast<int>(status));
         AG_LOG_ERROR(log);
@@ -238,17 +269,39 @@ uint64_t CWrapper::getId() const
 
 void CWrapper::disconnect(bool graceful)
 {
-    std::lock_guard<std::mutex> lock(m_connectionMutex);
-    if (!m_connection)
     {
-        return;
+        std::lock_guard<std::mutex> lock(m_callbackContext->mutex);
+        m_callbackContext->owner.reset();
+        m_callbackContext->connectionStateChangedCallback = nullptr;
+        m_callbackContext->closed = false;
     }
     if (graceful)
     {
-        natsConnection_Flush(m_connection.get());
-        natsConnection_Drain(m_connection.get());
+        std::lock_guard<std::mutex> lock(m_subscriptionsMutex);
+        for (auto& [id, sub] : m_subscriptions)
+        {
+            natsSubscription_Drain(sub.get());
+        }
     }
-    natsConnection_Close(m_connection.get());
+    std::unique_ptr<natsConnection, NatsConnectionDeleter> conn;
+    {
+        std::lock_guard<std::mutex> lock(m_connectionMutex);
+        if (!m_connection)
+        {
+            return;
+        }
+        conn = std::move(m_connection);
+    }
+    if (graceful)
+    {
+        natsConnection_Flush(conn.get());
+    }
+    natsConnection_Close(conn.get());
+    {
+        std::unique_lock<std::mutex> lock(m_callbackContext->mutex);
+        m_callbackContext->closedCV.wait_for(lock, std::chrono::seconds(5),
+            [this] { return m_callbackContext->closed; });
+    }
 }
 
 
@@ -274,35 +327,18 @@ ConnectionStatus CWrapper::getStatus()
 }
 
 
-void  CWrapper::flush()
+void CWrapper::flush()
 {
-    if (!m_connection)
+    natsConnection* conn = nullptr;
     {
-        return;
+        std::lock_guard<std::mutex> lock(m_connectionMutex);
+        if (!m_connection)
+        {
+            return;
+        }
+        conn = m_connection.get();
     }
-    natsConnection_Flush(m_connection.get());
-}
-
-void CWrapper::handleConnectionStateChanged(uint64_t connection_id)
-{
-    uint64_t stored_connection_id;
-    natsConnection_GetClientID(m_connection.get(), &stored_connection_id);
-    if (connection_id == stored_connection_id && m_connectionStateChangedCallback)
-    {
-        m_connectionStateChangedCallback();
-    }
-}
-
-void CWrapper::handleSubscriptionError(uint64_t connection_id, int64_t subscription_id, int status)
-{
-    uint64_t stored_connection_id;
-    natsConnection_GetClientID(m_connection.get(), &stored_connection_id);
-    if (connection_id != stored_connection_id)
-    {
-        return;
-    }
-    std::string errorMessage =  "Error for subscription: " + std::to_string(subscription_id) + " with status " + std::to_string(status);
-    AG_LOG_ERROR(errorMessage);
+    natsConnection_Flush(conn);
 }
 
 int64_t CWrapper::subscribe(const std::string& topic, SimpleOnMessageCallback callback, SubscriptionClosedCallback onSubscriptionClosedCallback)
@@ -397,15 +433,18 @@ int64_t CWrapper::subscribeWithResponse(const std::string& topic, MessageCallbac
 void CWrapper::unsubscribe(int64_t id)
 {
     AG_LOG_DEBUG("nats client: unsubscribe " + std::to_string(id));
-    std::unique_lock<std::mutex> lock{ m_subscriptionsMutex };
-    auto found = m_subscriptions.find(static_cast<uint64_t>(id));
-    if (found == m_subscriptions.end())
+    std::shared_ptr<natsSubscription> sub;
     {
-        // May happen if unsubscribe during connection disconnecting, the disconnect request removes the subscriptions.
-        return;
+        std::lock_guard<std::mutex> lock{ m_subscriptionsMutex };
+        auto found = m_subscriptions.find(static_cast<uint64_t>(id));
+        if (found == m_subscriptions.end())
+        {
+            // May happen if unsubscribe during connection disconnecting, the disconnect request removes the subscriptions.
+            return;
+        }
+        sub = found->second;
     }
-    lock.unlock();
-    auto status = natsSubscription_Unsubscribe(found->second.get());
+    auto status = natsSubscription_Unsubscribe(sub.get());
     if (status != NATS_OK && status != NATS_CONNECTION_CLOSED) {
         AG_LOG_WARNING("Failed to unsubscribe " + std::to_string(id)+ " status " + std::to_string(status));
         cleanSubscription(id);
@@ -455,7 +494,7 @@ void CWrapper::publish(const std::string& topic, const std::string& payload)
     AG_LOG_DEBUG(topic);
     AG_LOG_DEBUG(payload);
     auto status = natsConnection_PublishString(m_connection.get(), topic.c_str(), payload.c_str());
-    if (status != NATS_OK) { 
+    if (status != NATS_OK) {
         AG_LOG_WARNING("Failed to publish message with status " + std::to_string(status) + " for topic " +  topic);
     }
 }

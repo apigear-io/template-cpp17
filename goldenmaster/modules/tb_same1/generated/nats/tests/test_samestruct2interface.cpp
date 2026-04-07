@@ -219,10 +219,10 @@ TEST_CASE("Nats  tb.same1 SameStruct2Interface tests")
         resultFuture.wait();
     }
 
-    serviceSameStruct2Interface.reset();
-    clientSameStruct2Interface.reset();
     client->disconnect();
     service->disconnect();
+    serviceSameStruct2Interface.reset();
+    clientSameStruct2Interface.reset();
     client.reset();
     service.reset();
 }

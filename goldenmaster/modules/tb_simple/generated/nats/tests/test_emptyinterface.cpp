@@ -76,10 +76,10 @@ TEST_CASE("Nats  tb.simple EmptyInterface tests")
     lock.unlock();
     client->flush();
 
-    serviceEmptyInterface.reset();
-    clientEmptyInterface.reset();
     client->disconnect();
     service->disconnect();
+    serviceEmptyInterface.reset();
+    clientEmptyInterface.reset();
     client.reset();
     service.reset();
 }

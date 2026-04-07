@@ -344,10 +344,10 @@ TEST_CASE("Nats  tb.enum EnumInterface tests")
         resultFuture.wait();
     }
 
-    serviceEnumInterface.reset();
-    clientEnumInterface.reset();
     client->disconnect();
     service->disconnect();
+    serviceEnumInterface.reset();
+    clientEnumInterface.reset();
     client.reset();
     service.reset();
 }
