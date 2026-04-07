@@ -124,10 +124,10 @@ TEST_CASE("Nats  tb.simple VoidInterface tests")
         resultFuture.wait();
     }
 
-    serviceVoidInterface.reset();
-    clientVoidInterface.reset();
     client->disconnect();
     service->disconnect();
+    serviceVoidInterface.reset();
+    clientVoidInterface.reset();
     client.reset();
     service.reset();
 }

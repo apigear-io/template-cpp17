@@ -22,7 +22,7 @@ namespace Nats {
 
 /**
  * @brief This a simple c++ wrapper for the c Nats implementation
- * 
+ *
  * Since in Nats there are only clients connected to a central broker,
  * the ApiGear service and client side use this class to connect to each other via the broker.
  */
@@ -34,11 +34,6 @@ public:
         return std::shared_ptr<CWrapper>(new CWrapper());
     };
     virtual ~CWrapper();
-
-    std::shared_ptr<CWrapper> getPtr()
-    {
-        return shared_from_this();
-    }
 
     void connect(const std::string& address, std::function<void(void)> connectionStateChangedCallback, bool sendAsap);
     uint64_t getId() const;
@@ -70,15 +65,14 @@ public:
         int64_t id = -1;
         MessageCallbackWithResult callback;
     };
-    struct ConnectionCallbackContext
-    {
-        std::weak_ptr<CWrapper> object;
-        std::function<void(uint64_t)> function;
-    };
 
-    struct SubscriptionErrorContext {
-        std::weak_ptr<CWrapper> object;
-        std::function<void(uint64_t, int64_t, int)> function;
+    struct CallbackContext
+    {
+        std::mutex mutex;
+        std::weak_ptr<CWrapper> owner;
+        std::function<void(void)> connectionStateChangedCallback;
+        bool closed = false;
+        std::condition_variable closedCV;
     };
 
 private:
@@ -87,9 +81,7 @@ private:
         void operator()(natsConnection* connection);
     };
 
-    void handleConnectionStateChanged(uint64_t connection_id);
     void cleanSubscription(int64_t id);
-    void handleSubscriptionError(uint64_t connection_id, int64_t subscription_id, int status);
 
     std::mutex m_simpleCallbacksMutex;
     std::mutex m_requestCallbacksMutex;
@@ -103,9 +95,7 @@ private:
     std::unordered_map<uint64_t, std::shared_ptr<natsSubscription>> m_subscriptions;
     std::mutex m_subscriptionsMutex;
 
-    ConnectionCallbackContext m_connectionHandlerContext;
-    std::function<void(void)> m_connectionStateChangedCallback;
-    SubscriptionErrorContext m_subscriptionErrorContext;
+    std::shared_ptr<CallbackContext> m_callbackContext;
 
     explicit CWrapper();
 };

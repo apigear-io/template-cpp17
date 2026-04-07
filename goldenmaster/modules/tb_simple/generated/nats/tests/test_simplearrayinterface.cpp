@@ -636,10 +636,10 @@ TEST_CASE("Nats  tb.simple SimpleArrayInterface tests")
         resultFuture.wait();
     }
 
-    serviceSimpleArrayInterface.reset();
-    clientSimpleArrayInterface.reset();
     client->disconnect();
     service->disconnect();
+    serviceSimpleArrayInterface.reset();
+    clientSimpleArrayInterface.reset();
     client.reset();
     service.reset();
 }

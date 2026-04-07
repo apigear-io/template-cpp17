@@ -174,10 +174,10 @@ TEST_CASE("Nats  tb.simple NoSignalsInterface tests")
         resultFuture.wait();
     }
 
-    serviceNoSignalsInterface.reset();
-    clientNoSignalsInterface.reset();
     client->disconnect();
     service->disconnect();
+    serviceNoSignalsInterface.reset();
+    clientNoSignalsInterface.reset();
     client.reset();
     service.reset();
 }

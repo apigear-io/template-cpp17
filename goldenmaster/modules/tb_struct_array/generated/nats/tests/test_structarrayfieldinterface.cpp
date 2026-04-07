@@ -250,10 +250,10 @@ TEST_CASE("Nats  tb.struct.array StructArrayFieldInterface tests")
         resultFuture.wait();
     }
 
-    serviceStructArrayFieldInterface.reset();
-    clientStructArrayFieldInterface.reset();
     client->disconnect();
     service->disconnect();
+    serviceStructArrayFieldInterface.reset();
+    clientStructArrayFieldInterface.reset();
     client.reset();
     service.reset();
 }

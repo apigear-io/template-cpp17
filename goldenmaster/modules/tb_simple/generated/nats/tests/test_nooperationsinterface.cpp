@@ -141,10 +141,10 @@ TEST_CASE("Nats  tb.simple NoOperationsInterface tests")
         lock.unlock();
     }
 
-    serviceNoOperationsInterface.reset();
-    clientNoOperationsInterface.reset();
     client->disconnect();
     service->disconnect();
+    serviceNoOperationsInterface.reset();
+    clientNoOperationsInterface.reset();
     client.reset();
     service.reset();
 }

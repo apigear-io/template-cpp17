@@ -175,10 +175,10 @@ TEST_CASE("Nats  tb.simple NoPropertiesInterface tests")
         resultFuture.wait();
     }
 
-    serviceNoPropertiesInterface.reset();
-    clientNoPropertiesInterface.reset();
     client->disconnect();
     service->disconnect();
+    serviceNoPropertiesInterface.reset();
+    clientNoPropertiesInterface.reset();
     client.reset();
     service.reset();
 }

@@ -211,10 +211,10 @@ TEST_CASE("Nats  tb.same2 SameEnum2Interface tests")
         resultFuture.wait();
     }
 
-    serviceSameEnum2Interface.reset();
-    clientSameEnum2Interface.reset();
     client->disconnect();
     service->disconnect();
+    serviceSameEnum2Interface.reset();
+    clientSameEnum2Interface.reset();
     client.reset();
     service.reset();
 }

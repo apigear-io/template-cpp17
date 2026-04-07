@@ -678,10 +678,10 @@ TEST_CASE("Nats  tb.simple SimpleInterface tests")
         resultFuture.wait();
     }
 
-    serviceSimpleInterface.reset();
-    clientSimpleInterface.reset();
     client->disconnect();
     service->disconnect();
+    serviceSimpleInterface.reset();
+    clientSimpleInterface.reset();
     client.reset();
     service.reset();
 }

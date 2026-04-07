@@ -295,10 +295,10 @@ TEST_CASE("Nats  testbed2 NestedStruct3Interface tests")
         resultFuture.wait();
     }
 
-    serviceNestedStruct3Interface.reset();
-    clientNestedStruct3Interface.reset();
     client->disconnect();
     service->disconnect();
+    serviceNestedStruct3Interface.reset();
+    clientNestedStruct3Interface.reset();
     client.reset();
     service.reset();
 }
