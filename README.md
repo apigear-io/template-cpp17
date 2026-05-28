@@ -81,3 +81,7 @@ Workflow for template changes:
 3. Run `go run main.go diff` to verify against `goldenmaster/`
 4. Update `goldenmaster/` to match the intended output
 5. CI validates the goldenmaster is up-to-date on every PR
+
+## License
+
+Licensed under the [MIT License](./LICENSE). See [LICENSE](./LICENSE) for details.
