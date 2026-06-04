@@ -1,3 +1,10 @@
+---
+sidebar_label: "Features"
+title: "C++17 Template Features - ApiGear"
+description: "Overview of the C++17 template features for the ApiGear code generator: generated interfaces and data types, stub implementations, networking adapters, and traffic monitoring."
+keywords: [c++17, cpp17, apigear, objectapi, template features, code generator]
+---
+
 import CodeBlock from '@theme/CodeBlock';
 import helloWorldModuleComponent from '!!raw-loader!./data/helloworld.module.yaml';
 import Figure from '../figure'
@@ -67,13 +74,13 @@ Features can be used in combination with _API_ and add more functionality on top
   - `app` simple example with stubs.
   - `appthreadsafe` simple example with stubs wrapped with thread safe decorator. See [thread safe decorator from core features](stubs.md#core)
 
-<Figure caption="Overview of features for user application, including receiving data from network: Bottom floor shows possible inputs for your API, you can either obtain data from the network with OLink or MQTT or use local (thread safe if necessary) implementation." src="/img/features/featuresApp.png" />
+<Figure caption="Overview of features for user application, including receiving data from network: Bottom floor shows possible inputs for your API, you can either obtain data from the network with OLink or MQTT or use local (thread safe if necessary) implementation." src="/img/cpp17/features/featuresApp.png" />
 
 :::note
 Theoretically you can use the Thread Safe Decorator with other features that implements API: OLinkClient and MQTT Client, but they, already provide thread safety on at least the same level as the Thread Safe Decorator.
 :::
 
-<Figure caption="Overview of features for user application, including publishing data through network: Topmost floor shows your options for using your local implementation (bottom floor): you can use it in your local app and/or use method of sharing the data with clients in the network. Consider then using thread safe version of your implementation." src="/img/features/featuresServer.png" />
+<Figure caption="Overview of features for user application, including publishing data through network: Topmost floor shows your options for using your local implementation (bottom floor): you can use it in your local app and/or use method of sharing the data with clients in the network. Consider then using thread safe version of your implementation." src="/img/cpp17/features/featuresServer.png" />
 
 There are also an _internal_ features:
 
