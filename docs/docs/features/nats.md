@@ -8,7 +8,6 @@ sidebar_position: 3
 
 import CodeBlock from '@theme/CodeBlock';
 import helloWorldModuleComponent from '!!raw-loader!./data/helloworld.module.yaml';
-import natsMessagesFormat from './data/ApiGearNatsv0.1.pdf';
 
 # NATS
 
@@ -231,5 +230,5 @@ All you need to do is to pass the `ApiGear::Nats::Service` and a local Hello imp
 
 ### Nats Messages
 
-In case you want construct messages for client or server side on your own, please check how topics are created and how does the payload look like, check this document [messages format](./data/ApiGearNatsv0.1.pdf).
+For the NATS subject structure and payload format, see **[ApiGear over NATS](/docs/protocols/nats/mapping)**.
 
