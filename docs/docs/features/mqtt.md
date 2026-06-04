@@ -1,10 +1,14 @@
 ﻿---
+sidebar_label: "MQTT"
+title: "C++17 Template MQTT Networking - ApiGear"
+description: "MQTT networking in the ApiGear C++17 template: expose and consume C++17 interfaces over MQTT using generated client and server adapters."
+keywords: [c++17, cpp17, apigear, objectapi, mqtt, networking, messaging]
 sidebar_position: 3
 ---
 
 import CodeBlock from '@theme/CodeBlock';
 import helloWorldModuleComponent from '!!raw-loader!./data/helloworld.module.yaml';
-import mqttMessagesFormat from './data/ApiGearMQTTv0.1.pdf';
+import mqttMessagesFormat from '/files/mqtt/ApiGearMQTTv0.1.pdf';
 
 # MQTT
 
@@ -204,4 +208,4 @@ testIoWorldHello->_getPublisher().publishJustSaid(someMessage);
 
 ### MQTT Messages
 
-In case you want construct messages for client or server side on your own, please check how topics are created and how does the payload look like, check this document [messages format](./data/ApiGearMQTTv0.1.pdf).
+In case you want construct messages for client or server side on your own, please check how topics are created and how does the payload look like, check this document [messages format](/files/mqtt/ApiGearMQTTv0.1.pdf).
