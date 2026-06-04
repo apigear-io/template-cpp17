@@ -1,4 +1,8 @@
 ﻿---
+sidebar_label: "Stubs"
+title: "C++17 Template Stub Implementations - ApiGear"
+description: "Generated stub implementations in the ApiGear C++17 template: ready-to-extend default classes for your interfaces, ideal for prototyping and testing C++17 services."
+keywords: [c++17, cpp17, apigear, objectapi, stubs, default implementation, prototyping]
 sidebar_position: 2
 ---
 

@@ -1,4 +1,8 @@
 ---
+sidebar_label: "Quick-Start"
+title: "C++17 Template Quick Start - ApiGear"
+description: "Quick-start guide for the ApiGear C++17 template: install the generator, define an ObjectAPI interface, and generate your first C++17 SDK in minutes."
+keywords: [c++17, cpp17, apigear, objectapi, quick start, getting started, tutorial]
 sidebar_position: 2
 ---
 import QuickStartCommon from "@site/docs/_quickstart_common.md"

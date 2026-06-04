@@ -1,4 +1,8 @@
 ---
+sidebar_label: "Introduction"
+title: "C++17 SDK Generator - ApiGear Template"
+description: "Generate modern C++17 SDKs from ObjectAPI definitions with ApiGear: interfaces, structs, stub implementations, plus OLink, NATS, and MQTT networking with built-in monitoring."
+keywords: [c++17, cpp17, api code generator, sdk generator, apigear, objectapi, olink, nats, mqtt]
 sidebar_position: 1
 ---
 

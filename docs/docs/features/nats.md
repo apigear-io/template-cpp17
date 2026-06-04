@@ -1,4 +1,8 @@
 ﻿---
+sidebar_label: "NATS"
+title: "C++17 Template NATS Networking - ApiGear"
+description: "NATS networking in the ApiGear C++17 template: connect C++17 interface clients and services over the NATS messaging system."
+keywords: [c++17, cpp17, apigear, objectapi, nats, networking, messaging]
 sidebar_position: 3
 ---
 
